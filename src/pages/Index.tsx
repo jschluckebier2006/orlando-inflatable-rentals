@@ -1,13 +1,34 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { Layout } from "@/components/layout/Layout";
+import { SEOHead } from "@/components/seo/SEOHead";
+import { LocalBusinessSchema } from "@/components/seo/LocalBusinessSchema";
+import { HeroSection } from "@/components/home/HeroSection";
+import { CategoriesSection } from "@/components/home/CategoriesSection";
+import { PopularRentalsSection } from "@/components/home/PopularRentalsSection";
+import { DeliveryAreasSection } from "@/components/home/DeliveryAreasSection";
+import { EventTypesSection } from "@/components/home/EventTypesSection";
+import { ReviewsSection } from "@/components/home/ReviewsSection";
+import { FAQSection } from "@/components/home/FAQSection";
+import { CTASection } from "@/components/home/CTASection";
 
 const Index = () => {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
-    </div>
+    <Layout>
+      <SEOHead
+        title="Bounce House & Water Slide Rentals in Orlando FL"
+        description="Orlando Inflatables is your one-stop shop for bounce house, water slide, obstacle course, and party rental equipment in East Orlando, Orange County. Book your rental today! (407) 497-1840"
+        canonical="/"
+      />
+      <LocalBusinessSchema />
+      
+      <HeroSection />
+      <CategoriesSection />
+      <PopularRentalsSection />
+      <DeliveryAreasSection />
+      <EventTypesSection />
+      <ReviewsSection />
+      <FAQSection />
+      <CTASection />
+    </Layout>
   );
 };
 
