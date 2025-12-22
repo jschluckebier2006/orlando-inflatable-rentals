@@ -45,6 +45,11 @@ import BounceHouseWaterfordLakes from "./pages/city-service/BounceHouseWaterford
 import WaterSlideWaterfordLakes from "./pages/city-service/WaterSlideWaterfordLakes";
 import BounceHouseWedgefield from "./pages/city-service/BounceHouseWedgefield";
 import WaterSlideWedgefield from "./pages/city-service/WaterSlideWedgefield";
+import BirthdayParties from "./pages/events/BirthdayParties";
+import SchoolEvents from "./pages/events/SchoolEvents";
+import ChurchEvents from "./pages/events/ChurchEvents";
+import CorporateEvents from "./pages/events/CorporateEvents";
+import GraduationEvents from "./pages/events/GraduationEvents";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
