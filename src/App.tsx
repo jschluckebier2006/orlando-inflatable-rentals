@@ -25,6 +25,26 @@ import EastwoodDelivery from "./pages/delivery/Eastwood";
 import StoneybrookDelivery from "./pages/delivery/Stoneybrook";
 import WaterfordLakesDelivery from "./pages/delivery/WaterfordLakes";
 import WedgefieldDelivery from "./pages/delivery/Wedgefield";
+import BounceHouseAlafaya from "./pages/city-service/BounceHouseAlafaya";
+import WaterSlideAlafaya from "./pages/city-service/WaterSlideAlafaya";
+import BounceHouseAvalonPark from "./pages/city-service/BounceHouseAvalonPark";
+import WaterSlideAvalonPark from "./pages/city-service/WaterSlideAvalonPark";
+import BounceHouseAzaleaPark from "./pages/city-service/BounceHouseAzaleaPark";
+import WaterSlideAzaleaPark from "./pages/city-service/WaterSlideAzaleaPark";
+import BounceHouseBithlo from "./pages/city-service/BounceHouseBithlo";
+import WaterSlideBithlo from "./pages/city-service/WaterSlideBithlo";
+import BounceHouseChristmas from "./pages/city-service/BounceHouseChristmas";
+import WaterSlideChristmas from "./pages/city-service/WaterSlideChristmas";
+import BounceHouseChuluota from "./pages/city-service/BounceHouseChuluota";
+import WaterSlideChuluota from "./pages/city-service/WaterSlideChuluota";
+import BounceHouseEastwood from "./pages/city-service/BounceHouseEastwood";
+import WaterSlideEastwood from "./pages/city-service/WaterSlideEastwood";
+import BounceHouseStoneybrook from "./pages/city-service/BounceHouseStoneybrook";
+import WaterSlideStoneybrook from "./pages/city-service/WaterSlideStoneybrook";
+import BounceHouseWaterfordLakes from "./pages/city-service/BounceHouseWaterfordLakes";
+import WaterSlideWaterfordLakes from "./pages/city-service/WaterSlideWaterfordLakes";
+import BounceHouseWedgefield from "./pages/city-service/BounceHouseWedgefield";
+import WaterSlideWedgefield from "./pages/city-service/WaterSlideWedgefield";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -58,6 +78,26 @@ const App = () => (
             <Route path="/delivery-area/stoneybrook" element={<StoneybrookDelivery />} />
             <Route path="/delivery-area/waterford-lakes" element={<WaterfordLakesDelivery />} />
             <Route path="/delivery-area/wedgefield" element={<WedgefieldDelivery />} />
+            <Route path="/bounce-house-rentals-alafaya" element={<BounceHouseAlafaya />} />
+            <Route path="/water-slide-rentals-alafaya" element={<WaterSlideAlafaya />} />
+            <Route path="/bounce-house-rentals-avalon-park" element={<BounceHouseAvalonPark />} />
+            <Route path="/water-slide-rentals-avalon-park" element={<WaterSlideAvalonPark />} />
+            <Route path="/bounce-house-rentals-azalea-park" element={<BounceHouseAzaleaPark />} />
+            <Route path="/water-slide-rentals-azalea-park" element={<WaterSlideAzaleaPark />} />
+            <Route path="/bounce-house-rentals-bithlo" element={<BounceHouseBithlo />} />
+            <Route path="/water-slide-rentals-bithlo" element={<WaterSlideBithlo />} />
+            <Route path="/bounce-house-rentals-christmas" element={<BounceHouseChristmas />} />
+            <Route path="/water-slide-rentals-christmas" element={<WaterSlideChristmas />} />
+            <Route path="/bounce-house-rentals-chuluota" element={<BounceHouseChuluota />} />
+            <Route path="/water-slide-rentals-chuluota" element={<WaterSlideChuluota />} />
+            <Route path="/bounce-house-rentals-eastwood" element={<BounceHouseEastwood />} />
+            <Route path="/water-slide-rentals-eastwood" element={<WaterSlideEastwood />} />
+            <Route path="/bounce-house-rentals-stoneybrook" element={<BounceHouseStoneybrook />} />
+            <Route path="/water-slide-rentals-stoneybrook" element={<WaterSlideStoneybrook />} />
+            <Route path="/bounce-house-rentals-waterford-lakes" element={<BounceHouseWaterfordLakes />} />
+            <Route path="/water-slide-rentals-waterford-lakes" element={<WaterSlideWaterfordLakes />} />
+            <Route path="/bounce-house-rentals-wedgefield" element={<BounceHouseWedgefield />} />
+            <Route path="/water-slide-rentals-wedgefield" element={<WaterSlideWedgefield />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </TooltipProvider>
