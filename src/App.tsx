@@ -15,6 +15,16 @@ import ObstacleCourseRentals from "./pages/ObstacleCourseRentals";
 import InteractiveGameRentals from "./pages/InteractiveGameRentals";
 import ConcessionRentals from "./pages/ConcessionRentals";
 import TableChairRentals from "./pages/TableChairRentals";
+import AlafayaDelivery from "./pages/delivery/Alafaya";
+import AvalonParkDelivery from "./pages/delivery/AvalonPark";
+import AzaleaParkDelivery from "./pages/delivery/AzaleaPark";
+import BithloDelivery from "./pages/delivery/Bithlo";
+import ChristmasDelivery from "./pages/delivery/Christmas";
+import ChuluotaDelivery from "./pages/delivery/Chuluota";
+import EastwoodDelivery from "./pages/delivery/Eastwood";
+import StoneybrookDelivery from "./pages/delivery/Stoneybrook";
+import WaterfordLakesDelivery from "./pages/delivery/WaterfordLakes";
+import WedgefieldDelivery from "./pages/delivery/Wedgefield";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -38,6 +48,16 @@ const App = () => (
             <Route path="/interactive-game-rentals" element={<InteractiveGameRentals />} />
             <Route path="/concession-rentals" element={<ConcessionRentals />} />
             <Route path="/table-chair-rentals" element={<TableChairRentals />} />
+            <Route path="/delivery-area/alafaya" element={<AlafayaDelivery />} />
+            <Route path="/delivery-area/avalon-park" element={<AvalonParkDelivery />} />
+            <Route path="/delivery-area/azalea-park" element={<AzaleaParkDelivery />} />
+            <Route path="/delivery-area/bithlo" element={<BithloDelivery />} />
+            <Route path="/delivery-area/christmas" element={<ChristmasDelivery />} />
+            <Route path="/delivery-area/chuluota" element={<ChuluotaDelivery />} />
+            <Route path="/delivery-area/eastwood" element={<EastwoodDelivery />} />
+            <Route path="/delivery-area/stoneybrook" element={<StoneybrookDelivery />} />
+            <Route path="/delivery-area/waterford-lakes" element={<WaterfordLakesDelivery />} />
+            <Route path="/delivery-area/wedgefield" element={<WedgefieldDelivery />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </TooltipProvider>
