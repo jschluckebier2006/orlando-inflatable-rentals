@@ -23,13 +23,13 @@ export function CategoryCard({ title, products, categoryLink }: CategoryCardProp
         <h3 className="font-display text-lg font-bold text-primary-foreground">
           {title}
         </h3>
-        <Link to={categoryLink}>
+        <Link to={categoryLink} aria-label={`View all ${title}`}>
           <Button 
             variant="secondary" 
             size="sm" 
             className="bg-white text-foreground hover:bg-gray-100 font-semibold text-sm"
           >
-            See All
+            View All {title}
           </Button>
         </Link>
       </div>
@@ -57,12 +57,12 @@ export function CategoryCard({ title, products, categoryLink }: CategoryCardProp
             </Link>
           ))}
           
-          {/* See More Button */}
-          <Link to={categoryLink} className="flex-shrink-0 flex items-center justify-center px-2">
+          {/* View More Button */}
+          <Link to={categoryLink} className="flex-shrink-0 flex items-center justify-center px-2" aria-label={`View more ${title}`}>
             <Button 
               className="bg-amber-500 hover:bg-amber-600 text-white font-semibold text-sm px-4 py-2 rounded-md shadow-md"
             >
-              See More
+              View {title} →
             </Button>
           </Link>
         </div>
