@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import birthdayPartiesImage from "@/assets/birthday-parties-category.png";
 import schoolEventsImage from "@/assets/school-events-category.png";
+import churchEventsImage from "@/assets/church-events-category.png";
 
 const eventTypes = [
   {
@@ -28,11 +29,11 @@ const eventTypes = [
   },
   {
     name: "Church Events",
-    description: "Fellowship and community gatherings",
+    description: "",
     href: "/events/church-events",
-    icon: Church,
-    image: "https://images.unsplash.com/photo-1438032005730-c779502df39b?w=400&h=250&fit=crop",
-    hasOverlayText: true,
+    icon: null,
+    image: churchEventsImage,
+    hasOverlayText: false,
   },
   {
     name: "Corporate Events",
