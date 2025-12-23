@@ -11,6 +11,7 @@ import { Check, Phone, Shield, Clock, Users, Sparkles } from "lucide-react";
 import { useState } from "react";
 import { JotformModal } from "@/components/JotformModal";
 import { Helmet } from "react-helmet-async";
+import { siteImages } from "@/components/home/ContentImages";
 
 const features = [
   { icon: Shield, title: "Licensed & Insured", description: "Full liability coverage for your peace of mind" },
@@ -66,14 +67,22 @@ export default function BounceSlideComboRentals() {
       <BreadcrumbSchema items={[{ name: "Bounce & Slide Combos", href: "/bounce-slide-combo-rentals" }]} />
 
       {/* Hero Section */}
-      <section className="gradient-hero text-primary-foreground py-16 md:py-24">
-        <div className="container-page">
+      <section 
+        className="relative text-white py-16 md:py-24"
+        style={{
+          backgroundImage: `url(${siteImages.kidsSlide1})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}
+      >
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/90 via-primary/80 to-primary/90"></div>
+        <div className="container-page relative z-10">
           <div className="max-w-4xl mx-auto text-center">
-            <Badge className="mb-4 bg-white/20 text-primary-foreground">2-in-1 Fun!</Badge>
-            <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
+            <Badge className="mb-4 bg-white/20 text-white border-white/30">2-in-1 Fun!</Badge>
+            <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-white">
               Bounce & Slide Combo Rentals in Orlando, FL
             </h1>
-            <p className="text-xl text-primary-foreground/90 mb-8 max-w-2xl mx-auto">
+            <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
               Get double the fun with our combo units that feature both a bounce area and an exciting slide! Perfect for parties of all sizes.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -81,7 +90,7 @@ export default function BounceSlideComboRentals() {
                 Get a Free Quote
               </Button>
               <a href="tel:4074971840">
-                <Button size="lg" className="bg-white text-primary hover:bg-white/90 btn-bounce text-lg px-8 font-semibold">
+                <Button size="lg" variant="outline" className="bg-transparent border-white text-white hover:bg-white/20 btn-bounce text-lg px-8 font-semibold">
                   <Phone className="mr-2 h-5 w-5" /> (407) 497-1840
                 </Button>
               </a>
