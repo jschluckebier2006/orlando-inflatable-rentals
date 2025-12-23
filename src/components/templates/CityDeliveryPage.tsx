@@ -398,7 +398,7 @@ export function CityDeliveryPage({
             <p className="text-muted-foreground leading-relaxed mb-8">
               When you rent from{" "}
               <a
-                href="https://www.google.com/maps?cid=5765028857056498073"
+                href="https://g.page/r/CfkLrEA027rSEAE"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-primary hover:underline font-semibold inline-flex items-center gap-1"
