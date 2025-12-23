@@ -3,6 +3,7 @@ import { SEOHead } from "@/components/seo/SEOHead";
 import { LocalBusinessSchema } from "@/components/seo/LocalBusinessSchema";
 import { HeroSection } from "@/components/home/HeroSection";
 import { CategoriesSection } from "@/components/home/CategoriesSection";
+import { SEOContentSection } from "@/components/home/SEOContentSection";
 import { PopularRentalsSection } from "@/components/home/PopularRentalsSection";
 import { DeliveryAreasSection } from "@/components/home/DeliveryAreasSection";
 import { EventTypesSection } from "@/components/home/EventTypesSection";
@@ -22,6 +23,7 @@ const Index = () => {
       
       <HeroSection />
       <CategoriesSection />
+      <SEOContentSection />
       <PopularRentalsSection />
       <DeliveryAreasSection />
       <EventTypesSection />
