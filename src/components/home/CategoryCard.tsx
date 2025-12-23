@@ -58,12 +58,12 @@ export function CategoryCard({ title, products, categoryLink }: CategoryCardProp
           ))}
           
           {/* See More Card */}
-          <Link to={categoryLink} className="flex-shrink-0 w-28 group">
+          <Link to={categoryLink} className="flex-shrink-0 w-16 group">
             <div className="h-full flex flex-col items-center justify-center aspect-square bg-muted/50 rounded-md hover:bg-primary/10 transition-colors">
-              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-2 group-hover:bg-primary/20 transition-colors">
-                <ArrowRight className="h-6 w-6 text-primary" />
+              <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center mb-1 group-hover:bg-primary/20 transition-colors">
+                <ArrowRight className="h-4 w-4 text-primary" />
               </div>
-              <span className="text-sm font-semibold text-primary">See More</span>
+              <span className="text-xs font-semibold text-primary">More</span>
             </div>
           </Link>
         </div>
