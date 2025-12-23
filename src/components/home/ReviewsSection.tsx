@@ -51,14 +51,15 @@ export function ReviewsSection() {
           {reviews.map((review, index) => (
             <Card key={index} className="h-full">
               <CardContent className="p-6">
-                <Quote className="h-8 w-8 text-primary/20 mb-4" />
+                <Quote className="h-8 w-8 text-primary/20 mb-4" aria-hidden="true" />
                 <p className="text-foreground mb-4 leading-relaxed">
                   "{review.text}"
                 </p>
-                <div className="flex items-center gap-1 mb-3">
+                <div className="flex items-center gap-1 mb-3" role="img" aria-label={`${review.rating} out of 5 stars`}>
                   {[...Array(5)].map((_, i) => (
                     <Star
                       key={i}
+                      aria-hidden="true"
                       className={`h-4 w-4 ${
                         i < review.rating
                           ? "text-accent fill-accent"
