@@ -57,14 +57,13 @@ export function CategoryCard({ title, products, categoryLink }: CategoryCardProp
             </Link>
           ))}
           
-          {/* See More Card */}
-          <Link to={categoryLink} className="flex-shrink-0 w-16 group">
-            <div className="h-full flex flex-col items-center justify-center aspect-square bg-muted/50 rounded-md hover:bg-primary/10 transition-colors">
-              <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center mb-1 group-hover:bg-primary/20 transition-colors">
-                <ArrowRight className="h-4 w-4 text-primary" />
-              </div>
-              <span className="text-xs font-semibold text-primary">More</span>
-            </div>
+          {/* See More Button */}
+          <Link to={categoryLink} className="flex-shrink-0 flex items-center justify-center px-2">
+            <Button 
+              className="bg-amber-500 hover:bg-amber-600 text-white font-semibold text-sm px-4 py-2 rounded-md shadow-md"
+            >
+              See More
+            </Button>
           </Link>
         </div>
       </div>
