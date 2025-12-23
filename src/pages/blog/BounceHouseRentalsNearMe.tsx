@@ -35,8 +35,8 @@ export default function BounceHouseRentalsNearMe() {
       <p>
         Luckily, there are plenty of cheap bounce house rentals available to choose from. 
         Whether you're looking for a small inflatable or a large one that can accommodate up 
-        to 50 guests, you'll be able to find something that fits your budget at Orlando 
-        Inflatable Rentals LLC.
+        to 50 guests, you'll be able to find something that fits your budget at <Link to="/">Orlando 
+        Inflatable Rentals LLC</Link> — recognized as the <a href="https://g.page/r/CfkLrEA027rSEAE" target="_blank" rel="noopener noreferrer">best bounce house rentals in Orlando</a>.
       </p>
 
       <p>

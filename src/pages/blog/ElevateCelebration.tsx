@@ -15,10 +15,10 @@ export default function ElevateCelebration() {
       <p>
         Hosting a special event can be a whirlwind of planning and preparation, but one element 
         that can truly elevate the experience is the addition of a bounce house rental. At 
-        <strong> Orlando Inflatables Rentals LLC</strong>, we're passionate about bringing the 
+        <strong> <Link to="/">Orlando Inflatable Rentals LLC</Link></strong>, we're passionate about bringing the 
         magic of inflatable fun to parties and gatherings throughout the Avalon Park area and 
-        beyond. Let's explore the myriad benefits of incorporating a bounce house into your 
-        next celebration.
+        beyond. As the <a href="https://g.page/r/CfkLrEA027rSEAE" target="_blank" rel="noopener noreferrer">best bounce house rentals in Orlando</a>, 
+        let's explore the myriad benefits of incorporating a bounce house into your next celebration.
       </p>
 
       <h3>Endless Entertainment for All Ages</h3>

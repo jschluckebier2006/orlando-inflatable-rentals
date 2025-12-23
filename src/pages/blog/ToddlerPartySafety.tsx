@@ -75,8 +75,10 @@ export default function ToddlerPartySafety() {
       <h2>Sanitation Protocols: Pre-Rental Cleaning Assurance</h2>
 
       <p>
-        Orlando Inflatable Rentals LLC applies a strict 4-step sanitation process before every 
-        bounce house rental, exceeding standard hygiene expectations for child-focused events:
+        <Link to="/">Orlando Inflatable Rentals LLC</Link> applies a strict 4-step sanitation process before every 
+        bounce house rental, exceeding standard hygiene expectations for child-focused events. As the 
+        <a href="https://g.page/r/CfkLrEA027rSEAE" target="_blank" rel="noopener noreferrer">best bounce house rentals in Orlando</a>, 
+        each inflatable undergoes:
       </p>
 
       <ol>

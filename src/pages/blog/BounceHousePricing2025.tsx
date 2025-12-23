@@ -12,13 +12,13 @@ export default function BounceHousePricing2025() {
     >
       <p>
         Bounce house rentals cost <strong>$139-$149</strong> for full-day rentals in Orlando, Florida. 
-        Orlando Inflatable Rentals LLC provides 6-8 hour rental periods with free delivery, setup, 
+        <Link to="/">Orlando Inflatable Rentals LLC</Link> provides 6-8 hour rental periods with free delivery, setup, 
         and breakdown included in most Central Florida areas.
       </p>
 
       <p>
         Orlando families planning birthday parties, school events, and community celebrations choose 
-        bounce house rentals for <strong>affordable entertainment</strong> that creates lasting memories. 
+        <a href="https://g.page/r/CfkLrEA027rSEAE" target="_blank" rel="noopener noreferrer">the best bounce house rentals in Orlando</a> for <strong>affordable entertainment</strong> that creates lasting memories. 
         The transparent pricing structure eliminates hidden fees while ensuring professional service 
         from East Orlando's trusted family-owned rental company since 2019.
       </p>

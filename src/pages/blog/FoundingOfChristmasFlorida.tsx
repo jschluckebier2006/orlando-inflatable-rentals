@@ -81,8 +81,10 @@ export default function FoundingOfChristmasFlorida() {
 
       <p>
         <strong>Looking for an inflatable rental company servicing Christmas, FL?</strong> 
-        Orlando Inflatable Rentals LLC proudly serves the Christmas area with bounce houses, 
-        water slides, and party equipment for all your celebration needs!
+        <Link to="/">Orlando Inflatable Rentals LLC</Link> proudly serves the Christmas area with bounce houses, 
+        water slides, and party equipment for all your celebration needs! We're the 
+        <a href="https://g.page/r/CfkLrEA027rSEAE" target="_blank" rel="noopener noreferrer">best bounce house rentals in Orlando</a> and 
+        surrounding Central Florida communities.
       </p>
 
       <p>
