@@ -3,7 +3,8 @@ import { SEOHead } from "@/components/seo/SEOHead";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
 import { CTASection } from "@/components/home/CTASection";
 import { ReviewsSection } from "@/components/home/ReviewsSection";
-import { Card, CardContent } from "@/components/ui/card";
+import { ProductGrid } from "@/components/inventory/ProductGrid";
+import { getBounceHouses } from "@/data/inventory";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -19,12 +20,6 @@ const features = [
   { icon: Users, title: "All Ages Welcome", description: "Options for toddlers to adults" },
 ];
 
-const bounceHouses = [
-  { name: "Classic Castle Bounce House", capacity: "8-10 kids", age: "3-12 years", size: "15x15 ft", image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop" },
-  { name: "Princess Palace Bouncer", capacity: "8-10 kids", age: "3-10 years", size: "15x15 ft", image: "https://images.unsplash.com/photo-1527529482837-4698179dc6ce?w=400&h=300&fit=crop" },
-  { name: "Sports Arena Bounce House", capacity: "10-12 kids", age: "4-14 years", size: "18x18 ft", image: "https://images.unsplash.com/photo-1518611012118-696072aa579a?w=400&h=300&fit=crop" },
-  { name: "Tropical Paradise Bouncer", capacity: "8-10 kids", age: "3-12 years", size: "15x15 ft", image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop" },
-];
 
 const faqs = [
   { q: "How much space do I need for a bounce house?", a: "Most standard bounce houses require a flat area of approximately 20x20 feet to allow for proper setup and safety clearance. We recommend measuring your space before booking and our team will confirm the requirements for your specific rental." },
@@ -163,23 +158,7 @@ export default function BounceHouseRentals() {
       <section className="section-padding">
         <div className="container-page">
           <h2 className="font-display text-3xl font-bold text-foreground mb-8 text-center">Our Bounce House Inventory</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {bounceHouses.map((item) => (
-              <Card key={item.name} className="overflow-hidden card-hover">
-                <div className="aspect-[4/3] overflow-hidden">
-                  <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
-                </div>
-                <CardContent className="p-4">
-                  <h3 className="font-display font-semibold text-foreground mb-2">{item.name}</h3>
-                  <div className="space-y-1 text-sm text-muted-foreground">
-                    <p>Capacity: {item.capacity}</p>
-                    <p>Ages: {item.age}</p>
-                    <p>Size: {item.size}</p>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          <ProductGrid products={getBounceHouses()} />
         </div>
       </section>
 

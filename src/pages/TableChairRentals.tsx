@@ -3,7 +3,8 @@ import { SEOHead } from "@/components/seo/SEOHead";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
 import { CTASection } from "@/components/home/CTASection";
 import { ReviewsSection } from "@/components/home/ReviewsSection";
-import { Card, CardContent } from "@/components/ui/card";
+import { ProductGrid } from "@/components/inventory/ProductGrid";
+import { getTablesChairs } from "@/data/inventory";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -20,12 +21,6 @@ const features = [
   { icon: Users, title: "Any Event Size", description: "From small to large gatherings" },
 ];
 
-const inventory = [
-  { name: "White Folding Chairs", capacity: "Up to 300 lbs", style: "Classic folding", min: "10 minimum", image: "https://images.unsplash.com/photo-1506439773649-6e0eb8cfb237?w=400&h=300&fit=crop" },
-  { name: "6ft Rectangular Tables", capacity: "6-8 guests", style: "Folding banquet", min: "1 minimum", image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400&h=300&fit=crop" },
-  { name: "8ft Rectangular Tables", capacity: "8-10 guests", style: "Folding banquet", min: "1 minimum", image: "https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=400&h=300&fit=crop" },
-  { name: "Round Tables (60\")", capacity: "8-10 guests", style: "Round banquet", min: "1 minimum", image: "https://images.unsplash.com/photo-1533090161767-e6ffed986c88?w=400&h=300&fit=crop" },
-];
 
 const faqs = [
   { q: "What is the minimum rental for tables and chairs?", a: "We have a 10-chair minimum for chair rentals. Tables can be rented individually with no minimum. Delivery fees may apply for smaller orders." },
@@ -155,23 +150,7 @@ export default function TableChairRentals() {
       <section className="section-padding">
         <div className="container-page">
           <h2 className="font-display text-3xl font-bold text-foreground mb-8 text-center">Our Table & Chair Inventory</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {inventory.map((item) => (
-              <Card key={item.name} className="overflow-hidden card-hover">
-                <div className="aspect-[4/3] overflow-hidden">
-                  <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
-                </div>
-                <CardContent className="p-4">
-                  <h3 className="font-display font-semibold text-foreground mb-2">{item.name}</h3>
-                  <div className="space-y-1 text-sm text-muted-foreground">
-                    <p>Capacity: {item.capacity}</p>
-                    <p>Style: {item.style}</p>
-                    <p>Min Order: {item.min}</p>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          <ProductGrid products={getTablesChairs()} />
         </div>
       </section>
 
