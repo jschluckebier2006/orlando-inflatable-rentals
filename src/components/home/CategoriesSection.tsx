@@ -22,7 +22,7 @@ const categories = [
     image: bounceSlideComboImg,
   },
   {
-    name: "Water Slides",
+    name: "Water & Dry Slides",
     description: "Beat the Florida heat with exciting water slides",
     href: "/water-slide-rentals",
     image: waterSlideCategoryImg,
