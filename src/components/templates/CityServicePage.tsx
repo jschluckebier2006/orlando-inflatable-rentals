@@ -16,7 +16,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { ContentImageRow, cityServiceImages, getHeroBackground } from "@/components/home/ContentImages";
+import { ContentImageRow, cityServiceImages, cityServiceImages2, getHeroBackground } from "@/components/home/ContentImages";
 
 interface CityServicePageProps {
   city: string;
@@ -274,7 +274,7 @@ export function CityServicePage({ city, citySlug, serviceType, nearbyAreas, loca
         <div className="container-page">
           <div className="max-w-4xl mx-auto">
             <ContentImageRow 
-              images={[cityServiceImages[2], cityServiceImages[0], cityServiceImages[1]]} 
+              images={cityServiceImages2} 
               alts={[`Fun ${serviceName.toLowerCase()} in ${city}`, `${city} celebration`, `Party rental fun in ${city}`]} 
             />
           </div>

@@ -21,7 +21,7 @@ import obstacleCourseImg from "@/assets/obstacle-course-category.png";
 import interactiveGamesImg from "@/assets/interactive-games-category.png";
 import concessionsImg from "@/assets/concessions-category.png";
 import tablesChairsImg from "@/assets/tables-chairs-category.png";
-import { ContentImageRow, deliveryPageImages, getHeroBackground } from "@/components/home/ContentImages";
+import { ContentImageRow, deliveryPageImages, deliveryPageImages2, getHeroBackground } from "@/components/home/ContentImages";
 
 const services = [
   { name: "Bounce Houses", href: "/bounce-house-rentals", image: bounceHouseCategoryImg },
@@ -244,7 +244,7 @@ export function CityDeliveryPage({
 
             {/* Content Images Row 2 */}
             <ContentImageRow 
-              images={[deliveryPageImages[1], deliveryPageImages[2], deliveryPageImages[0]]} 
+              images={deliveryPageImages2} 
               alts={[`Party celebration in ${cityName}`, `${cityName} water slide fun`, `Birthday party ${cityName}`]} 
             />
 
