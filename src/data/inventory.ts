@@ -56,6 +56,7 @@ import whiteFoldingChair from "@/assets/inventory/white-folding-chair.webp";
 import fullCourtPressGame from "@/assets/inventory/full-court-press-game.webp";
 import lavaRaptorCombo from "@/assets/inventory/lava-raptor-combo.webp";
 import popcornMachine from "@/assets/inventory/popcorn-machine.webp";
+import kidsPicnicTable from "@/assets/inventory/kids-picnic-table.webp";
 
 export const products: Product[] = [
   // Water Slides
@@ -306,6 +307,14 @@ export const products: Product[] = [
     category: "tables-chairs",
     price: 1.75,
     image: whiteFoldingChair,
+  },
+  {
+    id: "kids-picnic-table",
+    name: "Kids' Picnic Table",
+    slug: "kids-picnic-table",
+    category: "tables-chairs",
+    price: 10,
+    image: kidsPicnicTable,
   },
 ];
 
