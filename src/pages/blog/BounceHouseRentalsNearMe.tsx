@@ -9,6 +9,8 @@ export default function BounceHouseRentalsNearMe() {
       metaDescription="Find the best inflatable bounce house rentals near Orlando. Affordable party rentals, water slides, and more from Orlando Inflatable Rentals LLC."
       heroImage={siteImages.kidsBouncHouse1}
       category="Rental Guide"
+      slug="bounce-house-rentals-near-me"
+      datePublished="2024-08-20"
     >
       <p>
         There are plenty of top inflatable <Link to="/bounce-house-rentals">bounce house rentals near me</Link> that 

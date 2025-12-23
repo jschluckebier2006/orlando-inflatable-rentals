@@ -1,9 +1,10 @@
 import { ReactNode } from "react";
-import { Helmet } from "react-helmet-async";
 import { Layout } from "@/components/layout/Layout";
+import { SEOHead } from "@/components/seo/SEOHead";
+import { ArticleSchema } from "@/components/seo/ArticleSchema";
+import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
 import { ReviewsSection } from "@/components/home/ReviewsSection";
 import { CTASection } from "@/components/home/CTASection";
-import { siteImages } from "@/components/home/ContentImages";
 import { Link } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
 
@@ -12,6 +13,9 @@ interface BlogPostLayoutProps {
   metaDescription: string;
   heroImage: string;
   category: string;
+  slug: string;
+  datePublished: string;
+  dateModified?: string;
   children: ReactNode;
 }
 
@@ -20,14 +24,37 @@ export function BlogPostLayout({
   metaDescription, 
   heroImage, 
   category,
+  slug,
+  datePublished,
+  dateModified,
   children 
 }: BlogPostLayoutProps) {
+  const canonicalPath = `/blog/${slug}`;
+  
   return (
     <Layout>
-      <Helmet>
-        <title>{title} | Orlando Inflatable Rentals Blog</title>
-        <meta name="description" content={metaDescription} />
-      </Helmet>
+      <SEOHead
+        title={`${title} | Orlando Inflatable Rentals Blog`}
+        description={metaDescription}
+        canonical={canonicalPath}
+        ogType="article"
+        datePublished={datePublished}
+        dateModified={dateModified}
+      />
+      <ArticleSchema
+        title={title}
+        description={metaDescription}
+        datePublished={datePublished}
+        dateModified={dateModified}
+        image={heroImage}
+        url={canonicalPath}
+      />
+      <BreadcrumbSchema
+        items={[
+          { name: "Blog", href: "/blog" },
+          { name: category, href: canonicalPath }
+        ]}
+      />
 
       {/* Breadcrumb */}
       <div className="bg-muted/50 py-3">

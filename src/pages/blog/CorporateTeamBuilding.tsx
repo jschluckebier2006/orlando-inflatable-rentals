@@ -9,6 +9,8 @@ export default function CorporateTeamBuilding() {
       metaDescription="Corporate team building with inflatables redefines workplace events in Orlando. Use obstacle courses, games, and slides to foster teamwork and stress relief."
       heroImage={siteImages.slideTunnel1}
       category="Corporate Events"
+      slug="corporate-team-building-with-inflatables"
+      datePublished="2024-11-10"
     >
       <p>
         Corporate team building with inflatables redefines workplace events in Orlando and Central 

@@ -3,24 +3,32 @@ import { Helmet } from "react-helmet-async";
 interface SEOHeadProps {
   title: string;
   description: string;
-  canonical?: string;
+  canonical: string;
   ogImage?: string;
   ogType?: string;
   noindex?: boolean;
+  datePublished?: string;
+  dateModified?: string;
 }
 
 export function SEOHead({
   title,
   description,
   canonical,
-  ogImage = "/og-image.jpg",
+  ogImage,
   ogType = "website",
   noindex = false,
+  datePublished,
+  dateModified,
 }: SEOHeadProps) {
   const siteName = "Orlando Inflatables";
   const baseUrl = "https://orlandoinflatables.com";
   const fullTitle = title.includes(siteName) ? title : `${title} | ${siteName}`;
-  const canonicalUrl = canonical ? `${baseUrl}${canonical}` : undefined;
+  const canonicalUrl = `${baseUrl}${canonical}`;
+  
+  // Default OG image - use a real image from assets
+  const defaultOgImage = "/og-image.jpg";
+  const ogImageUrl = ogImage ? `${baseUrl}${ogImage}` : `${baseUrl}${defaultOgImage}`;
 
   return (
     <Helmet>
@@ -29,21 +37,27 @@ export function SEOHead({
       
       {noindex && <meta name="robots" content="noindex, nofollow" />}
       
-      {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
+      <link rel="canonical" href={canonicalUrl} />
       
       {/* Open Graph */}
       <meta property="og:title" content={fullTitle} />
       <meta property="og:description" content={description} />
       <meta property="og:type" content={ogType} />
-      {canonicalUrl && <meta property="og:url" content={canonicalUrl} />}
-      <meta property="og:image" content={`${baseUrl}${ogImage}`} />
+      <meta property="og:url" content={canonicalUrl} />
+      <meta property="og:image" content={ogImageUrl} />
       <meta property="og:site_name" content={siteName} />
+      <meta property="og:locale" content="en_US" />
       
       {/* Twitter */}
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={fullTitle} />
       <meta name="twitter:description" content={description} />
-      <meta name="twitter:image" content={`${baseUrl}${ogImage}`} />
+      <meta name="twitter:image" content={ogImageUrl} />
+      <meta name="twitter:site" content="@orlandoinflata1" />
+      
+      {/* Article dates for blog posts */}
+      {datePublished && <meta property="article:published_time" content={datePublished} />}
+      {dateModified && <meta property="article:modified_time" content={dateModified} />}
       
       {/* Additional */}
       <meta name="geo.region" content="US-FL" />
