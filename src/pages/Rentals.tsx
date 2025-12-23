@@ -1,6 +1,7 @@
 import { Layout } from "@/components/layout/Layout";
 import { SEOHead } from "@/components/seo/SEOHead";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
+import { ReviewsSection } from "@/components/home/ReviewsSection";
 import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import bounceHouseCategoryImg from "@/assets/bounce-house-category.png";
@@ -53,6 +54,7 @@ export default function Rentals() {
           </div>
         </div>
       </section>
+      <ReviewsSection />
     </Layout>
   );
 }
