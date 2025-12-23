@@ -520,8 +520,11 @@ const CorporateEvents = () => {
                 Request Corporate Quote
               </Link>
             </Button>
-            <Button size="lg" variant="outline" className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary" asChild>
-              <a href="tel:+14073743062">Call (407) 374-3062</a>
+            <Button size="lg" variant="outline" className="bg-transparent border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary" asChild>
+              <a href="tel:+14073743062">
+                <Phone className="mr-2 h-5 w-5" />
+                Call (407) 374-3062
+              </a>
             </Button>
           </div>
         </div>
