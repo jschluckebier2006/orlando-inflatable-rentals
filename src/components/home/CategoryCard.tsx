@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { ArrowRight } from "lucide-react";
 import { type Product } from "@/data/inventory";
 
 interface CategoryCardProps {
@@ -10,8 +11,8 @@ interface CategoryCardProps {
 }
 
 export function CategoryCard({ title, products, categoryLink }: CategoryCardProps) {
-  // Limit to 3 products
-  const displayProducts = products.slice(0, 3);
+  // Show up to 5 products
+  const displayProducts = products.slice(0, 5);
   
   if (displayProducts.length === 0) return null;
 
@@ -33,11 +34,11 @@ export function CategoryCard({ title, products, categoryLink }: CategoryCardProp
         </Link>
       </div>
       
-      {/* Products Grid */}
-      <div className="p-4">
-        <div className="grid grid-cols-3 gap-3">
+      {/* Scrollable Products */}
+      <div className="p-4 overflow-x-auto">
+        <div className="flex gap-3" style={{ minWidth: 'max-content' }}>
           {displayProducts.map((item) => (
-            <Link key={item.id} to={categoryLink} className="group">
+            <Link key={item.id} to={categoryLink} className="group flex-shrink-0 w-28">
               <Card className="h-full overflow-hidden border-0 shadow-none hover:shadow-md transition-shadow">
                 <div className="aspect-square overflow-hidden bg-muted/30 rounded-md">
                   <img
@@ -55,6 +56,16 @@ export function CategoryCard({ title, products, categoryLink }: CategoryCardProp
               </Card>
             </Link>
           ))}
+          
+          {/* See More Card */}
+          <Link to={categoryLink} className="flex-shrink-0 w-28 group">
+            <div className="h-full flex flex-col items-center justify-center aspect-square bg-muted/50 rounded-md hover:bg-primary/10 transition-colors">
+              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-2 group-hover:bg-primary/20 transition-colors">
+                <ArrowRight className="h-6 w-6 text-primary" />
+              </div>
+              <span className="text-sm font-semibold text-primary">See More</span>
+            </div>
+          </Link>
         </div>
       </div>
     </div>
