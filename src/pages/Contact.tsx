@@ -1,6 +1,7 @@
 import { Layout } from "@/components/layout/Layout";
 import { SEOHead } from "@/components/seo/SEOHead";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
+import { ReviewsSection } from "@/components/home/ReviewsSection";
 import { JotformEmbed } from "@/components/JotformEmbed";
 import { Phone, Mail, MapPin } from "lucide-react";
 
@@ -39,6 +40,7 @@ export default function Contact() {
           </div>
         </div>
       </section>
+      <ReviewsSection />
     </Layout>
   );
 }
