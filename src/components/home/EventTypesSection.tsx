@@ -7,6 +7,7 @@ import {
   GraduationCap 
 } from "lucide-react";
 import birthdayPartiesImage from "@/assets/birthday-parties-category.png";
+import schoolEventsImage from "@/assets/school-events-category.png";
 
 const eventTypes = [
   {
@@ -19,11 +20,11 @@ const eventTypes = [
   },
   {
     name: "School Events",
-    description: "Field days, carnivals, and celebrations",
+    description: "",
     href: "/events/school-events",
-    icon: School,
-    image: "https://images.unsplash.com/photo-1509062522246-3755977927d7?w=400&h=250&fit=crop",
-    hasOverlayText: true,
+    icon: null,
+    image: schoolEventsImage,
+    hasOverlayText: false,
   },
   {
     name: "Church Events",
