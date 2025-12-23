@@ -1,50 +1,60 @@
 import { CityDeliveryPage } from "@/components/templates/CityDeliveryPage";
 
-const AvalonPark = () => {
+const nearbyAreas = [
+  { name: "Waterford Lakes", slug: "waterford-lakes" },
+  { name: "Alafaya", slug: "alafaya" },
+  { name: "Stoneybrook", slug: "stoneybrook" },
+  { name: "Eastwood", slug: "eastwood" },
+];
+
+const faqs = [
+  {
+    question: "How much does it cost to rent a bounce house in Avalon Park?",
+    answer: "Bounce house rentals in Avalon Park start at $199 for an 8-hour rental. Pricing depends on the size and style—combo units with slides and themed inflatables may cost more. All rentals include free delivery, setup, and pickup throughout Avalon Park.",
+  },
+  {
+    question: "Do you deliver to all Avalon Park villages and neighborhoods?",
+    answer: "Yes! We deliver to every village within Avalon Park including East Park, West Park, and all surrounding neighborhoods. Our team knows the community well and provides on-time delivery to your exact location.",
+  },
+  {
+    question: "Can I rent a water slide for my Avalon Park pool party?",
+    answer: "Absolutely! Water slides are perfect for Avalon Park summer parties. We set them up on the grass near your pool area for hours of refreshing fun. Our 15-18 foot slides are ideal for most Avalon Park backyards.",
+  },
+  {
+    question: "How far in advance should I book party rentals in Avalon Park?",
+    answer: "We recommend booking 1-2 weeks ahead, especially for weekends. Avalon Park is one of our busiest service areas, and popular inflatables book quickly. For major holidays or themed units, 3-4 weeks notice is ideal.",
+  },
+  {
+    question: "Do you set up at Avalon Park Town Center events?",
+    answer: "Yes, we serve events at Downtown Avalon Park and Town Center venues. You may need venue approval for commercial locations. For private backyard parties, simply book directly with us and we handle everything.",
+  },
+  {
+    question: "What happens if it rains on my Avalon Park party day?",
+    answer: "Florida weather is unpredictable! If rain threatens your event, we'll work with you to reschedule at no extra charge. Light showers are usually fine, but we'll take down equipment during lightning for everyone's safety.",
+  },
+  {
+    question: "Can I rent tables, chairs, and concessions with my Avalon Park bounce house?",
+    answer: "Yes! We offer complete party packages including tables, chairs, cotton candy machines, snow cone makers, and popcorn poppers. Bundle items together for special package pricing on your Avalon Park celebration.",
+  },
+  {
+    question: "What safety measures do you take for Avalon Park rentals?",
+    answer: "Every inflatable is commercially rated, regularly inspected, and cleaned with hospital-grade disinfectants. We're fully licensed and insured. Our team provides proper anchoring and complete safety instructions at every delivery.",
+  },
+];
+
+export default function AvalonParkDelivery() {
   return (
     <CityDeliveryPage
       cityName="Avalon Park"
       citySlug="avalon-park"
       metaTitle="Bounce House & Water Slide Rentals Avalon Park FL | Orlando Inflatables"
-      metaDescription="Bounce house & water slide rentals in Avalon Park FL. Family-friendly party inflatables with free delivery. Licensed & insured. Call (407) 497-1840!"
-      cityDescription="Known for its New Urbanism design, tree-lined streets, and strong sense of community, Avalon Park is the perfect setting for memorable celebrations."
+      metaDescription="Bounce house & water slide rentals in Avalon Park FL. Serving Downtown Avalon Park & all villages with party inflatables. Free delivery! Call (407) 497-1840."
+      nearbyAreas={nearbyAreas}
       cityWikipediaUrl="https://en.wikipedia.org/wiki/Avalon_Park,_Florida"
-      additionalCityInfo="Avalon Park is a master-planned community in East Orlando, developed with New Urbanism principles that emphasize walkability, community gathering spaces, and traditional neighborhood design. The community features a charming downtown area with shops, restaurants, and event spaces."
-      localLandmarks="We regularly deliver to parties throughout Avalon Park, including the Downtown Avalon Park Town Center, community clubhouses, local parks, school events at Avalon Park area schools, and private residences throughout all Avalon Park villages."
-      nearbyAreas={[
-        { name: "Waterford Lakes", slug: "waterford-lakes" },
-        { name: "Alafaya", slug: "alafaya" },
-        { name: "Stoneybrook", slug: "stoneybrook" },
-        { name: "Eastwood", slug: "eastwood" },
-      ]}
-      faqs={[
-        {
-          question: "Do you deliver bounce houses to all of Avalon Park?",
-          answer: "Yes! We provide free delivery to all villages and neighborhoods within Avalon Park. Our team is familiar with the entire community and will ensure on-time delivery to your location."
-        },
-        {
-          question: "What size bounce house fits in an Avalon Park backyard?",
-          answer: "Most Avalon Park homes can accommodate our standard bounce houses (15x15) and many can fit our larger combo units. We recommend measuring your yard and discussing options with our team to find the perfect fit."
-        },
-        {
-          question: "Can I rent a water slide for my Avalon Park pool party?",
-          answer: "Absolutely! Our water slides are perfect for Avalon Park pool parties. They're set up on grass near the pool area and provide hours of refreshing fun for guests of all ages."
-        },
-        {
-          question: "How early should I book for an Avalon Park event?",
-          answer: "We recommend booking at least 1-2 weeks in advance, especially for weekend events. Avalon Park is one of our busiest areas, so early booking ensures you get your preferred inflatable."
-        },
-        {
-          question: "Do you set up at Avalon Park community clubhouses?",
-          answer: "Yes, we frequently set up at HOA facilities and community clubhouses throughout Avalon Park. Just confirm with your HOA that inflatables are permitted and we'll handle the rest."
-        },
-        {
-          question: "What's included in my Avalon Park bounce house rental?",
-          answer: "Every rental includes free delivery, professional setup, safety instructions, and pickup after your event. We also provide stakes or sandbags as needed for your specific location."
-        }
-      ]}
+      cityDescription="Welcome to Avalon Park, one of East Orlando's most beloved master-planned communities! Known for its charming New Urbanism design, tree-lined boulevards, and vibrant Downtown center, Avalon Park is home to thousands of families who know how to celebrate in style. Whether you're hosting a birthday party, graduation celebration, or community gathering, Orlando Inflatables delivers the excitement."
+      additionalCityInfo="Avalon Park was developed with New Urbanism principles that emphasize walkability, community gathering spaces, and traditional neighborhood design. The community features a charming downtown area with shops, restaurants, and event venues. Multiple villages make up this thriving community, including East Park, West Park, and surrounding neighborhoods. Avalon Park's family-oriented culture, excellent schools, and active HOAs create the perfect environment for memorable celebrations."
+      localLandmarks="We regularly deliver to parties throughout Avalon Park's beautiful neighborhoods. Popular venues include Downtown Avalon Park near the Town Center shops and restaurants, community clubhouses and HOA facilities, Avalon Park area schools for field days and carnivals, neighborhood parks and common areas, and the many spacious backyards throughout all Avalon Park villages. Our team is familiar with every corner of this wonderful community."
+      faqs={faqs}
     />
   );
-};
-
-export default AvalonPark;
+}
