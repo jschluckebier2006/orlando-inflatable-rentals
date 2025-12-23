@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronUp, Check } from "lucide-react";
 import waterSlideFun from "@/assets/water-slide-fun-1.jpg";
 import kidsBouncingGroup from "@/assets/kids-group-bounce-1.jpg";
+import kidsSlide from "@/assets/kids-slide-1.jpg";
 
 export function SEOContentSection() {
   const [expanded, setExpanded] = useState(false);
@@ -155,6 +156,15 @@ export function SEOContentSection() {
             <p className="text-muted-foreground leading-relaxed mb-6">
               They keep lines moving, guests engaged, and energy levels high. When you want something more interactive than a standard inflatable, obstacle courses deliver.
             </p>
+
+            {/* Content Break Image 3 */}
+            <div className="my-8 rounded-xl overflow-hidden shadow-lg">
+              <img 
+                src={kidsSlide} 
+                alt="Kids sliding down an inflatable slide at a party" 
+                className="w-full h-64 md:h-80 object-cover"
+              />
+            </div>
 
             {/* H3: Interactive Games */}
             <h3 className="font-display text-xl md:text-2xl font-bold text-foreground mb-4">
