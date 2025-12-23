@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
 import { JotformModal } from "@/components/JotformModal";
+import logo from "@/assets/logo.png";
 
 const rentalCategories = [
   { name: "Bounce Houses", href: "/bounce-house-rentals", description: "Fun bounce houses for all ages" },
@@ -62,13 +63,12 @@ export function Header() {
         <div className="container-page">
           <div className="flex h-16 items-center justify-between">
             {/* Logo */}
-            <Link to="/" className="flex items-center gap-2">
-              <div className="flex flex-col">
-                <span className="font-display text-xl md:text-2xl font-bold text-primary">
-                  Orlando Inflatables
-                </span>
-                <span className="text-xs text-muted-foreground -mt-1">Bounce House & Water Slide Rentals</span>
-              </div>
+            <Link to="/" className="flex items-center">
+              <img 
+                src={logo} 
+                alt="Orlando Inflatables - Bounce House & Water Slide Rentals" 
+                className="h-12 md:h-14 w-auto"
+              />
             </Link>
 
             {/* Desktop Navigation */}
