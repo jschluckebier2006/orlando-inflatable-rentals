@@ -1,11 +1,11 @@
 import { Layout } from "@/components/layout/Layout";
 import { SEOHead } from "@/components/seo/SEOHead";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
+import { ServiceSchema } from "@/components/seo/ServiceSchema";
 import { ReviewsSection } from "@/components/home/ReviewsSection";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
 import { siteImages } from "@/components/home/ContentImages";
 import { 
   Building, 
@@ -23,23 +23,6 @@ import {
 } from "lucide-react";
 
 const CorporateEvents = () => {
-  const eventSchema = {
-    "@context": "https://schema.org",
-    "@type": "Service",
-    "name": "Corporate Event Inflatable Rentals Orlando",
-    "description": "Professional inflatable rentals for corporate events, company picnics, team building, and employee appreciation in Orlando and East Orange County.",
-    "provider": {
-      "@type": "LocalBusiness",
-      "name": "Orlando Inflatables",
-      "telephone": "(407) 374-3062",
-      "areaServed": "Orlando, FL"
-    },
-    "serviceType": "Corporate Event Entertainment",
-    "areaServed": {
-      "@type": "State",
-      "name": "Florida"
-    }
-  };
 
   const features = [
     {
@@ -131,11 +114,11 @@ const CorporateEvents = () => {
         description="Professional inflatable rentals for corporate events in Orlando. Company picnics, team building, employee appreciation & more. Fully insured. Get a free quote!"
         canonical="/events/corporate-events"
       />
-      <Helmet>
-        <script type="application/ld+json">
-          {JSON.stringify(eventSchema)}
-        </script>
-      </Helmet>
+      <ServiceSchema
+        serviceName="Corporate Event Inflatable Rentals Orlando"
+        description="Professional inflatable rentals for corporate events, company picnics, team building, and employee appreciation in Orlando and East Orange County."
+        url="/events/corporate-events"
+      />
       <BreadcrumbSchema
         items={[
           { name: "Events", href: "/events" },

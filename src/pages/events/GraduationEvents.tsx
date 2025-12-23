@@ -1,11 +1,11 @@
 import { Layout } from "@/components/layout/Layout";
 import { SEOHead } from "@/components/seo/SEOHead";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
+import { ServiceSchema } from "@/components/seo/ServiceSchema";
 import { ReviewsSection } from "@/components/home/ReviewsSection";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
 import { siteImages } from "@/components/home/ContentImages";
 import { 
   GraduationCap, 
@@ -23,23 +23,6 @@ import {
 } from "lucide-react";
 
 const GraduationEvents = () => {
-  const eventSchema = {
-    "@context": "https://schema.org",
-    "@type": "Service",
-    "name": "Graduation Party Inflatable Rentals Orlando",
-    "description": "Professional inflatable rentals for graduation parties in Orlando and East Orange County. Celebrate graduates with bounce houses, water slides, and party entertainment.",
-    "provider": {
-      "@type": "LocalBusiness",
-      "name": "Orlando Inflatables",
-      "telephone": "(407) 374-3062",
-      "areaServed": "Orlando, FL"
-    },
-    "serviceType": "Graduation Party Entertainment",
-    "areaServed": {
-      "@type": "State",
-      "name": "Florida"
-    }
-  };
 
   const features = [
     {
@@ -135,11 +118,11 @@ const GraduationEvents = () => {
         description="Celebrate your graduate with bounce house rentals in Orlando. Pre-K to college graduation parties. Water slides, games & concessions. Book your celebration today!"
         canonical="/events/graduation-events"
       />
-      <Helmet>
-        <script type="application/ld+json">
-          {JSON.stringify(eventSchema)}
-        </script>
-      </Helmet>
+      <ServiceSchema
+        serviceName="Graduation Party Inflatable Rentals Orlando"
+        description="Professional inflatable rentals for graduation parties in Orlando and East Orange County. Celebrate graduates with bounce houses, water slides, and party entertainment."
+        url="/events/graduation-events"
+      />
       <BreadcrumbSchema
         items={[
           { name: "Events", href: "/events" },

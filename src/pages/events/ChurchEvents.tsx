@@ -1,11 +1,11 @@
 import { Layout } from "@/components/layout/Layout";
 import { SEOHead } from "@/components/seo/SEOHead";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
+import { ServiceSchema } from "@/components/seo/ServiceSchema";
 import { ReviewsSection } from "@/components/home/ReviewsSection";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
 import { siteImages } from "@/components/home/ContentImages";
 import { 
   Church, 
@@ -23,23 +23,6 @@ import {
 } from "lucide-react";
 
 const ChurchEvents = () => {
-  const eventSchema = {
-    "@context": "https://schema.org",
-    "@type": "Service",
-    "name": "Church Event Inflatable Rentals Orlando",
-    "description": "Professional inflatable rentals for church events, VBS, fall festivals, and community outreach in Orlando and East Orange County. Safe, family-friendly entertainment.",
-    "provider": {
-      "@type": "LocalBusiness",
-      "name": "Orlando Inflatables",
-      "telephone": "(407) 374-3062",
-      "areaServed": "Orlando, FL"
-    },
-    "serviceType": "Church Event Entertainment",
-    "areaServed": {
-      "@type": "State",
-      "name": "Florida"
-    }
-  };
 
   const features = [
     {
@@ -115,11 +98,11 @@ const ChurchEvents = () => {
         description="Professional inflatable rentals for church events in Orlando. VBS, fall festivals, community outreach & more. Safe, family-friendly entertainment. Get a free quote!"
         canonical="/events/church-events"
       />
-      <Helmet>
-        <script type="application/ld+json">
-          {JSON.stringify(eventSchema)}
-        </script>
-      </Helmet>
+      <ServiceSchema
+        serviceName="Church Event Inflatable Rentals Orlando"
+        description="Professional inflatable rentals for church events, VBS, fall festivals, and community outreach in Orlando and East Orange County. Safe, family-friendly entertainment."
+        url="/events/church-events"
+      />
       <BreadcrumbSchema
         items={[
           { name: "Events", href: "/events" },

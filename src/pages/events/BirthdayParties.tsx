@@ -1,11 +1,11 @@
 import { Layout } from "@/components/layout/Layout";
 import { SEOHead } from "@/components/seo/SEOHead";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
+import { ServiceSchema } from "@/components/seo/ServiceSchema";
 import { ReviewsSection } from "@/components/home/ReviewsSection";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
 import { siteImages } from "@/components/home/ContentImages";
 import { 
   Cake, 
@@ -23,23 +23,6 @@ import {
 } from "lucide-react";
 
 const BirthdayParties = () => {
-  const eventSchema = {
-    "@context": "https://schema.org",
-    "@type": "Service",
-    "name": "Birthday Party Inflatable Rentals Orlando",
-    "description": "Professional bounce house and inflatable rentals for birthday parties in Orlando and East Orange County. Safe, clean, and fun entertainment for kids of all ages.",
-    "provider": {
-      "@type": "LocalBusiness",
-      "name": "Orlando Inflatables",
-      "telephone": "(407) 374-3062",
-      "areaServed": "Orlando, FL"
-    },
-    "serviceType": "Birthday Party Entertainment",
-    "areaServed": {
-      "@type": "State",
-      "name": "Florida"
-    }
-  };
 
   const features = [
     {
@@ -127,11 +110,11 @@ const BirthdayParties = () => {
         description="Make your child's birthday unforgettable with bounce house rentals in Orlando. Professional delivery, setup & pickup. Safe, clean inflatables for all ages. Book today!"
         canonical="/events/birthday-parties"
       />
-      <Helmet>
-        <script type="application/ld+json">
-          {JSON.stringify(eventSchema)}
-        </script>
-      </Helmet>
+      <ServiceSchema
+        serviceName="Birthday Party Inflatable Rentals Orlando"
+        description="Professional bounce house and inflatable rentals for birthday parties in Orlando and East Orange County. Safe, clean, and fun entertainment for kids of all ages."
+        url="/events/birthday-parties"
+      />
       <BreadcrumbSchema
         items={[
           { name: "Events", href: "/events" },
