@@ -7,13 +7,13 @@
 
 @layer base {
   :root {
-    /* Primary - Bright Blue (fun, energetic, trustworthy) */
-    --primary: 205 100% 45%;
+    /* Primary - Darker Blue for WCAG AA contrast (4.5:1 with white) */
+    --primary: 205 100% 35%;
     --primary-foreground: 0 0% 100%;
     
-    /* Secondary - Orange accent (energy, excitement) */
+    /* Secondary - Orange with dark text for accessibility */
     --secondary: 28 100% 55%;
-    --secondary-foreground: 0 0% 100%;
+    --secondary-foreground: 222 47% 11%;
     
     /* Accent - Yellow (fun, playful) */
     --accent: 45 100% 55%;
@@ -31,9 +31,9 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222 47% 11%;
     
-    /* Muted */
+    /* Muted - Darkened for better contrast (4.5:1 on light backgrounds) */
     --muted: 210 40% 96%;
-    --muted-foreground: 215 16% 47%;
+    --muted-foreground: 215 25% 35%;
     
     /* Destructive */
     --destructive: 0 84% 60%;
@@ -42,13 +42,13 @@
     /* Border & Input */
     --border: 214 32% 91%;
     --input: 214 32% 91%;
-    --ring: 205 100% 45%;
+    --ring: 205 100% 35%;
     
     --radius: 0.75rem;
     
     /* Custom Orlando Inflatables tokens */
-    --hero-gradient-start: 205 100% 50%;
-    --hero-gradient-end: 220 100% 35%;
+    --hero-gradient-start: 205 100% 40%;
+    --hero-gradient-end: 220 100% 30%;
     --section-alt: 210 50% 96%;
     --success: 142 76% 36%;
     --success-foreground: 0 0% 100%;
@@ -144,7 +144,7 @@
   }
   
   .gradient-primary {
-    background: linear-gradient(135deg, hsl(var(--primary)), hsl(205 100% 35%));
+    background: linear-gradient(135deg, hsl(var(--primary)), hsl(205 100% 25%));
   }
   
   .card-hover {
