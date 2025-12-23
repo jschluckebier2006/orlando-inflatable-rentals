@@ -5,6 +5,7 @@ import { HeroSection } from "@/components/home/HeroSection";
 import { CategoriesSection } from "@/components/home/CategoriesSection";
 import { SEOContentSection } from "@/components/home/SEOContentSection";
 import { PopularRentalsSection } from "@/components/home/PopularRentalsSection";
+import { AllCategoryCarousels } from "@/components/home/AllCategoryCarousels";
 import { DeliveryAreasSection } from "@/components/home/DeliveryAreasSection";
 import { EventTypesSection } from "@/components/home/EventTypesSection";
 import { ReviewsSection } from "@/components/home/ReviewsSection";
@@ -32,6 +33,7 @@ const Index = () => {
         />
       </div>
       <PopularRentalsSection />
+      <AllCategoryCarousels />
       <DeliveryAreasSection />
       <EventTypesSection />
       <ReviewsSection />
