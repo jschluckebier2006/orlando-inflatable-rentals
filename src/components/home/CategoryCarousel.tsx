@@ -58,23 +58,23 @@ export function CategoryCarousel({
           }}
           className="w-full"
         >
-          <CarouselContent className="-ml-4">
+          <CarouselContent className="-ml-3">
             {products.map((item) => (
-              <CarouselItem key={item.id} className="pl-4 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
+              <CarouselItem key={item.id} className="pl-3 basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/5 xl:basis-1/6">
                 <Link to={categoryLink}>
                   <Card className="h-full overflow-hidden card-hover group">
-                    <div className="relative aspect-square overflow-hidden bg-muted/30">
+                    <div className="relative aspect-[4/3] overflow-hidden bg-muted/30">
                       <img
                         src={item.image}
                         alt={item.name}
                         className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-110"
                       />
-                      <Badge className="absolute top-3 right-3 bg-secondary text-secondary-foreground font-bold">
+                      <Badge className="absolute top-2 right-2 bg-secondary text-secondary-foreground font-bold text-xs">
                         ${item.price}
                       </Badge>
                     </div>
-                    <CardContent className="p-4">
-                      <h3 className="font-display text-lg font-semibold text-foreground line-clamp-2 group-hover:text-primary transition-colors">
+                    <CardContent className="p-2">
+                      <h3 className="font-display text-sm font-semibold text-foreground line-clamp-2 group-hover:text-primary transition-colors">
                         {item.name}
                       </h3>
                     </CardContent>
