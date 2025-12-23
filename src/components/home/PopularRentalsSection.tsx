@@ -36,5 +36,5 @@ const getCategoryLink = (category: ProductCategory): string => {
 export function PopularRentalsSection() {
   // Get a mix of popular items from different categories
   const popularItems = products.filter(p => !["concessions", "tables-chairs"].includes(p.category)).slice(0, 16);
-  return;
+  return null;
 }
