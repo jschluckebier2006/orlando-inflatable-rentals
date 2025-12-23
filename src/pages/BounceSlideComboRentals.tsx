@@ -3,7 +3,6 @@ import { SEOHead } from "@/components/seo/SEOHead";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
 import { CTASection } from "@/components/home/CTASection";
 import { ReviewsSection } from "@/components/home/ReviewsSection";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -12,6 +11,8 @@ import { useState } from "react";
 import { JotformModal } from "@/components/JotformModal";
 import { Helmet } from "react-helmet-async";
 import { siteImages } from "@/components/home/ContentImages";
+import { ProductGrid } from "@/components/inventory/ProductGrid";
+import { getBounceSlidesCombos } from "@/data/inventory";
 
 const features = [
   { icon: Shield, title: "Licensed & Insured", description: "Full liability coverage for your peace of mind" },
@@ -20,12 +21,6 @@ const features = [
   { icon: Users, title: "All Ages Welcome", description: "Options for toddlers to adults" },
 ];
 
-const combos = [
-  { name: "Castle Combo with Slide", capacity: "10-12 kids", age: "3-12 years", size: "20x15 ft", image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop" },
-  { name: "Tropical Combo Bouncer", capacity: "10-12 kids", age: "4-14 years", size: "22x15 ft", image: "https://images.unsplash.com/photo-1527529482837-4698179dc6ce?w=400&h=300&fit=crop" },
-  { name: "Sports Arena Combo", capacity: "12-14 kids", age: "4-14 years", size: "24x16 ft", image: "https://images.unsplash.com/photo-518611012118-696072aa579a?w=400&h=300&fit=crop" },
-  { name: "Princess Palace Combo", capacity: "10-12 kids", age: "3-10 years", size: "20x15 ft", image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop" },
-];
 
 const faqs = [
   { q: "What's the difference between a bounce house and a combo unit?", a: "Combo units combine the fun of a bounce house with an attached slide, giving kids two activities in one inflatable. They typically include a bounce area, climbing wall, and slide for more variety and entertainment value." },
@@ -154,23 +149,7 @@ export default function BounceSlideComboRentals() {
       <section className="section-padding">
         <div className="container-page">
           <h2 className="font-display text-3xl font-bold text-foreground mb-8 text-center">Our Combo Unit Inventory</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {combos.map((item) => (
-              <Card key={item.name} className="overflow-hidden card-hover">
-                <div className="aspect-[4/3] overflow-hidden">
-                  <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
-                </div>
-                <CardContent className="p-4">
-                  <h3 className="font-display font-semibold text-foreground mb-2">{item.name}</h3>
-                  <div className="space-y-1 text-sm text-muted-foreground">
-                    <p>Capacity: {item.capacity}</p>
-                    <p>Ages: {item.age}</p>
-                    <p>Size: {item.size}</p>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          <ProductGrid products={getBounceSlidesCombos()} columns={4} />
         </div>
       </section>
 
