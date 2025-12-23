@@ -26,12 +26,6 @@ const Index = () => {
       <HeroSection />
       <CategoriesSection />
       <SEOContentSection />
-      <div className="container-page">
-        <ContentImageRow 
-          images={homePageImages} 
-          alts={["Kids enjoying bounce house fun", "Children on water slide", "Group playing in bounce house"]} 
-        />
-      </div>
       <PopularRentalsSection />
       <AllCategoryCarousels />
       <DeliveryAreasSection />
