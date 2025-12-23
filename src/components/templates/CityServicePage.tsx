@@ -16,6 +16,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { ContentImageRow, cityServiceImages, getHeroBackground } from "@/components/home/ContentImages";
 
 interface CityServicePageProps {
   city: string;
@@ -112,18 +113,23 @@ export function CityServicePage({ city, citySlug, serviceType, nearbyAreas, loca
         { name: city, href: `/${pageSlug}` }
       ]} />
 
-      {/* Hero */}
-      <section className="gradient-hero text-primary-foreground py-16 md:py-20">
-        <div className="container-page">
+      {/* Hero with Background Image */}
+      <section className="relative text-white py-20 md:py-28 overflow-hidden">
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: `url(${getHeroBackground(citySlug)})` }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/60 to-black/70" />
+        <div className="container-page relative z-10">
           <div className="max-w-4xl mx-auto text-center">
             <div className="flex items-center justify-center gap-2 mb-4">
               {isBounceHouse ? <Castle className="h-6 w-6" /> : <Waves className="h-6 w-6" />}
-              <span className="text-lg">Serving {city}, Florida</span>
+              <span className="text-lg drop-shadow-lg">Serving {city}, Florida</span>
             </div>
-            <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
+            <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-6 drop-shadow-lg">
               {serviceName} Rentals in {city}, FL
             </h1>
-            <p className="text-xl text-primary-foreground/90 mb-8 max-w-2xl mx-auto">
+            <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto drop-shadow-md">
               Premium {serviceName.toLowerCase()} rentals delivered to {city}. Safe, clean, and perfect for birthday parties, school events, and celebrations!
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -175,6 +181,12 @@ export function CityServicePage({ city, citySlug, serviceType, nearbyAreas, loca
                 <span className="text-muted-foreground"><strong>{isBounceHouse ? 'Themed Bounce Houses' : 'Tropical Water Slides'}:</strong> Add a special touch to your {city} themed party.</span>
               </li>
             </ul>
+            
+            {/* Content Images Row 1 */}
+            <ContentImageRow 
+              images={cityServiceImages} 
+              alts={[`${city} bounce house party`, `Kids enjoying inflatables in ${city}`, `${city} party rental fun`]} 
+            />
           </div>
         </div>
       </section>
@@ -253,6 +265,18 @@ export function CityServicePage({ city, citySlug, serviceType, nearbyAreas, loca
             <p className="text-muted-foreground leading-relaxed mb-8">
               As a locally-owned business, we take pride in serving the {city} community. We've helped countless {city} families create lasting memories with our premium {serviceName.toLowerCase()} rentals. Our team knows the area well and provides personalized service to every customer.
             </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Content Images Row 2 */}
+      <section className="section-padding">
+        <div className="container-page">
+          <div className="max-w-4xl mx-auto">
+            <ContentImageRow 
+              images={[cityServiceImages[2], cityServiceImages[0], cityServiceImages[1]]} 
+              alts={[`Fun ${serviceName.toLowerCase()} in ${city}`, `${city} celebration`, `Party rental fun in ${city}`]} 
+            />
           </div>
         </div>
       </section>
