@@ -179,6 +179,17 @@ export function Header() {
                 </NavigationMenuItem>
 
                 <NavigationMenuItem>
+                  <Link to="/blog">
+                    <NavigationMenuLink className={cn(
+                      "group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none",
+                      location.pathname.startsWith("/blog") && "bg-accent"
+                    )}>
+                      Blog
+                    </NavigationMenuLink>
+                  </Link>
+                </NavigationMenuItem>
+
+                <NavigationMenuItem>
                   <NavigationMenuTrigger>Contact</NavigationMenuTrigger>
                   <NavigationMenuContent>
                     <ul className="grid w-[200px] gap-2 p-4">
@@ -276,6 +287,14 @@ export function Header() {
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Events
+              </Link>
+
+              <Link 
+                to="/blog" 
+                className="block py-2 font-medium text-foreground hover:text-primary"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Blog
               </Link>
 
               <Link 
