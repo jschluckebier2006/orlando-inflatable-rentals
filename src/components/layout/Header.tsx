@@ -126,7 +126,7 @@ export function Header() {
                         <li key={area}>
                           <NavigationMenuLink asChild>
                             <Link
-                              to={`/delivery-area/${area.toLowerCase().replace(/\s+/g, "-")}`}
+                              to={`/water-slide-and-bounce-house-rental-${area.toLowerCase().replace(/\s+/g, "-")}`}
                               className="block select-none rounded-md p-2 text-sm leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground"
                             >
                               {area}

@@ -34,7 +34,7 @@ export function DeliveryAreasSection() {
           {deliveryAreas.map((area) => (
             <Link
               key={area.slug}
-              to={`/delivery-area/${area.slug}`}
+              to={`/water-slide-and-bounce-house-rental-${area.slug}`}
               className="group flex items-center gap-2 p-4 rounded-lg bg-card border border-border hover:border-primary hover:shadow-md transition-all duration-300"
             >
               <MapPin className="h-5 w-5 text-primary group-hover:scale-110 transition-transform" />

@@ -22,7 +22,7 @@ export default function DeliveryArea() {
           <p className="text-muted-foreground text-lg text-center mb-12 max-w-2xl mx-auto">We proudly serve East Orlando, Orange County, and Central Florida with free delivery!</p>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
             {areas.map((area) => (
-              <Link key={area.slug} to={`/delivery-area/${area.slug}`} className="group flex items-center gap-2 p-4 rounded-lg bg-card border border-border hover:border-primary hover:shadow-md transition-all">
+              <Link key={area.slug} to={`/water-slide-and-bounce-house-rental-${area.slug}`} className="group flex items-center gap-2 p-4 rounded-lg bg-card border border-border hover:border-primary hover:shadow-md transition-all">
                 <MapPin className="h-5 w-5 text-primary group-hover:scale-110 transition-transform" />
                 <span className="font-medium text-foreground group-hover:text-primary transition-colors">{area.name}</span>
               </Link>

@@ -88,7 +88,7 @@ export default function FoundingOfChristmasFlorida() {
       </p>
 
       <p>
-        <strong><Link to="/delivery-area/christmas">View our Christmas, FL delivery area</Link> or 
+        <strong><Link to="/water-slide-and-bounce-house-rental-christmas">View our Christmas, FL delivery area</Link> or 
         <Link to="/contact"> contact us</Link> to book your rental today!</strong>
       </p>
     </BlogPostLayout>

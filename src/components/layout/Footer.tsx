@@ -84,7 +84,7 @@ export function Footer() {
               {deliveryAreas.map((area) => (
                 <li key={area}>
                   <Link 
-                    to={`/delivery-area/${area.toLowerCase().replace(/\s+/g, "-")}`}
+                    to={`/water-slide-and-bounce-house-rental-${area.toLowerCase().replace(/\s+/g, "-")}`}
                     className="text-background/80 hover:text-secondary transition-colors text-sm"
                   >
                     {area}
