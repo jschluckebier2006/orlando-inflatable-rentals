@@ -5,7 +5,7 @@ import { CTASection } from "@/components/home/CTASection";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
-import { MapPin, Phone, ExternalLink, Castle, Waves, Trophy, Gamepad2, Popcorn, Armchair, ChevronDown } from "lucide-react";
+import { MapPin, Phone, ExternalLink, ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { JotformModal } from "@/components/JotformModal";
 import {
@@ -14,14 +14,15 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import bounceHouseCategoryImg from "@/assets/bounce-house-category.png";
 
 const services = [
-  { name: "Bounce Houses", href: "/bounce-house-rentals", icon: Castle },
-  { name: "Water Slides", href: "/water-slide-rentals", icon: Waves },
-  { name: "Obstacle Courses", href: "/obstacle-course-rentals", icon: Trophy },
-  { name: "Interactive Games", href: "/interactive-game-rentals", icon: Gamepad2 },
-  { name: "Concessions", href: "/concession-rentals", icon: Popcorn },
-  { name: "Tables & Chairs", href: "/table-chair-rentals", icon: Armchair },
+  { name: "Bounce Houses", href: "/bounce-house-rentals", image: bounceHouseCategoryImg },
+  { name: "Water Slides", href: "/water-slide-rentals", image: null },
+  { name: "Obstacle Courses", href: "/obstacle-course-rentals", image: null },
+  { name: "Interactive Games", href: "/interactive-game-rentals", image: null },
+  { name: "Concessions", href: "/concession-rentals", image: null },
+  { name: "Tables & Chairs", href: "/table-chair-rentals", image: null },
 ];
 
 interface NearbyArea {
@@ -198,9 +199,17 @@ export function CityDeliveryPage({
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
               {services.map((service) => (
                 <Link key={service.name} to={service.href}>
-                  <Card className="h-full card-hover">
-                    <CardContent className="p-4 flex items-center gap-3">
-                      <service.icon className="h-6 w-6 text-primary" />
+                  <Card className="h-full card-hover overflow-hidden">
+                    {service.image && (
+                      <div className="aspect-[16/9] overflow-hidden">
+                        <img 
+                          src={service.image} 
+                          alt={service.name} 
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    )}
+                    <CardContent className="p-4 flex items-center justify-center">
                       <span className="font-medium text-foreground">{service.name}</span>
                     </CardContent>
                   </Card>
