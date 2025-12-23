@@ -1,16 +1,66 @@
+# Orlando Inflatables - Robots.txt
+# https://orlandoinflatables.com
+
+# Allow all major search engines full access
 User-agent: Googlebot
 Allow: /
+Crawl-delay: 1
 
 User-agent: Bingbot
 Allow: /
+Crawl-delay: 2
 
+User-agent: Slurp
+Allow: /
+Crawl-delay: 2
+
+User-agent: DuckDuckBot
+Allow: /
+Crawl-delay: 2
+
+# Social media crawlers - full access for rich previews
 User-agent: Twitterbot
 Allow: /
 
 User-agent: facebookexternalhit
 Allow: /
 
+User-agent: LinkedInBot
+Allow: /
+
+User-agent: Pinterest
+Allow: /
+
+# Default rules for all other bots
 User-agent: *
 Allow: /
 
+# Block access to development and system files
+Disallow: /api/
+Disallow: /_*
+Disallow: /node_modules/
+Disallow: /*.json$
+Disallow: /*.config.*
+Disallow: /src/
+
+# Block common spam and scraper bots
+User-agent: AhrefsBot
+Crawl-delay: 10
+
+User-agent: SemrushBot
+Crawl-delay: 10
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: dotbot
+Disallow: /
+
+User-agent: BLEXBot
+Disallow: /
+
+# Sitemap location
 Sitemap: https://orlandoinflatables.com/sitemap.xml
+
+# Host directive (for Yandex and some other crawlers)
+Host: https://orlandoinflatables.com
