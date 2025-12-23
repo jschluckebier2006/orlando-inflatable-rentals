@@ -18,6 +18,7 @@ import bounceHouseCategoryImg from "@/assets/bounce-house-category.png";
 
 const services = [
   { name: "Bounce Houses", href: "/bounce-house-rentals", image: bounceHouseCategoryImg },
+  { name: "Bounce & Slide Combos", href: "/bounce-slide-combo-rentals", image: null },
   { name: "Water Slides", href: "/water-slide-rentals", image: null },
   { name: "Obstacle Courses", href: "/obstacle-course-rentals", image: null },
   { name: "Interactive Games", href: "/interactive-game-rentals", image: null },

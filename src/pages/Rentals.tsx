@@ -7,6 +7,7 @@ import bounceHouseCategoryImg from "@/assets/bounce-house-category.png";
 
 const categories = [
   { name: "Bounce Houses", description: "Fun bounce houses for all ages", href: "/bounce-house-rentals", image: bounceHouseCategoryImg },
+  { name: "Bounce & Slide Combos", description: "2-in-1 bounce & slide fun", href: "/bounce-slide-combo-rentals", image: null },
   { name: "Water Slides", description: "Beat the Florida heat", href: "/water-slide-rentals", image: null },
   { name: "Obstacle Courses", description: "Challenge your guests", href: "/obstacle-course-rentals", image: null },
   { name: "Interactive Games", description: "Engaging games for everyone", href: "/interactive-game-rentals", image: null },

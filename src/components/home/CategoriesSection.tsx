@@ -10,6 +10,12 @@ const categories = [
     image: bounceHouseCategoryImg,
   },
   {
+    name: "Bounce & Slide Combos",
+    description: "2-in-1 fun with bounce houses and slides combined",
+    href: "/bounce-slide-combo-rentals",
+    image: null, // Add image later
+  },
+  {
     name: "Water Slides",
     description: "Beat the Florida heat with exciting water slides",
     href: "/water-slide-rentals",

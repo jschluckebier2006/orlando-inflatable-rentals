@@ -10,6 +10,7 @@ import DeliveryArea from "./pages/DeliveryArea";
 import Events from "./pages/Events";
 import Contact from "./pages/Contact";
 import BounceHouseRentals from "./pages/BounceHouseRentals";
+import BounceSlideComboRentals from "./pages/BounceSlideComboRentals";
 import WaterSlideRentals from "./pages/WaterSlideRentals";
 import ObstacleCourseRentals from "./pages/ObstacleCourseRentals";
 import InteractiveGameRentals from "./pages/InteractiveGameRentals";
@@ -68,6 +69,7 @@ const App = () => (
             <Route path="/events" element={<Events />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/bounce-house-rentals" element={<BounceHouseRentals />} />
+            <Route path="/bounce-slide-combo-rentals" element={<BounceSlideComboRentals />} />
             <Route path="/water-slide-rentals" element={<WaterSlideRentals />} />
             <Route path="/obstacle-course-rentals" element={<ObstacleCourseRentals />} />
             <Route path="/interactive-game-rentals" element={<InteractiveGameRentals />} />

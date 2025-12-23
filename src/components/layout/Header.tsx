@@ -15,6 +15,7 @@ import { JotformModal } from "@/components/JotformModal";
 
 const rentalCategories = [
   { name: "Bounce Houses", href: "/bounce-house-rentals", description: "Fun bounce houses for all ages" },
+  { name: "Bounce & Slide Combos", href: "/bounce-slide-combo-rentals", description: "2-in-1 bounce & slide fun" },
   { name: "Water Slides", href: "/water-slide-rentals", description: "Beat the heat with water slides" },
   { name: "Obstacle Courses", href: "/obstacle-course-rentals", description: "Challenge your guests" },
   { name: "Interactive Games", href: "/interactive-game-rentals", description: "Engaging games for everyone" },
