@@ -94,8 +94,16 @@ export default function BounceSlideComboRentals() {
         </div>
       </section>
 
-      {/* Features */}
+      {/* Inventory Grid */}
       <section className="section-padding">
+        <div className="container-page">
+          <h2 className="font-display text-3xl font-bold text-foreground mb-8 text-center">Our Combo Unit Inventory</h2>
+          <ProductGrid products={getBounceSlidesCombos()} columns={4} />
+        </div>
+      </section>
+
+      {/* Features */}
+      <section className="section-padding section-alt">
         <div className="container-page">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {features.map((feature) => (
@@ -112,7 +120,7 @@ export default function BounceSlideComboRentals() {
       </section>
 
       {/* Main Content */}
-      <section className="section-padding section-alt">
+      <section className="section-padding">
         <div className="container-page">
           <div className="max-w-4xl mx-auto prose prose-lg">
             <h2 className="font-display text-3xl font-bold text-foreground mb-6">
@@ -142,14 +150,6 @@ export default function BounceSlideComboRentals() {
               <li className="flex items-start gap-3"><Check className="h-5 w-5 text-primary mt-1 flex-shrink-0" /><span className="text-muted-foreground"><strong>Less Wait Time:</strong> With multiple activity zones, kids don't have to wait as long for their turn.</span></li>
             </ul>
           </div>
-        </div>
-      </section>
-
-      {/* Inventory Grid */}
-      <section className="section-padding">
-        <div className="container-page">
-          <h2 className="font-display text-3xl font-bold text-foreground mb-8 text-center">Our Combo Unit Inventory</h2>
-          <ProductGrid products={getBounceSlidesCombos()} columns={4} />
         </div>
       </section>
 

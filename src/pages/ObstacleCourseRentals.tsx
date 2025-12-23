@@ -86,8 +86,16 @@ export default function ObstacleCourseRentals() {
         </div>
       </section>
 
-      {/* Features */}
+      {/* Inventory Grid */}
       <section className="section-padding">
+        <div className="container-page">
+          <h2 className="font-display text-3xl font-bold text-foreground mb-8 text-center">Our Obstacle Course Inventory</h2>
+          <ProductGrid products={getObstacleCourses()} columns={3} />
+        </div>
+      </section>
+
+      {/* Features */}
+      <section className="section-padding section-alt">
         <div className="container-page">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {features.map((feature) => (
@@ -104,7 +112,7 @@ export default function ObstacleCourseRentals() {
       </section>
 
       {/* Main Content */}
-      <section className="section-padding section-alt">
+      <section className="section-padding">
         <div className="container-page">
           <div className="max-w-4xl mx-auto prose prose-lg">
             <h2 className="font-display text-3xl font-bold text-foreground mb-6">
@@ -144,14 +152,6 @@ export default function ObstacleCourseRentals() {
               Many of our obstacle courses feature exciting themes and vibrant colors that add visual appeal to any event. From military-style boot camp courses to tropical adventure themes, we have options to match your event's atmosphere.
             </p>
           </div>
-        </div>
-      </section>
-
-      {/* Inventory Grid */}
-      <section className="section-padding">
-        <div className="container-page">
-          <h2 className="font-display text-3xl font-bold text-foreground mb-8 text-center">Our Obstacle Course Inventory</h2>
-          <ProductGrid products={getObstacleCourses()} columns={3} />
         </div>
       </section>
 
