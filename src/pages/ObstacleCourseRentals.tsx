@@ -3,15 +3,16 @@ import { SEOHead } from "@/components/seo/SEOHead";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
 import { CTASection } from "@/components/home/CTASection";
 import { ReviewsSection } from "@/components/home/ReviewsSection";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Trophy, Check, Phone, Shield, Clock, Users, Zap } from "lucide-react";
+import { Check, Phone, Shield, Clock, Users, Zap } from "lucide-react";
 import { useState } from "react";
 import { JotformModal } from "@/components/JotformModal";
 import { Helmet } from "react-helmet-async";
 import { siteImages } from "@/components/home/ContentImages";
+import { ProductGrid } from "@/components/inventory/ProductGrid";
+import { getObstacleCourses } from "@/data/inventory";
 
 const features = [
   { icon: Shield, title: "Licensed & Insured", description: "Full liability coverage included" },
@@ -20,12 +21,6 @@ const features = [
   { icon: Users, title: "Team Building", description: "Perfect for groups and competitions" },
 ];
 
-const obstacleCourses = [
-  { name: "40ft Radical Run", length: "40 ft", capacity: "2 at a time", age: "5-16 years", image: "https://images.unsplash.com/photo-1544117519-31a4b719223d?w=400&h=300&fit=crop" },
-  { name: "Ultimate Challenge Course", length: "50 ft", capacity: "4 at a time", age: "6-Adult", image: "https://images.unsplash.com/photo-1518611012118-696072aa579a?w=400&h=300&fit=crop" },
-  { name: "Junior Obstacle Run", length: "30 ft", capacity: "2 at a time", age: "3-10 years", image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop" },
-  { name: "Mega Obstacle Combo", length: "65 ft", capacity: "4 at a time", age: "6-Adult", image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop" },
-];
 
 const faqs = [
   { q: "How much space is needed for an obstacle course?", a: "Obstacle courses require significant space - typically 50-70 feet in length and 15-20 feet in width, depending on the unit. We'll help you determine if your venue can accommodate your chosen obstacle course." },
@@ -156,23 +151,7 @@ export default function ObstacleCourseRentals() {
       <section className="section-padding">
         <div className="container-page">
           <h2 className="font-display text-3xl font-bold text-foreground mb-8 text-center">Our Obstacle Course Inventory</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {obstacleCourses.map((item) => (
-              <Card key={item.name} className="overflow-hidden card-hover">
-                <div className="aspect-[4/3] overflow-hidden">
-                  <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
-                </div>
-                <CardContent className="p-4">
-                  <h3 className="font-display font-semibold text-foreground mb-2">{item.name}</h3>
-                  <div className="space-y-1 text-sm text-muted-foreground">
-                    <p>Length: {item.length}</p>
-                    <p>Capacity: {item.capacity}</p>
-                    <p>Ages: {item.age}</p>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          <ProductGrid products={getObstacleCourses()} columns={3} />
         </div>
       </section>
 
