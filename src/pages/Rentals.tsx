@@ -4,15 +4,21 @@ import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
 import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import bounceHouseCategoryImg from "@/assets/bounce-house-category.png";
+import bounceSlideComboImg from "@/assets/bounce-slide-combo-category.png";
+import waterSlideCategoryImg from "@/assets/water-slide-category.png";
+import obstacleCourseImg from "@/assets/obstacle-course-category.png";
+import interactiveGamesImg from "@/assets/interactive-games-category.png";
+import concessionsImg from "@/assets/concessions-category.png";
+import tablesChairsImg from "@/assets/tables-chairs-category.png";
 
 const categories = [
   { name: "Bounce Houses", description: "Fun bounce houses for all ages", href: "/bounce-house-rentals", image: bounceHouseCategoryImg },
-  { name: "Bounce & Slide Combos", description: "2-in-1 bounce & slide fun", href: "/bounce-slide-combo-rentals", image: null },
-  { name: "Water Slides", description: "Beat the Florida heat", href: "/water-slide-rentals", image: null },
-  { name: "Obstacle Courses", description: "Challenge your guests", href: "/obstacle-course-rentals", image: null },
-  { name: "Interactive Games", description: "Engaging games for everyone", href: "/interactive-game-rentals", image: null },
-  { name: "Concessions", description: "Popcorn, snow cones & more", href: "/concession-rentals", image: null },
-  { name: "Tables & Chairs", description: "Seating for your event", href: "/table-chair-rentals", image: null },
+  { name: "Bounce & Slide Combos", description: "2-in-1 bounce & slide fun", href: "/bounce-slide-combo-rentals", image: bounceSlideComboImg },
+  { name: "Water Slides", description: "Beat the Florida heat", href: "/water-slide-rentals", image: waterSlideCategoryImg },
+  { name: "Obstacle Courses", description: "Challenge your guests", href: "/obstacle-course-rentals", image: obstacleCourseImg },
+  { name: "Interactive Games", description: "Engaging games for everyone", href: "/interactive-game-rentals", image: interactiveGamesImg },
+  { name: "Concessions", description: "Popcorn, snow cones & more", href: "/concession-rentals", image: concessionsImg },
+  { name: "Tables & Chairs", description: "Seating for your event", href: "/table-chair-rentals", image: tablesChairsImg },
 ];
 
 export default function Rentals() {
