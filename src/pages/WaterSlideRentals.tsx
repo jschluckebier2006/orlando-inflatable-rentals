@@ -3,15 +3,16 @@ import { SEOHead } from "@/components/seo/SEOHead";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
 import { CTASection } from "@/components/home/CTASection";
 import { ReviewsSection } from "@/components/home/ReviewsSection";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Waves, Check, Phone, Shield, Clock, Droplets, Sun } from "lucide-react";
+import { Check, Phone, Shield, Clock, Droplets, Sun } from "lucide-react";
 import { useState } from "react";
 import { JotformModal } from "@/components/JotformModal";
 import { Helmet } from "react-helmet-async";
 import { siteImages } from "@/components/home/ContentImages";
+import { ProductGrid } from "@/components/inventory/ProductGrid";
+import { getWaterSlides } from "@/data/inventory";
 
 const features = [
   { icon: Shield, title: "Licensed & Insured", description: "Full liability coverage included" },
@@ -20,12 +21,6 @@ const features = [
   { icon: Sun, title: "Summer Perfect", description: "Ideal for hot Orlando days" },
 ];
 
-const waterSlides = [
-  { name: "Tropical Thunder Water Slide", height: "18 ft", length: "35 ft", age: "5-14 years", image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop" },
-  { name: "Blue Lagoon Dual Lane", height: "16 ft", length: "30 ft", age: "4-12 years", image: "https://images.unsplash.com/photo-1544117519-31a4b719223d?w=400&h=300&fit=crop" },
-  { name: "Paradise Plunge Slide", height: "20 ft", length: "40 ft", age: "6-16 years", image: "https://images.unsplash.com/photo-1518611012118-696072aa579a?w=400&h=300&fit=crop" },
-  { name: "Splash Zone Combo", height: "14 ft", length: "25 ft", age: "3-10 years", image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop" },
-];
 
 const faqs = [
   { q: "Do I need to provide a water source?", a: "Yes, you'll need access to a standard garden hose within 100 feet of the setup location. Our water slides connect directly to your hose and use continuous water flow during operation." },
@@ -156,23 +151,7 @@ export default function WaterSlideRentals() {
       <section className="section-padding">
         <div className="container-page">
           <h2 className="font-display text-3xl font-bold text-foreground mb-8 text-center">Our Water Slide Inventory</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {waterSlides.map((item) => (
-              <Card key={item.name} className="overflow-hidden card-hover">
-                <div className="aspect-[4/3] overflow-hidden">
-                  <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
-                </div>
-                <CardContent className="p-4">
-                  <h3 className="font-display font-semibold text-foreground mb-2">{item.name}</h3>
-                  <div className="space-y-1 text-sm text-muted-foreground">
-                    <p>Height: {item.height}</p>
-                    <p>Length: {item.length}</p>
-                    <p>Ages: {item.age}</p>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          <ProductGrid products={getWaterSlides()} columns={4} />
         </div>
       </section>
 

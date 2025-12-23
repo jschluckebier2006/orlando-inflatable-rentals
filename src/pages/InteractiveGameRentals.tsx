@@ -3,15 +3,16 @@ import { SEOHead } from "@/components/seo/SEOHead";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
 import { CTASection } from "@/components/home/CTASection";
 import { ReviewsSection } from "@/components/home/ReviewsSection";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Gamepad2, Check, Phone, Shield, Clock, Users, Target } from "lucide-react";
+import { Check, Phone, Shield, Clock, Users, Target } from "lucide-react";
 import { useState } from "react";
 import { JotformModal } from "@/components/JotformModal";
 import { Helmet } from "react-helmet-async";
 import { siteImages } from "@/components/home/ContentImages";
+import { ProductGrid } from "@/components/inventory/ProductGrid";
+import { getInteractiveGames } from "@/data/inventory";
 
 const features = [
   { icon: Shield, title: "Licensed & Insured", description: "Full liability coverage included" },
@@ -20,12 +21,6 @@ const features = [
   { icon: Users, title: "All Ages", description: "Games for every skill level" },
 ];
 
-const games = [
-  { name: "Giant Basketball Shootout", type: "Sports Game", players: "2-4 players", age: "5+ years", image: "https://images.unsplash.com/photo-1518611012118-696072aa579a?w=400&h=300&fit=crop" },
-  { name: "Inflatable Soccer Darts", type: "Target Game", players: "2-6 players", age: "6+ years", image: "https://images.unsplash.com/photo-1544117519-31a4b719223d?w=400&h=300&fit=crop" },
-  { name: "Wrecking Ball Challenge", type: "Action Game", players: "4 players", age: "8+ years", image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop" },
-  { name: "Human Foosball", type: "Team Game", players: "10-12 players", age: "8+ years", image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop" },
-];
 
 const faqs = [
   { q: "What types of interactive games do you offer?", a: "We offer a wide variety including basketball shootouts, soccer darts, jousting, wrecking ball, human foosball, and more. Each game provides a unique competitive experience for your guests." },
@@ -155,23 +150,7 @@ export default function InteractiveGameRentals() {
       <section className="section-padding">
         <div className="container-page">
           <h2 className="font-display text-3xl font-bold text-foreground mb-8 text-center">Our Interactive Game Inventory</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {games.map((item) => (
-              <Card key={item.name} className="overflow-hidden card-hover">
-                <div className="aspect-[4/3] overflow-hidden">
-                  <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
-                </div>
-                <CardContent className="p-4">
-                  <h3 className="font-display font-semibold text-foreground mb-2">{item.name}</h3>
-                  <div className="space-y-1 text-sm text-muted-foreground">
-                    <p>Type: {item.type}</p>
-                    <p>Players: {item.players}</p>
-                    <p>Ages: {item.age}</p>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          <ProductGrid products={getInteractiveGames()} columns={4} />
         </div>
       </section>
 
