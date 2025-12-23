@@ -2,43 +2,50 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight, Star } from "lucide-react";
-const popularRentals = [
-  {
-    name: "Castle Combo Bounce House",
-    category: "Bounce House",
-    image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop",
-    rating: 5,
-    reviews: 24,
-    href: "/bounce-house-rentals",
-  },
-  {
-    name: "Tropical Water Slide",
-    category: "Water Slide",
-    image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop",
-    rating: 5,
-    reviews: 31,
-    href: "/water-slide-rentals",
-  },
-  {
-    name: "40ft Obstacle Challenge",
-    category: "Obstacle Course",
-    image: "https://images.unsplash.com/photo-1544117519-31a4b719223d?w=400&h=300&fit=crop",
-    rating: 5,
-    reviews: 18,
-    href: "/obstacle-course-rentals",
-  },
-  {
-    name: "Interactive Sports Arena",
-    category: "Interactive Game",
-    image: "https://images.unsplash.com/photo-1518611012118-696072aa579a?w=400&h=300&fit=crop",
-    rating: 4,
-    reviews: 15,
-    href: "/interactive-game-rentals",
-  },
-];
+import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import { products, type ProductCategory } from "@/data/inventory";
+
+// Get category display name
+const getCategoryLabel = (category: ProductCategory): string => {
+  const labels: Record<ProductCategory, string> = {
+    "water-slides": "Water Slide",
+    "bounce-slide-combos": "Bounce & Slide Combo",
+    "interactive-games": "Interactive Game",
+    "bounce-houses": "Bounce House",
+    "obstacle-courses": "Obstacle Course",
+    "concessions": "Concession",
+    "tables-chairs": "Tables & Chairs",
+  };
+  return labels[category];
+};
+
+// Get category link
+const getCategoryLink = (category: ProductCategory): string => {
+  const links: Record<ProductCategory, string> = {
+    "water-slides": "/water-slide-rentals",
+    "bounce-slide-combos": "/bounce-slide-combo-rentals",
+    "interactive-games": "/interactive-game-rentals",
+    "bounce-houses": "/bounce-house-rentals",
+    "obstacle-courses": "/obstacle-course-rentals",
+    "concessions": "/concession-rentals",
+    "tables-chairs": "/table-chair-rentals",
+  };
+  return links[category];
+};
 
 export function PopularRentalsSection() {
+  // Get a mix of popular items from different categories
+  const popularItems = products.filter(p => 
+    !["concessions", "tables-chairs"].includes(p.category)
+  ).slice(0, 16);
+
   return (
     <section className="section-padding section-alt">
       <div className="container-page">
@@ -60,44 +67,53 @@ export function PopularRentalsSection() {
           </Link>
         </div>
 
-        {/* Rentals Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {popularRentals.map((rental) => (
-            <Link key={rental.name} to={rental.href}>
-              <Card className="h-full overflow-hidden card-hover group">
-                <div className="relative aspect-[4/3] overflow-hidden">
-                  <img
-                    src={rental.image}
-                    alt={rental.name}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                  />
-                  <Badge className="absolute top-3 left-3 bg-primary/90">
-                    {rental.category}
-                  </Badge>
-                </div>
-                <CardContent className="p-4">
-                  <h3 className="font-display text-lg font-semibold text-foreground mb-2 line-clamp-1">
-                    {rental.name}
-                  </h3>
-                  <div className="flex items-center gap-1">
-                    {[...Array(5)].map((_, i) => (
-                      <Star
-                        key={i}
-                        className={`h-4 w-4 ${
-                          i < rental.rating
-                            ? "text-accent fill-accent"
-                            : "text-muted-foreground"
-                        }`}
+        {/* Rentals Carousel */}
+        <Carousel
+          opts={{
+            align: "start",
+            loop: true,
+          }}
+          className="w-full"
+        >
+          <CarouselContent className="-ml-4">
+            {popularItems.map((item) => (
+              <CarouselItem key={item.id} className="pl-4 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
+                <Link to={getCategoryLink(item.category)}>
+                  <Card className="h-full overflow-hidden card-hover group">
+                    <div className="relative aspect-square overflow-hidden bg-muted/30">
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-110"
                       />
-                    ))}
-                    <span className="text-sm text-muted-foreground ml-1">
-                      ({rental.reviews})
-                    </span>
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
-          ))}
+                      <Badge className="absolute top-3 left-3 bg-primary/90">
+                        {getCategoryLabel(item.category)}
+                      </Badge>
+                      <Badge className="absolute top-3 right-3 bg-secondary text-secondary-foreground font-bold">
+                        ${item.price}
+                      </Badge>
+                    </div>
+                    <CardContent className="p-4">
+                      <h3 className="font-display text-lg font-semibold text-foreground line-clamp-2 group-hover:text-primary transition-colors">
+                        {item.name}
+                      </h3>
+                    </CardContent>
+                  </Card>
+                </Link>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselPrevious className="hidden md:flex -left-4 bg-background border-border shadow-lg hover:bg-primary hover:text-primary-foreground" />
+          <CarouselNext className="hidden md:flex -right-4 bg-background border-border shadow-lg hover:bg-primary hover:text-primary-foreground" />
+        </Carousel>
+
+        {/* Mobile scroll hint */}
+        <div className="flex justify-center mt-6 md:hidden">
+          <p className="text-sm text-muted-foreground flex items-center gap-2">
+            <ChevronLeft className="h-4 w-4" />
+            Swipe to see more
+            <ChevronRight className="h-4 w-4" />
+          </p>
         </div>
       </div>
     </section>
