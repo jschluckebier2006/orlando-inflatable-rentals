@@ -21,6 +21,7 @@ import obstacleCourseImg from "@/assets/obstacle-course-category.png";
 import interactiveGamesImg from "@/assets/interactive-games-category.png";
 import concessionsImg from "@/assets/concessions-category.png";
 import tablesChairsImg from "@/assets/tables-chairs-category.png";
+import { ContentImageRow, deliveryPageImages, getHeroBackground } from "@/components/home/ContentImages";
 
 const services = [
   { name: "Bounce Houses", href: "/bounce-house-rentals", image: bounceHouseCategoryImg },
@@ -83,18 +84,23 @@ export function CityDeliveryPage({
         ]}
       />
 
-      {/* Hero Section */}
-      <section className="gradient-hero text-primary-foreground py-16 md:py-20">
-        <div className="container-page">
+      {/* Hero Section with Background Image */}
+      <section className="relative text-white py-20 md:py-28 overflow-hidden">
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: `url(${getHeroBackground(citySlug)})` }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/60 to-black/70" />
+        <div className="container-page relative z-10">
           <div className="max-w-4xl mx-auto text-center">
             <div className="flex items-center justify-center gap-2 mb-4">
               <MapPin className="h-6 w-6" />
-              <span className="text-lg">Now Serving</span>
+              <span className="text-lg drop-shadow-lg">Now Serving</span>
             </div>
-            <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
+            <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-6 drop-shadow-lg">
               Bounce House & Water Slide Rentals in {cityName}
             </h1>
-            <p className="text-xl text-primary-foreground/90 mb-8 max-w-2xl mx-auto">
+            <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto drop-shadow-md">
               Your trusted party rental company serving {cityName} and surrounding areas. Free delivery on bounce houses, water slides, obstacle courses, and more!
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -169,6 +175,12 @@ export function CityDeliveryPage({
               <li>• <strong>Large Event Inflatables:</strong> Commercial-grade units for school and church events</li>
             </ul>
 
+            {/* Content Images Row 1 */}
+            <ContentImageRow 
+              images={deliveryPageImages} 
+              alts={[`${cityName} bounce house rental`, `Kids party fun in ${cityName}`, `${cityName} inflatable rentals`]} 
+            />
+
             {/* H2: Water Slide Rentals */}
             <h2 className="font-display text-3xl font-bold text-foreground mb-6">
               Water Slide Rentals {cityName} Florida
@@ -198,6 +210,12 @@ export function CityDeliveryPage({
             <p className="text-muted-foreground leading-relaxed mb-8">
               {localLandmarks || `${cityName} offers numerous venues perfect for party rentals, including community parks, HOA clubhouses, schools, churches, and spacious residential backyards. Our delivery team is familiar with the area and can accommodate setups at any location.`}
             </p>
+
+            {/* Content Images Row 2 */}
+            <ContentImageRow 
+              images={[deliveryPageImages[1], deliveryPageImages[2], deliveryPageImages[0]]} 
+              alts={[`Party celebration in ${cityName}`, `${cityName} water slide fun`, `Birthday party ${cityName}`]} 
+            />
 
             {/* H2: Services Grid */}
             <h2 className="font-display text-3xl font-bold text-foreground mb-6">

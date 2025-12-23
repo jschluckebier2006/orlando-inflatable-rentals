@@ -10,6 +10,7 @@ import { EventTypesSection } from "@/components/home/EventTypesSection";
 import { ReviewsSection } from "@/components/home/ReviewsSection";
 import { FAQSection } from "@/components/home/FAQSection";
 import { CTASection } from "@/components/home/CTASection";
+import { ContentImageRow, homePageImages } from "@/components/home/ContentImages";
 
 const Index = () => {
   return (
@@ -24,6 +25,12 @@ const Index = () => {
       <HeroSection />
       <CategoriesSection />
       <SEOContentSection />
+      <div className="container-page">
+        <ContentImageRow 
+          images={homePageImages} 
+          alts={["Kids enjoying bounce house fun", "Children on water slide", "Group playing in bounce house"]} 
+        />
+      </div>
       <PopularRentalsSection />
       <DeliveryAreasSection />
       <EventTypesSection />
