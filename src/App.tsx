@@ -52,6 +52,14 @@ import ChurchEvents from "./pages/events/ChurchEvents";
 import CorporateEvents from "./pages/events/CorporateEvents";
 import GraduationEvents from "./pages/events/GraduationEvents";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
+import Blog from "./pages/Blog";
+import BounceHousePricing2025 from "./pages/blog/BounceHousePricing2025";
+import CorporateTeamBuilding from "./pages/blog/CorporateTeamBuilding";
+import ToddlerPartySafety from "./pages/blog/ToddlerPartySafety";
+import Top3BounceHouseThemes from "./pages/blog/Top3BounceHouseThemes";
+import ElevateCelebration from "./pages/blog/ElevateCelebration";
+import BounceHouseRentalsNearMe from "./pages/blog/BounceHouseRentalsNearMe";
+import FoundingOfChristmasFlorida from "./pages/blog/FoundingOfChristmasFlorida";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -112,6 +120,14 @@ const App = () => (
             <Route path="/events/corporate-events" element={<CorporateEvents />} />
             <Route path="/events/graduation-events" element={<GraduationEvents />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/blog" element={<Blog />} />
+            <Route path="/blog/bounce-house-rental-pricing-orlando-2025" element={<BounceHousePricing2025 />} />
+            <Route path="/blog/corporate-team-building-with-inflatables" element={<CorporateTeamBuilding />} />
+            <Route path="/blog/toddler-party-safety-bounce-house-rules" element={<ToddlerPartySafety />} />
+            <Route path="/blog/top-3-bounce-house-themes-orlando" element={<Top3BounceHouseThemes />} />
+            <Route path="/blog/elevate-celebration-bounce-house-rental" element={<ElevateCelebration />} />
+            <Route path="/blog/bounce-house-rentals-near-me" element={<BounceHouseRentalsNearMe />} />
+            <Route path="/blog/founding-of-christmas-florida" element={<FoundingOfChristmasFlorida />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </TooltipProvider>
