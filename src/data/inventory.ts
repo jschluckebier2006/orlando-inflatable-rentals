@@ -46,6 +46,16 @@ import insaneHurricaneSlide from "@/assets/inventory/27ft-insane-hurricane-water
 import backyardObstacle from "@/assets/inventory/30ft-backyard-obstacle-course.webp";
 import flashpointObstacle from "@/assets/inventory/46ft-flashpoint-obstacle-course.webp";
 import radioactiveRunObstacle from "@/assets/inventory/53ft-radioactive-run-obstacle-course.webp";
+// New imports
+import bubbleMachine from "@/assets/inventory/bubble-machine.webp";
+import dunkTank from "@/assets/inventory/carnival-dunk-tank.webp";
+import cottonCandyMachine from "@/assets/inventory/cotton-candy-machine.webp";
+import dinosaurRaptorBounce from "@/assets/inventory/dinosaur-raptor-bounce-house.webp";
+import disneyPrincessBounce from "@/assets/inventory/disney-princess-bounce-house.webp";
+import whiteFoldingChair from "@/assets/inventory/white-folding-chair.webp";
+import fullCourtPressGame from "@/assets/inventory/full-court-press-game.webp";
+import lavaRaptorCombo from "@/assets/inventory/lava-raptor-combo.webp";
+import popcornMachine from "@/assets/inventory/popcorn-machine.webp";
 
 export const products: Product[] = [
   // Water Slides
@@ -214,6 +224,88 @@ export const products: Product[] = [
     category: "obstacle-courses",
     price: 395,
     image: radioactiveRunObstacle,
+  },
+  
+  // Bounce Houses
+  {
+    id: "dinosaur-raptor-bounce",
+    name: "Dinosaur Raptor Bounce House",
+    slug: "dinosaur-raptor-bounce-house",
+    category: "bounce-houses",
+    price: 149,
+    image: dinosaurRaptorBounce,
+  },
+  {
+    id: "disney-princess-bounce",
+    name: "Disney Princess Bounce House",
+    slug: "disney-princess-bounce-house",
+    category: "bounce-houses",
+    price: 139,
+    image: disneyPrincessBounce,
+  },
+  
+  // Interactive Games (additional)
+  {
+    id: "carnival-dunk-tank",
+    name: "Carnival Dunk Tank",
+    slug: "carnival-dunk-tank",
+    category: "interactive-games",
+    price: 229,
+    image: dunkTank,
+  },
+  {
+    id: "full-court-press",
+    name: "Full Court Press Basketball Game",
+    slug: "full-court-press-game",
+    category: "interactive-games",
+    price: 199,
+    image: fullCourtPressGame,
+  },
+  
+  // Bounce & Slide Combos (additional)
+  {
+    id: "lava-raptor-combo",
+    name: "Lava Raptor 4-in-1 Wet/Dry Combo",
+    slug: "lava-raptor-combo",
+    category: "bounce-slide-combos",
+    price: 219,
+    image: lavaRaptorCombo,
+  },
+  
+  // Concessions
+  {
+    id: "bubble-machine",
+    name: "Bubble Machine",
+    slug: "bubble-machine",
+    category: "concessions",
+    price: 25,
+    image: bubbleMachine,
+  },
+  {
+    id: "cotton-candy-machine",
+    name: "Cotton Candy Machine",
+    slug: "cotton-candy-machine",
+    category: "concessions",
+    price: 65,
+    image: cottonCandyMachine,
+  },
+  {
+    id: "popcorn-machine",
+    name: "Popcorn Machine",
+    slug: "popcorn-machine",
+    category: "concessions",
+    price: 65,
+    image: popcornMachine,
+  },
+  
+  // Tables & Chairs
+  {
+    id: "white-folding-chair",
+    name: "White Folding Chair",
+    slug: "white-folding-chair",
+    category: "tables-chairs",
+    price: 1.75,
+    image: whiteFoldingChair,
   },
 ];
 
