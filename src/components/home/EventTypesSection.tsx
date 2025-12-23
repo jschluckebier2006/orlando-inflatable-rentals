@@ -9,6 +9,7 @@ import {
 import birthdayPartiesImage from "@/assets/birthday-parties-category.png";
 import schoolEventsImage from "@/assets/school-events-category.png";
 import churchEventsImage from "@/assets/church-events-category.png";
+import corporateEventsImage from "@/assets/corporate-events-category.png";
 
 const eventTypes = [
   {
@@ -37,11 +38,11 @@ const eventTypes = [
   },
   {
     name: "Corporate Events",
-    description: "Team building and company picnics",
+    description: "",
     href: "/events/corporate-events",
-    icon: Building2,
-    image: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=400&h=250&fit=crop",
-    hasOverlayText: true,
+    icon: null,
+    image: corporateEventsImage,
+    hasOverlayText: false,
   },
   {
     name: "Graduation Events",
