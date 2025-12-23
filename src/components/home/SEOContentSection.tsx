@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronUp, Check } from "lucide-react";
+import waterSlideFun from "@/assets/water-slide-fun-1.jpg";
+import kidsBouncingGroup from "@/assets/kids-group-bounce-1.jpg";
 
 export function SEOContentSection() {
   const [expanded, setExpanded] = useState(false);
@@ -50,6 +52,15 @@ export function SEOContentSection() {
               Whether you're hosting kids, teens, or even adults, our water slides create instant excitement and nonstop action. If you're planning a summer event and want something guests will talk about long after it's over, a water slide rental is the move.
             </p>
 
+            {/* Content Break Image 1 */}
+            <div className="my-8 rounded-xl overflow-hidden shadow-lg">
+              <img 
+                src={waterSlideFun} 
+                alt="Kids enjoying a water slide rental in Orlando" 
+                className="w-full h-64 md:h-80 object-cover"
+              />
+            </div>
+
             {/* H3: Bounce Houses */}
             <h3 className="font-display text-xl md:text-2xl font-bold text-foreground mb-4">
               Bounce Houses That Never Go Out of Style
@@ -79,6 +90,15 @@ export function SEOContentSection() {
             <p className="text-muted-foreground leading-relaxed mb-6">
               They're safe, spacious, and built to keep kids active and entertained. If you're looking for an easy win when planning a party, a bounce house rental always delivers.
             </p>
+
+            {/* Content Break Image 2 */}
+            <div className="my-8 rounded-xl overflow-hidden shadow-lg">
+              <img 
+                src={kidsBouncingGroup} 
+                alt="Group of kids having fun in a bounce house rental" 
+                className="w-full h-64 md:h-80 object-cover"
+              />
+            </div>
 
             {/* H3: Bounce and Slide Combos */}
             <h3 className="font-display text-xl md:text-2xl font-bold text-foreground mb-4">
