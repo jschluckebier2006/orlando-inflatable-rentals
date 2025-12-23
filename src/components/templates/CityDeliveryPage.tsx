@@ -290,6 +290,119 @@ export function CityDeliveryPage({
         </div>
       </section>
 
+      {/* Rich SEO Interlinking Section */}
+      <section className="section-padding section-alt">
+        <div className="container-page">
+          <div className="max-w-4xl mx-auto prose prose-lg">
+            <h2 className="font-display text-3xl font-bold text-foreground mb-6">
+              We Are the Best Bounce House Rentals {cityName} Company
+            </h2>
+            <p className="text-muted-foreground leading-relaxed mb-6">
+              Are you searching for an inflatable "Bounce House Rentals Near Me" in {cityName}, FL area? Well, look no further.{" "}
+              <Link to="/" className="text-primary hover:underline font-semibold">
+                Orlando Inflatable Rentals LLC
+              </Link>{" "}
+              offers a wide variety of party inflatable rentals such as bouncy combo slides, inflatable interactive games, water slide rentals, and more! Whether you're hosting a corporate event or your child's birthday party, you'll find exactly what you need to make your event epic! We carry a selection of fun affordable{" "}
+              <Link to="/bounce-house-rentals" className="text-primary hover:underline">
+                bounce house rentals
+              </Link>
+              , inexpensive{" "}
+              <Link to="/water-slide-rentals" className="text-primary hover:underline">
+                water slide rentals
+              </Link>
+              , Hybrid Water Slides,{" "}
+              <Link to="/obstacle-course-rentals" className="text-primary hover:underline">
+                Obstacle Course Rentals
+              </Link>
+              , Bouncer/Slide Combo Rentals,{" "}
+              <Link to="/interactive-game-rentals" className="text-primary hover:underline">
+                Inflatable Sidewalk Game Rentals
+              </Link>
+              ,{" "}
+              <Link to="/table-chair-rentals" className="text-primary hover:underline">
+                Table Rentals, Chair Rentals
+              </Link>
+              , and{" "}
+              <Link to="/concession-rentals" className="text-primary hover:underline">
+                Concession Equipment rentals
+              </Link>
+              . Make your next {cityName} Party a HUGE success with our top party rental equipment rentals – if you need it, we've got it!
+            </p>
+
+            <h2 className="font-display text-2xl font-bold text-foreground mb-4">
+              Top Bounce House Rentals {cityName} FL
+            </h2>
+            <p className="text-muted-foreground mb-4">
+              Bounce Houses for rent, Party Rental Equipment Service in {cityName} FL.
+            </p>
+
+            <h3 className="font-display text-xl font-semibold text-foreground mb-4">
+              Hey {cityName} Residents! If you don't want to miss out on these awesome inflatable rentals, get in touch ASAP!
+            </h3>
+            <p className="text-muted-foreground leading-relaxed mb-6">
+              At{" "}
+              <Link to="/" className="text-primary hover:underline font-semibold">
+                Orlando Inflatable Rentals
+              </Link>
+              , our fun inflatables can suit any occasion. We have rentals perfect for your child's{" "}
+              <Link to="/events/birthday-parties" className="text-primary hover:underline">
+                birthday party
+              </Link>{" "}
+              or just for some family time in Spring, Summer, and Fall. We offer a ton of different units including a{" "}
+              <Link to="/bounce-house-rentals" className="text-primary hover:underline">
+                bouncy castle
+              </Link>{" "}
+              and{" "}
+              <Link to="/water-slide-rentals" className="text-primary hover:underline">
+                water slides with two lanes
+              </Link>
+              , ensuring that no one ever has to spend time waiting in line again. Get together with your friends and family and enjoy the {cityName}, FL outdoors. We have a range of inflatable bouncers perfect for parties, as well as giant water slides where you can splash around all day.
+            </p>
+
+            <p className="text-muted-foreground leading-relaxed mb-8">
+              When you rent from{" "}
+              <a
+                href="https://www.google.com/maps?cid=5765028857056498073"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary hover:underline font-semibold inline-flex items-center gap-1"
+              >
+                Orlando Inflatable Rentals <ExternalLink className="h-3 w-3" />
+              </a>
+              , not only can you be sure of getting competitive prices on popular inflatables, but also excellent customer service. {cityName} area residents, support your local {cityName} bounce house rentals vendor and call{" "}
+              <a href="tel:4074971840" className="text-primary hover:underline font-semibold">
+                407-497-1840
+              </a>{" "}
+              now to reserve your inflatable rentals. It's time to have some family fun!
+            </p>
+
+            <div className="bg-primary/10 rounded-lg p-6 text-center">
+              <p className="text-lg font-semibold text-foreground mb-4">
+                Ready to Book Your {cityName} Party Rentals?
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Button
+                  onClick={() => setShowJotform(true)}
+                  size="lg"
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground btn-bounce"
+                >
+                  Get a Free Quote Today
+                </Button>
+                <a href="tel:4074971840">
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    className="btn-bounce w-full"
+                  >
+                    <Phone className="mr-2 h-5 w-5" /> (407) 497-1840
+                  </Button>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <CTASection />
       <JotformModal open={showJotform} onOpenChange={setShowJotform} />
     </Layout>
