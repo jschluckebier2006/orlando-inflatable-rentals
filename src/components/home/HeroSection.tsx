@@ -27,7 +27,7 @@ export function HeroSection() {
             <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight animate-fade-in">
               Your One-Stop Shop for{" "}
               <span className="text-accent">Bounce House</span> &{" "}
-              <span className="text-accent">Water Slide</span> Rentals
+              <span className="text-accent">Water Slide</span> Rentals in Orlando
             </h1>
 
             {/* Subheading */}
