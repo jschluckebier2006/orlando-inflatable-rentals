@@ -1,11 +1,11 @@
 import { Layout } from "@/components/layout/Layout";
 import { SEOHead } from "@/components/seo/SEOHead";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
+import { ServiceSchema } from "@/components/seo/ServiceSchema";
 import { ReviewsSection } from "@/components/home/ReviewsSection";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
 import { siteImages } from "@/components/home/ContentImages";
 import { 
   GraduationCap, 
@@ -23,23 +23,6 @@ import {
 } from "lucide-react";
 
 const SchoolEvents = () => {
-  const eventSchema = {
-    "@context": "https://schema.org",
-    "@type": "Service",
-    "name": "School Event Inflatable Rentals Orlando",
-    "description": "Professional inflatable rentals for school events, field days, carnivals, and fundraisers in Orlando and East Orange County. Safe, insured, and school-approved equipment.",
-    "provider": {
-      "@type": "LocalBusiness",
-      "name": "Orlando Inflatables",
-      "telephone": "(407) 374-3062",
-      "areaServed": "Orlando, FL"
-    },
-    "serviceType": "School Event Entertainment",
-    "areaServed": {
-      "@type": "State",
-      "name": "Florida"
-    }
-  };
 
   const features = [
     {
@@ -127,11 +110,11 @@ const SchoolEvents = () => {
         description="Professional inflatable rentals for school events in Orlando. Fully insured, school-approved equipment for field days, carnivals, and fundraisers. Get a free quote today!"
         canonical="/events/school-events"
       />
-      <Helmet>
-        <script type="application/ld+json">
-          {JSON.stringify(eventSchema)}
-        </script>
-      </Helmet>
+      <ServiceSchema
+        serviceName="School Event Inflatable Rentals Orlando"
+        description="Professional inflatable rentals for school events, field days, carnivals, and fundraisers in Orlando and East Orange County. Safe, insured, and school-approved equipment."
+        url="/events/school-events"
+      />
       <BreadcrumbSchema
         items={[
           { name: "Events", href: "/events" },

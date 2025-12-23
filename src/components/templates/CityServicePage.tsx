@@ -1,6 +1,9 @@
 import { Layout } from "@/components/layout/Layout";
 import { SEOHead } from "@/components/seo/SEOHead";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
+import { ServiceSchema } from "@/components/seo/ServiceSchema";
+import { FAQPageSchema } from "@/components/seo/FAQPageSchema";
+import { LocalBusinessSchema } from "@/components/seo/LocalBusinessSchema";
 import { CTASection } from "@/components/home/CTASection";
 import { ReviewsSection } from "@/components/home/ReviewsSection";
 import { Button } from "@/components/ui/button";
@@ -9,7 +12,6 @@ import { Link } from "react-router-dom";
 import { MapPin, Phone, Check, Castle, Waves, Star, Clock, Shield, Truck, Users, Calendar, HelpCircle } from "lucide-react";
 import { useState } from "react";
 import { JotformModal } from "@/components/JotformModal";
-import { Helmet } from "react-helmet-async";
 import {
   Accordion,
   AccordionContent,
@@ -43,7 +45,7 @@ export function CityServicePage({ city, citySlug, serviceType, nearbyAreas, loca
   const title = `${serviceName} Rentals ${city} FL | Orlando Inflatables`;
   const description = `${serviceName} rentals in ${city}, FL. Premium inflatable ${serviceName.toLowerCase()}s for birthday parties, events & celebrations. Free delivery! Call (407) 497-1840.`;
 
-  // FAQ Schema for SEO
+  // FAQ items for schema
   const faqItems = [
     {
       question: `How much does it cost to rent a ${serviceName.toLowerCase()} in ${city}?`,
@@ -71,43 +73,17 @@ export function CityServicePage({ city, citySlug, serviceType, nearbyAreas, loca
     }
   ];
 
-  const faqSchema = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": faqItems.map(item => ({
-      "@type": "Question",
-      "name": item.question,
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": item.answer
-      }
-    }))
-  };
-
-  const serviceSchema = {
-    "@context": "https://schema.org",
-    "@type": "Service",
-    "name": `${serviceName} Rentals in ${city} FL`,
-    "provider": {
-      "@type": "LocalBusiness",
-      "name": "Orlando Inflatables",
-      "telephone": "+1-407-497-1840"
-    },
-    "areaServed": {
-      "@type": "City",
-      "name": city,
-      "containedInPlace": { "@type": "State", "name": "Florida" }
-    },
-    "description": description
-  };
-
   return (
     <Layout>
       <SEOHead title={title} description={description} canonical={`/${pageSlug}`} />
-      <Helmet>
-        <script type="application/ld+json">{JSON.stringify(serviceSchema)}</script>
-        <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
-      </Helmet>
+      <ServiceSchema
+        serviceName={`${serviceName} Rentals in ${city} FL`}
+        description={description}
+        areaServed={city}
+        url={`/${pageSlug}`}
+      />
+      <FAQPageSchema faqs={faqItems} />
+      <LocalBusinessSchema cityName={city} />
       <BreadcrumbSchema items={[
         { name: isBounceHouse ? "Bounce House Rentals" : "Water Slide Rentals", href: servicePath },
         { name: city, href: `/${pageSlug}` }
