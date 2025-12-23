@@ -3,15 +3,15 @@ import { SEOHead } from "@/components/seo/SEOHead";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
 import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
-import { Castle, Waves, Trophy, Gamepad2, Popcorn, Armchair } from "lucide-react";
+import bounceHouseCategoryImg from "@/assets/bounce-house-category.png";
 
 const categories = [
-  { name: "Bounce Houses", description: "Fun bounce houses for all ages", href: "/bounce-house-rentals", icon: Castle, color: "text-primary", bgColor: "bg-primary/10" },
-  { name: "Water Slides", description: "Beat the Florida heat", href: "/water-slide-rentals", icon: Waves, color: "text-blue-500", bgColor: "bg-blue-500/10" },
-  { name: "Obstacle Courses", description: "Challenge your guests", href: "/obstacle-course-rentals", icon: Trophy, color: "text-orange-500", bgColor: "bg-orange-500/10" },
-  { name: "Interactive Games", description: "Engaging games for everyone", href: "/interactive-game-rentals", icon: Gamepad2, color: "text-purple-500", bgColor: "bg-purple-500/10" },
-  { name: "Concessions", description: "Popcorn, snow cones & more", href: "/concession-rentals", icon: Popcorn, color: "text-pink-500", bgColor: "bg-pink-500/10" },
-  { name: "Tables & Chairs", description: "Seating for your event", href: "/table-chair-rentals", icon: Armchair, color: "text-green-600", bgColor: "bg-green-600/10" },
+  { name: "Bounce Houses", description: "Fun bounce houses for all ages", href: "/bounce-house-rentals", image: bounceHouseCategoryImg },
+  { name: "Water Slides", description: "Beat the Florida heat", href: "/water-slide-rentals", image: null },
+  { name: "Obstacle Courses", description: "Challenge your guests", href: "/obstacle-course-rentals", image: null },
+  { name: "Interactive Games", description: "Engaging games for everyone", href: "/interactive-game-rentals", image: null },
+  { name: "Concessions", description: "Popcorn, snow cones & more", href: "/concession-rentals", image: null },
+  { name: "Tables & Chairs", description: "Seating for your event", href: "/table-chair-rentals", image: null },
 ];
 
 export default function Rentals() {
@@ -26,11 +26,17 @@ export default function Rentals() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {categories.map((cat) => (
               <Link key={cat.name} to={cat.href}>
-                <Card className="h-full card-hover border-2 border-transparent hover:border-primary/20">
-                  <CardContent className="p-6">
-                    <div className={`inline-flex items-center justify-center w-14 h-14 rounded-xl ${cat.bgColor} mb-4`}>
-                      <cat.icon className={`h-7 w-7 ${cat.color}`} />
+                <Card className="h-full card-hover border-2 border-transparent hover:border-primary/20 overflow-hidden">
+                  {cat.image && (
+                    <div className="aspect-[16/9] overflow-hidden">
+                      <img 
+                        src={cat.image} 
+                        alt={cat.name} 
+                        className="w-full h-full object-cover"
+                      />
                     </div>
+                  )}
+                  <CardContent className="p-6">
                     <h2 className="font-display text-xl font-semibold text-foreground mb-2">{cat.name}</h2>
                     <p className="text-muted-foreground">{cat.description}</p>
                   </CardContent>

@@ -10,7 +10,6 @@ import { Castle, Check, Star, Phone, Shield, Clock, Users, Sparkles } from "luci
 import { useState } from "react";
 import { JotformModal } from "@/components/JotformModal";
 import { Helmet } from "react-helmet-async";
-import bounceHouseCategoryImg from "@/assets/bounce-house-category.png";
 
 const features = [
   { icon: Shield, title: "Licensed & Insured", description: "Full liability coverage for your peace of mind" },
@@ -20,10 +19,10 @@ const features = [
 ];
 
 const bounceHouses = [
-  { name: "Classic Castle Bounce House", capacity: "8-10 kids", age: "3-12 years", size: "15x15 ft", image: bounceHouseCategoryImg },
-  { name: "Princess Palace Bouncer", capacity: "8-10 kids", age: "3-10 years", size: "15x15 ft", image: bounceHouseCategoryImg },
-  { name: "Sports Arena Bounce House", capacity: "10-12 kids", age: "4-14 years", size: "18x18 ft", image: bounceHouseCategoryImg },
-  { name: "Tropical Paradise Bouncer", capacity: "8-10 kids", age: "3-12 years", size: "15x15 ft", image: bounceHouseCategoryImg },
+  { name: "Classic Castle Bounce House", capacity: "8-10 kids", age: "3-12 years", size: "15x15 ft", image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop" },
+  { name: "Princess Palace Bouncer", capacity: "8-10 kids", age: "3-10 years", size: "15x15 ft", image: "https://images.unsplash.com/photo-1527529482837-4698179dc6ce?w=400&h=300&fit=crop" },
+  { name: "Sports Arena Bounce House", capacity: "10-12 kids", age: "4-14 years", size: "18x18 ft", image: "https://images.unsplash.com/photo-1518611012118-696072aa579a?w=400&h=300&fit=crop" },
+  { name: "Tropical Paradise Bouncer", capacity: "8-10 kids", age: "3-12 years", size: "15x15 ft", image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop" },
 ];
 
 const faqs = [
