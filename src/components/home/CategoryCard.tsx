@@ -60,7 +60,7 @@ export function CategoryCard({ title, products, categoryLink }: CategoryCardProp
           {/* View More Button */}
           <Link to={categoryLink} className="flex-shrink-0 flex items-center justify-center px-2" aria-label={`View more ${title}`}>
             <Button 
-              className="bg-amber-500 hover:bg-amber-600 text-white font-semibold text-sm px-4 py-2 rounded-md shadow-md"
+              className="bg-secondary hover:bg-secondary/90 text-secondary-foreground font-semibold text-sm px-4 py-2 rounded-md shadow-md"
             >
               View {title} →
             </Button>
