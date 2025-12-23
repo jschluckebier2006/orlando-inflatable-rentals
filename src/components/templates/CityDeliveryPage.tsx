@@ -1,0 +1,297 @@
+import { Layout } from "@/components/layout/Layout";
+import { SEOHead } from "@/components/seo/SEOHead";
+import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
+import { CTASection } from "@/components/home/CTASection";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Link } from "react-router-dom";
+import { MapPin, Phone, ExternalLink, Castle, Waves, Trophy, Gamepad2, Popcorn, Armchair, ChevronDown } from "lucide-react";
+import { useState } from "react";
+import { JotformModal } from "@/components/JotformModal";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+
+const services = [
+  { name: "Bounce Houses", href: "/bounce-house-rentals", icon: Castle },
+  { name: "Water Slides", href: "/water-slide-rentals", icon: Waves },
+  { name: "Obstacle Courses", href: "/obstacle-course-rentals", icon: Trophy },
+  { name: "Interactive Games", href: "/interactive-game-rentals", icon: Gamepad2 },
+  { name: "Concessions", href: "/concession-rentals", icon: Popcorn },
+  { name: "Tables & Chairs", href: "/table-chair-rentals", icon: Armchair },
+];
+
+interface NearbyArea {
+  name: string;
+  slug: string;
+}
+
+interface FAQ {
+  question: string;
+  answer: string;
+}
+
+interface CityDeliveryPageProps {
+  cityName: string;
+  citySlug: string;
+  metaTitle: string;
+  metaDescription: string;
+  nearbyAreas: NearbyArea[];
+  cityDescription: string;
+  cityWikipediaUrl?: string;
+  additionalCityInfo?: string;
+  localLandmarks?: string;
+  faqs: FAQ[];
+}
+
+export function CityDeliveryPage({
+  cityName,
+  citySlug,
+  metaTitle,
+  metaDescription,
+  nearbyAreas,
+  cityDescription,
+  cityWikipediaUrl,
+  additionalCityInfo,
+  localLandmarks,
+  faqs,
+}: CityDeliveryPageProps) {
+  const [showJotform, setShowJotform] = useState(false);
+
+  return (
+    <Layout>
+      <SEOHead
+        title={metaTitle}
+        description={metaDescription}
+        canonical={`/delivery-area/${citySlug}`}
+      />
+      <BreadcrumbSchema
+        items={[
+          { name: "Delivery Areas", href: "/delivery-area" },
+          { name: cityName, href: `/delivery-area/${citySlug}` },
+        ]}
+      />
+
+      {/* Hero Section */}
+      <section className="gradient-hero text-primary-foreground py-16 md:py-20">
+        <div className="container-page">
+          <div className="max-w-4xl mx-auto text-center">
+            <div className="flex items-center justify-center gap-2 mb-4">
+              <MapPin className="h-6 w-6" />
+              <span className="text-lg">Now Serving</span>
+            </div>
+            <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
+              Bounce House & Water Slide Rentals in {cityName}
+            </h1>
+            <p className="text-xl text-primary-foreground/90 mb-8 max-w-2xl mx-auto">
+              Your trusted party rental company serving {cityName} and surrounding areas. Free delivery on bounce houses, water slides, obstacle courses, and more!
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button
+                onClick={() => setShowJotform(true)}
+                size="lg"
+                className="bg-secondary hover:bg-secondary/90 text-secondary-foreground btn-bounce text-lg px-8"
+              >
+                Get a Free Quote
+              </Button>
+              <a href="tel:4074971840">
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="border-primary-foreground/30 text-primary-foreground hover:bg-white/10 btn-bounce text-lg px-8"
+                >
+                  <Phone className="mr-2 h-5 w-5" /> (407) 497-1840
+                </Button>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Main Content */}
+      <section className="section-padding">
+        <div className="container-page">
+          <div className="max-w-4xl mx-auto">
+            {/* H2: Party Rental Equipment */}
+            <h2 className="font-display text-3xl font-bold text-foreground mb-6">
+              Party Rental Equipment Rentals {cityName}
+            </h2>
+            <p className="text-muted-foreground leading-relaxed mb-6">
+              Orlando Inflatables is your premier source for party rental equipment in{" "}
+              {cityWikipediaUrl ? (
+                <a
+                  href={cityWikipediaUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary hover:underline inline-flex items-center gap-1"
+                >
+                  {cityName}, Florida <ExternalLink className="h-3 w-3" />
+                </a>
+              ) : (
+                `${cityName}, Florida`
+              )}
+              . {cityDescription}
+            </p>
+
+            <h3 className="font-display text-xl font-semibold text-foreground mb-4">
+              Complete Party Rental Inventory for {cityName} Events
+            </h3>
+            <p className="text-muted-foreground leading-relaxed mb-8">
+              From backyard birthday parties to large community events, we have everything you need to create an unforgettable celebration. Our extensive inventory includes bounce houses in various themes and sizes, thrilling water slides for hot Florida days, challenging obstacle courses, interactive games, concession machines, and tables and chairs for your guests.
+            </p>
+
+            {/* H2: Bounce House Rentals */}
+            <h2 className="font-display text-3xl font-bold text-foreground mb-6">
+              Bounce House Rentals {cityName} FL
+            </h2>
+            <p className="text-muted-foreground leading-relaxed mb-6">
+              Our bounce house rentals are the most popular choice for {cityName} birthday parties, school events, and family gatherings. We offer a wide selection of themed bounce houses, combo units with slides, and toddler-friendly options to match any party theme or age group.
+            </p>
+
+            <h3 className="font-display text-xl font-semibold text-foreground mb-4">
+              Types of Bounce Houses Available in {cityName}
+            </h3>
+            <ul className="space-y-2 mb-8 text-muted-foreground">
+              <li>• <strong>Standard Bounce Houses:</strong> Classic jumping fun in various sizes and colors</li>
+              <li>• <strong>Themed Bounce Houses:</strong> Princess castles, superhero themes, tropical designs, and more</li>
+              <li>• <strong>Combo Units:</strong> Bounce houses with attached slides for double the fun</li>
+              <li>• <strong>Toddler Inflatables:</strong> Smaller, age-appropriate units for little ones</li>
+              <li>• <strong>Large Event Inflatables:</strong> Commercial-grade units for school and church events</li>
+            </ul>
+
+            {/* H2: Water Slide Rentals */}
+            <h2 className="font-display text-3xl font-bold text-foreground mb-6">
+              Water Slide Rentals {cityName} Florida
+            </h2>
+            <p className="text-muted-foreground leading-relaxed mb-6">
+              Beat the Florida heat with our exciting water slide rentals! Perfect for summer parties, pool parties, and any outdoor event in {cityName}. Our water slides range from kid-friendly sizes to massive slides that will thrill guests of all ages.
+            </p>
+
+            <h3 className="font-display text-xl font-semibold text-foreground mb-4">
+              Water Slide Options for {cityName} Parties
+            </h3>
+            <p className="text-muted-foreground leading-relaxed mb-8">
+              Choose from single-lane slides, dual-lane racing slides, slip-and-slides, and water slide combos. All our water slides are designed with safety in mind and feature soft landing pools. We provide all the equipment needed – just connect a standard garden hose and you're ready for hours of splashing fun!
+            </p>
+
+            {/* H2: About the City */}
+            <h2 className="font-display text-3xl font-bold text-foreground mb-6">
+              About {cityName}, Florida
+            </h2>
+            <p className="text-muted-foreground leading-relaxed mb-6">
+              {additionalCityInfo || `${cityName} is a wonderful community in the greater Orlando area, known for its family-friendly neighborhoods and active community events. Residents enjoy a suburban lifestyle with easy access to Orlando's attractions, dining, and entertainment options.`}
+            </p>
+
+            <h3 className="font-display text-xl font-semibold text-foreground mb-4">
+              Popular Event Venues in {cityName}
+            </h3>
+            <p className="text-muted-foreground leading-relaxed mb-8">
+              {localLandmarks || `${cityName} offers numerous venues perfect for party rentals, including community parks, HOA clubhouses, schools, churches, and spacious residential backyards. Our delivery team is familiar with the area and can accommodate setups at any location.`}
+            </p>
+
+            {/* H2: Services Grid */}
+            <h2 className="font-display text-3xl font-bold text-foreground mb-6">
+              All Party Rental Services in {cityName}
+            </h2>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
+              {services.map((service) => (
+                <Link key={service.name} to={service.href}>
+                  <Card className="h-full card-hover">
+                    <CardContent className="p-4 flex items-center gap-3">
+                      <service.icon className="h-6 w-6 text-primary" />
+                      <span className="font-medium text-foreground">{service.name}</span>
+                    </CardContent>
+                  </Card>
+                </Link>
+              ))}
+            </div>
+
+            <h3 className="font-display text-xl font-semibold text-foreground mb-4">
+              Additional Rental Equipment for {cityName} Events
+            </h3>
+            <p className="text-muted-foreground leading-relaxed mb-8">
+              Complete your party package with our obstacle courses for competitive fun, interactive games like basketball shootouts and jousting arenas, concession machines for popcorn, cotton candy, and snow cones, plus tables and chairs to keep your guests comfortable throughout the event.
+            </p>
+
+            {/* H2: Why Choose Us */}
+            <h2 className="font-display text-3xl font-bold text-foreground mb-6">
+              Why Choose Orlando Inflatables in {cityName}?
+            </h2>
+            <p className="text-muted-foreground leading-relaxed mb-4">
+              When you book with Orlando Inflatables for your {cityName} event, you're choosing the area's most trusted party rental company. Here's what sets us apart:
+            </p>
+            <ul className="space-y-2 mb-8 text-muted-foreground">
+              <li>• <strong>Free Delivery & Setup:</strong> Complimentary delivery throughout {cityName}</li>
+              <li>• <strong>Clean & Sanitized:</strong> Every unit is thoroughly cleaned and inspected before each rental</li>
+              <li>• <strong>Licensed & Insured:</strong> Full liability coverage for your peace of mind</li>
+              <li>• <strong>On-Time Service:</strong> We arrive when promised and handle all setup</li>
+              <li>• <strong>Local Expertise:</strong> We know {cityName} neighborhoods and can recommend the best options for your venue</li>
+              <li>• <strong>24/7 Support:</strong> Customer service available throughout your rental period</li>
+            </ul>
+
+            <h3 className="font-display text-xl font-semibold text-foreground mb-4">
+              Our Commitment to {cityName} Families
+            </h3>
+            <p className="text-muted-foreground leading-relaxed mb-8">
+              We're not just a rental company – we're part of the {cityName} community. Our team takes pride in helping local families create memorable celebrations. From your first phone call to the final pickup, we're dedicated to making your event a success.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="section-padding section-alt">
+        <div className="container-page">
+          <div className="max-w-4xl mx-auto">
+            <h4 className="font-display text-2xl font-bold text-foreground mb-2 text-center">
+              Frequently Asked Questions
+            </h4>
+            <h5 className="text-lg text-muted-foreground mb-8 text-center">
+              Common Questions About Party Rentals in {cityName}
+            </h5>
+            <Accordion type="single" collapsible className="w-full space-y-4">
+              {faqs.map((faq, index) => (
+                <AccordionItem
+                  key={index}
+                  value={`faq-${index}`}
+                  className="bg-card rounded-lg border px-6"
+                >
+                  <AccordionTrigger className="text-left font-semibold text-foreground hover:no-underline">
+                    {faq.question}
+                  </AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground">
+                    {faq.answer}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </div>
+        </div>
+      </section>
+
+      {/* Nearby Areas */}
+      <section className="section-padding">
+        <div className="container-page">
+          <h2 className="font-display text-2xl font-bold text-foreground mb-6 text-center">
+            We Also Deliver to Nearby Areas
+          </h2>
+          <div className="flex flex-wrap justify-center gap-4">
+            {nearbyAreas.map((area) => (
+              <Link key={area.slug} to={`/delivery-area/${area.slug}`}>
+                <Button variant="outline" className="btn-bounce">
+                  <MapPin className="mr-2 h-4 w-4" /> {area.name}
+                </Button>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <CTASection />
+      <JotformModal open={showJotform} onOpenChange={setShowJotform} />
+    </Layout>
+  );
+}
