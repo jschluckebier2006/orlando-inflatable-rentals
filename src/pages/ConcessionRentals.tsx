@@ -11,6 +11,7 @@ import { Popcorn, Check, Phone, Shield, Clock, Utensils, Sparkles } from "lucide
 import { useState } from "react";
 import { JotformModal } from "@/components/JotformModal";
 import { Helmet } from "react-helmet-async";
+import { siteImages } from "@/components/home/ContentImages";
 
 const features = [
   { icon: Shield, title: "Licensed & Insured", description: "Full liability coverage included" },
@@ -58,14 +59,22 @@ export default function ConcessionRentals() {
       <BreadcrumbSchema items={[{ name: "Concession Rentals", href: "/concession-rentals" }]} />
 
       {/* Hero Section */}
-      <section className="gradient-hero text-primary-foreground py-16 md:py-24">
-        <div className="container-page">
+      <section 
+        className="relative text-white py-16 md:py-24"
+        style={{
+          backgroundImage: `url(${siteImages.kidsSmilingBounce1})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}
+      >
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/90 via-primary/80 to-primary/90"></div>
+        <div className="container-page relative z-10">
           <div className="max-w-4xl mx-auto text-center">
-            <Badge className="mb-4 bg-white/20 text-primary-foreground">Carnival Treats</Badge>
-            <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
+            <Badge className="mb-4 bg-white/20 text-white border-white/30">Carnival Treats</Badge>
+            <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-white">
               Concession Rentals in Orlando, FL
             </h1>
-            <p className="text-xl text-primary-foreground/90 mb-8 max-w-2xl mx-auto">
+            <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
               Add delicious carnival-style treats to your event with our concession machine rentals. Popcorn, snow cones, cotton candy, and more!
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -73,7 +82,7 @@ export default function ConcessionRentals() {
                 Get a Free Quote
               </Button>
               <a href="tel:4074971840">
-                <Button size="lg" className="bg-white text-primary hover:bg-white/90 btn-bounce text-lg px-8 font-semibold">
+                <Button size="lg" variant="outline" className="bg-transparent border-white text-white hover:bg-white/20 btn-bounce text-lg px-8 font-semibold">
                   <Phone className="mr-2 h-5 w-5" /> (407) 497-1840
                 </Button>
               </a>
