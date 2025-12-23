@@ -1,6 +1,12 @@
 import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import bounceHouseCategoryImg from "@/assets/bounce-house-category.png";
+import bounceSlideComboImg from "@/assets/bounce-slide-combo-category.png";
+import waterSlideCategoryImg from "@/assets/water-slide-category.png";
+import obstacleCourseImg from "@/assets/obstacle-course-category.png";
+import interactiveGamesImg from "@/assets/interactive-games-category.png";
+import concessionsImg from "@/assets/concessions-category.png";
+import tablesChairsImg from "@/assets/tables-chairs-category.png";
 
 const categories = [
   {
@@ -13,37 +19,37 @@ const categories = [
     name: "Bounce & Slide Combos",
     description: "2-in-1 fun with bounce houses and slides combined",
     href: "/bounce-slide-combo-rentals",
-    image: null, // Add image later
+    image: bounceSlideComboImg,
   },
   {
     name: "Water Slides",
     description: "Beat the Florida heat with exciting water slides",
     href: "/water-slide-rentals",
-    image: null, // Add image later
+    image: waterSlideCategoryImg,
   },
   {
     name: "Obstacle Courses",
     description: "Challenge guests with thrilling obstacle courses",
     href: "/obstacle-course-rentals",
-    image: null, // Add image later
+    image: obstacleCourseImg,
   },
   {
     name: "Interactive Games",
     description: "Engaging games for competitive fun",
     href: "/interactive-game-rentals",
-    image: null, // Add image later
+    image: interactiveGamesImg,
   },
   {
     name: "Concessions",
     description: "Popcorn, snow cones, cotton candy & more",
     href: "/concession-rentals",
-    image: null, // Add image later
+    image: concessionsImg,
   },
   {
     name: "Tables & Chairs",
     description: "Comfortable seating for all your guests",
     href: "/table-chair-rentals",
-    image: null, // Add image later
+    image: tablesChairsImg,
   },
 ];
 

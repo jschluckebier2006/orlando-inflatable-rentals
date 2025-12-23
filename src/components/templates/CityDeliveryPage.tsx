@@ -15,15 +15,21 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import bounceHouseCategoryImg from "@/assets/bounce-house-category.png";
+import bounceSlideComboImg from "@/assets/bounce-slide-combo-category.png";
+import waterSlideCategoryImg from "@/assets/water-slide-category.png";
+import obstacleCourseImg from "@/assets/obstacle-course-category.png";
+import interactiveGamesImg from "@/assets/interactive-games-category.png";
+import concessionsImg from "@/assets/concessions-category.png";
+import tablesChairsImg from "@/assets/tables-chairs-category.png";
 
 const services = [
   { name: "Bounce Houses", href: "/bounce-house-rentals", image: bounceHouseCategoryImg },
-  { name: "Bounce & Slide Combos", href: "/bounce-slide-combo-rentals", image: null },
-  { name: "Water Slides", href: "/water-slide-rentals", image: null },
-  { name: "Obstacle Courses", href: "/obstacle-course-rentals", image: null },
-  { name: "Interactive Games", href: "/interactive-game-rentals", image: null },
-  { name: "Concessions", href: "/concession-rentals", image: null },
-  { name: "Tables & Chairs", href: "/table-chair-rentals", image: null },
+  { name: "Bounce & Slide Combos", href: "/bounce-slide-combo-rentals", image: bounceSlideComboImg },
+  { name: "Water Slides", href: "/water-slide-rentals", image: waterSlideCategoryImg },
+  { name: "Obstacle Courses", href: "/obstacle-course-rentals", image: obstacleCourseImg },
+  { name: "Interactive Games", href: "/interactive-game-rentals", image: interactiveGamesImg },
+  { name: "Concessions", href: "/concession-rentals", image: concessionsImg },
+  { name: "Tables & Chairs", href: "/table-chair-rentals", image: tablesChairsImg },
 ];
 
 interface NearbyArea {
