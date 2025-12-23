@@ -1,6 +1,8 @@
 import { Layout } from "@/components/layout/Layout";
 import { SEOHead } from "@/components/seo/SEOHead";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
+import { ServiceSchema } from "@/components/seo/ServiceSchema";
+import { FAQPageSchema } from "@/components/seo/FAQPageSchema";
 import { CTASection } from "@/components/home/CTASection";
 import { ReviewsSection } from "@/components/home/ReviewsSection";
 import { Button } from "@/components/ui/button";
@@ -9,7 +11,6 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Check, Phone, Shield, Clock, Users, Target } from "lucide-react";
 import { useState } from "react";
 import { JotformModal } from "@/components/JotformModal";
-import { Helmet } from "react-helmet-async";
 import { siteImages } from "@/components/home/ContentImages";
 import { ProductGrid } from "@/components/inventory/ProductGrid";
 import { getInteractiveGames } from "@/data/inventory";
@@ -32,14 +33,7 @@ const faqs = [
 export default function InteractiveGameRentals() {
   const [showJotform, setShowJotform] = useState(false);
 
-  const serviceSchema = {
-    "@context": "https://schema.org",
-    "@type": "Service",
-    "name": "Interactive Game Rentals in Orlando FL",
-    "provider": { "@type": "LocalBusiness", "name": "Orlando Inflatables", "telephone": "+1-407-497-1840" },
-    "areaServed": { "@type": "City", "name": "Orlando", "containedInPlace": { "@type": "State", "name": "Florida" } },
-    "description": "Interactive inflatable game rentals for parties, carnivals, and corporate events in East Orlando."
-  };
+  const faqItems = faqs.map(faq => ({ question: faq.q, answer: faq.a }));
 
   return (
     <Layout>
@@ -48,9 +42,13 @@ export default function InteractiveGameRentals() {
         description="Rent exciting interactive games in Orlando FL for parties & events. Basketball, soccer darts, jousting & more! Licensed & insured. Call (407) 497-1840!"
         canonical="/interactive-game-rentals"
       />
-      <Helmet>
-        <script type="application/ld+json">{JSON.stringify(serviceSchema)}</script>
-      </Helmet>
+      <ServiceSchema
+        serviceName="Interactive Game Rentals in Orlando FL"
+        description="Interactive inflatable game rentals for parties, carnivals, and corporate events in East Orlando."
+        areaServed="Orlando"
+        url="/interactive-game-rentals"
+      />
+      <FAQPageSchema faqs={faqItems} />
       <BreadcrumbSchema items={[{ name: "Interactive Game Rentals", href: "/interactive-game-rentals" }]} />
 
       {/* Hero Section */}

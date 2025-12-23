@@ -1,6 +1,8 @@
 import { Layout } from "@/components/layout/Layout";
 import { SEOHead } from "@/components/seo/SEOHead";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
+import { ServiceSchema } from "@/components/seo/ServiceSchema";
+import { FAQPageSchema } from "@/components/seo/FAQPageSchema";
 import { CTASection } from "@/components/home/CTASection";
 import { ReviewsSection } from "@/components/home/ReviewsSection";
 import { Button } from "@/components/ui/button";
@@ -9,7 +11,6 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Check, Phone, Shield, Clock, Users, Zap } from "lucide-react";
 import { useState } from "react";
 import { JotformModal } from "@/components/JotformModal";
-import { Helmet } from "react-helmet-async";
 import { siteImages } from "@/components/home/ContentImages";
 import { ProductGrid } from "@/components/inventory/ProductGrid";
 import { getObstacleCourses } from "@/data/inventory";
@@ -32,14 +33,7 @@ const faqs = [
 export default function ObstacleCourseRentals() {
   const [showJotform, setShowJotform] = useState(false);
 
-  const serviceSchema = {
-    "@context": "https://schema.org",
-    "@type": "Service",
-    "name": "Obstacle Course Rentals in Orlando FL",
-    "provider": { "@type": "LocalBusiness", "name": "Orlando Inflatables", "telephone": "+1-407-497-1840" },
-    "areaServed": { "@type": "City", "name": "Orlando", "containedInPlace": { "@type": "State", "name": "Florida" } },
-    "description": "Inflatable obstacle course rentals for parties, school events, and corporate team building in East Orlando."
-  };
+  const faqItems = faqs.map(faq => ({ question: faq.q, answer: faq.a }));
 
   return (
     <Layout>
@@ -48,9 +42,13 @@ export default function ObstacleCourseRentals() {
         description="Rent thrilling inflatable obstacle courses in Orlando FL for parties, school field days & corporate events. Dual-lane racing fun! Call (407) 497-1840 for free delivery!"
         canonical="/obstacle-course-rentals"
       />
-      <Helmet>
-        <script type="application/ld+json">{JSON.stringify(serviceSchema)}</script>
-      </Helmet>
+      <ServiceSchema
+        serviceName="Obstacle Course Rentals in Orlando FL"
+        description="Inflatable obstacle course rentals for parties, school events, and corporate team building in East Orlando."
+        areaServed="Orlando"
+        url="/obstacle-course-rentals"
+      />
+      <FAQPageSchema faqs={faqItems} />
       <BreadcrumbSchema items={[{ name: "Obstacle Course Rentals", href: "/obstacle-course-rentals" }]} />
 
       {/* Hero Section */}

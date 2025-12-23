@@ -1,6 +1,8 @@
 import { Layout } from "@/components/layout/Layout";
 import { SEOHead } from "@/components/seo/SEOHead";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
+import { ServiceSchema } from "@/components/seo/ServiceSchema";
+import { FAQPageSchema } from "@/components/seo/FAQPageSchema";
 import { CTASection } from "@/components/home/CTASection";
 import { ReviewsSection } from "@/components/home/ReviewsSection";
 import { Button } from "@/components/ui/button";
@@ -9,7 +11,6 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Check, Phone, Shield, Clock, Users, Sparkles } from "lucide-react";
 import { useState } from "react";
 import { JotformModal } from "@/components/JotformModal";
-import { Helmet } from "react-helmet-async";
 import { siteImages } from "@/components/home/ContentImages";
 import { ProductGrid } from "@/components/inventory/ProductGrid";
 import { getBounceSlidesCombos } from "@/data/inventory";
@@ -32,22 +33,7 @@ const faqs = [
 export default function BounceSlideComboRentals() {
   const [showJotform, setShowJotform] = useState(false);
 
-  const serviceSchema = {
-    "@context": "https://schema.org",
-    "@type": "Service",
-    "name": "Bounce & Slide Combo Rentals in Orlando FL",
-    "provider": {
-      "@type": "LocalBusiness",
-      "name": "Orlando Inflatables",
-      "telephone": "+1-407-497-1840"
-    },
-    "areaServed": {
-      "@type": "City",
-      "name": "Orlando",
-      "containedInPlace": { "@type": "State", "name": "Florida" }
-    },
-    "description": "Premium bounce house and slide combo rentals for birthday parties, school events, and celebrations in East Orlando and Orange County."
-  };
+  const faqItems = faqs.map(faq => ({ question: faq.q, answer: faq.a }));
 
   return (
     <Layout>
@@ -56,9 +42,13 @@ export default function BounceSlideComboRentals() {
         description="Rent bounce house & slide combos in Orlando FL for birthday parties & events. Double the fun with 2-in-1 inflatables! Licensed & insured with free delivery. Call (407) 497-1840!"
         canonical="/bounce-slide-combo-rentals"
       />
-      <Helmet>
-        <script type="application/ld+json">{JSON.stringify(serviceSchema)}</script>
-      </Helmet>
+      <ServiceSchema
+        serviceName="Bounce & Slide Combo Rentals in Orlando FL"
+        description="Premium bounce house and slide combo rentals for birthday parties, school events, and celebrations in East Orlando and Orange County."
+        areaServed="Orlando"
+        url="/bounce-slide-combo-rentals"
+      />
+      <FAQPageSchema faqs={faqItems} />
       <BreadcrumbSchema items={[{ name: "Bounce & Slide Combos", href: "/bounce-slide-combo-rentals" }]} />
 
       {/* Hero Section */}

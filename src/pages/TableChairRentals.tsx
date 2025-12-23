@@ -1,6 +1,8 @@
 import { Layout } from "@/components/layout/Layout";
 import { SEOHead } from "@/components/seo/SEOHead";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
+import { ServiceSchema } from "@/components/seo/ServiceSchema";
+import { FAQPageSchema } from "@/components/seo/FAQPageSchema";
 import { CTASection } from "@/components/home/CTASection";
 import { ReviewsSection } from "@/components/home/ReviewsSection";
 import { ProductGrid } from "@/components/inventory/ProductGrid";
@@ -8,10 +10,9 @@ import { getTablesChairs } from "@/data/inventory";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Armchair, Check, Phone, Shield, Clock, Users, Package } from "lucide-react";
+import { Check, Phone, Shield, Clock, Users, Package } from "lucide-react";
 import { useState } from "react";
 import { JotformModal } from "@/components/JotformModal";
-import { Helmet } from "react-helmet-async";
 import { siteImages } from "@/components/home/ContentImages";
 
 const features = [
@@ -32,14 +33,7 @@ const faqs = [
 export default function TableChairRentals() {
   const [showJotform, setShowJotform] = useState(false);
 
-  const serviceSchema = {
-    "@context": "https://schema.org",
-    "@type": "Service",
-    "name": "Table and Chair Rentals in Orlando FL",
-    "provider": { "@type": "LocalBusiness", "name": "Orlando Inflatables", "telephone": "+1-407-497-1840" },
-    "areaServed": { "@type": "City", "name": "Orlando", "containedInPlace": { "@type": "State", "name": "Florida" } },
-    "description": "Table and chair rentals for parties, events, and gatherings in East Orlando and Orange County."
-  };
+  const faqItems = faqs.map(faq => ({ question: faq.q, answer: faq.a }));
 
   return (
     <Layout>
@@ -48,9 +42,13 @@ export default function TableChairRentals() {
         description="Rent tables and chairs in Orlando FL for parties, weddings & events. Folding chairs, banquet tables & more. Free delivery! Call (407) 497-1840!"
         canonical="/table-chair-rentals"
       />
-      <Helmet>
-        <script type="application/ld+json">{JSON.stringify(serviceSchema)}</script>
-      </Helmet>
+      <ServiceSchema
+        serviceName="Table and Chair Rentals in Orlando FL"
+        description="Table and chair rentals for parties, events, and gatherings in East Orlando and Orange County."
+        areaServed="Orlando"
+        url="/table-chair-rentals"
+      />
+      <FAQPageSchema faqs={faqItems} />
       <BreadcrumbSchema items={[{ name: "Table & Chair Rentals", href: "/table-chair-rentals" }]} />
 
       {/* Hero Section */}
