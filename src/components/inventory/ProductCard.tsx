@@ -13,11 +13,11 @@ export function ProductCard({ product, onClick }: ProductCardProps) {
       className="overflow-hidden card-hover cursor-pointer group transition-all duration-300 hover:shadow-xl"
       onClick={onClick}
     >
-      <div className="aspect-[4/3] overflow-hidden relative">
+      <div className="aspect-square overflow-hidden relative bg-muted/30">
         <img 
           src={product.image} 
           alt={product.name} 
-          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" 
+          className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105" 
         />
         <Badge className="absolute top-3 right-3 bg-secondary text-secondary-foreground font-bold text-sm px-3 py-1">
           ${product.price}
