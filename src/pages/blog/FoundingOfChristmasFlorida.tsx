@@ -9,6 +9,8 @@ export default function FoundingOfChristmasFlorida() {
       metaDescription="Learn about the origins of Christmas, Florida, from Fort Christmas in the Second Seminole War to today's holiday-themed tourist attraction."
       heroImage={siteImages.kidsSlide1}
       category="Local History"
+      slug="founding-of-christmas-florida"
+      datePublished="2024-12-20"
     >
       <p>
         The origins of <strong>Christmas, Florida</strong> can be traced back to the Second 

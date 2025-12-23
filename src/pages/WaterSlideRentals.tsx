@@ -1,6 +1,8 @@
 import { Layout } from "@/components/layout/Layout";
 import { SEOHead } from "@/components/seo/SEOHead";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
+import { ServiceSchema } from "@/components/seo/ServiceSchema";
+import { FAQPageSchema } from "@/components/seo/FAQPageSchema";
 import { CTASection } from "@/components/home/CTASection";
 import { ReviewsSection } from "@/components/home/ReviewsSection";
 import { Button } from "@/components/ui/button";
@@ -9,7 +11,6 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Check, Phone, Shield, Clock, Droplets, Sun } from "lucide-react";
 import { useState } from "react";
 import { JotformModal } from "@/components/JotformModal";
-import { Helmet } from "react-helmet-async";
 import { siteImages } from "@/components/home/ContentImages";
 import { ProductGrid } from "@/components/inventory/ProductGrid";
 import { getWaterSlides } from "@/data/inventory";
@@ -21,25 +22,15 @@ const features = [
   { icon: Sun, title: "Summer Perfect", description: "Ideal for hot Orlando days" },
 ];
 
-
 const faqs = [
-  { q: "Do I need to provide a water source?", a: "Yes, you'll need access to a standard garden hose within 100 feet of the setup location. Our water slides connect directly to your hose and use continuous water flow during operation." },
-  { q: "How much water do water slides use?", a: "Our water slides typically use about the same amount of water as a garden sprinkler. The water recirculates, making them relatively efficient while keeping the slide surface wet and slippery for maximum fun." },
-  { q: "What surface can water slides be set up on?", a: "Water slides work best on flat grass surfaces. We can also set up on concrete or asphalt with proper anchoring, though grass is preferred for softer landings in the splash zone." },
-  { q: "Are water slides safe for younger children?", a: "We offer water slides specifically designed for younger children with gentler slopes and smaller heights. Our team can recommend the best option based on the ages of your guests." },
+  { question: "Do I need to provide a water source?", answer: "Yes, you'll need access to a standard garden hose within 100 feet of the setup location. Our water slides connect directly to your hose and use continuous water flow during operation." },
+  { question: "How much water do water slides use?", answer: "Our water slides typically use about the same amount of water as a garden sprinkler. The water recirculates, making them relatively efficient while keeping the slide surface wet and slippery for maximum fun." },
+  { question: "What surface can water slides be set up on?", answer: "Water slides work best on flat grass surfaces. We can also set up on concrete or asphalt with proper anchoring, though grass is preferred for softer landings in the splash zone." },
+  { question: "Are water slides safe for younger children?", answer: "We offer water slides specifically designed for younger children with gentler slopes and smaller heights. Our team can recommend the best option based on the ages of your guests." },
 ];
 
 export default function WaterSlideRentals() {
   const [showJotform, setShowJotform] = useState(false);
-
-  const serviceSchema = {
-    "@context": "https://schema.org",
-    "@type": "Service",
-    "name": "Water Slide Rentals in Orlando FL",
-    "provider": { "@type": "LocalBusiness", "name": "Orlando Inflatables", "telephone": "+1-407-497-1840" },
-    "areaServed": { "@type": "City", "name": "Orlando", "containedInPlace": { "@type": "State", "name": "Florida" } },
-    "description": "Premium inflatable water slide rentals for summer parties and events in East Orlando and Orange County."
-  };
 
   return (
     <Layout>
@@ -48,9 +39,12 @@ export default function WaterSlideRentals() {
         description="Rent exciting inflatable water slides in Orlando FL for summer parties & events. Beat the Florida heat! Licensed & insured with free delivery. Call (407) 497-1840!"
         canonical="/water-slide-rentals"
       />
-      <Helmet>
-        <script type="application/ld+json">{JSON.stringify(serviceSchema)}</script>
-      </Helmet>
+      <ServiceSchema
+        serviceName="Water Slide Rentals in Orlando FL"
+        description="Premium inflatable water slide rentals for summer parties and events in East Orlando and Orange County."
+        url="/water-slide-rentals"
+      />
+      <FAQPageSchema faqs={faqs} />
       <BreadcrumbSchema items={[{ name: "Water Slide Rentals", href: "/water-slide-rentals" }]} />
 
       {/* Hero Section */}
@@ -200,8 +194,8 @@ export default function WaterSlideRentals() {
             <Accordion type="single" collapsible className="w-full space-y-4">
               {faqs.map((faq, index) => (
                 <AccordionItem key={index} value={`item-${index}`} className="bg-card rounded-lg border border-border px-6">
-                  <AccordionTrigger className="text-left font-display font-semibold hover:no-underline">{faq.q}</AccordionTrigger>
-                  <AccordionContent className="text-muted-foreground leading-relaxed">{faq.a}</AccordionContent>
+                  <AccordionTrigger className="text-left font-display font-semibold hover:no-underline">{faq.question}</AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground leading-relaxed">{faq.answer}</AccordionContent>
                 </AccordionItem>
               ))}
             </Accordion>

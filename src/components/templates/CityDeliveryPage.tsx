@@ -1,6 +1,8 @@
 import { Layout } from "@/components/layout/Layout";
 import { SEOHead } from "@/components/seo/SEOHead";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
+import { LocalBusinessSchema } from "@/components/seo/LocalBusinessSchema";
+import { FAQPageSchema } from "@/components/seo/FAQPageSchema";
 import { CTASection } from "@/components/home/CTASection";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -70,6 +72,12 @@ export function CityDeliveryPage({
   faqs,
 }: CityDeliveryPageProps) {
   const [showJotform, setShowJotform] = useState(false);
+  
+  // Convert FAQs to schema format
+  const faqSchemaItems = faqs.map(faq => ({
+    question: faq.question,
+    answer: faq.answer
+  }));
 
   return (
     <Layout>
@@ -78,6 +86,8 @@ export function CityDeliveryPage({
         description={metaDescription}
         canonical={`/water-slide-and-bounce-house-rental-${citySlug}`}
       />
+      <LocalBusinessSchema cityName={cityName} />
+      <FAQPageSchema faqs={faqSchemaItems} />
       <BreadcrumbSchema
         items={[
           { name: "Delivery Areas", href: "/delivery-area" },

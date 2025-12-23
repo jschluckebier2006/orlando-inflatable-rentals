@@ -9,6 +9,8 @@ export default function ToddlerPartySafety() {
       metaDescription="Orlando toddler party safety demands strict bounce house rules. Learn about supervision, age separation, and weather protocols for safe, enjoyable parties."
       heroImage={siteImages.toddlerBounce1}
       category="Safety Tips"
+      slug="toddler-party-safety-bounce-house-rules"
+      datePublished="2024-10-05"
     >
       <p>
         Orlando toddler party safety demands strict, evidence-based bounce house rules customized 

@@ -1,6 +1,8 @@
 import { Layout } from "@/components/layout/Layout";
 import { SEOHead } from "@/components/seo/SEOHead";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
+import { ServiceSchema } from "@/components/seo/ServiceSchema";
+import { FAQPageSchema } from "@/components/seo/FAQPageSchema";
 import { CTASection } from "@/components/home/CTASection";
 import { ReviewsSection } from "@/components/home/ReviewsSection";
 import { ProductGrid } from "@/components/inventory/ProductGrid";
@@ -11,8 +13,8 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Castle, Check, Star, Phone, Shield, Clock, Users, Sparkles } from "lucide-react";
 import { useState } from "react";
 import { JotformModal } from "@/components/JotformModal";
-import { Helmet } from "react-helmet-async";
 import { siteImages } from "@/components/home/ContentImages";
+
 const features = [
   { icon: Shield, title: "Licensed & Insured", description: "Full liability coverage for your peace of mind" },
   { icon: Sparkles, title: "Clean & Sanitized", description: "Thoroughly cleaned after every rental" },
@@ -20,33 +22,15 @@ const features = [
   { icon: Users, title: "All Ages Welcome", description: "Options for toddlers to adults" },
 ];
 
-
 const faqs = [
-  { q: "How much space do I need for a bounce house?", a: "Most standard bounce houses require a flat area of approximately 20x20 feet to allow for proper setup and safety clearance. We recommend measuring your space before booking and our team will confirm the requirements for your specific rental." },
-  { q: "Are your bounce houses safe for young children?", a: "Absolutely! We offer bounce houses specifically designed for toddlers and younger children with lower walls, softer surfaces, and age-appropriate features. We also provide safety guidelines with every rental." },
-  { q: "What happens if it rains on my event day?", a: "Safety is our priority. If weather conditions are unsafe for inflatable use, we'll work with you to reschedule at no additional charge. Light rain typically isn't an issue, but we monitor conditions closely." },
-  { q: "Do you set up and take down the bounce house?", a: "Yes! Our professional team handles all delivery, setup, and pickup. We'll arrive early to ensure everything is ready before your guests arrive and return afterward for takedown." },
+  { question: "How much space do I need for a bounce house?", answer: "Most standard bounce houses require a flat area of approximately 20x20 feet to allow for proper setup and safety clearance. We recommend measuring your space before booking and our team will confirm the requirements for your specific rental." },
+  { question: "Are your bounce houses safe for young children?", answer: "Absolutely! We offer bounce houses specifically designed for toddlers and younger children with lower walls, softer surfaces, and age-appropriate features. We also provide safety guidelines with every rental." },
+  { question: "What happens if it rains on my event day?", answer: "Safety is our priority. If weather conditions are unsafe for inflatable use, we'll work with you to reschedule at no additional charge. Light rain typically isn't an issue, but we monitor conditions closely." },
+  { question: "Do you set up and take down the bounce house?", answer: "Yes! Our professional team handles all delivery, setup, and pickup. We'll arrive early to ensure everything is ready before your guests arrive and return afterward for takedown." },
 ];
 
 export default function BounceHouseRentals() {
   const [showJotform, setShowJotform] = useState(false);
-
-  const serviceSchema = {
-    "@context": "https://schema.org",
-    "@type": "Service",
-    "name": "Bounce House Rentals in Orlando FL",
-    "provider": {
-      "@type": "LocalBusiness",
-      "name": "Orlando Inflatables",
-      "telephone": "+1-407-497-1840"
-    },
-    "areaServed": {
-      "@type": "City",
-      "name": "Orlando",
-      "containedInPlace": { "@type": "State", "name": "Florida" }
-    },
-    "description": "Premium bounce house rentals for birthday parties, school events, and celebrations in East Orlando and Orange County."
-  };
 
   return (
     <Layout>
@@ -55,9 +39,12 @@ export default function BounceHouseRentals() {
         description="Rent clean, safe bounce houses in Orlando FL for birthday parties, school events & celebrations. Licensed & insured with free delivery to East Orlando. Call (407) 497-1840!"
         canonical="/bounce-house-rentals"
       />
-      <Helmet>
-        <script type="application/ld+json">{JSON.stringify(serviceSchema)}</script>
-      </Helmet>
+      <ServiceSchema
+        serviceName="Bounce House Rentals in Orlando FL"
+        description="Premium bounce house rentals for birthday parties, school events, and celebrations in East Orlando and Orange County."
+        url="/bounce-house-rentals"
+      />
+      <FAQPageSchema faqs={faqs} />
       <BreadcrumbSchema items={[{ name: "Bounce House Rentals", href: "/bounce-house-rentals" }]} />
 
       {/* Hero Section */}
@@ -210,8 +197,8 @@ export default function BounceHouseRentals() {
             <Accordion type="single" collapsible className="w-full space-y-4">
               {faqs.map((faq, index) => (
                 <AccordionItem key={index} value={`item-${index}`} className="bg-card rounded-lg border border-border px-6">
-                  <AccordionTrigger className="text-left font-display font-semibold hover:no-underline">{faq.q}</AccordionTrigger>
-                  <AccordionContent className="text-muted-foreground leading-relaxed">{faq.a}</AccordionContent>
+                  <AccordionTrigger className="text-left font-display font-semibold hover:no-underline">{faq.question}</AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground leading-relaxed">{faq.answer}</AccordionContent>
                 </AccordionItem>
               ))}
             </Accordion>

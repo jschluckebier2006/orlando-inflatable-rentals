@@ -9,6 +9,8 @@ export default function ElevateCelebration() {
       metaDescription="Discover how a bounce house rental can elevate your next celebration. Endless entertainment, active play, and stress-free party planning in Orlando."
       heroImage={siteImages.girlsJumping1}
       category="Party Ideas"
+      slug="elevate-celebration-bounce-house-rental"
+      datePublished="2024-06-15"
     >
       <h2>Introduction</h2>
 
