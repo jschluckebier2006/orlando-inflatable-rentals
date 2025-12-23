@@ -43,18 +43,18 @@ export function Footer() {
                 href="tel:4074971840" 
                 className="flex items-center gap-2 text-background/90 hover:text-secondary transition-colors"
               >
-                <Phone className="h-4 w-4" />
+                <Phone className="h-4 w-4" aria-hidden="true" />
                 <span>(407) 497-1840</span>
               </a>
               <a 
                 href="mailto:orlandoinflatablesllc@gmail.com" 
                 className="flex items-center gap-2 text-background/90 hover:text-secondary transition-colors"
               >
-                <Mail className="h-4 w-4" />
+                <Mail className="h-4 w-4" aria-hidden="true" />
                 <span>orlandoinflatablesllc@gmail.com</span>
               </a>
               <div className="flex items-center gap-2 text-background/90">
-                <MapPin className="h-4 w-4" />
+                <MapPin className="h-4 w-4" aria-hidden="true" />
                 <span>East Orlando, FL</span>
               </div>
             </div>
@@ -138,22 +138,22 @@ export function Footer() {
             </p>
             <div className="flex items-center gap-4">
               <a 
-                href="https://facebook.com" 
+                href="https://www.facebook.com/profile.php?id=61563048615864" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="text-background/70 hover:text-secondary transition-colors"
-                aria-label="Facebook"
+                aria-label="Visit Orlando Inflatables on Facebook"
               >
-                <Facebook className="h-5 w-5" />
+                <Facebook className="h-5 w-5" aria-hidden="true" />
               </a>
               <a 
-                href="https://instagram.com" 
+                href="https://www.instagram.com/orlandoinflatablesllc/" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="text-background/70 hover:text-secondary transition-colors"
-                aria-label="Instagram"
+                aria-label="Visit Orlando Inflatables on Instagram"
               >
-                <Instagram className="h-5 w-5" />
+                <Instagram className="h-5 w-5" aria-hidden="true" />
               </a>
             </div>
           </div>
