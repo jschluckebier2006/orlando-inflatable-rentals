@@ -26,7 +26,9 @@ export const siteImages = {
 // Image sets for different pages
 export const homePageImages = [kidsGroupSlide1, waterSlideBoy1, kidsGroupBounce1];
 export const cityServiceImages = [girlsJumping1, kidsSmilingBounce1, kidsSlide1];
+export const cityServiceImages2 = [waterSlideFun1, toddlerBounce1, slideTunnel1];
 export const deliveryPageImages = [kidsBouncHouse1, toddlerBounce1, slideTunnel1];
+export const deliveryPageImages2 = [girlsJumping1, waterSlideFun1, kidsSmilingBounce1];
 
 // Hero background images for city pages (rotating by index)
 export const heroBackgrounds = [
