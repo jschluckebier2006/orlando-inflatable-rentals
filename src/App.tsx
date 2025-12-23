@@ -73,7 +73,7 @@ const App = () => (
           <Sonner />
           <Routes>
             <Route path="/" element={<Index />} />
-            <Route path="/water-slide-and-bounce-house-rental-orlando" element={<Index />} />
+            <Route path="/water-slide-and-bounce-house-rentals-orlando" element={<Index />} />
             <Route path="/rentals" element={<Rentals />} />
             <Route path="/delivery-area" element={<DeliveryArea />} />
             <Route path="/events" element={<Events />} />
