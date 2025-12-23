@@ -179,14 +179,31 @@ export function Header() {
                 </NavigationMenuItem>
 
                 <NavigationMenuItem>
-                  <Link to="/contact">
-                    <NavigationMenuLink className={cn(
-                      "group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground",
-                      location.pathname === "/contact" && "bg-accent"
-                    )}>
-                      Contact
-                    </NavigationMenuLink>
-                  </Link>
+                  <NavigationMenuTrigger>Contact</NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <ul className="grid w-[200px] gap-2 p-4">
+                      <li>
+                        <NavigationMenuLink asChild>
+                          <Link
+                            to="/contact"
+                            className="block select-none rounded-md p-2 text-sm leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground"
+                          >
+                            Contact Us
+                          </Link>
+                        </NavigationMenuLink>
+                      </li>
+                      <li>
+                        <NavigationMenuLink asChild>
+                          <Link
+                            to="/privacy-policy"
+                            className="block select-none rounded-md p-2 text-sm leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground"
+                          >
+                            Privacy Policy
+                          </Link>
+                        </NavigationMenuLink>
+                      </li>
+                    </ul>
+                  </NavigationMenuContent>
                 </NavigationMenuItem>
               </NavigationMenuList>
             </NavigationMenu>
@@ -267,6 +284,14 @@ export function Header() {
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Contact
+              </Link>
+
+              <Link 
+                to="/privacy-policy" 
+                className="block py-2 pl-4 text-sm text-muted-foreground hover:text-primary"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Privacy Policy
               </Link>
 
               <Button 

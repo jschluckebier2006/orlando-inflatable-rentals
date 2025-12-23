@@ -51,6 +51,7 @@ import SchoolEvents from "./pages/events/SchoolEvents";
 import ChurchEvents from "./pages/events/ChurchEvents";
 import CorporateEvents from "./pages/events/CorporateEvents";
 import GraduationEvents from "./pages/events/GraduationEvents";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -110,6 +111,7 @@ const App = () => (
             <Route path="/events/church-events" element={<ChurchEvents />} />
             <Route path="/events/corporate-events" element={<CorporateEvents />} />
             <Route path="/events/graduation-events" element={<GraduationEvents />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </TooltipProvider>
