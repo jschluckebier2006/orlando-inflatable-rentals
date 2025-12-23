@@ -179,17 +179,6 @@ export function Header() {
                 </NavigationMenuItem>
 
                 <NavigationMenuItem>
-                  <Link to="/blog">
-                    <NavigationMenuLink className={cn(
-                      "group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none",
-                      location.pathname.startsWith("/blog") && "bg-accent"
-                    )}>
-                      Blog
-                    </NavigationMenuLink>
-                  </Link>
-                </NavigationMenuItem>
-
-                <NavigationMenuItem>
                   <NavigationMenuTrigger>Contact</NavigationMenuTrigger>
                   <NavigationMenuContent>
                     <ul className="grid w-[200px] gap-2 p-4">
@@ -200,6 +189,16 @@ export function Header() {
                             className="block select-none rounded-md p-2 text-sm leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground"
                           >
                             Contact Us
+                          </Link>
+                        </NavigationMenuLink>
+                      </li>
+                      <li>
+                        <NavigationMenuLink asChild>
+                          <Link
+                            to="/blog"
+                            className="block select-none rounded-md p-2 text-sm leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground"
+                          >
+                            Blog
                           </Link>
                         </NavigationMenuLink>
                       </li>
@@ -290,19 +289,19 @@ export function Header() {
               </Link>
 
               <Link 
-                to="/blog" 
-                className="block py-2 font-medium text-foreground hover:text-primary"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Blog
-              </Link>
-
-              <Link 
                 to="/contact" 
                 className="block py-2 font-medium text-foreground hover:text-primary"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Contact
+              </Link>
+
+              <Link 
+                to="/blog" 
+                className="block py-2 pl-4 text-sm text-muted-foreground hover:text-primary"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Blog
               </Link>
 
               <Link 
