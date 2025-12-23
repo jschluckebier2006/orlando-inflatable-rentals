@@ -36,6 +36,16 @@ import tropicShockSlide from "@/assets/inventory/15ft-tropic-shock-water-slide.w
 import lavaFallsSlide from "@/assets/inventory/17ft-lava-falls-water-slide.webp";
 import tikiPlungeSlide from "@/assets/inventory/18ft-tiki-plunge-water-slide.webp";
 import islandDropSlide from "@/assets/inventory/18ft-island-drop-water-slide.webp";
+import purpleHurricaneSlide from "@/assets/inventory/18ft-purple-hurricane-water-slide.webp";
+import bajaHybridSlide from "@/assets/inventory/20ft-baja-hybrid-water-slide.webp";
+import goombaySplashSlide from "@/assets/inventory/20ft-goombay-splash-water-slide.webp";
+import paradiseFallsSlide from "@/assets/inventory/20ft-paradise-falls-water-slide.webp";
+import toxicSlide from "@/assets/inventory/21ft-toxic-water-slide.webp";
+import reggaeRushSlide from "@/assets/inventory/25ft-reggae-rush-water-slide.webp";
+import insaneHurricaneSlide from "@/assets/inventory/27ft-insane-hurricane-water-slide.webp";
+import backyardObstacle from "@/assets/inventory/30ft-backyard-obstacle-course.webp";
+import flashpointObstacle from "@/assets/inventory/46ft-flashpoint-obstacle-course.webp";
+import radioactiveRunObstacle from "@/assets/inventory/53ft-radioactive-run-obstacle-course.webp";
 
 export const products: Product[] = [
   // Water Slides
@@ -70,6 +80,62 @@ export const products: Product[] = [
     category: "water-slides",
     price: 319,
     image: islandDropSlide,
+  },
+  {
+    id: "purple-hurricane-18",
+    name: "18' Purple Hurricane Single Lane Water Slide",
+    slug: "18-purple-hurricane-water-slide",
+    category: "water-slides",
+    price: 279,
+    image: purpleHurricaneSlide,
+  },
+  {
+    id: "baja-hybrid-20",
+    name: "20' Baja Hybrid Water Slide",
+    slug: "20-baja-hybrid-water-slide",
+    category: "water-slides",
+    price: 369,
+    image: bajaHybridSlide,
+  },
+  {
+    id: "goombay-splash-20",
+    name: "20' Goombay Splash Dual Lane Water Slide",
+    slug: "20-goombay-splash-water-slide",
+    category: "water-slides",
+    price: 369,
+    image: goombaySplashSlide,
+  },
+  {
+    id: "paradise-falls-20",
+    name: "20' Paradise Falls Water Slide",
+    slug: "20-paradise-falls-water-slide",
+    category: "water-slides",
+    price: 369,
+    image: paradiseFallsSlide,
+  },
+  {
+    id: "toxic-21",
+    name: "21' Toxic Dual Lane Water Slide",
+    slug: "21-toxic-water-slide",
+    category: "water-slides",
+    price: 399,
+    image: toxicSlide,
+  },
+  {
+    id: "reggae-rush-25",
+    name: "25' Reggae Rush Dual Lane Water Slide",
+    slug: "25-reggae-rush-water-slide",
+    category: "water-slides",
+    price: 559,
+    image: reggaeRushSlide,
+  },
+  {
+    id: "insane-hurricane-27",
+    name: "27' Insane Hurricane Water Slide",
+    slug: "27-insane-hurricane-water-slide",
+    category: "water-slides",
+    price: 599,
+    image: insaneHurricaneSlide,
   },
   
   // Bounce & Slide Combos
@@ -122,6 +188,32 @@ export const products: Product[] = [
     category: "interactive-games",
     price: 189,
     image: sportsGame,
+  },
+  
+  // Obstacle Courses
+  {
+    id: "backyard-obstacle-30",
+    name: "30' Backyard Obstacle Course",
+    slug: "30-backyard-obstacle-course",
+    category: "obstacle-courses",
+    price: 259,
+    image: backyardObstacle,
+  },
+  {
+    id: "flashpoint-obstacle-46",
+    name: "46' Flashpoint Wet/Dry Obstacle Course",
+    slug: "46-flashpoint-obstacle-course",
+    category: "obstacle-courses",
+    price: 389,
+    image: flashpointObstacle,
+  },
+  {
+    id: "radioactive-run-53",
+    name: "53' Radioactive Run Dual Lane Obstacle Course",
+    slug: "53-radioactive-run-obstacle-course",
+    category: "obstacle-courses",
+    price: 395,
+    image: radioactiveRunObstacle,
   },
 ];
 
