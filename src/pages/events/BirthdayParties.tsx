@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
+import { siteImages } from "@/components/home/ContentImages";
 import { 
   Cake, 
   Star, 
@@ -139,28 +140,34 @@ const BirthdayParties = () => {
       />
 
       {/* Hero Section */}
-      <section className="relative py-20 bg-gradient-to-br from-primary/10 via-background to-secondary/10">
-        <div className="container-page">
+      <section className="relative py-20 overflow-hidden">
+        {/* Background Image */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: `url(${siteImages.girlsJumping1})` }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/90 via-primary/80 to-primary/90" />
+        <div className="container-page relative z-10">
           <div className="max-w-4xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full mb-6">
+            <div className="inline-flex items-center gap-2 bg-white/20 text-white px-4 py-2 rounded-full mb-6">
               <Cake className="h-5 w-5" />
               <span className="font-medium">Birthday Party Specialists</span>
             </div>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-white">
               Birthday Party Inflatable Rentals in Orlando
             </h1>
-            <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">
+            <p className="text-xl text-white/90 mb-8 max-w-3xl mx-auto">
               Create magical birthday memories with our premium bounce houses, water slides, and party entertainment. 
               Serving Orlando and East Orange County with professional delivery and setup.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" asChild>
+              <Button size="lg" className="bg-white text-primary hover:bg-white/90" asChild>
                 <Link to="/contact">
                   <Phone className="mr-2 h-5 w-5" />
                   Get a Free Quote
                 </Link>
               </Button>
-              <Button size="lg" variant="outline" asChild>
+              <Button size="lg" variant="outline" className="bg-transparent border-white text-white hover:bg-white/20" asChild>
                 <Link to="/rentals">Browse All Rentals</Link>
               </Button>
             </div>
