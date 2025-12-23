@@ -10,6 +10,7 @@ import { EventTypesSection } from "@/components/home/EventTypesSection";
 import { ReviewsSection } from "@/components/home/ReviewsSection";
 import { FAQSection } from "@/components/home/FAQSection";
 import { CTASection } from "@/components/home/CTASection";
+import { LifestyleImageStrip, imageGroups } from "@/components/ui/LifestyleImages";
 
 const Index = () => {
   return (
@@ -24,10 +25,13 @@ const Index = () => {
       <HeroSection />
       <CategoriesSection />
       <SEOContentSection />
+      <LifestyleImageStrip images={imageGroups.home} />
       <PopularRentalsSection />
       <DeliveryAreasSection />
+      <LifestyleImageStrip images={imageGroups.events} />
       <EventTypesSection />
       <ReviewsSection />
+      <LifestyleImageStrip images={imageGroups.bounceHouse} />
       <FAQSection />
       <CTASection />
     </Layout>

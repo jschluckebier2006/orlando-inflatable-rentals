@@ -10,6 +10,7 @@ import { Waves, Check, Phone, Shield, Clock, Droplets, Sun } from "lucide-react"
 import { useState } from "react";
 import { JotformModal } from "@/components/JotformModal";
 import { Helmet } from "react-helmet-async";
+import { LifestyleImageStrip, imageGroups } from "@/components/ui/LifestyleImages";
 
 const features = [
   { icon: Shield, title: "Licensed & Insured", description: "Full liability coverage included" },
@@ -98,6 +99,9 @@ export default function WaterSlideRentals() {
         </div>
       </section>
 
+      {/* Lifestyle Images Strip 1 */}
+      <LifestyleImageStrip images={imageGroups.waterSlide} />
+
       {/* Main Content */}
       <section className="section-padding section-alt">
         <div className="container-page">
@@ -166,6 +170,9 @@ export default function WaterSlideRentals() {
         </div>
       </section>
 
+      {/* Lifestyle Images Strip 2 */}
+      <LifestyleImageStrip images={imageGroups.home} />
+
       {/* More Content */}
       <section className="section-padding section-alt">
         <div className="container-page">
@@ -199,6 +206,9 @@ export default function WaterSlideRentals() {
           </div>
         </div>
       </section>
+
+      {/* Lifestyle Images Strip 3 */}
+      <LifestyleImageStrip images={imageGroups.bounceHouse} />
 
       {/* FAQ Section */}
       <section className="section-padding">

@@ -16,6 +16,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { LifestyleImageStrip, imageGroups } from "@/components/ui/LifestyleImages";
 
 interface CityServicePageProps {
   city: string;
@@ -179,6 +180,9 @@ export function CityServicePage({ city, citySlug, serviceType, nearbyAreas, loca
         </div>
       </section>
 
+      {/* Lifestyle Images Strip 1 */}
+      <LifestyleImageStrip images={imageGroups.cityService} />
+
       {/* H2: Why Choose Our Service */}
       <section className="section-padding section-alt">
         <div className="container-page">
@@ -256,6 +260,9 @@ export function CityServicePage({ city, citySlug, serviceType, nearbyAreas, loca
           </div>
         </div>
       </section>
+
+      {/* Lifestyle Images Strip 2 */}
+      <LifestyleImageStrip images={imageGroups.bounceHouse} />
 
       {/* Reviews Section */}
       <ReviewsSection />
@@ -345,6 +352,9 @@ export function CityServicePage({ city, citySlug, serviceType, nearbyAreas, loca
           </div>
         </div>
       </section>
+
+      {/* Lifestyle Images Strip 3 */}
+      <LifestyleImageStrip images={imageGroups.home} />
 
       {/* H2: Book Your Rental Today */}
       <section className="section-padding section-alt">
