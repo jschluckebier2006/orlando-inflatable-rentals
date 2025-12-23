@@ -3,7 +3,8 @@ import { SEOHead } from "@/components/seo/SEOHead";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
 import { CTASection } from "@/components/home/CTASection";
 import { ReviewsSection } from "@/components/home/ReviewsSection";
-import { Card, CardContent } from "@/components/ui/card";
+import { ProductGrid } from "@/components/inventory/ProductGrid";
+import { getConcessions } from "@/data/inventory";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -20,12 +21,6 @@ const features = [
   { icon: Sparkles, title: "Fresh Supplies", description: "Quality ingredients provided" },
 ];
 
-const concessions = [
-  { name: "Popcorn Machine", servings: "50+ servings", includes: "Kernels, oil, bags", rental: "Full Day", image: "https://images.unsplash.com/photo-1585647347483-22b66260dfff?w=400&h=300&fit=crop" },
-  { name: "Snow Cone Machine", servings: "75+ servings", includes: "Ice, syrup, cups", rental: "Full Day", image: "https://images.unsplash.com/photo-1497034825429-c343d7c6a68f?w=400&h=300&fit=crop" },
-  { name: "Cotton Candy Machine", servings: "50+ servings", includes: "Sugar, cones, bags", rental: "Full Day", image: "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400&h=300&fit=crop" },
-  { name: "Nacho Cheese Warmer", servings: "40+ servings", includes: "Cheese, chips, trays", rental: "Full Day", image: "https://images.unsplash.com/photo-1582169296194-e4d644c48063?w=400&h=300&fit=crop" },
-];
 
 const faqs = [
   { q: "Do you provide the supplies for concession machines?", a: "Yes! All our concession rentals include supplies for the number of servings listed. Additional supply packages can be purchased if you're expecting a larger crowd." },
@@ -155,23 +150,7 @@ export default function ConcessionRentals() {
       <section className="section-padding">
         <div className="container-page">
           <h2 className="font-display text-3xl font-bold text-foreground mb-8 text-center">Our Concession Inventory</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {concessions.map((item) => (
-              <Card key={item.name} className="overflow-hidden card-hover">
-                <div className="aspect-[4/3] overflow-hidden">
-                  <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
-                </div>
-                <CardContent className="p-4">
-                  <h3 className="font-display font-semibold text-foreground mb-2">{item.name}</h3>
-                  <div className="space-y-1 text-sm text-muted-foreground">
-                    <p>Servings: {item.servings}</p>
-                    <p>Includes: {item.includes}</p>
-                    <p>Rental: {item.rental}</p>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          <ProductGrid products={getConcessions()} />
         </div>
       </section>
 
