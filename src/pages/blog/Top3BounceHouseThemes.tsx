@@ -29,9 +29,10 @@ export default function Top3BounceHouseThemes() {
       <h2>Why Choose Orlando Inflatable Rentals LLC for Bounce House Themes?</h2>
 
       <p>
-        Orlando Inflatable Rentals LLC provides <Link to="/bounce-house-rentals">bounce house</Link> themes 
-        in Orlando with a focus on safety, convenience, and customer satisfaction. The company 
-        is family-owned, operating since 2019, and serves Central Florida communities.
+        <Link to="/">Orlando Inflatable Rentals LLC</Link> provides <Link to="/bounce-house-rentals">bounce house</Link> themes 
+        in Orlando with a focus on safety, convenience, and customer satisfaction. As the 
+        <a href="https://g.page/r/CfkLrEA027rSEAE" target="_blank" rel="noopener noreferrer">best bounce house rentals in Orlando</a>, 
+        the company is family-owned, operating since 2019, and serves Central Florida communities.
       </p>
 
       <ul>

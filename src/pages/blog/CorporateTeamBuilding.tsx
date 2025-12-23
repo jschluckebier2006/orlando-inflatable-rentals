@@ -28,10 +28,12 @@ export default function CorporateTeamBuilding() {
 
       <p>
         Compared to typical icebreakers or seminars, these activities promote healthy competition 
-        and drive meaningful connections across departments. Orlando Inflatable Rentals LLC 
-        specializes in providing sanitized, safety-certified inflatables tailored for professional 
+        and drive meaningful connections across departments. <Link to="/">Orlando Inflatable Rentals LLC</Link> specializes 
+        in providing sanitized, safety-certified inflatables tailored for professional 
         team-building outcomes, ensuring inclusivity and success for organizations aiming to 
-        improve workplace dynamics, creativity, and employee satisfaction.
+        improve workplace dynamics, creativity, and employee satisfaction. We're recognized as the 
+        <a href="https://g.page/r/CfkLrEA027rSEAE" target="_blank" rel="noopener noreferrer">best bounce house rentals in Orlando</a> for 
+        corporate events.
       </p>
 
       <h2>Why Are Inflatables a Top Choice for Adult Corporate Team Building Events?</h2>
