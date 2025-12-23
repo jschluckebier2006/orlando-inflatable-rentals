@@ -103,6 +103,11 @@ const App = () => (
             <Route path="/water-slide-rentals-waterford-lakes" element={<WaterSlideWaterfordLakes />} />
             <Route path="/bounce-house-rentals-wedgefield" element={<BounceHouseWedgefield />} />
             <Route path="/water-slide-rentals-wedgefield" element={<WaterSlideWedgefield />} />
+            <Route path="/events/birthday-parties" element={<BirthdayParties />} />
+            <Route path="/events/school-events" element={<SchoolEvents />} />
+            <Route path="/events/church-events" element={<ChurchEvents />} />
+            <Route path="/events/corporate-events" element={<CorporateEvents />} />
+            <Route path="/events/graduation-events" element={<GraduationEvents />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </TooltipProvider>
