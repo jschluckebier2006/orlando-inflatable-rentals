@@ -27,9 +27,8 @@ export function CTASection() {
             </Button>
             <a href="tel:4074971840">
               <Button
-                variant="outline"
                 size="lg"
-                className="border-primary-foreground/30 text-primary-foreground hover:bg-white/10 btn-bounce text-lg px-8"
+                className="bg-white text-primary hover:bg-white/90 btn-bounce text-lg px-8 font-semibold"
               >
                 <Phone className="mr-2 h-5 w-5" />
                 (407) 497-1840
