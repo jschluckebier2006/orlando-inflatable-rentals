@@ -25,7 +25,7 @@ import tablesChairsImg from "@/assets/tables-chairs-category.png";
 const services = [
   { name: "Bounce Houses", href: "/bounce-house-rentals", image: bounceHouseCategoryImg },
   { name: "Bounce & Slide Combos", href: "/bounce-slide-combo-rentals", image: bounceSlideComboImg },
-  { name: "Water Slides", href: "/water-slide-rentals", image: waterSlideCategoryImg },
+  { name: "Water & Dry Slides", href: "/water-slide-rentals", image: waterSlideCategoryImg },
   { name: "Obstacle Courses", href: "/obstacle-course-rentals", image: obstacleCourseImg },
   { name: "Interactive Games", href: "/interactive-game-rentals", image: interactiveGamesImg },
   { name: "Concessions", href: "/concession-rentals", image: concessionsImg },
