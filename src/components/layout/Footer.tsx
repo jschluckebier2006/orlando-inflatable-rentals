@@ -115,8 +115,8 @@ export function Footer() {
             {/* Google Map Embed */}
             <div className="rounded-lg overflow-hidden">
               <iframe
-                title="Orlando Inflatables Service Area"
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d224444.89991554483!2d-81.5318813!3d28.5383355!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x88e77b5e5d3c3c49%3A0x6dce3c5d6a3e0d5c!2sOrlando%2C%20FL!5e0!3m2!1sen!2sus!4v1703123456789!5m2!1sen!2sus"
+                title="Orlando Inflatable Rentals LLC"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d224262.43870853822!2d-81.42556538153113!3d28.56674155418236!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x88e75dea47c42fdf%3A0xd2badb3440ac0bf9!2sOrlando%20Inflatable%20Rentals%20LLC!5e0!3m2!1sen!2sus!4v1766524561048!5m2!1sen!2sus"
                 width="100%"
                 height="150"
                 style={{ border: 0 }}
