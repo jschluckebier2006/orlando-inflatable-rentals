@@ -434,16 +434,16 @@ const BirthdayParties = () => {
           </p>
           <div className="flex flex-wrap justify-center gap-3">
             {[
-              { name: "Alafaya", href: "/delivery-area/alafaya" },
-              { name: "Avalon Park", href: "/delivery-area/avalon-park" },
-              { name: "Waterford Lakes", href: "/delivery-area/waterford-lakes" },
-              { name: "Stoneybrook", href: "/delivery-area/stoneybrook" },
-              { name: "Eastwood", href: "/delivery-area/eastwood" },
-              { name: "Azalea Park", href: "/delivery-area/azalea-park" },
-              { name: "Christmas", href: "/delivery-area/christmas" },
-              { name: "Chuluota", href: "/delivery-area/chuluota" },
-              { name: "Bithlo", href: "/delivery-area/bithlo" },
-              { name: "Wedgefield", href: "/delivery-area/wedgefield" }
+              { name: "Alafaya", href: "/water-slide-and-bounce-house-rental-alafaya" },
+              { name: "Avalon Park", href: "/water-slide-and-bounce-house-rental-avalon-park" },
+              { name: "Waterford Lakes", href: "/water-slide-and-bounce-house-rental-waterford-lakes" },
+              { name: "Stoneybrook", href: "/water-slide-and-bounce-house-rental-stoneybrook" },
+              { name: "Eastwood", href: "/water-slide-and-bounce-house-rental-eastwood" },
+              { name: "Azalea Park", href: "/water-slide-and-bounce-house-rental-azalea-park" },
+              { name: "Christmas", href: "/water-slide-and-bounce-house-rental-christmas" },
+              { name: "Chuluota", href: "/water-slide-and-bounce-house-rental-chuluota" },
+              { name: "Bithlo", href: "/water-slide-and-bounce-house-rental-bithlo" },
+              { name: "Wedgefield", href: "/water-slide-and-bounce-house-rental-wedgefield" }
             ].map((area) => (
               <Link
                 key={area.name}

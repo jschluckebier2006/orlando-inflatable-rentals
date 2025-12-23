@@ -76,12 +76,12 @@ export function CityDeliveryPage({
       <SEOHead
         title={metaTitle}
         description={metaDescription}
-        canonical={`/delivery-area/${citySlug}`}
+        canonical={`/water-slide-and-bounce-house-rental-${citySlug}`}
       />
       <BreadcrumbSchema
         items={[
           { name: "Delivery Areas", href: "/delivery-area" },
-          { name: cityName, href: `/delivery-area/${citySlug}` },
+          { name: cityName, href: `/water-slide-and-bounce-house-rental-${citySlug}` },
         ]}
       />
 
@@ -316,7 +316,7 @@ export function CityDeliveryPage({
           </h2>
           <div className="flex flex-wrap justify-center gap-4">
             {nearbyAreas.map((area) => (
-              <Link key={area.slug} to={`/delivery-area/${area.slug}`}>
+              <Link key={area.slug} to={`/water-slide-and-bounce-house-rental-${area.slug}`}>
                 <Button variant="outline" className="btn-bounce">
                   <MapPin className="mr-2 h-4 w-4" /> {area.name}
                 </Button>

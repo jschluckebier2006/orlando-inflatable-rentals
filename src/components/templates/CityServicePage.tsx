@@ -473,7 +473,7 @@ export function CityServicePage({ city, citySlug, serviceType, nearbyAreas, loca
               Explore More Party Rentals
             </h3>
             <div className="grid md:grid-cols-2 gap-4 mb-8">
-              <Link to={`/delivery-area/${citySlug}`}>
+              <Link to={`/water-slide-and-bounce-house-rental-${citySlug}`}>
                 <Card className="h-full card-hover">
                   <CardContent className="p-4 flex items-center gap-3">
                     <MapPin className="h-6 w-6 text-primary" />

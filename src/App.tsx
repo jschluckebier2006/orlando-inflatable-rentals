@@ -73,6 +73,7 @@ const App = () => (
           <Sonner />
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/water-slide-and-bounce-house-rental-orlando" element={<Index />} />
             <Route path="/rentals" element={<Rentals />} />
             <Route path="/delivery-area" element={<DeliveryArea />} />
             <Route path="/events" element={<Events />} />
@@ -84,16 +85,16 @@ const App = () => (
             <Route path="/interactive-game-rentals" element={<InteractiveGameRentals />} />
             <Route path="/concession-rentals" element={<ConcessionRentals />} />
             <Route path="/table-chair-rentals" element={<TableChairRentals />} />
-            <Route path="/delivery-area/alafaya" element={<AlafayaDelivery />} />
-            <Route path="/delivery-area/avalon-park" element={<AvalonParkDelivery />} />
-            <Route path="/delivery-area/azalea-park" element={<AzaleaParkDelivery />} />
-            <Route path="/delivery-area/bithlo" element={<BithloDelivery />} />
-            <Route path="/delivery-area/christmas" element={<ChristmasDelivery />} />
-            <Route path="/delivery-area/chuluota" element={<ChuluotaDelivery />} />
-            <Route path="/delivery-area/eastwood" element={<EastwoodDelivery />} />
-            <Route path="/delivery-area/stoneybrook" element={<StoneybrookDelivery />} />
-            <Route path="/delivery-area/waterford-lakes" element={<WaterfordLakesDelivery />} />
-            <Route path="/delivery-area/wedgefield" element={<WedgefieldDelivery />} />
+            <Route path="/water-slide-and-bounce-house-rental-alafaya" element={<AlafayaDelivery />} />
+            <Route path="/water-slide-and-bounce-house-rental-avalon-park" element={<AvalonParkDelivery />} />
+            <Route path="/water-slide-and-bounce-house-rental-azalea-park" element={<AzaleaParkDelivery />} />
+            <Route path="/water-slide-and-bounce-house-rental-bithlo" element={<BithloDelivery />} />
+            <Route path="/water-slide-and-bounce-house-rental-christmas" element={<ChristmasDelivery />} />
+            <Route path="/water-slide-and-bounce-house-rental-chuluota" element={<ChuluotaDelivery />} />
+            <Route path="/water-slide-and-bounce-house-rental-eastwood" element={<EastwoodDelivery />} />
+            <Route path="/water-slide-and-bounce-house-rental-stoneybrook" element={<StoneybrookDelivery />} />
+            <Route path="/water-slide-and-bounce-house-rental-waterford-lakes" element={<WaterfordLakesDelivery />} />
+            <Route path="/water-slide-and-bounce-house-rental-wedgefield" element={<WedgefieldDelivery />} />
             <Route path="/bounce-house-rentals-alafaya" element={<BounceHouseAlafaya />} />
             <Route path="/water-slide-rentals-alafaya" element={<WaterSlideAlafaya />} />
             <Route path="/bounce-house-rentals-avalon-park" element={<BounceHouseAvalonPark />} />
