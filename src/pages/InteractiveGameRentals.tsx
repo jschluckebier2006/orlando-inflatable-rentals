@@ -86,8 +86,16 @@ export default function InteractiveGameRentals() {
         </div>
       </section>
 
-      {/* Features */}
+      {/* Inventory Grid */}
       <section className="section-padding">
+        <div className="container-page">
+          <h2 className="font-display text-3xl font-bold text-foreground mb-8 text-center">Our Interactive Game Inventory</h2>
+          <ProductGrid products={getInteractiveGames()} columns={4} />
+        </div>
+      </section>
+
+      {/* Features */}
+      <section className="section-padding section-alt">
         <div className="container-page">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {features.map((feature) => (
@@ -104,7 +112,7 @@ export default function InteractiveGameRentals() {
       </section>
 
       {/* Main Content */}
-      <section className="section-padding section-alt">
+      <section className="section-padding">
         <div className="container-page">
           <div className="max-w-4xl mx-auto prose prose-lg">
             <h2 className="font-display text-3xl font-bold text-foreground mb-6">
@@ -143,14 +151,6 @@ export default function InteractiveGameRentals() {
               For large events, we recommend combining multiple interactive games to create a complete carnival atmosphere. Add a basketball game, a soccer darts station, and a wrecking ball arena for an unforgettable experience that gives guests plenty of options for fun.
             </p>
           </div>
-        </div>
-      </section>
-
-      {/* Inventory Grid */}
-      <section className="section-padding">
-        <div className="container-page">
-          <h2 className="font-display text-3xl font-bold text-foreground mb-8 text-center">Our Interactive Game Inventory</h2>
-          <ProductGrid products={getInteractiveGames()} columns={4} />
         </div>
       </section>
 

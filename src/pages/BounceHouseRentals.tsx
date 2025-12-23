@@ -93,8 +93,16 @@ export default function BounceHouseRentals() {
         </div>
       </section>
 
-      {/* Features */}
+      {/* Inventory Grid */}
       <section className="section-padding">
+        <div className="container-page">
+          <h2 className="font-display text-3xl font-bold text-foreground mb-8 text-center">Our Bounce House Inventory</h2>
+          <ProductGrid products={getBounceHouses()} />
+        </div>
+      </section>
+
+      {/* Features */}
+      <section className="section-padding section-alt">
         <div className="container-page">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {features.map((feature) => (
@@ -111,7 +119,7 @@ export default function BounceHouseRentals() {
       </section>
 
       {/* Main Content */}
-      <section className="section-padding section-alt">
+      <section className="section-padding">
         <div className="container-page">
           <div className="max-w-4xl mx-auto prose prose-lg">
             <h2 className="font-display text-3xl font-bold text-foreground mb-6">
@@ -151,14 +159,6 @@ export default function BounceHouseRentals() {
               Each bounce house is designed with safety features including reinforced seams, secure anchor points, and mesh windows for visibility. We also offer toddler-specific bounce houses with lower walls and softer surfaces for our youngest guests.
             </p>
           </div>
-        </div>
-      </section>
-
-      {/* Inventory Grid */}
-      <section className="section-padding">
-        <div className="container-page">
-          <h2 className="font-display text-3xl font-bold text-foreground mb-8 text-center">Our Bounce House Inventory</h2>
-          <ProductGrid products={getBounceHouses()} />
         </div>
       </section>
 
