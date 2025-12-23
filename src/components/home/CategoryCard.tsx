@@ -11,8 +11,8 @@ interface CategoryCardProps {
 }
 
 export function CategoryCard({ title, products, categoryLink }: CategoryCardProps) {
-  // Show up to 5 products
-  const displayProducts = products.slice(0, 5);
+  // Limit to 3 products
+  const displayProducts = products.slice(0, 3);
   
   if (displayProducts.length === 0) return null;
 
