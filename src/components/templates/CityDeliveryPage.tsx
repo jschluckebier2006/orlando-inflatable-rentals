@@ -124,8 +124,39 @@ export function CityDeliveryPage({
         </div>
       </section>
 
-      {/* Main Content */}
+      {/* Services Grid - Moved to top */}
       <section className="section-padding">
+        <div className="container-page">
+          <div className="max-w-5xl mx-auto">
+            <h2 className="font-display text-3xl font-bold text-foreground mb-6 text-center">
+              All Party Rental Services in {cityName}
+            </h2>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
+              {services.map((service) => (
+                <Link key={service.name} to={service.href}>
+                  <Card className="h-full card-hover overflow-hidden">
+                    {service.image && (
+                      <div className="aspect-[16/9] overflow-hidden">
+                        <img 
+                          src={service.image} 
+                          alt={service.name} 
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    )}
+                    <CardContent className="p-4 flex items-center justify-center">
+                      <span className="font-medium text-foreground text-center text-sm">{service.name}</span>
+                    </CardContent>
+                  </Card>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Main Content */}
+      <section className="section-padding section-alt">
         <div className="container-page">
           <div className="max-w-4xl mx-auto">
             {/* H2: Party Rental Equipment */}
@@ -216,38 +247,6 @@ export function CityDeliveryPage({
               images={[deliveryPageImages[1], deliveryPageImages[2], deliveryPageImages[0]]} 
               alts={[`Party celebration in ${cityName}`, `${cityName} water slide fun`, `Birthday party ${cityName}`]} 
             />
-
-            {/* H2: Services Grid */}
-            <h2 className="font-display text-3xl font-bold text-foreground mb-6">
-              All Party Rental Services in {cityName}
-            </h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
-              {services.map((service) => (
-                <Link key={service.name} to={service.href}>
-                  <Card className="h-full card-hover overflow-hidden">
-                    {service.image && (
-                      <div className="aspect-[16/9] overflow-hidden">
-                        <img 
-                          src={service.image} 
-                          alt={service.name} 
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                    )}
-                    <CardContent className="p-4 flex items-center justify-center">
-                      <span className="font-medium text-foreground">{service.name}</span>
-                    </CardContent>
-                  </Card>
-                </Link>
-              ))}
-            </div>
-
-            <h3 className="font-display text-xl font-semibold text-foreground mb-4">
-              Additional Rental Equipment for {cityName} Events
-            </h3>
-            <p className="text-muted-foreground leading-relaxed mb-8">
-              Complete your party package with our obstacle courses for competitive fun, interactive games like basketball shootouts and jousting arenas, concession machines for popcorn, cotton candy, and snow cones, plus tables and chairs to keep your guests comfortable throughout the event.
-            </p>
 
             {/* H2: Why Choose Us */}
             <h2 className="font-display text-3xl font-bold text-foreground mb-6">
