@@ -57,6 +57,15 @@ import fullCourtPressGame from "@/assets/inventory/full-court-press-game.webp";
 import lavaRaptorCombo from "@/assets/inventory/lava-raptor-combo.webp";
 import popcornMachine from "@/assets/inventory/popcorn-machine.webp";
 import kidsPicnicTable from "@/assets/inventory/kids-picnic-table.webp";
+// Final batch imports
+import powerGenerator from "@/assets/inventory/power-generator.webp";
+import primaryColorBounce from "@/assets/inventory/primary-color-bounce-house.webp";
+import snoKoneMachine from "@/assets/inventory/sno-kone-machine.webp";
+import southBeachCombo from "@/assets/inventory/south-beach-combo.webp";
+import summerSplashSlide from "@/assets/inventory/summer-splash-water-slide.webp";
+import whiteFoldingTable from "@/assets/inventory/white-folding-table.webp";
+import tropicalCrushCombo from "@/assets/inventory/tropical-crush-combo.webp";
+import wreckingBallGame from "@/assets/inventory/wrecking-ball-game.webp";
 
 export const products: Product[] = [
   // Water Slides
@@ -315,6 +324,80 @@ export const products: Product[] = [
     category: "tables-chairs",
     price: 10,
     image: kidsPicnicTable,
+  },
+  {
+    id: "white-folding-table",
+    name: "White Folding Table",
+    slug: "white-folding-table",
+    category: "tables-chairs",
+    price: 7,
+    image: whiteFoldingTable,
+  },
+  
+  // Final batch - Water Slides
+  {
+    id: "summer-splash-water-slide",
+    name: "Summer Splash Water Slide",
+    slug: "summer-splash-water-slide",
+    category: "water-slides",
+    price: 239,
+    image: summerSplashSlide,
+  },
+  
+  // Final batch - Bounce Houses
+  {
+    id: "primary-color-bounce",
+    name: "Primary Color Bounce House",
+    slug: "primary-color-bounce-house",
+    category: "bounce-houses",
+    price: 139,
+    image: primaryColorBounce,
+  },
+  
+  // Final batch - Bounce/Slide Combos
+  {
+    id: "south-beach-combo",
+    name: "South Beach 7-in-1 Combo",
+    slug: "south-beach-combo",
+    category: "bounce-slide-combos",
+    price: 269,
+    image: southBeachCombo,
+  },
+  {
+    id: "tropical-crush-combo",
+    name: "Tropical Crush 7-in-1 Combo",
+    slug: "tropical-crush-combo",
+    category: "bounce-slide-combos",
+    price: 269,
+    image: tropicalCrushCombo,
+  },
+  
+  // Final batch - Interactive Games
+  {
+    id: "wrecking-ball-game",
+    name: "Wrecking Ball Game",
+    slug: "wrecking-ball-game",
+    category: "interactive-games",
+    price: 249,
+    image: wreckingBallGame,
+  },
+  
+  // Final batch - Concessions
+  {
+    id: "sno-kone-machine",
+    name: "Sno-Kone Machine",
+    slug: "sno-kone-machine",
+    category: "concessions",
+    price: 65,
+    image: snoKoneMachine,
+  },
+  {
+    id: "power-generator",
+    name: "Power Generator",
+    slug: "power-generator",
+    category: "concessions",
+    price: 125,
+    image: powerGenerator,
   },
 ];
 
