@@ -10,6 +10,7 @@ import { Castle, Check, Star, Phone, Shield, Clock, Users, Sparkles } from "luci
 import { useState } from "react";
 import { JotformModal } from "@/components/JotformModal";
 import { Helmet } from "react-helmet-async";
+import { LifestyleImageStrip, imageGroups } from "@/components/ui/LifestyleImages";
 
 const features = [
   { icon: Shield, title: "Licensed & Insured", description: "Full liability coverage for your peace of mind" },
@@ -106,6 +107,9 @@ export default function BounceHouseRentals() {
         </div>
       </section>
 
+      {/* Lifestyle Images Strip 1 */}
+      <LifestyleImageStrip images={imageGroups.bounceHouse} />
+
       {/* Main Content */}
       <section className="section-padding section-alt">
         <div className="container-page">
@@ -174,6 +178,9 @@ export default function BounceHouseRentals() {
         </div>
       </section>
 
+      {/* Lifestyle Images Strip 2 */}
+      <LifestyleImageStrip images={imageGroups.home} />
+
       {/* More Content */}
       <section className="section-padding section-alt">
         <div className="container-page">
@@ -210,6 +217,9 @@ export default function BounceHouseRentals() {
           </div>
         </div>
       </section>
+
+      {/* Lifestyle Images Strip 3 */}
+      <LifestyleImageStrip images={imageGroups.events} />
 
       {/* FAQ Section */}
       <section className="section-padding">
