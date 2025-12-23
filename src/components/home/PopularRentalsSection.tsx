@@ -3,12 +3,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Star } from "lucide-react";
-
+import bounceHouseCategoryImg from "@/assets/bounce-house-category.png";
 const popularRentals = [
   {
     name: "Castle Combo Bounce House",
     category: "Bounce House",
-    image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop",
+    image: bounceHouseCategoryImg,
     rating: 5,
     reviews: 24,
     href: "/bounce-house-rentals",
