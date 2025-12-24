@@ -2,6 +2,7 @@ import { Layout } from "@/components/layout/Layout";
 import { SEOHead } from "@/components/seo/SEOHead";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
 import { ServiceSchema } from "@/components/seo/ServiceSchema";
+import { FAQPageSchema } from "@/components/seo/FAQPageSchema";
 import { ReviewsSection } from "@/components/home/ReviewsSection";
 import { EventCategoriesGrid } from "@/components/home/EventCategoriesGrid";
 import { Button } from "@/components/ui/button";
@@ -108,7 +109,7 @@ const ChurchEvents = () => {
   return (
     <Layout>
       <SEOHead
-        title="Church Event Inflatable Rentals Orlando | VBS, Fall Festivals & Outreach"
+        title="Church Event Inflatable Rentals Orlando | VBS & Fall Festivals"
         description="Professional inflatable rentals for church events in Orlando. VBS, fall festivals, community outreach & more. Safe, family-friendly entertainment. Get a free quote!"
         canonical="/events/church-event-inflatable-rentals-in-orlando"
       />
@@ -121,6 +122,15 @@ const ChurchEvents = () => {
         items={[
           { name: "Events", href: "/events" },
           { name: "Church Events", href: "/events/church-event-inflatable-rentals-in-orlando" }
+        ]}
+      />
+      <FAQPageSchema
+        faqs={[
+          { question: "Do you offer ministry pricing for church events?", answer: "Yes. We offer special ministry pricing because we believe in supporting the important work churches do in our community. Contact us for church event discounts." },
+          { question: "What inflatables work best for Vacation Bible School?", answer: "Bounce house combos and obstacle courses are popular for VBS because they accommodate multiple age groups and provide hours of entertainment throughout the week." },
+          { question: "Can you provide equipment for fall festivals?", answer: "Absolutely. We specialize in church fall festivals with multiple inflatables, concession machines, and games that create a carnival atmosphere for your community." },
+          { question: "Are your inflatables appropriate for church settings?", answer: "Yes. All our inflatables are family-friendly and appropriate for church settings. We have a variety of themes suitable for faith-based events." },
+          { question: "Do you provide insurance for church events?", answer: "Yes. We carry comprehensive liability insurance and can provide certificates naming your church as an additional insured for your event." }
         ]}
       />
 

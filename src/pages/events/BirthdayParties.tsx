@@ -2,6 +2,7 @@ import { Layout } from "@/components/layout/Layout";
 import { SEOHead } from "@/components/seo/SEOHead";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
 import { ServiceSchema } from "@/components/seo/ServiceSchema";
+import { FAQPageSchema } from "@/components/seo/FAQPageSchema";
 import { ReviewsSection } from "@/components/home/ReviewsSection";
 import { EventCategoriesGrid } from "@/components/home/EventCategoriesGrid";
 import { Button } from "@/components/ui/button";
@@ -118,7 +119,7 @@ const BirthdayParties = () => {
   return (
     <Layout>
       <SEOHead
-        title="Birthday Party Inflatable Rentals Orlando | Bounce Houses for Kids Parties"
+        title="Birthday Party Bounce House Rentals Orlando | Kids Party Fun"
         description="Make your child's birthday unforgettable with bounce house rentals in Orlando. Professional delivery, setup & pickup. Safe, clean inflatables for all ages. Book today!"
         canonical="/events/birthday-party-inflatable-rentals-in-orlando"
       />
@@ -131,6 +132,15 @@ const BirthdayParties = () => {
         items={[
           { name: "Events", href: "/events" },
           { name: "Birthday Parties", href: "/events/birthday-party-inflatable-rentals-in-orlando" }
+        ]}
+      />
+      <FAQPageSchema
+        faqs={[
+          { question: "Do you deliver birthday party inflatables throughout East Orlando?", answer: "Yes. Orlando Inflatables provides birthday party rentals across East Orlando, including residential neighborhoods, HOA communities, and nearby event locations." },
+          { question: "How much space do I need for a bounce house at my East Orlando home?", answer: "Most East Orlando backyards work well for standard bounce houses and combo units. We help confirm spacing, power access, and placement before delivery to ensure a safe setup." },
+          { question: "Are bounce houses allowed in East Orlando HOA communities?", answer: "Many East Orlando HOAs allow inflatables for private events. We help customers plan placement and timing to stay within typical HOA guidelines." },
+          { question: "What happens if it rains on my birthday party in East Orlando?", answer: "Light rain usually does not affect inflatable rentals. For severe weather, our team works with customers to reschedule or adjust plans when possible." },
+          { question: "Can I rent both a bounce house and water slide for an East Orlando birthday party?", answer: "Yes. Many East Orlando families choose combo packages that include a bounce house and water slide for longer parties and higher guest counts." }
         ]}
       />
 

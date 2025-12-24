@@ -2,6 +2,7 @@ import { Layout } from "@/components/layout/Layout";
 import { SEOHead } from "@/components/seo/SEOHead";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
 import { ServiceSchema } from "@/components/seo/ServiceSchema";
+import { FAQPageSchema } from "@/components/seo/FAQPageSchema";
 import { ReviewsSection } from "@/components/home/ReviewsSection";
 import { EventCategoriesGrid } from "@/components/home/EventCategoriesGrid";
 import { Button } from "@/components/ui/button";
@@ -128,8 +129,8 @@ const GraduationEvents = () => {
   return (
     <Layout>
       <SEOHead
-        title="Graduation Party Inflatable Rentals Orlando | Celebrate Your Graduate"
-        description="Celebrate your graduate with bounce house rentals in Orlando. Pre-K to college graduation parties. Water slides, games & concessions. Book your celebration today!"
+        title="Graduation Party Water Slide Rentals Orlando | Celebrate Grads"
+        description="Celebrate your graduate with water slide and bounce house rentals in Orlando. Pre-K to college graduation parties. Games & concessions. Book your celebration today!"
         canonical="/events/graduation-party-water-slide-rentals-in-orlando"
       />
       <ServiceSchema
@@ -141,6 +142,15 @@ const GraduationEvents = () => {
         items={[
           { name: "Events", href: "/events" },
           { name: "Graduation Events", href: "/events/graduation-party-water-slide-rentals-in-orlando" }
+        ]}
+      />
+      <FAQPageSchema
+        faqs={[
+          { question: "What inflatables are best for graduation parties?", answer: "Water slides are extremely popular for graduation parties in May and June. Bounce houses and interactive games are great for all-ages celebrations with younger siblings and relatives." },
+          { question: "Can you accommodate both kids and adults at graduation parties?", answer: "Yes. Our larger water slides and obstacle courses are designed to support adult participants as well as children, perfect for multi-generational celebrations." },
+          { question: "How early should I book for a graduation party?", answer: "Graduation season in May and June is very busy. We recommend booking 3-4 weeks in advance to ensure availability for your preferred date." },
+          { question: "Do you deliver to backyard graduation parties?", answer: "Absolutely. Most of our graduation party rentals are delivered to residential backyards throughout Orlando and East Orange County." },
+          { question: "What concessions are popular for graduation parties?", answer: "Snow cone machines are the most popular for beating the Florida heat, followed by cotton candy and popcorn machines for that festive party atmosphere." }
         ]}
       />
 
