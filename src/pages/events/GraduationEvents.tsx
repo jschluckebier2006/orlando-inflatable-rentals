@@ -239,7 +239,7 @@ const GraduationEvents = () => {
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-4 flex items-center justify-center gap-3">
               <Sparkles className="h-8 w-8 text-primary" />
-              Graduation Party Ideas are More Fun with Water Slide Rentals
+              Graduation Party Ideas - More Fun with Water Slide Rentals
             </h2>
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
               Find the perfect party setup for your graduate's celebration.
