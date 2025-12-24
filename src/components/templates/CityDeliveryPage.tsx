@@ -178,7 +178,7 @@ export function CityDeliveryPage({
       </section>
 
       {/* Reviews Section */}
-      <ReviewsSection />
+      <ReviewsSection cityName={cityName} />
 
       {/* Main Content with Staggered Images */}
       <section className="section-padding section-alt">

@@ -124,7 +124,7 @@ export function CityServicePage({ city, citySlug, serviceType, nearbyAreas, loca
       </section>
 
       {/* Reviews Section */}
-      <ReviewsSection />
+      <ReviewsSection cityName={city} />
 
       {/* H2: Party Rental Equipment Rentals City - Image Right */}
       <section className="section-padding">
