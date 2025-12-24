@@ -123,6 +123,9 @@ export function CityServicePage({ city, citySlug, serviceType, nearbyAreas, loca
         </div>
       </section>
 
+      {/* Reviews Section - Moved to top */}
+      <ReviewsSection />
+
       {/* H2: Party Rental Equipment Rentals City - Image Right */}
       <section className="section-padding">
         <div className="container-page">
@@ -351,9 +354,6 @@ export function CityServicePage({ city, citySlug, serviceType, nearbyAreas, loca
           </div>
         </div>
       </section>
-
-      {/* Reviews Section */}
-      <ReviewsSection />
 
       {/* H2: Perfect for Events & Celebrations */}
       <section className="section-padding section-alt">

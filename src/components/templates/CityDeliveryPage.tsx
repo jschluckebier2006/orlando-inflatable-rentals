@@ -145,7 +145,10 @@ export function CityDeliveryPage({
         </div>
       </section>
 
-      {/* Services Grid - Moved to top */}
+      {/* Reviews Section - Moved to top */}
+      <ReviewsSection />
+
+      {/* Services Grid */}
       <section className="section-padding">
         <div className="container-page">
           <div className="max-w-5xl mx-auto">
@@ -429,9 +432,6 @@ export function CityDeliveryPage({
           </div>
         </section>
       ))}
-
-      {/* Reviews Section */}
-      <ReviewsSection />
 
       {/* FAQ Section */}
       <section className="section-padding section-alt">
