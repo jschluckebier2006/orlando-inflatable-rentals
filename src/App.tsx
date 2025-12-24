@@ -115,11 +115,11 @@ const App = () => (
             <Route path="/water-slide-rentals-waterford-lakes" element={<WaterSlideWaterfordLakes />} />
             <Route path="/bounce-house-rentals-wedgefield" element={<BounceHouseWedgefield />} />
             <Route path="/water-slide-rentals-wedgefield" element={<WaterSlideWedgefield />} />
-            <Route path="/events/birthday-parties" element={<BirthdayParties />} />
-            <Route path="/events/school-events" element={<SchoolEvents />} />
-            <Route path="/events/church-events" element={<ChurchEvents />} />
-            <Route path="/events/corporate-events" element={<CorporateEvents />} />
-            <Route path="/events/graduation-events" element={<GraduationEvents />} />
+            <Route path="/events/birthday-party-inflatable-rentals-in-orlando" element={<BirthdayParties />} />
+            <Route path="/events/school-event-inflatable-rentals-in-orlando" element={<SchoolEvents />} />
+            <Route path="/events/church-event-inflatable-rentals-in-orlando" element={<ChurchEvents />} />
+            <Route path="/events/corporate-event-inflatable-rentals-in-orlando" element={<CorporateEvents />} />
+            <Route path="/events/graduation-party-water-slide-rentals-in-orlando" element={<GraduationEvents />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/bounce-house-rental-pricing-orlando-2025" element={<BounceHousePricing2025 />} />

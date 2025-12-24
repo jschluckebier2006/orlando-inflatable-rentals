@@ -36,11 +36,11 @@ const deliveryAreas = [
 ];
 
 const eventTypes = [
-  { name: "Birthday Parties", href: "/events/birthday-parties" },
-  { name: "School Events", href: "/events/school-events" },
-  { name: "Church Events", href: "/events/church-events" },
-  { name: "Corporate Events", href: "/events/corporate-events" },
-  { name: "Graduation Events", href: "/events/graduation-events" },
+  { name: "Birthday Parties", href: "/events/birthday-party-inflatable-rentals-in-orlando" },
+  { name: "School Events", href: "/events/school-event-inflatable-rentals-in-orlando" },
+  { name: "Church Events", href: "/events/church-event-inflatable-rentals-in-orlando" },
+  { name: "Corporate Events", href: "/events/corporate-event-inflatable-rentals-in-orlando" },
+  { name: "Graduation Events", href: "/events/graduation-party-water-slide-rentals-in-orlando" },
 ];
 
 export function Header() {

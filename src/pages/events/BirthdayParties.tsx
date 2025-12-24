@@ -119,17 +119,17 @@ const BirthdayParties = () => {
       <SEOHead
         title="Birthday Party Inflatable Rentals Orlando | Bounce Houses for Kids Parties"
         description="Make your child's birthday unforgettable with bounce house rentals in Orlando. Professional delivery, setup & pickup. Safe, clean inflatables for all ages. Book today!"
-        canonical="/events/birthday-parties"
+        canonical="/events/birthday-party-inflatable-rentals-in-orlando"
       />
       <ServiceSchema
         serviceName="Birthday Party Inflatable Rentals Orlando"
         description="Professional bounce house and inflatable rentals for birthday parties in Orlando and East Orange County. Safe, clean, and fun entertainment for kids of all ages."
-        url="/events/birthday-parties"
+        url="/events/birthday-party-inflatable-rentals-in-orlando"
       />
       <BreadcrumbSchema
         items={[
           { name: "Events", href: "/events" },
-          { name: "Birthday Parties", href: "/events/birthday-parties" }
+          { name: "Birthday Parties", href: "/events/birthday-party-inflatable-rentals-in-orlando" }
         ]}
       />
 
@@ -641,7 +641,7 @@ const BirthdayParties = () => {
                     <div className="space-y-4">
                       <h3 className="font-semibold text-lg">Related Event Types:</h3>
                       <p className="text-muted-foreground">
-                        We also provide rentals for <Link to="/events/school-events" className="text-primary hover:underline font-medium">school events</Link>, <Link to="/events/church-events" className="text-primary hover:underline font-medium">church gatherings</Link>, and <Link to="/events/graduation-events" className="text-primary hover:underline font-medium">graduation parties</Link> throughout East Orlando.
+                        We also provide rentals for <Link to="/events/school-event-inflatable-rentals-in-orlando" className="text-primary hover:underline font-medium">school events</Link>, <Link to="/events/church-event-inflatable-rentals-in-orlando" className="text-primary hover:underline font-medium">church gatherings</Link>, and <Link to="/events/graduation-party-water-slide-rentals-in-orlando" className="text-primary hover:underline font-medium">graduation parties</Link> throughout East Orlando.
                       </p>
                     </div>
                     
