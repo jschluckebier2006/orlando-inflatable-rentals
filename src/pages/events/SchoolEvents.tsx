@@ -6,6 +6,7 @@ import { FAQPageSchema } from "@/components/seo/FAQPageSchema";
 import { ReviewsSection } from "@/components/home/ReviewsSection";
 import { EventCategoriesGrid } from "@/components/home/EventCategoriesGrid";
 import { EventCrossLinks } from "@/components/home/EventCrossLinks";
+import { RelatedBlogPosts } from "@/components/home/RelatedBlogPosts";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
@@ -280,6 +281,9 @@ const SchoolEvents = () => {
 
       {/* Cross-Links to Other Events */}
       <EventCrossLinks currentEvent="school" />
+
+      {/* Related Blog Posts */}
+      <RelatedBlogPosts eventType="school" />
 
       {/* Packages */}
       <section className="py-16 bg-muted/30">
