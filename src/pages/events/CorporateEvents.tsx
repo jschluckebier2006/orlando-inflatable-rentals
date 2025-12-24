@@ -5,6 +5,7 @@ import { ServiceSchema } from "@/components/seo/ServiceSchema";
 import { FAQPageSchema } from "@/components/seo/FAQPageSchema";
 import { ReviewsSection } from "@/components/home/ReviewsSection";
 import { EventCategoriesGrid } from "@/components/home/EventCategoriesGrid";
+import { EventCrossLinks } from "@/components/home/EventCrossLinks";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
@@ -280,6 +281,9 @@ const CorporateEvents = () => {
 
       {/* Reviews Section */}
       <ReviewsSection />
+
+      {/* Cross-Links to Other Events */}
+      <EventCrossLinks currentEvent="corporate" />
 
       {/* Packages */}
       <section className="py-16 bg-muted/30">
