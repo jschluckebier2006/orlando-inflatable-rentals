@@ -19,10 +19,21 @@ import {
   Heart,
   Sparkles,
   Gift,
-  Camera
+  Camera,
+  MapPin,
+  HelpCircle,
+  ArrowRight,
+  ChevronDown,
+  ChevronUp
 } from "lucide-react";
+import { useState } from "react";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import kidsGroupBounce from "@/assets/kids-group-bounce-1.jpg";
+import waterSlideFun from "@/assets/water-slide-fun-1.jpg";
 
 const BirthdayParties = () => {
+  const [showEastOrlandoFAQ, setShowEastOrlandoFAQ] = useState(false);
+  const [showMoreLinks, setShowMoreLinks] = useState(false);
 
   const features = [
     {
@@ -440,14 +451,262 @@ const BirthdayParties = () => {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 bg-primary text-primary-foreground">
+      {/* SECTION 1: East Orlando Authority Block */}
+      <section className="py-16">
+        <div className="container-page">
+          <div className="max-w-5xl mx-auto">
+            <div className="grid lg:grid-cols-2 gap-10 items-center">
+              <div>
+                <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full mb-6">
+                  <MapPin className="h-5 w-5" />
+                  <span className="font-medium">East Orlando Focus</span>
+                </div>
+                <h2 className="text-3xl font-bold mb-6">Birthday Party Rentals Throughout East Orlando</h2>
+                <p className="text-muted-foreground text-lg leading-relaxed mb-6">
+                  Orlando Inflatables specializes in birthday party rentals throughout East Orlando, serving families in residential neighborhoods, master planned communities, and surrounding areas. Our team understands the layout, spacing, and setup needs common to East Orlando homes, making it easy to plan stress free birthday celebrations.
+                </p>
+                <p className="text-muted-foreground text-lg leading-relaxed mb-4">
+                  We regularly provide birthday party inflatables for:
+                </p>
+                <ul className="space-y-3 mb-6">
+                  <li className="flex items-start gap-3">
+                    <CheckCircle className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+                    <span className="text-muted-foreground">Backyard parties in East Orlando neighborhoods</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <CheckCircle className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+                    <span className="text-muted-foreground">HOA communities with setup guidelines</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <CheckCircle className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+                    <span className="text-muted-foreground">School and church birthday celebrations</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <CheckCircle className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+                    <span className="text-muted-foreground">Community parks and green spaces</span>
+                  </li>
+                </ul>
+                <p className="text-muted-foreground text-lg leading-relaxed">
+                  Because we serve East Orlando year round, we know how to recommend the right bounce house or water slide based on yard size, guest count, and the age group of the kids attending.
+                </p>
+              </div>
+              <div className="relative">
+                <img 
+                  src={kidsGroupBounce} 
+                  alt="Kids enjoying birthday party bounce house in East Orlando" 
+                  className="rounded-2xl shadow-2xl w-full h-auto object-cover"
+                />
+                <div className="absolute -bottom-4 -right-4 bg-primary text-primary-foreground px-6 py-3 rounded-xl shadow-lg">
+                  <p className="font-bold">Serving East Orlando</p>
+                  <p className="text-sm opacity-90">Year-round service</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 2: East Orlando Birthday Party FAQs */}
+      <section className="py-16 bg-muted/30">
+        <div className="container-page">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-12">
+              <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full mb-6">
+                <HelpCircle className="h-5 w-5" />
+                <span className="font-medium">Common Questions</span>
+              </div>
+              <h2 className="text-3xl font-bold mb-4">East Orlando Birthday Party Rental FAQs</h2>
+              <p className="text-muted-foreground text-lg">
+                Get answers to the most common questions about birthday party rentals in East Orlando.
+              </p>
+            </div>
+            
+            <Collapsible open={showEastOrlandoFAQ} onOpenChange={setShowEastOrlandoFAQ}>
+              <div className="space-y-6">
+                <Card className="border-0 shadow-md">
+                  <CardContent className="p-6">
+                    <h4 className="font-bold text-lg mb-3">Do you deliver birthday party inflatables throughout East Orlando?</h4>
+                    <p className="text-muted-foreground">
+                      Yes. Orlando Inflatables provides birthday party rentals across East Orlando, including residential neighborhoods, HOA communities, and nearby event locations.
+                    </p>
+                  </CardContent>
+                </Card>
+                
+                <Card className="border-0 shadow-md">
+                  <CardContent className="p-6">
+                    <h4 className="font-bold text-lg mb-3">How much space do I need for a bounce house at my East Orlando home?</h4>
+                    <p className="text-muted-foreground">
+                      Most East Orlando backyards work well for standard bounce houses and combo units. We help confirm spacing, power access, and placement before delivery to ensure a safe setup.
+                    </p>
+                  </CardContent>
+                </Card>
+                
+                <CollapsibleContent className="space-y-6">
+                  <Card className="border-0 shadow-md">
+                    <CardContent className="p-6">
+                      <h4 className="font-bold text-lg mb-3">Are bounce houses allowed in East Orlando HOA communities?</h4>
+                      <p className="text-muted-foreground">
+                        Many East Orlando HOAs allow inflatables for private events. We help customers plan placement and timing to stay within typical HOA guidelines.
+                      </p>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card className="border-0 shadow-md">
+                    <CardContent className="p-6">
+                      <h4 className="font-bold text-lg mb-3">What happens if it rains on my birthday party in East Orlando?</h4>
+                      <p className="text-muted-foreground">
+                        Light rain usually does not affect inflatable rentals. For severe weather, our team works with customers to reschedule or adjust plans when possible.
+                      </p>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card className="border-0 shadow-md">
+                    <CardContent className="p-6">
+                      <h4 className="font-bold text-lg mb-3">Can I rent both a bounce house and water slide for an East Orlando birthday party?</h4>
+                      <p className="text-muted-foreground">
+                        Yes. Many East Orlando families choose combo packages that include a bounce house and water slide for longer parties and higher guest counts.
+                      </p>
+                    </CardContent>
+                  </Card>
+                </CollapsibleContent>
+              </div>
+              
+              <div className="text-center mt-8">
+                <CollapsibleTrigger asChild>
+                  <Button variant="outline" className="gap-2">
+                    {showEastOrlandoFAQ ? (
+                      <>
+                        <ChevronUp className="h-4 w-4" />
+                        Show Less
+                      </>
+                    ) : (
+                      <>
+                        <ChevronDown className="h-4 w-4" />
+                        See More FAQs
+                      </>
+                    )}
+                  </Button>
+                </CollapsibleTrigger>
+              </div>
+            </Collapsible>
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 3: Internal Linking Reinforcement */}
+      <section className="py-16">
+        <div className="container-page">
+          <div className="max-w-5xl mx-auto">
+            <div className="grid lg:grid-cols-2 gap-10 items-center">
+              <div className="order-2 lg:order-1">
+                <img 
+                  src={waterSlideFun} 
+                  alt="Kids enjoying water slide birthday party in East Orlando" 
+                  className="rounded-2xl shadow-2xl w-full h-auto object-cover"
+                />
+              </div>
+              <div className="order-1 lg:order-2">
+                <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full mb-6">
+                  <ArrowRight className="h-5 w-5" />
+                  <span className="font-medium">Explore More</span>
+                </div>
+                <h2 className="text-3xl font-bold mb-6">Explore More East Orlando Party Rental Options</h2>
+                <p className="text-muted-foreground text-lg leading-relaxed mb-6">
+                  Looking for more ways to make your East Orlando celebration unforgettable? Explore our full range of party rentals, from <Link to="/bounce-house-rentals" className="text-primary hover:underline font-medium">birthday bounce house rentals in East Orlando</Link> to exciting <Link to="/water-slide-rentals" className="text-primary hover:underline font-medium">East Orlando water slide birthday parties</Link>.
+                </p>
+                
+                <Collapsible open={showMoreLinks} onOpenChange={setShowMoreLinks}>
+                  <div className="space-y-4 mb-6">
+                    <h3 className="font-semibold text-lg">East Orlando Communities We Serve:</h3>
+                    <div className="flex flex-wrap gap-2">
+                      <Link to="/water-slide-and-bounce-house-rental-avalon-park" className="bg-primary/10 text-primary px-4 py-2 rounded-full hover:bg-primary hover:text-primary-foreground transition-colors text-sm font-medium">
+                        Avalon Park
+                      </Link>
+                      <Link to="/water-slide-and-bounce-house-rental-waterford-lakes" className="bg-primary/10 text-primary px-4 py-2 rounded-full hover:bg-primary hover:text-primary-foreground transition-colors text-sm font-medium">
+                        Waterford Lakes
+                      </Link>
+                      <Link to="/water-slide-and-bounce-house-rental-eastwood" className="bg-primary/10 text-primary px-4 py-2 rounded-full hover:bg-primary hover:text-primary-foreground transition-colors text-sm font-medium">
+                        Eastwood
+                      </Link>
+                      <Link to="/water-slide-and-bounce-house-rental-alafaya" className="bg-primary/10 text-primary px-4 py-2 rounded-full hover:bg-primary hover:text-primary-foreground transition-colors text-sm font-medium">
+                        Alafaya
+                      </Link>
+                      <Link to="/water-slide-and-bounce-house-rental-stoneybrook" className="bg-primary/10 text-primary px-4 py-2 rounded-full hover:bg-primary hover:text-primary-foreground transition-colors text-sm font-medium">
+                        Stoneybrook
+                      </Link>
+                    </div>
+                  </div>
+                  
+                  <CollapsibleContent className="space-y-6">
+                    <div className="space-y-4">
+                      <h3 className="font-semibold text-lg">Related Event Types:</h3>
+                      <p className="text-muted-foreground">
+                        We also provide rentals for <Link to="/events/school-events" className="text-primary hover:underline font-medium">school events</Link>, <Link to="/events/church-events" className="text-primary hover:underline font-medium">church gatherings</Link>, and <Link to="/events/graduation-events" className="text-primary hover:underline font-medium">graduation parties</Link> throughout East Orlando.
+                      </p>
+                    </div>
+                    
+                    <div className="space-y-4">
+                      <h3 className="font-semibold text-lg">Popular Rental Categories:</h3>
+                      <div className="grid grid-cols-2 gap-3">
+                        <Link to="/bounce-slide-combo-rentals" className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors">
+                          <ArrowRight className="h-4 w-4" />
+                          Combo Units
+                        </Link>
+                        <Link to="/obstacle-course-rentals" className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors">
+                          <ArrowRight className="h-4 w-4" />
+                          Obstacle Courses
+                        </Link>
+                        <Link to="/interactive-game-rentals" className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors">
+                          <ArrowRight className="h-4 w-4" />
+                          Interactive Games
+                        </Link>
+                        <Link to="/concession-rentals" className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors">
+                          <ArrowRight className="h-4 w-4" />
+                          Concessions
+                        </Link>
+                      </div>
+                    </div>
+                  </CollapsibleContent>
+                  
+                  <div className="mt-6">
+                    <CollapsibleTrigger asChild>
+                      <Button variant="outline" className="gap-2">
+                        {showMoreLinks ? (
+                          <>
+                            <ChevronUp className="h-4 w-4" />
+                            Show Less
+                          </>
+                        ) : (
+                          <>
+                            <ChevronDown className="h-4 w-4" />
+                            See More Options
+                          </>
+                        )}
+                      </Button>
+                    </CollapsibleTrigger>
+                  </div>
+                </Collapsible>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 4: East Orlando CTA (Localized) */}
+      <section className="py-20 bg-gradient-to-br from-primary via-primary to-primary/90 text-primary-foreground">
         <div className="container-page text-center">
+          <div className="inline-flex items-center gap-2 bg-white/20 text-white px-4 py-2 rounded-full mb-6">
+            <MapPin className="h-5 w-5" />
+            <span className="font-medium">East Orlando Service Area</span>
+          </div>
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
-            Ready to Plan the Perfect Birthday Party?
+            Book an East Orlando Birthday Party Today
           </h2>
-          <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
-            Contact us today for a free quote and let's make your child's birthday celebration one they'll never forget!
+          <p className="text-xl mb-4 opacity-90 max-w-3xl mx-auto">
+            Orlando Inflatables proudly serves families throughout East Orlando with clean, reliable birthday party rentals. Whether you're planning a backyard celebration, HOA friendly party, or a larger gathering, our team is ready to help.
+          </p>
+          <p className="text-lg mb-8 opacity-80 max-w-2xl mx-auto">
+            Check availability online and reserve your East Orlando birthday party rentals today to secure the best bounce houses and water slides for your celebration.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button size="lg" variant="secondary" asChild>
