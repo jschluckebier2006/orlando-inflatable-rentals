@@ -138,7 +138,7 @@ const ChurchEvents = () => {
               <span className="font-medium">Church Event Specialists</span>
             </div>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-white">
-              Church Events
+              Church Event Inflatable Rentals in Orlando
             </h1>
             <p className="text-xl text-white/90 mb-8 max-w-3xl mx-auto">
               Family-friendly inflatable rentals for VBS, fall festivals, summer programs, and community outreach events. 

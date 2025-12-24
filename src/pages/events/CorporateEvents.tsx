@@ -155,7 +155,7 @@ const CorporateEvents = () => {
               <span className="font-medium">Corporate Event Specialists</span>
             </div>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-white">
-              Corporate Events
+              Corporate Event Inflatable Rentals in Orlando
             </h1>
             <p className="text-xl text-white/90 mb-8 max-w-3xl mx-auto">
               Professional entertainment solutions for company picnics, team building events, and employee appreciation days. 

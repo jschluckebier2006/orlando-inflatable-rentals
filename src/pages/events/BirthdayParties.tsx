@@ -148,7 +148,7 @@ const BirthdayParties = () => {
               <span className="font-medium">Birthday Party Specialists</span>
             </div>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-white">
-              Birthday Parties
+              Birthday Party Inflatable Rentals in Orlando
             </h1>
             <p className="text-xl text-white/90 mb-8 max-w-3xl mx-auto">
               Create magical birthday memories with our premium bounce houses, water slides, and party entertainment. 

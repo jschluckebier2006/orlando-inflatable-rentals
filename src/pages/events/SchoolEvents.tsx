@@ -150,7 +150,7 @@ const SchoolEvents = () => {
               <span className="font-medium">School Event Specialists</span>
             </div>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-white">
-              School Events
+              School Event Inflatable Rentals in Orlando
             </h1>
             <p className="text-xl text-white/90 mb-8 max-w-3xl mx-auto">
               Fully insured, school-approved inflatable rentals for field days, carnivals, fundraisers, and celebrations. 
