@@ -18,7 +18,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { ContentImageRow, cityServiceImages, cityServiceImages2, getHeroBackground } from "@/components/home/ContentImages";
+import { cityServiceImages, cityServiceImages2, getHeroBackground } from "@/components/home/ContentImages";
+import { ContentImageWithText } from "@/components/home/ContentImageWithText";
 
 interface CityServicePageProps {
   city: string;
@@ -122,47 +123,53 @@ export function CityServicePage({ city, citySlug, serviceType, nearbyAreas, loca
         </div>
       </section>
 
-      {/* H2: Party Rental Equipment Rentals City */}
+      {/* H2: Party Rental Equipment Rentals City - Image Right */}
       <section className="section-padding">
         <div className="container-page">
-          <div className="max-w-4xl mx-auto">
-            <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-6">
-              Party Rental Equipment Rentals {city}
-            </h2>
-            <p className="text-muted-foreground leading-relaxed mb-6 text-lg">
-              {localContent.intro}
-            </p>
-            <p className="text-muted-foreground leading-relaxed mb-8">
-              Orlando Inflatables is your trusted local provider of premium {serviceName.toLowerCase()} rentals in {city}. We deliver clean, safe, and exciting inflatables right to your doorstep, whether you're hosting a backyard birthday party, organizing a school event, or planning a community celebration.
-            </p>
+          <div className="max-w-5xl mx-auto">
+            <ContentImageWithText
+              src={cityServiceImages[0]}
+              alt={`${city} bounce house party`}
+              imagePosition="right"
+            >
+              <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-6">
+                Party Rental Equipment Rentals {city}
+              </h2>
+              <p className="text-muted-foreground leading-relaxed mb-6 text-lg">
+                {localContent.intro}
+              </p>
+              <p className="text-muted-foreground leading-relaxed">
+                Orlando Inflatables is your trusted local provider of premium {serviceName.toLowerCase()} rentals in {city}. We deliver clean, safe, and exciting inflatables right to your doorstep.
+              </p>
+            </ContentImageWithText>
 
-            {/* H3: Best Bounce Houses/Water Slides */}
-            <h3 className="font-display text-2xl font-bold text-foreground mb-4">
-              Best {serviceNamePlural} for {city} Parties
-            </h3>
-            <p className="text-muted-foreground leading-relaxed mb-6">
-              Our selection of {serviceName.toLowerCase()}s includes something for every age group and event size. From compact units perfect for smaller backyards to massive {isBounceHouse ? 'combo units with slides' : 'dual-lane racing slides'}, we have the perfect rental for your {city} celebration.
-            </p>
-            <ul className="space-y-3 mb-8">
-              <li className="flex items-start gap-3">
-                <Check className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
-                <span className="text-muted-foreground"><strong>{isBounceHouse ? 'Standard Bounce Houses' : 'Single Lane Water Slides'}:</strong> Perfect for smaller gatherings and younger children in {city}.</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <Check className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
-                <span className="text-muted-foreground"><strong>{isBounceHouse ? 'Combo Bounce Houses' : 'Dual Lane Racing Slides'}:</strong> Great for larger parties with multiple activities and older kids.</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <Check className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
-                <span className="text-muted-foreground"><strong>{isBounceHouse ? 'Themed Bounce Houses' : 'Tropical Water Slides'}:</strong> Add a special touch to your {city} themed party.</span>
-              </li>
-            </ul>
-            
-            {/* Content Images Row 1 */}
-            <ContentImageRow 
-              images={cityServiceImages} 
-              alts={[`${city} bounce house party`, `Kids enjoying inflatables in ${city}`, `${city} party rental fun`]} 
-            />
+            {/* H3: Best Bounce Houses/Water Slides - Image Left */}
+            <ContentImageWithText
+              src={cityServiceImages[1]}
+              alt={`Kids enjoying inflatables in ${city}`}
+              imagePosition="left"
+            >
+              <h3 className="font-display text-2xl font-bold text-foreground mb-4">
+                Best {serviceNamePlural} for {city} Parties
+              </h3>
+              <p className="text-muted-foreground leading-relaxed mb-6">
+                Our selection of {serviceName.toLowerCase()}s includes something for every age group and event size.
+              </p>
+              <ul className="space-y-3">
+                <li className="flex items-start gap-3">
+                  <Check className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
+                  <span className="text-muted-foreground"><strong>{isBounceHouse ? 'Standard Bounce Houses' : 'Single Lane Water Slides'}:</strong> Perfect for smaller gatherings.</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Check className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
+                  <span className="text-muted-foreground"><strong>{isBounceHouse ? 'Combo Bounce Houses' : 'Dual Lane Racing Slides'}:</strong> Great for larger parties.</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Check className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
+                  <span className="text-muted-foreground"><strong>{isBounceHouse ? 'Themed Bounce Houses' : 'Tropical Water Slides'}:</strong> Add a special touch to your party.</span>
+                </li>
+              </ul>
+            </ContentImageWithText>
           </div>
         </div>
       </section>
@@ -223,36 +230,64 @@ export function CityServicePage({ city, citySlug, serviceType, nearbyAreas, loca
         </div>
       </section>
 
-      {/* H2: About City Florida */}
+      {/* H2: About City Florida - Image Right */}
       <section className="section-padding">
         <div className="container-page">
-          <div className="max-w-4xl mx-auto">
-            <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-6">
-              About {city}, Florida
-            </h2>
-            <p className="text-muted-foreground leading-relaxed mb-6">
-              {localContent.about}
-            </p>
+          <div className="max-w-5xl mx-auto">
+            <ContentImageWithText
+              src={cityServiceImages[2]}
+              alt={`${city} party rental fun`}
+              imagePosition="right"
+            >
+              <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-6">
+                About {city}, Florida
+              </h2>
+              <p className="text-muted-foreground leading-relaxed mb-6">
+                {localContent.about}
+              </p>
+              <h3 className="font-display text-2xl font-bold text-foreground mb-4">
+                Serving Families Throughout {city}
+              </h3>
+              <p className="text-muted-foreground leading-relaxed">
+                As a locally-owned business, we take pride in serving the {city} community. We've helped countless {city} families create lasting memories.
+              </p>
+            </ContentImageWithText>
 
-            {/* H3: Serving Families in City */}
-            <h3 className="font-display text-2xl font-bold text-foreground mb-4">
-              Serving Families Throughout {city}
-            </h3>
-            <p className="text-muted-foreground leading-relaxed mb-8">
-              As a locally-owned business, we take pride in serving the {city} community. We've helped countless {city} families create lasting memories with our premium {serviceName.toLowerCase()} rentals. Our team knows the area well and provides personalized service to every customer.
-            </p>
-          </div>
-        </div>
-      </section>
+            {/* Additional Image Section - Image Left */}
+            <ContentImageWithText
+              src={cityServiceImages2[0]}
+              alt={`Fun ${serviceName.toLowerCase()} in ${city}`}
+              imagePosition="left"
+            >
+              <h3 className="font-display text-2xl font-bold text-foreground mb-4">
+                Your Local Party Rental Experts
+              </h3>
+              <p className="text-muted-foreground leading-relaxed mb-4">
+                Our team knows the {city} area well and provides personalized service to every customer. We understand local HOA requirements, neighborhood layouts, and the best setup practices for your area.
+              </p>
+              <ul className="space-y-2 text-muted-foreground">
+                <li>• <strong>Local Knowledge:</strong> We know {city} streets and neighborhoods</li>
+                <li>• <strong>HOA Friendly:</strong> Clean, professional equipment and respectful setup</li>
+                <li>• <strong>Community Focused:</strong> Proudly serving {city} families</li>
+              </ul>
+            </ContentImageWithText>
 
-      {/* Content Images Row 2 */}
-      <section className="section-padding">
-        <div className="container-page">
-          <div className="max-w-4xl mx-auto">
-            <ContentImageRow 
-              images={cityServiceImages2} 
-              alts={[`Fun ${serviceName.toLowerCase()} in ${city}`, `${city} celebration`, `Party rental fun in ${city}`]} 
-            />
+            {/* Third Image Section - Image Right */}
+            <ContentImageWithText
+              src={cityServiceImages2[1]}
+              alt={`${city} celebration`}
+              imagePosition="right"
+            >
+              <h3 className="font-display text-2xl font-bold text-foreground mb-4">
+                Making Memories in {city}
+              </h3>
+              <p className="text-muted-foreground leading-relaxed mb-4">
+                Every event in {city} is an opportunity to create lasting memories. Whether it's a child's first birthday or a neighborhood block party, our {serviceName.toLowerCase()}s bring smiles to faces of all ages.
+              </p>
+              <p className="text-muted-foreground leading-relaxed">
+                We've served hundreds of {city} families and look forward to being part of your next celebration!
+              </p>
+            </ContentImageWithText>
           </div>
         </div>
       </section>

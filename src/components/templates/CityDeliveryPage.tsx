@@ -24,7 +24,8 @@ import obstacleCourseImg from "@/assets/obstacle-course-category.webp";
 import interactiveGamesImg from "@/assets/interactive-games-category.webp";
 import concessionsImg from "@/assets/concessions-category.webp";
 import tablesChairsImg from "@/assets/tables-chairs-category.webp";
-import { ContentImageRow, deliveryPageImages, deliveryPageImages2, getHeroBackground } from "@/components/home/ContentImages";
+import { deliveryPageImages, deliveryPageImages2, getHeroBackground } from "@/components/home/ContentImages";
+import { ContentImageWithText } from "@/components/home/ContentImageWithText";
 import { ReviewsSection } from "@/components/home/ReviewsSection";
 
 const services = [
@@ -176,121 +177,144 @@ export function CityDeliveryPage({
         </div>
       </section>
 
-      {/* Main Content */}
+      {/* Main Content with Staggered Images */}
       <section className="section-padding section-alt">
         <div className="container-page">
-          <div className="max-w-4xl mx-auto">
-            {/* H2: Party Rental Equipment */}
-            <h2 className="font-display text-3xl font-bold text-foreground mb-6">
-              Party Rental Equipment Rentals {cityName}
-            </h2>
-            <p className="text-muted-foreground leading-relaxed mb-6">
-              Orlando Inflatables is your premier source for party rental equipment in{" "}
-              {cityWikipediaUrl ? (
-                <a
-                  href={cityWikipediaUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-primary hover:underline inline-flex items-center gap-1"
-                >
-                  {cityName}, Florida <ExternalLink className="h-3 w-3" />
-                </a>
-              ) : (
-                `${cityName}, Florida`
-              )}
-              . {cityDescription}
-            </p>
+          <div className="max-w-5xl mx-auto">
+            {/* H2: Party Rental Equipment - Image Right */}
+            <ContentImageWithText
+              src={deliveryPageImages[0]}
+              alt={`${cityName} bounce house rental`}
+              imagePosition="right"
+            >
+              <h2 className="font-display text-3xl font-bold text-foreground mb-6">
+                Party Rental Equipment Rentals {cityName}
+              </h2>
+              <p className="text-muted-foreground leading-relaxed mb-6">
+                Orlando Inflatables is your premier source for party rental equipment in{" "}
+                {cityWikipediaUrl ? (
+                  <a
+                    href={cityWikipediaUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary hover:underline inline-flex items-center gap-1"
+                  >
+                    {cityName}, Florida <ExternalLink className="h-3 w-3" />
+                  </a>
+                ) : (
+                  `${cityName}, Florida`
+                )}
+                . {cityDescription}
+              </p>
+              <h3 className="font-display text-xl font-semibold text-foreground mb-4">
+                Complete Party Rental Inventory for {cityName} Events
+              </h3>
+              <p className="text-muted-foreground leading-relaxed">
+                From backyard birthday parties to large community events, we have everything you need to create an unforgettable celebration.
+              </p>
+            </ContentImageWithText>
 
-            <h3 className="font-display text-xl font-semibold text-foreground mb-4">
-              Complete Party Rental Inventory for {cityName} Events
-            </h3>
-            <p className="text-muted-foreground leading-relaxed mb-8">
-              From backyard birthday parties to large community events, we have everything you need to create an unforgettable celebration. Our extensive inventory includes bounce houses in various themes and sizes, thrilling water slides for hot Florida days, challenging obstacle courses, interactive games, concession machines, and tables and chairs for your guests.
-            </p>
+            {/* H2: Bounce House Rentals - Image Left */}
+            <ContentImageWithText
+              src={deliveryPageImages[1]}
+              alt={`Kids party fun in ${cityName}`}
+              imagePosition="left"
+            >
+              <h2 className="font-display text-3xl font-bold text-foreground mb-6">
+                Bounce House Rentals {cityName} FL
+              </h2>
+              <p className="text-muted-foreground leading-relaxed mb-6">
+                Our bounce house rentals are the most popular choice for {cityName} birthday parties, school events, and family gatherings. We offer a wide selection of themed bounce houses, combo units with slides, and toddler-friendly options.
+              </p>
+              <h3 className="font-display text-xl font-semibold text-foreground mb-4">
+                Types of Bounce Houses Available
+              </h3>
+              <ul className="space-y-2 text-muted-foreground">
+                <li>• <strong>Standard Bounce Houses:</strong> Classic jumping fun</li>
+                <li>• <strong>Themed Bounce Houses:</strong> Princess castles, superheroes, and more</li>
+                <li>• <strong>Combo Units:</strong> Bounce houses with attached slides</li>
+                <li>• <strong>Toddler Inflatables:</strong> Age-appropriate units for little ones</li>
+              </ul>
+            </ContentImageWithText>
 
-            {/* H2: Bounce House Rentals */}
-            <h2 className="font-display text-3xl font-bold text-foreground mb-6">
-              Bounce House Rentals {cityName} FL
-            </h2>
-            <p className="text-muted-foreground leading-relaxed mb-6">
-              Our bounce house rentals are the most popular choice for {cityName} birthday parties, school events, and family gatherings. We offer a wide selection of themed bounce houses, combo units with slides, and toddler-friendly options to match any party theme or age group.
-            </p>
+            {/* H2: Water Slide Rentals - Image Right */}
+            <ContentImageWithText
+              src={deliveryPageImages[2]}
+              alt={`${cityName} inflatable rentals`}
+              imagePosition="right"
+            >
+              <h2 className="font-display text-3xl font-bold text-foreground mb-6">
+                Water Slide Rentals {cityName} Florida
+              </h2>
+              <p className="text-muted-foreground leading-relaxed mb-6">
+                Beat the Florida heat with our exciting water slide rentals! Perfect for summer parties, pool parties, and any outdoor event in {cityName}. Our water slides range from kid-friendly sizes to massive slides that will thrill guests of all ages.
+              </p>
+              <h3 className="font-display text-xl font-semibold text-foreground mb-4">
+                Water Slide Options for {cityName} Parties
+              </h3>
+              <p className="text-muted-foreground leading-relaxed">
+                Choose from single-lane slides, dual-lane racing slides, and water slide combos. All our water slides are designed with safety in mind and feature soft landing pools.
+              </p>
+            </ContentImageWithText>
 
-            <h3 className="font-display text-xl font-semibold text-foreground mb-4">
-              Types of Bounce Houses Available in {cityName}
-            </h3>
-            <ul className="space-y-2 mb-8 text-muted-foreground">
-              <li>• <strong>Standard Bounce Houses:</strong> Classic jumping fun in various sizes and colors</li>
-              <li>• <strong>Themed Bounce Houses:</strong> Princess castles, superhero themes, tropical designs, and more</li>
-              <li>• <strong>Combo Units:</strong> Bounce houses with attached slides for double the fun</li>
-              <li>• <strong>Toddler Inflatables:</strong> Smaller, age-appropriate units for little ones</li>
-              <li>• <strong>Large Event Inflatables:</strong> Commercial-grade units for school and church events</li>
-            </ul>
+            {/* H2: About the City - Image Left */}
+            <ContentImageWithText
+              src={deliveryPageImages2[0]}
+              alt={`Party celebration in ${cityName}`}
+              imagePosition="left"
+            >
+              <h2 className="font-display text-3xl font-bold text-foreground mb-6">
+                About {cityName}, Florida
+              </h2>
+              <p className="text-muted-foreground leading-relaxed mb-6">
+                {additionalCityInfo || `${cityName} is a wonderful community in the greater Orlando area, known for its family-friendly neighborhoods and active community events. Residents enjoy a suburban lifestyle with easy access to Orlando's attractions, dining, and entertainment options.`}
+              </p>
+              <h3 className="font-display text-xl font-semibold text-foreground mb-4">
+                Popular Event Venues in {cityName}
+              </h3>
+              <p className="text-muted-foreground leading-relaxed">
+                {localLandmarks || `${cityName} offers numerous venues perfect for party rentals, including community parks, HOA clubhouses, schools, churches, and spacious residential backyards.`}
+              </p>
+            </ContentImageWithText>
 
-            {/* Content Images Row 1 */}
-            <ContentImageRow 
-              images={deliveryPageImages} 
-              alts={[`${cityName} bounce house rental`, `Kids party fun in ${cityName}`, `${cityName} inflatable rentals`]} 
-            />
+            {/* H2: Why Choose Us - Image Right */}
+            <ContentImageWithText
+              src={deliveryPageImages2[1]}
+              alt={`${cityName} water slide fun`}
+              imagePosition="right"
+            >
+              <h2 className="font-display text-3xl font-bold text-foreground mb-6">
+                Why Choose Orlando Inflatables in {cityName}?
+              </h2>
+              <p className="text-muted-foreground leading-relaxed mb-4">
+                When you book with Orlando Inflatables for your {cityName} event, you're choosing the area's most trusted party rental company.
+              </p>
+              <ul className="space-y-2 text-muted-foreground">
+                <li>• <strong>Free Delivery & Setup:</strong> Complimentary delivery throughout {cityName}</li>
+                <li>• <strong>Clean & Sanitized:</strong> Every unit is thoroughly cleaned and inspected</li>
+                <li>• <strong>Licensed & Insured:</strong> Full liability coverage for your peace of mind</li>
+                <li>• <strong>On-Time Service:</strong> We arrive when promised and handle all setup</li>
+              </ul>
+            </ContentImageWithText>
 
-            {/* H2: Water Slide Rentals */}
-            <h2 className="font-display text-3xl font-bold text-foreground mb-6">
-              Water Slide Rentals {cityName} Florida
-            </h2>
-            <p className="text-muted-foreground leading-relaxed mb-6">
-              Beat the Florida heat with our exciting water slide rentals! Perfect for summer parties, pool parties, and any outdoor event in {cityName}. Our water slides range from kid-friendly sizes to massive slides that will thrill guests of all ages.
-            </p>
-
-            <h3 className="font-display text-xl font-semibold text-foreground mb-4">
-              Water Slide Options for {cityName} Parties
-            </h3>
-            <p className="text-muted-foreground leading-relaxed mb-8">
-              Choose from single-lane slides, dual-lane racing slides, slip-and-slides, and water slide combos. All our water slides are designed with safety in mind and feature soft landing pools. We provide all the equipment needed – just connect a standard garden hose and you're ready for hours of splashing fun!
-            </p>
-
-            {/* H2: About the City */}
-            <h2 className="font-display text-3xl font-bold text-foreground mb-6">
-              About {cityName}, Florida
-            </h2>
-            <p className="text-muted-foreground leading-relaxed mb-6">
-              {additionalCityInfo || `${cityName} is a wonderful community in the greater Orlando area, known for its family-friendly neighborhoods and active community events. Residents enjoy a suburban lifestyle with easy access to Orlando's attractions, dining, and entertainment options.`}
-            </p>
-
-            <h3 className="font-display text-xl font-semibold text-foreground mb-4">
-              Popular Event Venues in {cityName}
-            </h3>
-            <p className="text-muted-foreground leading-relaxed mb-8">
-              {localLandmarks || `${cityName} offers numerous venues perfect for party rentals, including community parks, HOA clubhouses, schools, churches, and spacious residential backyards. Our delivery team is familiar with the area and can accommodate setups at any location.`}
-            </p>
-
-            {/* Content Images Row 2 */}
-            <ContentImageRow 
-              images={deliveryPageImages2} 
-              alts={[`Party celebration in ${cityName}`, `${cityName} water slide fun`, `Birthday party ${cityName}`]} 
-            />
-
-            {/* H2: Why Choose Us */}
-            <h2 className="font-display text-3xl font-bold text-foreground mb-6">
-              Why Choose Orlando Inflatables in {cityName}?
-            </h2>
-            <p className="text-muted-foreground leading-relaxed mb-4">
-              When you book with Orlando Inflatables for your {cityName} event, you're choosing the area's most trusted party rental company. Here's what sets us apart:
-            </p>
-            <ul className="space-y-2 mb-8 text-muted-foreground">
-              <li>• <strong>Free Delivery & Setup:</strong> Complimentary delivery throughout {cityName}</li>
-              <li>• <strong>Clean & Sanitized:</strong> Every unit is thoroughly cleaned and inspected before each rental</li>
-              <li>• <strong>Licensed & Insured:</strong> Full liability coverage for your peace of mind</li>
-              <li>• <strong>On-Time Service:</strong> We arrive when promised and handle all setup</li>
-              <li>• <strong>Local Expertise:</strong> We know {cityName} neighborhoods and can recommend the best options for your venue</li>
-              <li>• <strong>24/7 Support:</strong> Customer service available throughout your rental period</li>
-            </ul>
-
-            <h3 className="font-display text-xl font-semibold text-foreground mb-4">
-              Our Commitment to {cityName} Families
-            </h3>
-            <p className="text-muted-foreground leading-relaxed mb-8">
-              We're not just a rental company – we're part of the {cityName} community. Our team takes pride in helping local families create memorable celebrations. From your first phone call to the final pickup, we're dedicated to making your event a success.
-            </p>
+            {/* H3: Our Commitment - Image Left */}
+            <ContentImageWithText
+              src={deliveryPageImages2[2]}
+              alt={`Birthday party ${cityName}`}
+              imagePosition="left"
+            >
+              <h3 className="font-display text-2xl font-semibold text-foreground mb-4">
+                Our Commitment to {cityName} Families
+              </h3>
+              <p className="text-muted-foreground leading-relaxed mb-4">
+                We're not just a rental company – we're part of the {cityName} community. Our team takes pride in helping local families create memorable celebrations.
+              </p>
+              <ul className="space-y-2 text-muted-foreground">
+                <li>• <strong>Local Expertise:</strong> We know {cityName} neighborhoods and can recommend the best options</li>
+                <li>• <strong>24/7 Support:</strong> Customer service available throughout your rental period</li>
+                <li>• <strong>Large Event Inflatables:</strong> Commercial-grade units for school and church events</li>
+              </ul>
+            </ContentImageWithText>
           </div>
         </div>
       </section>
