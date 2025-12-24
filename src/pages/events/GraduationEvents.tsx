@@ -129,17 +129,17 @@ const GraduationEvents = () => {
       <SEOHead
         title="Graduation Party Inflatable Rentals Orlando | Celebrate Your Graduate"
         description="Celebrate your graduate with bounce house rentals in Orlando. Pre-K to college graduation parties. Water slides, games & concessions. Book your celebration today!"
-        canonical="/events/graduation-events"
+        canonical="/events/graduation-party-water-slide-rentals-in-orlando"
       />
       <ServiceSchema
         serviceName="Graduation Party Inflatable Rentals Orlando"
         description="Professional inflatable rentals for graduation parties in Orlando and East Orange County. Celebrate graduates with bounce houses, water slides, and party entertainment."
-        url="/events/graduation-events"
+        url="/events/graduation-party-water-slide-rentals-in-orlando"
       />
       <BreadcrumbSchema
         items={[
           { name: "Events", href: "/events" },
-          { name: "Graduation Events", href: "/events/graduation-events" }
+          { name: "Graduation Events", href: "/events/graduation-party-water-slide-rentals-in-orlando" }
         ]}
       />
 

@@ -137,7 +137,7 @@ function CommunityEventsSection() {
       </h2>
       <p className="text-muted-foreground leading-relaxed mb-6">
         Schools, churches, and community groups in Wedgefield often rely on inflatables for festivals, fundraisers, and family events. Orlando Inflatables provides dependable, commercial-grade equipment that works well for both small gatherings and larger{" "}
-        <Link to="/events/church-events" className="text-primary hover:underline font-semibold">
+        <Link to="/events/church-event-inflatable-rentals-in-orlando" className="text-primary hover:underline font-semibold">
           community celebrations
         </Link>.
       </p>
@@ -201,10 +201,10 @@ function ExploreMoreSection() {
         <div>
           <h3 className="font-display text-lg font-semibold text-foreground mb-3">Event Types:</h3>
           <ul className="space-y-2 text-muted-foreground">
-            <li>• <Link to="/events/birthday-parties" className="text-primary hover:underline">Birthday Party Rentals</Link></li>
-            <li>• <Link to="/events/school-events" className="text-primary hover:underline">School Event Rentals</Link></li>
-            <li>• <Link to="/events/church-events" className="text-primary hover:underline">Church Event Rentals</Link></li>
-            <li>• <Link to="/events/corporate-events" className="text-primary hover:underline">Corporate Event Rentals</Link></li>
+            <li>• <Link to="/events/birthday-party-inflatable-rentals-in-orlando" className="text-primary hover:underline">Birthday Party Rentals</Link></li>
+            <li>• <Link to="/events/school-event-inflatable-rentals-in-orlando" className="text-primary hover:underline">School Event Rentals</Link></li>
+            <li>• <Link to="/events/church-event-inflatable-rentals-in-orlando" className="text-primary hover:underline">Church Event Rentals</Link></li>
+            <li>• <Link to="/events/corporate-event-inflatable-rentals-in-orlando" className="text-primary hover:underline">Corporate Event Rentals</Link></li>
           </ul>
         </div>
       </div>

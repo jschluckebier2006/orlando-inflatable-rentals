@@ -126,17 +126,17 @@ const CorporateEvents = () => {
       <SEOHead
         title="Corporate Event Inflatable Rentals Orlando | Company Picnics & Team Building"
         description="Professional inflatable rentals for corporate events in Orlando. Company picnics, team building, employee appreciation & more. Fully insured. Get a free quote!"
-        canonical="/events/corporate-events"
+        canonical="/events/corporate-event-inflatable-rentals-in-orlando"
       />
       <ServiceSchema
         serviceName="Corporate Event Inflatable Rentals Orlando"
         description="Professional inflatable rentals for corporate events, company picnics, team building, and employee appreciation in Orlando and East Orange County."
-        url="/events/corporate-events"
+        url="/events/corporate-event-inflatable-rentals-in-orlando"
       />
       <BreadcrumbSchema
         items={[
           { name: "Events", href: "/events" },
-          { name: "Corporate Events", href: "/events/corporate-events" }
+          { name: "Corporate Events", href: "/events/corporate-event-inflatable-rentals-in-orlando" }
         ]}
       />
 

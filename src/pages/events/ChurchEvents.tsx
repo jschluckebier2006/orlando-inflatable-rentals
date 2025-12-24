@@ -109,17 +109,17 @@ const ChurchEvents = () => {
       <SEOHead
         title="Church Event Inflatable Rentals Orlando | VBS, Fall Festivals & Outreach"
         description="Professional inflatable rentals for church events in Orlando. VBS, fall festivals, community outreach & more. Safe, family-friendly entertainment. Get a free quote!"
-        canonical="/events/church-events"
+        canonical="/events/church-event-inflatable-rentals-in-orlando"
       />
       <ServiceSchema
         serviceName="Church Event Inflatable Rentals Orlando"
         description="Professional inflatable rentals for church events, VBS, fall festivals, and community outreach in Orlando and East Orange County. Safe, family-friendly entertainment."
-        url="/events/church-events"
+        url="/events/church-event-inflatable-rentals-in-orlando"
       />
       <BreadcrumbSchema
         items={[
           { name: "Events", href: "/events" },
-          { name: "Church Events", href: "/events/church-events" }
+          { name: "Church Events", href: "/events/church-event-inflatable-rentals-in-orlando" }
         ]}
       />
 

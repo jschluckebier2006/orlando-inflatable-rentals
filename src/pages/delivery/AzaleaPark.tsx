@@ -140,7 +140,7 @@ function SchoolEventsSection() {
       </h2>
       <p className="text-muted-foreground leading-relaxed mb-6">
         Schools and youth organizations throughout the Azalea Park area rely on Orlando Inflatables for dependable event rentals. Our commercial-grade inflatables are designed for high-traffic use and are ideal for field days, reward days, and seasonal{" "}
-        <Link to="/events/school-events" className="text-primary hover:underline font-semibold">
+        <Link to="/events/school-event-inflatable-rentals-in-orlando" className="text-primary hover:underline font-semibold">
           school celebrations
         </Link>.
       </p>
@@ -170,7 +170,7 @@ function ChurchEventsSection() {
       </p>
       <h3 className="font-display text-xl font-semibold text-foreground mb-4">
         Popular{" "}
-        <Link to="/events/church-events" className="text-primary hover:underline font-semibold">
+        <Link to="/events/church-event-inflatable-rentals-in-orlando" className="text-primary hover:underline font-semibold">
           Church Event Rentals
         </Link>{" "}
         Include:
@@ -232,10 +232,10 @@ function ExploreMoreSection() {
         <div>
           <h3 className="font-display text-lg font-semibold text-foreground mb-3">Event Types:</h3>
           <ul className="space-y-2 text-muted-foreground">
-            <li>• <Link to="/events/birthday-parties" className="text-primary hover:underline">Birthday Party Rentals</Link></li>
-            <li>• <Link to="/events/school-events" className="text-primary hover:underline">School Event Rentals</Link></li>
-            <li>• <Link to="/events/church-events" className="text-primary hover:underline">Church Event Rentals</Link></li>
-            <li>• <Link to="/events/corporate-events" className="text-primary hover:underline">Corporate Event Rentals</Link></li>
+            <li>• <Link to="/events/birthday-party-inflatable-rentals-in-orlando" className="text-primary hover:underline">Birthday Party Rentals</Link></li>
+            <li>• <Link to="/events/school-event-inflatable-rentals-in-orlando" className="text-primary hover:underline">School Event Rentals</Link></li>
+            <li>• <Link to="/events/church-event-inflatable-rentals-in-orlando" className="text-primary hover:underline">Church Event Rentals</Link></li>
+            <li>• <Link to="/events/corporate-event-inflatable-rentals-in-orlando" className="text-primary hover:underline">Corporate Event Rentals</Link></li>
           </ul>
         </div>
       </div>

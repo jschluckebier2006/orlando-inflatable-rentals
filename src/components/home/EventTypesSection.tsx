@@ -9,27 +9,27 @@ import graduationEventsImage from "@/assets/graduation-events-category.webp";
 const eventTypes = [
   {
     name: "Birthday Parties",
-    href: "/events/birthday-parties",
+    href: "/events/birthday-party-inflatable-rentals-in-orlando",
     image: birthdayPartiesImage,
   },
   {
     name: "School Events",
-    href: "/events/school-events",
+    href: "/events/school-event-inflatable-rentals-in-orlando",
     image: schoolEventsImage,
   },
   {
     name: "Church Events",
-    href: "/events/church-events",
+    href: "/events/church-event-inflatable-rentals-in-orlando",
     image: churchEventsImage,
   },
   {
     name: "Corporate Events",
-    href: "/events/corporate-events",
+    href: "/events/corporate-event-inflatable-rentals-in-orlando",
     image: corporateEventsImage,
   },
   {
     name: "Graduation Events",
-    href: "/events/graduation-events",
+    href: "/events/graduation-party-water-slide-rentals-in-orlando",
     image: graduationEventsImage,
   },
 ];

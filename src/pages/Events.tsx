@@ -12,11 +12,11 @@ import corporateEventsImage from "@/assets/corporate-events-category.webp";
 import graduationEventsImage from "@/assets/graduation-events-category.webp";
 
 const events = [
-  { name: "Birthday Parties", href: "/events/birthday-parties", icon: Cake, image: birthdayPartiesImage },
-  { name: "School Events", href: "/events/school-events", icon: School, image: schoolEventsImage },
-  { name: "Church Events", href: "/events/church-events", icon: Church, image: churchEventsImage },
-  { name: "Corporate Events", href: "/events/corporate-events", icon: Building2, image: corporateEventsImage },
-  { name: "Graduation Events", href: "/events/graduation-events", icon: GraduationCap, image: graduationEventsImage },
+  { name: "Birthday Parties", href: "/events/birthday-party-inflatable-rentals-in-orlando", icon: Cake, image: birthdayPartiesImage },
+  { name: "School Events", href: "/events/school-event-inflatable-rentals-in-orlando", icon: School, image: schoolEventsImage },
+  { name: "Church Events", href: "/events/church-event-inflatable-rentals-in-orlando", icon: Church, image: churchEventsImage },
+  { name: "Corporate Events", href: "/events/corporate-event-inflatable-rentals-in-orlando", icon: Building2, image: corporateEventsImage },
+  { name: "Graduation Events", href: "/events/graduation-party-water-slide-rentals-in-orlando", icon: GraduationCap, image: graduationEventsImage },
 ];
 
 export default function Events() {
