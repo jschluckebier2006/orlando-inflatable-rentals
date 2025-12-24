@@ -78,134 +78,135 @@ export function Header() {
             </Link>
 
             {/* Desktop Navigation */}
-            <NavigationMenu className="hidden lg:flex">
-              <NavigationMenuList>
-                <NavigationMenuItem>
-                  <NavigationMenuLink asChild>
-                    <Link 
-                      to="/"
-                      className={cn(
-                        "group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none",
-                        location.pathname === "/" && "bg-accent"
-                      )}
-                    >
-                      Home
-                    </Link>
-                  </NavigationMenuLink>
-                </NavigationMenuItem>
+            <nav className="hidden lg:flex items-center gap-1">
+              <NavigationMenu>
+                <NavigationMenuList className="gap-1">
+                  <NavigationMenuItem>
+                    <NavigationMenuLink asChild>
+                      <Link 
+                        to="/"
+                        className={cn(
+                          "group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none",
+                          location.pathname === "/" && "bg-accent"
+                        )}
+                      >
+                        Home
+                      </Link>
+                    </NavigationMenuLink>
+                  </NavigationMenuItem>
 
-                <NavigationMenuItem>
-                  <NavigationMenuTrigger>All Rentals</NavigationMenuTrigger>
-                  <NavigationMenuContent>
-                    <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
-                      {rentalCategories.map((category) => (
-                        <li key={category.name}>
+                  <NavigationMenuItem>
+                    <NavigationMenuTrigger>All Rentals</NavigationMenuTrigger>
+                    <NavigationMenuContent>
+                      <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
+                        {rentalCategories.map((category) => (
+                          <li key={category.name}>
+                            <NavigationMenuLink asChild>
+                              <Link
+                                to={category.href}
+                                className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                              >
+                                <div className="text-sm font-medium leading-none">{category.name}</div>
+                                <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                                  {category.description}
+                                </p>
+                              </Link>
+                            </NavigationMenuLink>
+                          </li>
+                        ))}
+                        <li className="col-span-2">
                           <NavigationMenuLink asChild>
                             <Link
-                              to={category.href}
-                              className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                              to="/rentals"
+                              className="block select-none rounded-md bg-primary/10 p-3 text-center font-medium text-primary no-underline outline-none transition-colors hover:bg-primary/20"
                             >
-                              <div className="text-sm font-medium leading-none">{category.name}</div>
-                              <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                                {category.description}
-                              </p>
+                              View All Rentals →
                             </Link>
                           </NavigationMenuLink>
                         </li>
-                      ))}
-                      <li className="col-span-2">
-                        <NavigationMenuLink asChild>
-                          <Link
-                            to="/rentals"
-                            className="block select-none rounded-md bg-primary/10 p-3 text-center font-medium text-primary no-underline outline-none transition-colors hover:bg-primary/20"
-                          >
-                            View All Rentals →
-                          </Link>
-                        </NavigationMenuLink>
-                      </li>
-                    </ul>
-                  </NavigationMenuContent>
-                </NavigationMenuItem>
+                      </ul>
+                    </NavigationMenuContent>
+                  </NavigationMenuItem>
 
-                <NavigationMenuItem>
-                  <NavigationMenuTrigger>Delivery Areas</NavigationMenuTrigger>
-                  <NavigationMenuContent>
-                    <ul className="grid w-[400px] gap-2 p-4 md:w-[500px] md:grid-cols-2">
-                      {deliveryAreas.map((area) => (
-                        <li key={area}>
+                  <NavigationMenuItem>
+                    <NavigationMenuTrigger>Delivery Areas</NavigationMenuTrigger>
+                    <NavigationMenuContent>
+                      <ul className="grid w-[400px] gap-2 p-4 md:w-[500px] md:grid-cols-2">
+                        {deliveryAreas.map((area) => (
+                          <li key={area}>
+                            <NavigationMenuLink asChild>
+                              <Link
+                                to={`/water-slide-and-bounce-house-rental-${area.toLowerCase().replace(/\s+/g, "-")}`}
+                                className="block select-none rounded-md p-2 text-sm leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground"
+                              >
+                                {area}
+                              </Link>
+                            </NavigationMenuLink>
+                          </li>
+                        ))}
+                        <li className="col-span-2">
                           <NavigationMenuLink asChild>
                             <Link
-                              to={`/water-slide-and-bounce-house-rental-${area.toLowerCase().replace(/\s+/g, "-")}`}
-                              className="block select-none rounded-md p-2 text-sm leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground"
+                              to="/delivery-area"
+                              className="block select-none rounded-md bg-primary/10 p-2 text-center font-medium text-primary no-underline outline-none transition-colors hover:bg-primary/20"
                             >
-                              {area}
+                              View All Delivery Areas →
                             </Link>
                           </NavigationMenuLink>
                         </li>
-                      ))}
-                      <li className="col-span-2">
-                        <NavigationMenuLink asChild>
-                          <Link
-                            to="/delivery-area"
-                            className="block select-none rounded-md bg-primary/10 p-2 text-center font-medium text-primary no-underline outline-none transition-colors hover:bg-primary/20"
-                          >
-                            View All Delivery Areas →
-                          </Link>
-                        </NavigationMenuLink>
-                      </li>
-                    </ul>
-                  </NavigationMenuContent>
-                </NavigationMenuItem>
+                      </ul>
+                    </NavigationMenuContent>
+                  </NavigationMenuItem>
+                </NavigationMenuList>
+              </NavigationMenu>
 
-              </NavigationMenuList>
-            </NavigationMenu>
-
-            {/* Events Dropdown - Separate for proper positioning */}
-            <DropdownMenu>
-              <DropdownMenuTrigger className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none">
-                Events
-                <ChevronDown className="relative top-[1px] ml-1 h-3 w-3 transition duration-200 group-data-[state=open]:rotate-180" />
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-[200px]">
-                {eventTypes.map((event) => (
-                  <DropdownMenuItem key={event.name} asChild>
-                    <Link to={event.href} className="cursor-pointer">
-                      {event.name}
+              {/* Events Dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none">
+                  Events
+                  <ChevronDown className="relative top-[1px] ml-1 h-3 w-3 transition duration-200 group-data-[state=open]:rotate-180" />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-[200px]">
+                  {eventTypes.map((event) => (
+                    <DropdownMenuItem key={event.name} asChild>
+                      <Link to={event.href} className="cursor-pointer">
+                        {event.name}
+                      </Link>
+                    </DropdownMenuItem>
+                  ))}
+                  <DropdownMenuItem asChild>
+                    <Link to="/events" className="cursor-pointer font-medium text-primary">
+                      View All Event Types →
                     </Link>
                   </DropdownMenuItem>
-                ))}
-                <DropdownMenuItem asChild>
-                  <Link to="/events" className="cursor-pointer font-medium text-primary">
-                    View All Event Types →
-                  </Link>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+                </DropdownMenuContent>
+              </DropdownMenu>
 
-            {/* Contact Dropdown - Separate for proper positioning */}
-            <DropdownMenu>
-              <DropdownMenuTrigger className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none">
-                Contact
-                <ChevronDown className="relative top-[1px] ml-1 h-3 w-3 transition duration-200 group-data-[state=open]:rotate-180" />
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-[180px]">
-                <DropdownMenuItem asChild>
-                  <Link to="/contact" className="cursor-pointer">
-                    Contact Us
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/blog" className="cursor-pointer">
-                    Blog
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/privacy-policy" className="cursor-pointer">
-                    Privacy Policy
-                  </Link>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+              {/* Contact Dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none">
+                  Contact
+                  <ChevronDown className="relative top-[1px] ml-1 h-3 w-3 transition duration-200 group-data-[state=open]:rotate-180" />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-[180px]">
+                  <DropdownMenuItem asChild>
+                    <Link to="/contact" className="cursor-pointer">
+                      Contact Us
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/blog" className="cursor-pointer">
+                      Blog
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/privacy-policy" className="cursor-pointer">
+                      Privacy Policy
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </nav>
 
             {/* CTA Button */}
             <Button 
