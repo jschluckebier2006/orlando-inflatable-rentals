@@ -144,7 +144,7 @@ const CorporateEvents = () => {
       <section className="relative py-20 overflow-hidden">
         {/* Background Image */}
         <div 
-          className="absolute inset-0 bg-cover bg-center"
+          className="absolute inset-0 bg-cover bg-top"
           style={{ backgroundImage: `url(${siteImages.kidsGroupSlide1})` }}
         />
         <div className="absolute inset-0 bg-gradient-to-br from-primary/90 via-primary/80 to-primary/90" />
