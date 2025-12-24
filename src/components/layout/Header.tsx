@@ -151,9 +151,9 @@ export function Header() {
                   </NavigationMenuContent>
                 </NavigationMenuItem>
 
-                <NavigationMenuItem>
+                <NavigationMenuItem className="relative">
                   <NavigationMenuTrigger>Events</NavigationMenuTrigger>
-                  <NavigationMenuContent>
+                  <NavigationMenuContent className="!left-auto !right-0 !translate-x-0">
                     <ul className="grid w-[300px] gap-2 p-4">
                       {eventTypes.map((event) => (
                         <li key={event.name}>
@@ -181,9 +181,9 @@ export function Header() {
                   </NavigationMenuContent>
                 </NavigationMenuItem>
 
-                <NavigationMenuItem>
+                <NavigationMenuItem className="relative">
                   <NavigationMenuTrigger>Contact</NavigationMenuTrigger>
-                  <NavigationMenuContent>
+                  <NavigationMenuContent className="!left-auto !right-0 !translate-x-0">
                     <ul className="grid w-[200px] gap-2 p-4">
                       <li>
                         <NavigationMenuLink asChild>
