@@ -5,13 +5,18 @@ import { ReviewsSection } from "@/components/home/ReviewsSection";
 import { Link } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Cake, School, Church, Building2, GraduationCap } from "lucide-react";
+import birthdayPartiesImage from "@/assets/birthday-parties-category.webp";
+import schoolEventsImage from "@/assets/school-events-category.webp";
+import churchEventsImage from "@/assets/church-events-category.webp";
+import corporateEventsImage from "@/assets/corporate-events-category.webp";
+import graduationEventsImage from "@/assets/graduation-events-category.webp";
 
 const events = [
-  { name: "Birthday Parties", href: "/events/birthday-parties", icon: Cake, image: "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=400&h=250&fit=crop" },
-  { name: "School Events", href: "/events/school-events", icon: School, image: "https://images.unsplash.com/photo-1509062522246-3755977927d7?w=400&h=250&fit=crop" },
-  { name: "Church Events", href: "/events/church-events", icon: Church, image: "https://images.unsplash.com/photo-1438032005730-c779502df39b?w=400&h=250&fit=crop" },
-  { name: "Corporate Events", href: "/events/corporate-events", icon: Building2, image: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=400&h=250&fit=crop" },
-  { name: "Graduation Events", href: "/events/graduation-events", icon: GraduationCap, image: "https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?w=400&h=250&fit=crop" },
+  { name: "Birthday Parties", href: "/events/birthday-parties", icon: Cake, image: birthdayPartiesImage },
+  { name: "School Events", href: "/events/school-events", icon: School, image: schoolEventsImage },
+  { name: "Church Events", href: "/events/church-events", icon: Church, image: churchEventsImage },
+  { name: "Corporate Events", href: "/events/corporate-events", icon: Building2, image: corporateEventsImage },
+  { name: "Graduation Events", href: "/events/graduation-events", icon: GraduationCap, image: graduationEventsImage },
 ];
 
 export default function Events() {
