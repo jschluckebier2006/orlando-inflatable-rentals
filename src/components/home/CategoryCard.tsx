@@ -29,7 +29,7 @@ export function CategoryCard({ title, products, categoryLink }: CategoryCardProp
             size="sm" 
             className="bg-white text-foreground hover:bg-gray-100 font-semibold text-sm"
           >
-            View All {title}
+            See More
           </Button>
         </Link>
       </div>
@@ -62,7 +62,7 @@ export function CategoryCard({ title, products, categoryLink }: CategoryCardProp
             <Button 
               className="bg-secondary hover:bg-secondary/90 text-secondary-foreground font-semibold text-sm px-4 py-2 rounded-md shadow-md"
             >
-              View {title} →
+              See More →
             </Button>
           </Link>
         </div>
