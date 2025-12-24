@@ -10,6 +10,12 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { JotformModal } from "@/components/JotformModal";
 import logo from "@/assets/logo.png";
@@ -151,75 +157,55 @@ export function Header() {
                   </NavigationMenuContent>
                 </NavigationMenuItem>
 
-                <NavigationMenuItem className="relative">
-                  <NavigationMenuTrigger>Events</NavigationMenuTrigger>
-                  <NavigationMenuContent positionInPlace className="!right-0 !left-auto">
-                    <ul className="grid w-[300px] gap-2 p-4">
-                      {eventTypes.map((event) => (
-                        <li key={event.name}>
-                          <NavigationMenuLink asChild>
-                            <Link
-                              to={event.href}
-                              className="block select-none rounded-md p-2 text-sm leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground"
-                            >
-                              {event.name}
-                            </Link>
-                          </NavigationMenuLink>
-                        </li>
-                      ))}
-                      <li>
-                        <NavigationMenuLink asChild>
-                          <Link
-                            to="/events"
-                            className="block select-none rounded-md bg-primary/10 p-2 text-center font-medium text-primary no-underline outline-none transition-colors hover:bg-primary/20"
-                          >
-                            View All Event Types →
-                          </Link>
-                        </NavigationMenuLink>
-                      </li>
-                    </ul>
-                  </NavigationMenuContent>
-                </NavigationMenuItem>
-
-                <NavigationMenuItem className="relative">
-                  <NavigationMenuTrigger>Contact</NavigationMenuTrigger>
-                  <NavigationMenuContent positionInPlace className="!right-0 !left-auto">
-                    <ul className="grid w-[200px] gap-2 p-4">
-                      <li>
-                        <NavigationMenuLink asChild>
-                          <Link
-                            to="/contact"
-                            className="block select-none rounded-md p-2 text-sm leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground"
-                          >
-                            Contact Us
-                          </Link>
-                        </NavigationMenuLink>
-                      </li>
-                      <li>
-                        <NavigationMenuLink asChild>
-                          <Link
-                            to="/blog"
-                            className="block select-none rounded-md p-2 text-sm leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground"
-                          >
-                            Blog
-                          </Link>
-                        </NavigationMenuLink>
-                      </li>
-                      <li>
-                        <NavigationMenuLink asChild>
-                          <Link
-                            to="/privacy-policy"
-                            className="block select-none rounded-md p-2 text-sm leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground"
-                          >
-                            Privacy Policy
-                          </Link>
-                        </NavigationMenuLink>
-                      </li>
-                    </ul>
-                  </NavigationMenuContent>
-                </NavigationMenuItem>
               </NavigationMenuList>
             </NavigationMenu>
+
+            {/* Events Dropdown - Separate for proper positioning */}
+            <DropdownMenu>
+              <DropdownMenuTrigger className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none">
+                Events
+                <ChevronDown className="relative top-[1px] ml-1 h-3 w-3 transition duration-200 group-data-[state=open]:rotate-180" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-[200px]">
+                {eventTypes.map((event) => (
+                  <DropdownMenuItem key={event.name} asChild>
+                    <Link to={event.href} className="cursor-pointer">
+                      {event.name}
+                    </Link>
+                  </DropdownMenuItem>
+                ))}
+                <DropdownMenuItem asChild>
+                  <Link to="/events" className="cursor-pointer font-medium text-primary">
+                    View All Event Types →
+                  </Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* Contact Dropdown - Separate for proper positioning */}
+            <DropdownMenu>
+              <DropdownMenuTrigger className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none">
+                Contact
+                <ChevronDown className="relative top-[1px] ml-1 h-3 w-3 transition duration-200 group-data-[state=open]:rotate-180" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-[180px]">
+                <DropdownMenuItem asChild>
+                  <Link to="/contact" className="cursor-pointer">
+                    Contact Us
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/blog" className="cursor-pointer">
+                    Blog
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/privacy-policy" className="cursor-pointer">
+                    Privacy Policy
+                  </Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
 
             {/* CTA Button */}
             <Button 
