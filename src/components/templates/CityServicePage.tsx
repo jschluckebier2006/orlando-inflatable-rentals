@@ -143,6 +143,16 @@ export function CityServicePage({ city, citySlug, serviceType, nearbyAreas, loca
               </p>
             </ContentImageWithText>
 
+            {/* Full-Width Section 1: Your Event, Our Priority */}
+            <div className="py-12 text-center border-b border-border/50">
+              <h3 className="font-display text-2xl font-bold text-foreground mb-4">
+                Your {city} Event, Our Priority
+              </h3>
+              <p className="text-muted-foreground leading-relaxed max-w-3xl mx-auto">
+                Planning a {serviceName.toLowerCase()} party in {city}? We make it easy! From the moment you request a quote to the final pickup, our team is dedicated to ensuring your event is a success. We handle all the heavy lifting so you can focus on celebrating.
+              </p>
+            </div>
+
             {/* H3: Best Bounce Houses/Water Slides - Image Left */}
             <ContentImageWithText
               src={cityServiceImages[1]}
@@ -253,6 +263,16 @@ export function CityServicePage({ city, citySlug, serviceType, nearbyAreas, loca
               </p>
             </ContentImageWithText>
 
+            {/* Full-Width Section 2: Safe & Clean Equipment */}
+            <div className="py-12 text-center border-b border-border/50">
+              <h3 className="font-display text-2xl font-bold text-foreground mb-4">
+                Safe & Clean Equipment Guaranteed
+              </h3>
+              <p className="text-muted-foreground leading-relaxed max-w-3xl mx-auto">
+                Every {serviceName.toLowerCase()} we deliver to {city} is thoroughly cleaned, sanitized with hospital-grade disinfectants, and inspected before each rental. Your children's safety is our top priority, and we're fully licensed and insured.
+              </p>
+            </div>
+
             {/* Additional Image Section - Image Left */}
             <ContentImageWithText
               src={cityServiceImages2[0]}
@@ -271,6 +291,16 @@ export function CityServicePage({ city, citySlug, serviceType, nearbyAreas, loca
                 <li>• <strong>Community Focused:</strong> Proudly serving {city} families</li>
               </ul>
             </ContentImageWithText>
+
+            {/* Full-Width Section 3: Book with Confidence */}
+            <div className="py-12 text-center border-b border-border/50">
+              <h3 className="font-display text-2xl font-bold text-foreground mb-4">
+                Book with Confidence
+              </h3>
+              <p className="text-muted-foreground leading-relaxed max-w-3xl mx-auto">
+                When you choose Orlando Inflatables for your {city} event, you're choosing reliability. We offer transparent pricing with no hidden fees, flexible scheduling, and a 100% satisfaction guarantee. Join thousands of happy {city} customers!
+              </p>
+            </div>
 
             {/* Third Image Section - Image Right */}
             <ContentImageWithText

@@ -214,6 +214,16 @@ export function CityDeliveryPage({
               </p>
             </ContentImageWithText>
 
+            {/* Full-Width Section 1: Your Event, Our Priority */}
+            <div className="py-12 text-center border-b border-border/50">
+              <h3 className="font-display text-2xl font-bold text-foreground mb-4">
+                Your {cityName} Event, Our Priority
+              </h3>
+              <p className="text-muted-foreground leading-relaxed max-w-3xl mx-auto">
+                Planning a party in {cityName}? We make it easy! From the moment you request a quote to the final pickup, our team is dedicated to ensuring your event is a success. We handle all the heavy lifting so you can focus on celebrating with your guests.
+              </p>
+            </div>
+
             {/* H2: Bounce House Rentals - Image Left */}
             <ContentImageWithText
               src={deliveryPageImages[1]}
@@ -237,6 +247,16 @@ export function CityDeliveryPage({
               </ul>
             </ContentImageWithText>
 
+            {/* Full-Width Section 2: Safe & Clean Equipment */}
+            <div className="py-12 text-center border-b border-border/50">
+              <h3 className="font-display text-2xl font-bold text-foreground mb-4">
+                Safe & Clean Equipment Guaranteed
+              </h3>
+              <p className="text-muted-foreground leading-relaxed max-w-3xl mx-auto">
+                Every inflatable we deliver to {cityName} is thoroughly cleaned, sanitized with hospital-grade disinfectants, and inspected before each rental. Your children's safety is our top priority, and we're fully licensed and insured for your peace of mind.
+              </p>
+            </div>
+
             {/* H2: Water Slide Rentals - Image Right */}
             <ContentImageWithText
               src={deliveryPageImages[2]}
@@ -256,6 +276,16 @@ export function CityDeliveryPage({
                 Choose from single-lane slides, dual-lane racing slides, and water slide combos. All our water slides are designed with safety in mind and feature soft landing pools.
               </p>
             </ContentImageWithText>
+
+            {/* Full-Width Section 3: Serving the Local Community */}
+            <div className="py-12 text-center border-b border-border/50">
+              <h3 className="font-display text-2xl font-bold text-foreground mb-4">
+                Proudly Serving the {cityName} Community
+              </h3>
+              <p className="text-muted-foreground leading-relaxed max-w-3xl mx-auto">
+                As a locally-owned business, we understand what {cityName} families need for their celebrations. We've helped hundreds of families in your neighborhood create unforgettable memories, and we'd love to be part of your next event.
+              </p>
+            </div>
 
             {/* H2: About the City - Image Left */}
             <ContentImageWithText
@@ -277,6 +307,16 @@ export function CityDeliveryPage({
               </p>
             </ContentImageWithText>
 
+            {/* Full-Width Section 4: Book with Confidence */}
+            <div className="py-12 text-center border-b border-border/50">
+              <h3 className="font-display text-2xl font-bold text-foreground mb-4">
+                Book with Confidence
+              </h3>
+              <p className="text-muted-foreground leading-relaxed max-w-3xl mx-auto">
+                When you choose Orlando Inflatables for your {cityName} event, you're choosing reliability. We offer transparent pricing with no hidden fees, flexible scheduling, and a 100% satisfaction guarantee. Join thousands of happy {cityName} customers!
+              </p>
+            </div>
+
             {/* H2: Why Choose Us - Image Right */}
             <ContentImageWithText
               src={deliveryPageImages2[1]}
@@ -296,6 +336,16 @@ export function CityDeliveryPage({
                 <li>• <strong>On-Time Service:</strong> We arrive when promised and handle all setup</li>
               </ul>
             </ContentImageWithText>
+
+            {/* Full-Width Section 5: Making Memories */}
+            <div className="py-12 text-center border-b border-border/50">
+              <h3 className="font-display text-2xl font-bold text-foreground mb-4">
+                Making Memories in {cityName}
+              </h3>
+              <p className="text-muted-foreground leading-relaxed max-w-3xl mx-auto">
+                Every celebration is an opportunity to create lasting memories. From first birthdays to graduation parties, our inflatables bring joy to guests of all ages. Let us help make your {cityName} event one to remember!
+              </p>
+            </div>
 
             {/* H3: Our Commitment - Image Left */}
             <ContentImageWithText
