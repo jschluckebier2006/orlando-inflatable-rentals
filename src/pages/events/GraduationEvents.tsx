@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import { siteImages } from "@/components/home/ContentImages";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { useState } from "react";
 import { 
   GraduationCap, 
   Star, 
@@ -19,10 +21,21 @@ import {
   PartyPopper,
   Award,
   Heart,
-  Sparkles
+  Sparkles,
+  MapPin,
+  HelpCircle,
+  ArrowRight,
+  ChevronDown,
+  ChevronUp,
+  Home,
+  Trophy
 } from "lucide-react";
+import waterSlideBoy from "@/assets/water-slide-boy-1.jpg";
+import girlsJumping from "@/assets/girls-jumping-1.jpg";
 
 const GraduationEvents = () => {
+  const [showGraduationFAQ, setShowGraduationFAQ] = useState(false);
+  const [showMoreLinks, setShowMoreLinks] = useState(false);
 
   const features = [
     {
@@ -478,14 +491,354 @@ const GraduationEvents = () => {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 bg-primary text-primary-foreground">
+      {/* SECTION 1: East Orlando Graduation Authority Block */}
+      <section className="py-16">
+        <div className="container-page">
+          <div className="max-w-5xl mx-auto">
+            <div className="grid lg:grid-cols-2 gap-10 items-center">
+              <div>
+                <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full mb-6">
+                  <MapPin className="h-5 w-5" />
+                  <span className="font-medium">East Orlando Celebrations</span>
+                </div>
+                <h2 className="text-3xl font-bold mb-6">Graduation Party Rentals Across East Orlando</h2>
+                <p className="text-muted-foreground text-lg leading-relaxed mb-6">
+                  Orlando Inflatables proudly provides graduation party rentals throughout East Orlando, helping families celebrate high school, middle school, and college milestones with fun, stress-free events.
+                </p>
+                <p className="text-muted-foreground text-lg leading-relaxed mb-4">
+                  Graduation parties we commonly support include:
+                </p>
+                <ul className="space-y-3 mb-6">
+                  <li className="flex items-start gap-3">
+                    <CheckCircle className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+                    <span className="text-muted-foreground">High school graduation celebrations</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <CheckCircle className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+                    <span className="text-muted-foreground">Middle school promotions</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <CheckCircle className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+                    <span className="text-muted-foreground">College graduation parties</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <CheckCircle className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+                    <span className="text-muted-foreground">End-of-school-year celebrations</span>
+                  </li>
+                </ul>
+                <p className="text-muted-foreground text-lg leading-relaxed">
+                  Because we serve East Orlando year-round, we understand backyard layouts, HOA guidelines, and the timing needs that come with graduation season.
+                </p>
+              </div>
+              <div className="relative">
+                <img 
+                  src={waterSlideBoy} 
+                  alt="Graduation party water slide fun in East Orlando" 
+                  className="rounded-2xl shadow-2xl w-full h-auto object-cover"
+                />
+                <div className="absolute -bottom-4 -right-4 bg-primary text-primary-foreground px-6 py-3 rounded-xl shadow-lg">
+                  <p className="font-bold">Celebrating Graduates</p>
+                  <p className="text-sm opacity-90">Throughout East Orlando</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 2: Backyard Graduation Parties */}
+      <section className="py-16 bg-muted/30">
+        <div className="container-page">
+          <div className="max-w-5xl mx-auto">
+            <div className="grid lg:grid-cols-2 gap-10 items-center">
+              <div className="order-2 lg:order-1">
+                <img 
+                  src={girlsJumping} 
+                  alt="Teens enjoying backyard graduation party inflatables in East Orlando" 
+                  className="rounded-2xl shadow-2xl w-full h-auto object-cover"
+                />
+              </div>
+              <div className="order-1 lg:order-2">
+                <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full mb-6">
+                  <Home className="h-5 w-5" />
+                  <span className="font-medium">Backyard Parties</span>
+                </div>
+                <h2 className="text-3xl font-bold mb-6">Backyard Graduation Party Rentals in East Orlando</h2>
+                <p className="text-muted-foreground text-lg leading-relaxed mb-6">
+                  Backyard graduation parties are extremely popular across East Orlando. Orlando Inflatables offers bounce houses, combo units, and water slides that work well for mixed-age gatherings.
+                </p>
+                <p className="text-muted-foreground text-lg leading-relaxed mb-4">
+                  Popular backyard graduation rentals include:
+                </p>
+                <ul className="space-y-3 mb-6">
+                  <li className="flex items-start gap-3">
+                    <CheckCircle className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+                    <span className="text-muted-foreground">Bounce house and slide combos</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <CheckCircle className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+                    <span className="text-muted-foreground">Water slides for warm weather celebrations</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <CheckCircle className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+                    <span className="text-muted-foreground">Interactive inflatables for teens and young adults</span>
+                  </li>
+                </ul>
+                <p className="text-muted-foreground text-lg leading-relaxed">
+                  We help families select inflatables that fit yard size, guest count, and age range.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Group Graduation Celebrations */}
+      <section className="py-16">
+        <div className="container-page">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-10">
+              <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full mb-6">
+                <Trophy className="h-5 w-5" />
+                <span className="font-medium">Group Celebrations</span>
+              </div>
+              <h2 className="text-3xl font-bold mb-4">High School & Group Graduation Celebrations</h2>
+              <p className="text-muted-foreground text-lg max-w-3xl mx-auto">
+                Graduation celebrations often bring together friends, family, and classmates. Orlando Inflatables provides inflatables designed for larger groups and longer event durations.
+              </p>
+            </div>
+            
+            <div className="grid md:grid-cols-3 gap-6 mb-8">
+              <Card className="border-0 shadow-lg text-center">
+                <CardContent className="p-6">
+                  <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                    <Trophy className="h-6 w-6 text-primary" />
+                  </div>
+                  <h3 className="font-semibold mb-2">Obstacle Courses</h3>
+                  <p className="text-muted-foreground text-sm">Friendly competition for teens</p>
+                </CardContent>
+              </Card>
+              <Card className="border-0 shadow-lg text-center">
+                <CardContent className="p-6">
+                  <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                    <Users className="h-6 w-6 text-primary" />
+                  </div>
+                  <h3 className="font-semibold mb-2">Large Inflatables</h3>
+                  <p className="text-muted-foreground text-sm">Great for teens and young adults</p>
+                </CardContent>
+              </Card>
+              <Card className="border-0 shadow-lg text-center">
+                <CardContent className="p-6">
+                  <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                    <Heart className="h-6 w-6 text-primary" />
+                  </div>
+                  <h3 className="font-semibold mb-2">Concessions</h3>
+                  <p className="text-muted-foreground text-sm">Popcorn, cotton candy, snow cones</p>
+                </CardContent>
+              </Card>
+            </div>
+            
+            <p className="text-muted-foreground text-lg text-center">
+              Our team helps plan placement and flow to keep guests engaged throughout the event.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 3: East Orlando Graduation FAQs */}
+      <section className="py-16 bg-muted/30">
+        <div className="container-page">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-12">
+              <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full mb-6">
+                <HelpCircle className="h-5 w-5" />
+                <span className="font-medium">Common Questions</span>
+              </div>
+              <h2 className="text-3xl font-bold mb-4">East Orlando Graduation Party Rental FAQs</h2>
+              <p className="text-muted-foreground text-lg">
+                Get answers to common questions about graduation party rentals in East Orlando.
+              </p>
+            </div>
+            
+            <Collapsible open={showGraduationFAQ} onOpenChange={setShowGraduationFAQ}>
+              <div className="space-y-6">
+                <Card className="border-0 shadow-md">
+                  <CardContent className="p-6">
+                    <h4 className="font-bold text-lg mb-3">Do you provide graduation party rentals throughout East Orlando?</h4>
+                    <p className="text-muted-foreground">
+                      Yes. Orlando Inflatables provides graduation party rentals across East Orlando for residential homes, HOA communities, and event locations.
+                    </p>
+                  </CardContent>
+                </Card>
+                
+                <Card className="border-0 shadow-md">
+                  <CardContent className="p-6">
+                    <h4 className="font-bold text-lg mb-3">Are inflatables suitable for teens and older students?</h4>
+                    <p className="text-muted-foreground">
+                      Yes. We offer inflatables that are popular with teens, including obstacle courses, combo units, and interactive games.
+                    </p>
+                  </CardContent>
+                </Card>
+                
+                <CollapsibleContent className="space-y-6">
+                  <Card className="border-0 shadow-md">
+                    <CardContent className="p-6">
+                      <h4 className="font-bold text-lg mb-3">Can graduation parties include water slides?</h4>
+                      <p className="text-muted-foreground">
+                        Absolutely. Many East Orlando graduation parties include water slides, especially during spring and early summer.
+                      </p>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card className="border-0 shadow-md">
+                    <CardContent className="p-6">
+                      <h4 className="font-bold text-lg mb-3">Are inflatables allowed in HOA communities for graduation parties?</h4>
+                      <p className="text-muted-foreground">
+                        Many East Orlando HOAs allow inflatables for private events. We help families plan placement and timing to stay within common guidelines.
+                      </p>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card className="border-0 shadow-md">
+                    <CardContent className="p-6">
+                      <h4 className="font-bold text-lg mb-3">Do you offer delivery, setup, and pickup for graduation events?</h4>
+                      <p className="text-muted-foreground">
+                        Yes. Our team handles delivery, professional setup, and takedown so families can focus on celebrating.
+                      </p>
+                    </CardContent>
+                  </Card>
+                </CollapsibleContent>
+              </div>
+              
+              <div className="text-center mt-8">
+                <CollapsibleTrigger asChild>
+                  <Button variant="outline" className="gap-2">
+                    {showGraduationFAQ ? (
+                      <>
+                        <ChevronUp className="h-4 w-4" />
+                        Show Less
+                      </>
+                    ) : (
+                      <>
+                        <ChevronDown className="h-4 w-4" />
+                        See More FAQs
+                      </>
+                    )}
+                  </Button>
+                </CollapsibleTrigger>
+              </div>
+            </Collapsible>
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 4: Internal Linking Reinforcement */}
+      <section className="py-16">
+        <div className="container-page">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-10">
+              <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full mb-6">
+                <ArrowRight className="h-5 w-5" />
+                <span className="font-medium">Explore More</span>
+              </div>
+              <h2 className="text-3xl font-bold mb-4">Explore More East Orlando Event Rental Options</h2>
+              <p className="text-muted-foreground text-lg max-w-3xl mx-auto">
+                Looking for more ways to make your East Orlando graduation celebration unforgettable? Explore our full range of rentals, from <Link to="/bounce-house-rentals" className="text-primary hover:underline font-medium">graduation bounce house rentals in East Orlando</Link> to <Link to="/water-slide-rentals" className="text-primary hover:underline font-medium">East Orlando graduation water slide rentals</Link>.
+              </p>
+            </div>
+            
+            <Collapsible open={showMoreLinks} onOpenChange={setShowMoreLinks}>
+              <div className="space-y-6">
+                <div>
+                  <h3 className="font-semibold text-lg mb-4 text-center">East Orlando Communities We Serve:</h3>
+                  <div className="flex flex-wrap justify-center gap-2">
+                    <Link to="/water-slide-and-bounce-house-rental-avalon-park" className="bg-primary/10 text-primary px-4 py-2 rounded-full hover:bg-primary hover:text-primary-foreground transition-colors text-sm font-medium">
+                      Avalon Park
+                    </Link>
+                    <Link to="/water-slide-and-bounce-house-rental-waterford-lakes" className="bg-primary/10 text-primary px-4 py-2 rounded-full hover:bg-primary hover:text-primary-foreground transition-colors text-sm font-medium">
+                      Waterford Lakes
+                    </Link>
+                    <Link to="/water-slide-and-bounce-house-rental-eastwood" className="bg-primary/10 text-primary px-4 py-2 rounded-full hover:bg-primary hover:text-primary-foreground transition-colors text-sm font-medium">
+                      Eastwood
+                    </Link>
+                    <Link to="/water-slide-and-bounce-house-rental-alafaya" className="bg-primary/10 text-primary px-4 py-2 rounded-full hover:bg-primary hover:text-primary-foreground transition-colors text-sm font-medium">
+                      Alafaya
+                    </Link>
+                    <Link to="/water-slide-and-bounce-house-rental-stoneybrook" className="bg-primary/10 text-primary px-4 py-2 rounded-full hover:bg-primary hover:text-primary-foreground transition-colors text-sm font-medium">
+                      Stoneybrook
+                    </Link>
+                  </div>
+                </div>
+                
+                <CollapsibleContent className="space-y-6">
+                  <div className="text-center">
+                    <h3 className="font-semibold text-lg mb-4">Related Event Types:</h3>
+                    <p className="text-muted-foreground max-w-2xl mx-auto">
+                      We also provide rentals for <Link to="/events/birthday-parties" className="text-primary hover:underline font-medium">birthday parties</Link>, <Link to="/events/school-events" className="text-primary hover:underline font-medium">school events</Link>, <Link to="/events/church-events" className="text-primary hover:underline font-medium">church events</Link>, and <Link to="/events/corporate-events" className="text-primary hover:underline font-medium">corporate events</Link> throughout East Orlando.
+                    </p>
+                  </div>
+                  
+                  <div>
+                    <h3 className="font-semibold text-lg mb-4 text-center">Popular Graduation Party Rentals:</h3>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-2xl mx-auto">
+                      <Link to="/bounce-slide-combo-rentals" className="flex items-center justify-center gap-2 text-muted-foreground hover:text-primary transition-colors text-sm">
+                        <ArrowRight className="h-4 w-4" />
+                        Combo Units
+                      </Link>
+                      <Link to="/water-slide-rentals" className="flex items-center justify-center gap-2 text-muted-foreground hover:text-primary transition-colors text-sm">
+                        <ArrowRight className="h-4 w-4" />
+                        Water Slides
+                      </Link>
+                      <Link to="/obstacle-course-rentals" className="flex items-center justify-center gap-2 text-muted-foreground hover:text-primary transition-colors text-sm">
+                        <ArrowRight className="h-4 w-4" />
+                        Obstacle Courses
+                      </Link>
+                      <Link to="/concession-rentals" className="flex items-center justify-center gap-2 text-muted-foreground hover:text-primary transition-colors text-sm">
+                        <ArrowRight className="h-4 w-4" />
+                        Concessions
+                      </Link>
+                    </div>
+                  </div>
+                </CollapsibleContent>
+              </div>
+              
+              <div className="text-center mt-8">
+                <CollapsibleTrigger asChild>
+                  <Button variant="outline" className="gap-2">
+                    {showMoreLinks ? (
+                      <>
+                        <ChevronUp className="h-4 w-4" />
+                        Show Less
+                      </>
+                    ) : (
+                      <>
+                        <ChevronDown className="h-4 w-4" />
+                        See More Options
+                      </>
+                    )}
+                  </Button>
+                </CollapsibleTrigger>
+              </div>
+            </Collapsible>
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 5: East Orlando Graduation CTA */}
+      <section className="py-20 bg-gradient-to-br from-primary via-primary to-primary/90 text-primary-foreground">
         <div className="container-page text-center">
+          <div className="inline-flex items-center gap-2 bg-white/20 text-white px-4 py-2 rounded-full mb-6">
+            <MapPin className="h-5 w-5" />
+            <span className="font-medium">East Orlando Celebrations</span>
+          </div>
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
-            Ready to Celebrate Your Graduate?
+            Book Graduation Party Rentals in East Orlando
           </h2>
-          <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
-            Contact us today for a free quote and let's make your graduation party unforgettable!
+          <p className="text-xl mb-4 opacity-90 max-w-3xl mx-auto">
+            Orlando Inflatables proudly serves families throughout East Orlando with clean, reliable graduation party rentals. Whether you're planning a backyard celebration or a larger group event, our team is ready to help.
+          </p>
+          <p className="text-lg mb-8 opacity-80 max-w-2xl mx-auto">
+            Check availability online and reserve graduation party rentals for your East Orlando celebration today.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button size="lg" variant="secondary" asChild>
