@@ -158,7 +158,7 @@ const GraduationEvents = () => {
               <span className="font-medium">Graduation Party Specialists</span>
             </div>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-white">
-              Graduation Party Inflatable Rentals in Orlando
+              Graduation Party Water Slide Rentals in Orlando
             </h1>
             <p className="text-xl text-white/90 mb-8 max-w-3xl mx-auto">
               Celebrate your graduate's achievement with memorable party entertainment. From Pre-K to PhD, 
