@@ -2,6 +2,7 @@ import { Layout } from "@/components/layout/Layout";
 import { SEOHead } from "@/components/seo/SEOHead";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
 import { ServiceSchema } from "@/components/seo/ServiceSchema";
+import { FAQPageSchema } from "@/components/seo/FAQPageSchema";
 import { ReviewsSection } from "@/components/home/ReviewsSection";
 import { EventCategoriesGrid } from "@/components/home/EventCategoriesGrid";
 import { Button } from "@/components/ui/button";
@@ -125,7 +126,7 @@ const CorporateEvents = () => {
   return (
     <Layout>
       <SEOHead
-        title="Corporate Event Inflatable Rentals Orlando | Company Picnics & Team Building"
+        title="Corporate Event Inflatable Rentals Orlando | Company Picnics"
         description="Professional inflatable rentals for corporate events in Orlando. Company picnics, team building, employee appreciation & more. Fully insured. Get a free quote!"
         canonical="/events/corporate-event-inflatable-rentals-in-orlando"
       />
@@ -138,6 +139,15 @@ const CorporateEvents = () => {
         items={[
           { name: "Events", href: "/events" },
           { name: "Corporate Events", href: "/events/corporate-event-inflatable-rentals-in-orlando" }
+        ]}
+      />
+      <FAQPageSchema
+        faqs={[
+          { question: "Do you provide insurance documentation for corporate events?", answer: "Yes. We carry comprehensive liability insurance and provide certificates of insurance for your venue or company upon request." },
+          { question: "Can you accommodate large company picnics?", answer: "Absolutely. We have packages designed for events of all sizes, from small team outings to large corporate celebrations with hundreds of employees and families." },
+          { question: "What equipment is best for team building events?", answer: "Obstacle courses and interactive games like basketball challenges encourage friendly competition and teamwork. We can recommend the best options for your team size." },
+          { question: "Do you offer delivery to corporate venues and parks?", answer: "Yes. We deliver to corporate campuses, public parks, private venues, and HOA clubhouses throughout Orlando and East Orange County." },
+          { question: "How far in advance should we book for a corporate event?", answer: "We recommend booking 2-3 weeks in advance for corporate events, especially during peak seasons like spring and fall when outdoor events are popular." }
         ]}
       />
 

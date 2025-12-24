@@ -2,6 +2,7 @@ import { Layout } from "@/components/layout/Layout";
 import { SEOHead } from "@/components/seo/SEOHead";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
 import { ServiceSchema } from "@/components/seo/ServiceSchema";
+import { FAQPageSchema } from "@/components/seo/FAQPageSchema";
 import { ReviewsSection } from "@/components/home/ReviewsSection";
 import { EventCategoriesGrid } from "@/components/home/EventCategoriesGrid";
 import { Button } from "@/components/ui/button";
@@ -120,7 +121,7 @@ const SchoolEvents = () => {
   return (
     <Layout>
       <SEOHead
-        title="School Event Inflatable Rentals Orlando | Field Days, Carnivals & Fundraisers"
+        title="School Event Inflatable Rentals Orlando | Field Days & Carnivals"
         description="Professional inflatable rentals for school events in Orlando. Fully insured, school-approved equipment for field days, carnivals, and fundraisers. Get a free quote today!"
         canonical="/events/school-event-inflatable-rentals-in-orlando"
       />
@@ -133,6 +134,15 @@ const SchoolEvents = () => {
         items={[
           { name: "Events", href: "/events" },
           { name: "School Events", href: "/events/school-event-inflatable-rentals-in-orlando" }
+        ]}
+      />
+      <FAQPageSchema
+        faqs={[
+          { question: "Do you provide insurance certificates for Orange County schools?", answer: "Yes. Orlando Inflatables carries comprehensive liability insurance and provides Certificates of Insurance (COI) naming your school or district as an additional insured upon request." },
+          { question: "What equipment is best for school field days?", answer: "Obstacle courses and interactive games are popular for field days because they can handle high volume and keep lines moving. We recommend multiple units spread across your space." },
+          { question: "Can you set up inflatables in a school gymnasium?", answer: "Yes. We have indoor-appropriate units for gymnasium events when weather doesn't cooperate. These units are designed for indoor use with proper ventilation." },
+          { question: "Do you offer discounts for schools and PTOs?", answer: "Yes. We offer special pricing for educational institutions, PTOs, and non-profit fundraising events. Multi-unit and multi-day discounts are also available." },
+          { question: "How far in advance should schools book?", answer: "We recommend booking 3-4 weeks ahead for field days and end-of-year celebrations, as these dates tend to be popular across many schools." }
         ]}
       />
 
