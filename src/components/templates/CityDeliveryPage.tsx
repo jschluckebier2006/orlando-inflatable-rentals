@@ -46,6 +46,11 @@ interface FAQ {
   answer: string;
 }
 
+interface CustomSection {
+  id: string;
+  content: React.ReactNode;
+}
+
 interface CityDeliveryPageProps {
   cityName: string;
   citySlug: string;
@@ -57,6 +62,7 @@ interface CityDeliveryPageProps {
   additionalCityInfo?: string;
   localLandmarks?: string;
   faqs: FAQ[];
+  customSections?: CustomSection[];
 }
 
 export function CityDeliveryPage({
@@ -70,6 +76,7 @@ export function CityDeliveryPage({
   additionalCityInfo,
   localLandmarks,
   faqs,
+  customSections,
 }: CityDeliveryPageProps) {
   const [showJotform, setShowJotform] = useState(false);
   
@@ -285,6 +292,17 @@ export function CityDeliveryPage({
           </div>
         </div>
       </section>
+
+      {/* Custom Sections */}
+      {customSections?.map((section) => (
+        <section key={section.id} className="section-padding">
+          <div className="container-page">
+            <div className="max-w-4xl mx-auto">
+              {section.content}
+            </div>
+          </div>
+        </section>
+      ))}
 
       {/* Reviews Section */}
       <ReviewsSection />
