@@ -6,6 +6,7 @@ import { FAQPageSchema } from "@/components/seo/FAQPageSchema";
 import { ReviewsSection } from "@/components/home/ReviewsSection";
 import { EventCategoriesGrid } from "@/components/home/EventCategoriesGrid";
 import { EventCrossLinks } from "@/components/home/EventCrossLinks";
+import { RelatedBlogPosts } from "@/components/home/RelatedBlogPosts";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
@@ -306,6 +307,9 @@ const BirthdayParties = () => {
 
       {/* Cross-Links to Other Events */}
       <EventCrossLinks currentEvent="birthday" />
+
+      {/* Related Blog Posts */}
+      <RelatedBlogPosts eventType="birthday" />
 
       {/* What's Included */}
       <section className="py-16">
