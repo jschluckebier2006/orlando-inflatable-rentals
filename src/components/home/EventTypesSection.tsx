@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
-import birthdayPartiesImage from "@/assets/birthday-parties-category.png";
-import schoolEventsImage from "@/assets/school-events-category.png";
-import churchEventsImage from "@/assets/church-events-category.png";
-import corporateEventsImage from "@/assets/corporate-events-category.png";
-import graduationEventsImage from "@/assets/graduation-events-category.png";
+import birthdayPartiesImage from "@/assets/birthday-parties-category.webp";
+import schoolEventsImage from "@/assets/school-events-category.webp";
+import churchEventsImage from "@/assets/church-events-category.webp";
+import corporateEventsImage from "@/assets/corporate-events-category.webp";
+import graduationEventsImage from "@/assets/graduation-events-category.webp";
 
 const eventTypes = [
   {
