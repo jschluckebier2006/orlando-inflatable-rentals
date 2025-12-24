@@ -56,11 +56,11 @@ export function EventCategoriesGrid() {
             Find the perfect entertainment for your event from our wide selection of inflatables and party equipment.
           </p>
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
           {categories.map((category) => (
             <Link key={category.name} to={category.href} className="group">
               <Card className="h-full overflow-hidden border-2 border-transparent hover:border-primary/30 transition-all duration-300 hover:shadow-lg">
-                <div className="aspect-square overflow-hidden bg-muted/30">
+                <div className="aspect-[4/3] overflow-hidden bg-muted/30">
                   <img
                     src={category.image}
                     alt={category.name}
