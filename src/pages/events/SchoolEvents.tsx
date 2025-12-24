@@ -3,13 +3,14 @@ import { SEOHead } from "@/components/seo/SEOHead";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
 import { ServiceSchema } from "@/components/seo/ServiceSchema";
 import { ReviewsSection } from "@/components/home/ReviewsSection";
+import { EventCategoriesGrid } from "@/components/home/EventCategoriesGrid";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import { siteImages } from "@/components/home/ContentImages";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useState } from "react";
-import { 
+import {
   GraduationCap, 
   Star, 
   Users, 
@@ -199,6 +200,9 @@ const SchoolEvents = () => {
           </div>
         </div>
       </section>
+
+      {/* Category Icons */}
+      <EventCategoriesGrid />
 
       {/* Features Grid */}
       <section className="py-16 bg-muted/30">
