@@ -120,6 +120,7 @@ export function Footer() {
                 width="100%"
                 height="150"
                 style={{ border: 0 }}
+                sandbox="allow-scripts allow-same-origin"
                 allowFullScreen
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"

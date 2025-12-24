@@ -23,6 +23,7 @@ export function JotformModal({ open, onOpenChange }: JotformModalProps) {
             src="https://form.jotform.com/252645641478162?nofs=1"
             className="w-full h-full border-0 rounded-lg"
             style={{ marginTop: '-280px', height: 'calc(100% + 280px)' }}
+            sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
             allow="geolocation; microphone; camera"
           />
         </div>
