@@ -46,6 +46,8 @@ const eventTypes = [
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showJotform, setShowJotform] = useState(false);
+  const [eventsOpen, setEventsOpen] = useState(false);
+  const [contactOpen, setContactOpen] = useState(false);
   const location = useLocation();
 
   return (
@@ -161,12 +163,21 @@ export function Header() {
               </NavigationMenu>
 
               {/* Events Dropdown */}
-              <DropdownMenu>
-                <DropdownMenuTrigger className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none">
+              <DropdownMenu open={eventsOpen} onOpenChange={setEventsOpen}>
+                <DropdownMenuTrigger 
+                  className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none"
+                  onMouseEnter={() => setEventsOpen(true)}
+                  onMouseLeave={() => setEventsOpen(false)}
+                >
                   Events
                   <ChevronDown className="relative top-[1px] ml-1 h-3 w-3 transition duration-200 group-data-[state=open]:rotate-180" />
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-[200px]">
+                <DropdownMenuContent 
+                  align="end" 
+                  className="w-[200px]"
+                  onMouseEnter={() => setEventsOpen(true)}
+                  onMouseLeave={() => setEventsOpen(false)}
+                >
                   {eventTypes.map((event) => (
                     <DropdownMenuItem key={event.name} asChild>
                       <Link to={event.href} className="cursor-pointer">
@@ -183,12 +194,21 @@ export function Header() {
               </DropdownMenu>
 
               {/* Contact Dropdown */}
-              <DropdownMenu>
-                <DropdownMenuTrigger className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none">
+              <DropdownMenu open={contactOpen} onOpenChange={setContactOpen}>
+                <DropdownMenuTrigger 
+                  className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none"
+                  onMouseEnter={() => setContactOpen(true)}
+                  onMouseLeave={() => setContactOpen(false)}
+                >
                   Contact
                   <ChevronDown className="relative top-[1px] ml-1 h-3 w-3 transition duration-200 group-data-[state=open]:rotate-180" />
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-[180px]">
+                <DropdownMenuContent 
+                  align="end" 
+                  className="w-[180px]"
+                  onMouseEnter={() => setContactOpen(true)}
+                  onMouseLeave={() => setContactOpen(false)}
+                >
                   <DropdownMenuItem asChild>
                     <Link to="/contact" className="cursor-pointer">
                       Contact Us
