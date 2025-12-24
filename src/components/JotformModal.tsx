@@ -13,15 +13,16 @@ interface JotformModalProps {
 export function JotformModal({ open, onOpenChange }: JotformModalProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl h-[90vh] p-0">
-        <DialogHeader className="p-4 pb-0">
+      <DialogContent className="max-w-4xl h-[90vh] p-0 flex flex-col">
+        <DialogHeader className="p-4 pb-2 shrink-0">
           <DialogTitle className="font-display text-xl">Get a Free Quote</DialogTitle>
         </DialogHeader>
-        <div className="flex-1 overflow-hidden p-4 pt-2">
+        <div className="flex-1 overflow-hidden px-4 pb-4">
           <iframe
             title="Contact Form"
-            src="https://form.jotform.com/252645641478162"
+            src="https://form.jotform.com/252645641478162?nofs=1"
             className="w-full h-full border-0 rounded-lg"
+            style={{ marginTop: '-280px', height: 'calc(100% + 280px)' }}
             allow="geolocation; microphone; camera"
           />
         </div>
