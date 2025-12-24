@@ -27,7 +27,7 @@ export function CategoryCard({ title, products, categoryLink }: CategoryCardProp
           <Button 
             variant="secondary" 
             size="sm" 
-            className="bg-white text-foreground hover:bg-gray-100 font-semibold text-sm"
+            className="bg-white text-foreground hover:bg-secondary hover:text-secondary-foreground font-semibold text-sm transition-all duration-300 hover:scale-105 hover:shadow-md"
           >
             See More
           </Button>
@@ -60,7 +60,7 @@ export function CategoryCard({ title, products, categoryLink }: CategoryCardProp
           {/* View More Button */}
           <Link to={categoryLink} className="flex-shrink-0 flex items-center justify-center px-2" aria-label={`View ${title}`}>
             <Button 
-              className="bg-secondary hover:bg-secondary/90 text-secondary-foreground font-semibold text-sm px-4 py-2 rounded-md shadow-md"
+              className="bg-secondary hover:bg-secondary/80 text-secondary-foreground font-semibold text-sm px-4 py-2 rounded-md shadow-md transition-all duration-300 hover:scale-110 hover:shadow-lg"
             >
               See More →
             </Button>
