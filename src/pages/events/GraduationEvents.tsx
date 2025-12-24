@@ -185,7 +185,7 @@ const GraduationEvents = () => {
           <div className="max-w-4xl mx-auto prose prose-lg">
             <h2 className="text-3xl font-bold mb-6 flex items-center gap-3">
               <Award className="h-8 w-8 text-primary" />
-              Celebrate Every Graduation Milestone
+              Celebrate Every Graduation Milestone with a Water Slide Rental
             </h2>
             <p className="text-muted-foreground text-lg leading-relaxed">
               Graduation marks the end of one chapter and the exciting beginning of another. At Orlando Inflatables, 
