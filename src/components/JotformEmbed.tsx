@@ -11,6 +11,7 @@ export function JotformEmbed({ className = "", height = "600px" }: JotformEmbedP
         src="https://form.jotform.com/252645641478162"
         className="w-full border-0 rounded-lg"
         style={{ height }}
+        sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
         allow="geolocation; microphone; camera"
       />
     </div>
