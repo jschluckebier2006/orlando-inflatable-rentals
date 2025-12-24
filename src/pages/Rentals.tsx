@@ -40,6 +40,7 @@ export default function Rentals() {
                       <img 
                         src={cat.image} 
                         alt={cat.name} 
+                        loading="lazy"
                         className="w-full h-full object-cover"
                       />
                     </div>

@@ -59,7 +59,7 @@ export function CategoriesSection() {
           {categories.map(category => <Link key={category.name} to={category.href}>
               <Card className="h-full card-hover border-2 border-transparent hover:border-primary/20 overflow-hidden">
                 {category.image && <div className="aspect-[16/9] overflow-hidden">
-                    <img src={category.image} alt={category.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                    <img src={category.image} alt={category.name} loading="lazy" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                   </div>}
                 <CardContent className="p-6">
                   <h3 className="font-display text-xl font-semibold text-foreground mb-2">
