@@ -4,13 +4,13 @@ import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
 import { ReviewsSection } from "@/components/home/ReviewsSection";
 import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
-import bounceHouseCategoryImg from "@/assets/bounce-house-category.png";
-import bounceSlideComboImg from "@/assets/bounce-slide-combo-category.png";
-import waterSlideCategoryImg from "@/assets/water-slide-category.png";
-import obstacleCourseImg from "@/assets/obstacle-course-category.png";
-import interactiveGamesImg from "@/assets/interactive-games-category.png";
-import concessionsImg from "@/assets/concessions-category.png";
-import tablesChairsImg from "@/assets/tables-chairs-category.png";
+import bounceHouseCategoryImg from "@/assets/bounce-house-category.webp";
+import bounceSlideComboImg from "@/assets/bounce-slide-combo-category.webp";
+import waterSlideCategoryImg from "@/assets/water-slide-category.webp";
+import obstacleCourseImg from "@/assets/obstacle-course-category.webp";
+import interactiveGamesImg from "@/assets/interactive-games-category.webp";
+import concessionsImg from "@/assets/concessions-category.webp";
+import tablesChairsImg from "@/assets/tables-chairs-category.webp";
 
 const categories = [
   { name: "Bounce Houses", description: "Fun bounce houses for all ages", href: "/bounce-house-rentals", image: bounceHouseCategoryImg },
