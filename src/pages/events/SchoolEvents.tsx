@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import { siteImages } from "@/components/home/ContentImages";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { useState } from "react";
 import { 
   GraduationCap, 
   Star, 
@@ -19,10 +21,21 @@ import {
   FileText,
   Award,
   Building2,
-  Heart
+  Heart,
+  MapPin,
+  HelpCircle,
+  ArrowRight,
+  ChevronDown,
+  ChevronUp,
+  Trophy,
+  PartyPopper
 } from "lucide-react";
+import kidsGroupSlide from "@/assets/kids-group-slide-1.jpg";
+import kidsSmilingBounce from "@/assets/kids-smiling-bounce-1.jpg";
 
 const SchoolEvents = () => {
+  const [showSchoolFAQ, setShowSchoolFAQ] = useState(false);
+  const [showMoreLinks, setShowMoreLinks] = useState(false);
 
   const features = [
     {
@@ -431,14 +444,354 @@ const SchoolEvents = () => {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 bg-primary text-primary-foreground">
+      {/* SECTION 1: East Orlando School Authority Block */}
+      <section className="py-16">
+        <div className="container-page">
+          <div className="max-w-5xl mx-auto">
+            <div className="grid lg:grid-cols-2 gap-10 items-center">
+              <div>
+                <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full mb-6">
+                  <MapPin className="h-5 w-5" />
+                  <span className="font-medium">East Orlando Schools</span>
+                </div>
+                <h2 className="text-3xl font-bold mb-6">School Event Rentals Across East Orlando</h2>
+                <p className="text-muted-foreground text-lg leading-relaxed mb-6">
+                  Orlando Inflatables specializes in providing school event rentals throughout East Orlando, working with elementary schools, middle schools, high schools, PTAs, and school administrators to deliver safe, organized, and engaging events.
+                </p>
+                <p className="text-muted-foreground text-lg leading-relaxed mb-4">
+                  We regularly support school events such as:
+                </p>
+                <ul className="space-y-3 mb-6">
+                  <li className="flex items-start gap-3">
+                    <CheckCircle className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+                    <span className="text-muted-foreground">Field days and reward days</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <CheckCircle className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+                    <span className="text-muted-foreground">End-of-year celebrations</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <CheckCircle className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+                    <span className="text-muted-foreground">School carnivals and festivals</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <CheckCircle className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+                    <span className="text-muted-foreground">Fundraisers and PTA events</span>
+                  </li>
+                </ul>
+                <p className="text-muted-foreground text-lg leading-relaxed">
+                  Because we serve East Orlando schools year-round, we understand campus layouts, supervision needs, and scheduling requirements that schools expect from a professional rental provider.
+                </p>
+              </div>
+              <div className="relative">
+                <img 
+                  src={kidsGroupSlide} 
+                  alt="Students enjoying inflatable slide at East Orlando school event" 
+                  className="rounded-2xl shadow-2xl w-full h-auto object-cover"
+                />
+                <div className="absolute -bottom-4 -right-4 bg-primary text-primary-foreground px-6 py-3 rounded-xl shadow-lg">
+                  <p className="font-bold">Trusted by Schools</p>
+                  <p className="text-sm opacity-90">Throughout East Orlando</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 2: School Event Types - Field Days */}
+      <section className="py-16 bg-muted/30">
+        <div className="container-page">
+          <div className="max-w-5xl mx-auto">
+            <div className="grid lg:grid-cols-2 gap-10 items-center">
+              <div className="order-2 lg:order-1">
+                <img 
+                  src={kidsSmilingBounce} 
+                  alt="Kids enjoying field day inflatables at East Orlando school" 
+                  className="rounded-2xl shadow-2xl w-full h-auto object-cover"
+                />
+              </div>
+              <div className="order-1 lg:order-2">
+                <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full mb-6">
+                  <Trophy className="h-5 w-5" />
+                  <span className="font-medium">Field Day Specialists</span>
+                </div>
+                <h2 className="text-3xl font-bold mb-6">Inflatables for East Orlando School Field Days</h2>
+                <p className="text-muted-foreground text-lg leading-relaxed mb-6">
+                  Field days are one of the most popular school events in East Orlando. Orlando Inflatables provides commercial-grade inflatables designed for continuous use and high participation.
+                </p>
+                <p className="text-muted-foreground text-lg leading-relaxed mb-4">
+                  Popular field day rentals include:
+                </p>
+                <ul className="space-y-3 mb-6">
+                  <li className="flex items-start gap-3">
+                    <CheckCircle className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+                    <span className="text-muted-foreground">Large obstacle courses for rotation groups</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <CheckCircle className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+                    <span className="text-muted-foreground">Multiple bounce houses to reduce wait times</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <CheckCircle className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+                    <span className="text-muted-foreground">Interactive inflatable games that encourage teamwork</span>
+                  </li>
+                </ul>
+                <p className="text-muted-foreground text-lg leading-relaxed">
+                  Our team helps schools plan spacing, flow, and setup so students can rotate safely and efficiently throughout the event.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* School Carnivals Section */}
+      <section className="py-16">
+        <div className="container-page">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-10">
+              <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full mb-6">
+                <PartyPopper className="h-5 w-5" />
+                <span className="font-medium">Carnivals & Festivals</span>
+              </div>
+              <h2 className="text-3xl font-bold mb-4">School Carnivals, Festivals & PTA Events</h2>
+              <p className="text-muted-foreground text-lg max-w-3xl mx-auto">
+                School carnivals and PTA events require reliable equipment and professional coordination. Orlando Inflatables offers a wide range of inflatables that work well for indoor gyms, outdoor fields, and blacktop areas.
+              </p>
+            </div>
+            
+            <div className="grid md:grid-cols-3 gap-6 mb-8">
+              <Card className="border-0 shadow-lg text-center">
+                <CardContent className="p-6">
+                  <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                    <Star className="h-6 w-6 text-primary" />
+                  </div>
+                  <h3 className="font-semibold mb-2">Bounce Houses & Combos</h3>
+                  <p className="text-muted-foreground text-sm">Multiple sizes for all age groups</p>
+                </CardContent>
+              </Card>
+              <Card className="border-0 shadow-lg text-center">
+                <CardContent className="p-6">
+                  <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                    <Trophy className="h-6 w-6 text-primary" />
+                  </div>
+                  <h3 className="font-semibold mb-2">Games & Obstacle Courses</h3>
+                  <p className="text-muted-foreground text-sm">Competitive fun for students</p>
+                </CardContent>
+              </Card>
+              <Card className="border-0 shadow-lg text-center">
+                <CardContent className="p-6">
+                  <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                    <Heart className="h-6 w-6 text-primary" />
+                  </div>
+                  <h3 className="font-semibold mb-2">Concessions</h3>
+                  <p className="text-muted-foreground text-sm">Popcorn, cotton candy, snow cones</p>
+                </CardContent>
+              </Card>
+            </div>
+            
+            <p className="text-muted-foreground text-lg text-center">
+              We work closely with school staff to ensure proper placement, power access, and safety compliance.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 3: East Orlando School Event FAQs */}
+      <section className="py-16 bg-muted/30">
+        <div className="container-page">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-12">
+              <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full mb-6">
+                <HelpCircle className="h-5 w-5" />
+                <span className="font-medium">Common Questions</span>
+              </div>
+              <h2 className="text-3xl font-bold mb-4">East Orlando School Event Rental FAQs</h2>
+              <p className="text-muted-foreground text-lg">
+                Get answers to common questions about school event rentals in East Orlando.
+              </p>
+            </div>
+            
+            <Collapsible open={showSchoolFAQ} onOpenChange={setShowSchoolFAQ}>
+              <div className="space-y-6">
+                <Card className="border-0 shadow-md">
+                  <CardContent className="p-6">
+                    <h4 className="font-bold text-lg mb-3">Do you provide inflatable rentals for East Orlando schools?</h4>
+                    <p className="text-muted-foreground">
+                      Yes. Orlando Inflatables provides school event rentals throughout East Orlando, including elementary, middle, and high schools.
+                    </p>
+                  </CardContent>
+                </Card>
+                
+                <Card className="border-0 shadow-md">
+                  <CardContent className="p-6">
+                    <h4 className="font-bold text-lg mb-3">Are your inflatables safe for school use?</h4>
+                    <p className="text-muted-foreground">
+                      Yes. All inflatables are commercial-grade, regularly inspected, and cleaned before each event. We also provide clear safety guidelines for school staff.
+                    </p>
+                  </CardContent>
+                </Card>
+                
+                <CollapsibleContent className="space-y-6">
+                  <Card className="border-0 shadow-md">
+                    <CardContent className="p-6">
+                      <h4 className="font-bold text-lg mb-3">Can you handle large school events with many students?</h4>
+                      <p className="text-muted-foreground">
+                        Absolutely. We regularly support large field days and school festivals by providing multiple inflatables and helping plan event flow.
+                      </p>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card className="border-0 shadow-md">
+                    <CardContent className="p-6">
+                      <h4 className="font-bold text-lg mb-3">Do you provide delivery and setup at schools?</h4>
+                      <p className="text-muted-foreground">
+                        Yes. Our team handles delivery, professional setup, and takedown at East Orlando school campuses.
+                      </p>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card className="border-0 shadow-md">
+                    <CardContent className="p-6">
+                      <h4 className="font-bold text-lg mb-3">Can schools combine inflatables with concessions?</h4>
+                      <p className="text-muted-foreground">
+                        Yes. Many schools pair inflatable rentals with concessions to create a full carnival-style event.
+                      </p>
+                    </CardContent>
+                  </Card>
+                </CollapsibleContent>
+              </div>
+              
+              <div className="text-center mt-8">
+                <CollapsibleTrigger asChild>
+                  <Button variant="outline" className="gap-2">
+                    {showSchoolFAQ ? (
+                      <>
+                        <ChevronUp className="h-4 w-4" />
+                        Show Less
+                      </>
+                    ) : (
+                      <>
+                        <ChevronDown className="h-4 w-4" />
+                        See More FAQs
+                      </>
+                    )}
+                  </Button>
+                </CollapsibleTrigger>
+              </div>
+            </Collapsible>
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 4: Internal Linking Reinforcement */}
+      <section className="py-16">
+        <div className="container-page">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-10">
+              <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full mb-6">
+                <ArrowRight className="h-5 w-5" />
+                <span className="font-medium">Explore More</span>
+              </div>
+              <h2 className="text-3xl font-bold mb-4">Explore More East Orlando Event Rental Options</h2>
+              <p className="text-muted-foreground text-lg max-w-3xl mx-auto">
+                Looking for more ways to make your East Orlando school event unforgettable? Explore our full range of rentals, from <Link to="/bounce-house-rentals" className="text-primary hover:underline font-medium">school bounce house rentals in East Orlando</Link> to exciting <Link to="/obstacle-course-rentals" className="text-primary hover:underline font-medium">obstacle courses for field days</Link>.
+              </p>
+            </div>
+            
+            <Collapsible open={showMoreLinks} onOpenChange={setShowMoreLinks}>
+              <div className="space-y-6">
+                <div>
+                  <h3 className="font-semibold text-lg mb-4 text-center">East Orlando Communities We Serve:</h3>
+                  <div className="flex flex-wrap justify-center gap-2">
+                    <Link to="/water-slide-and-bounce-house-rental-avalon-park" className="bg-primary/10 text-primary px-4 py-2 rounded-full hover:bg-primary hover:text-primary-foreground transition-colors text-sm font-medium">
+                      Avalon Park
+                    </Link>
+                    <Link to="/water-slide-and-bounce-house-rental-waterford-lakes" className="bg-primary/10 text-primary px-4 py-2 rounded-full hover:bg-primary hover:text-primary-foreground transition-colors text-sm font-medium">
+                      Waterford Lakes
+                    </Link>
+                    <Link to="/water-slide-and-bounce-house-rental-eastwood" className="bg-primary/10 text-primary px-4 py-2 rounded-full hover:bg-primary hover:text-primary-foreground transition-colors text-sm font-medium">
+                      Eastwood
+                    </Link>
+                    <Link to="/water-slide-and-bounce-house-rental-alafaya" className="bg-primary/10 text-primary px-4 py-2 rounded-full hover:bg-primary hover:text-primary-foreground transition-colors text-sm font-medium">
+                      Alafaya
+                    </Link>
+                    <Link to="/water-slide-and-bounce-house-rental-stoneybrook" className="bg-primary/10 text-primary px-4 py-2 rounded-full hover:bg-primary hover:text-primary-foreground transition-colors text-sm font-medium">
+                      Stoneybrook
+                    </Link>
+                  </div>
+                </div>
+                
+                <CollapsibleContent className="space-y-6">
+                  <div className="text-center">
+                    <h3 className="font-semibold text-lg mb-4">Related Event Types:</h3>
+                    <p className="text-muted-foreground max-w-2xl mx-auto">
+                      We also provide rentals for <Link to="/events/birthday-parties" className="text-primary hover:underline font-medium">birthday parties</Link>, <Link to="/events/church-events" className="text-primary hover:underline font-medium">church gatherings</Link>, and <Link to="/events/graduation-events" className="text-primary hover:underline font-medium">graduation parties</Link> throughout East Orlando.
+                    </p>
+                  </div>
+                  
+                  <div>
+                    <h3 className="font-semibold text-lg mb-4 text-center">Popular School Event Rentals:</h3>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-2xl mx-auto">
+                      <Link to="/bounce-house-rentals" className="flex items-center justify-center gap-2 text-muted-foreground hover:text-primary transition-colors text-sm">
+                        <ArrowRight className="h-4 w-4" />
+                        Bounce Houses
+                      </Link>
+                      <Link to="/obstacle-course-rentals" className="flex items-center justify-center gap-2 text-muted-foreground hover:text-primary transition-colors text-sm">
+                        <ArrowRight className="h-4 w-4" />
+                        Obstacle Courses
+                      </Link>
+                      <Link to="/interactive-game-rentals" className="flex items-center justify-center gap-2 text-muted-foreground hover:text-primary transition-colors text-sm">
+                        <ArrowRight className="h-4 w-4" />
+                        Interactive Games
+                      </Link>
+                      <Link to="/concession-rentals" className="flex items-center justify-center gap-2 text-muted-foreground hover:text-primary transition-colors text-sm">
+                        <ArrowRight className="h-4 w-4" />
+                        Concessions
+                      </Link>
+                    </div>
+                  </div>
+                </CollapsibleContent>
+              </div>
+              
+              <div className="text-center mt-8">
+                <CollapsibleTrigger asChild>
+                  <Button variant="outline" className="gap-2">
+                    {showMoreLinks ? (
+                      <>
+                        <ChevronUp className="h-4 w-4" />
+                        Show Less
+                      </>
+                    ) : (
+                      <>
+                        <ChevronDown className="h-4 w-4" />
+                        See More Options
+                      </>
+                    )}
+                  </Button>
+                </CollapsibleTrigger>
+              </div>
+            </Collapsible>
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 5: East Orlando School CTA */}
+      <section className="py-20 bg-gradient-to-br from-primary via-primary to-primary/90 text-primary-foreground">
         <div className="container-page text-center">
+          <div className="inline-flex items-center gap-2 bg-white/20 text-white px-4 py-2 rounded-full mb-6">
+            <MapPin className="h-5 w-5" />
+            <span className="font-medium">East Orlando Schools</span>
+          </div>
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
-            Ready to Plan Your School Event?
+            Book School Event Rentals in East Orlando
           </h2>
-          <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
-            Contact us today for a free quote and let's create an unforgettable event for your students!
+          <p className="text-xl mb-4 opacity-90 max-w-3xl mx-auto">
+            Orlando Inflatables proudly supports schools throughout East Orlando with clean, dependable, and professionally managed event rentals. Whether you're planning a field day, school carnival, or end-of-year celebration, our team is ready to help.
+          </p>
+          <p className="text-lg mb-8 opacity-80 max-w-2xl mx-auto">
+            Contact us today to check availability and reserve school event rentals for your East Orlando campus.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button size="lg" variant="secondary" asChild>
