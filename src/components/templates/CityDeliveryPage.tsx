@@ -214,13 +214,23 @@ export function CityDeliveryPage({
               </p>
             </ContentImageWithText>
 
-            {/* Full-Width Section 1: Your Event, Our Priority */}
+            {/* Full-Width Section 1a: Your Event, Our Priority */}
             <div className="py-12 text-center border-b border-border/50">
               <h3 className="font-display text-2xl font-bold text-foreground mb-4">
                 Your {cityName} Event, Our Priority
               </h3>
               <p className="text-muted-foreground leading-relaxed max-w-3xl mx-auto">
                 Planning a party in {cityName}? We make it easy! From the moment you request a quote to the final pickup, our team is dedicated to ensuring your event is a success. We handle all the heavy lifting so you can focus on celebrating with your guests.
+              </p>
+            </div>
+
+            {/* Full-Width Section 1b: Professional Service You Can Trust */}
+            <div className="py-12 text-center border-b border-border/50">
+              <h3 className="font-display text-2xl font-bold text-foreground mb-4">
+                Professional Service You Can Trust
+              </h3>
+              <p className="text-muted-foreground leading-relaxed max-w-3xl mx-auto">
+                Our experienced team has delivered thousands of successful events throughout {cityName} and the surrounding Orlando area. We show up on time, every time, with spotless equipment ready for your celebration.
               </p>
             </div>
 
@@ -247,13 +257,23 @@ export function CityDeliveryPage({
               </ul>
             </ContentImageWithText>
 
-            {/* Full-Width Section 2: Safe & Clean Equipment */}
+            {/* Full-Width Section 2a: Safe & Clean Equipment */}
             <div className="py-12 text-center border-b border-border/50">
               <h3 className="font-display text-2xl font-bold text-foreground mb-4">
                 Safe & Clean Equipment Guaranteed
               </h3>
               <p className="text-muted-foreground leading-relaxed max-w-3xl mx-auto">
                 Every inflatable we deliver to {cityName} is thoroughly cleaned, sanitized with hospital-grade disinfectants, and inspected before each rental. Your children's safety is our top priority, and we're fully licensed and insured for your peace of mind.
+              </p>
+            </div>
+
+            {/* Full-Width Section 2b: Inspected Before Every Rental */}
+            <div className="py-12 text-center border-b border-border/50">
+              <h3 className="font-display text-2xl font-bold text-foreground mb-4">
+                Inspected Before Every Rental
+              </h3>
+              <p className="text-muted-foreground leading-relaxed max-w-3xl mx-auto">
+                Before any inflatable leaves our facility for {cityName}, it undergoes a comprehensive safety inspection. We check all seams, anchor points, blower systems, and safety netting to ensure everything meets our rigorous standards.
               </p>
             </div>
 
@@ -277,13 +297,23 @@ export function CityDeliveryPage({
               </p>
             </ContentImageWithText>
 
-            {/* Full-Width Section 3: Serving the Local Community */}
+            {/* Full-Width Section 3a: Serving the Local Community */}
             <div className="py-12 text-center border-b border-border/50">
               <h3 className="font-display text-2xl font-bold text-foreground mb-4">
                 Proudly Serving the {cityName} Community
               </h3>
               <p className="text-muted-foreground leading-relaxed max-w-3xl mx-auto">
                 As a locally-owned business, we understand what {cityName} families need for their celebrations. We've helped hundreds of families in your neighborhood create unforgettable memories, and we'd love to be part of your next event.
+              </p>
+            </div>
+
+            {/* Full-Width Section 3b: Years of Local Experience */}
+            <div className="py-12 text-center border-b border-border/50">
+              <h3 className="font-display text-2xl font-bold text-foreground mb-4">
+                Years of Experience in {cityName}
+              </h3>
+              <p className="text-muted-foreground leading-relaxed max-w-3xl mx-auto">
+                We know the neighborhoods, parks, and venues throughout {cityName}. Our drivers are familiar with local streets and can navigate to your location with ease, ensuring prompt delivery and professional setup every time.
               </p>
             </div>
 
@@ -307,13 +337,23 @@ export function CityDeliveryPage({
               </p>
             </ContentImageWithText>
 
-            {/* Full-Width Section 4: Book with Confidence */}
+            {/* Full-Width Section 4a: Book with Confidence */}
             <div className="py-12 text-center border-b border-border/50">
               <h3 className="font-display text-2xl font-bold text-foreground mb-4">
                 Book with Confidence
               </h3>
               <p className="text-muted-foreground leading-relaxed max-w-3xl mx-auto">
                 When you choose Orlando Inflatables for your {cityName} event, you're choosing reliability. We offer transparent pricing with no hidden fees, flexible scheduling, and a 100% satisfaction guarantee. Join thousands of happy {cityName} customers!
+              </p>
+            </div>
+
+            {/* Full-Width Section 4b: Easy Booking Process */}
+            <div className="py-12 text-center border-b border-border/50">
+              <h3 className="font-display text-2xl font-bold text-foreground mb-4">
+                Simple & Easy Booking Process
+              </h3>
+              <p className="text-muted-foreground leading-relaxed max-w-3xl mx-auto">
+                Getting your party rental in {cityName} is quick and hassle-free. Browse our inventory, pick your date, and request a quote. We'll confirm availability and handle all the logistics so you can focus on planning the perfect event.
               </p>
             </div>
 
@@ -337,13 +377,23 @@ export function CityDeliveryPage({
               </ul>
             </ContentImageWithText>
 
-            {/* Full-Width Section 5: Making Memories */}
+            {/* Full-Width Section 5a: Making Memories */}
             <div className="py-12 text-center border-b border-border/50">
               <h3 className="font-display text-2xl font-bold text-foreground mb-4">
                 Making Memories in {cityName}
               </h3>
               <p className="text-muted-foreground leading-relaxed max-w-3xl mx-auto">
                 Every celebration is an opportunity to create lasting memories. From first birthdays to graduation parties, our inflatables bring joy to guests of all ages. Let us help make your {cityName} event one to remember!
+              </p>
+            </div>
+
+            {/* Full-Width Section 5b: Family-Friendly Fun */}
+            <div className="py-12 text-center border-b border-border/50">
+              <h3 className="font-display text-2xl font-bold text-foreground mb-4">
+                Family-Friendly Fun for All Ages
+              </h3>
+              <p className="text-muted-foreground leading-relaxed max-w-3xl mx-auto">
+                Our rentals are designed with families in mind. We offer age-appropriate options from toddler-friendly bounce houses to thrilling water slides for teens and adults. Every {cityName} family can find the perfect fit for their celebration.
               </p>
             </div>
 

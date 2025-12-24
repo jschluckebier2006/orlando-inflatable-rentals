@@ -143,13 +143,23 @@ export function CityServicePage({ city, citySlug, serviceType, nearbyAreas, loca
               </p>
             </ContentImageWithText>
 
-            {/* Full-Width Section 1: Your Event, Our Priority */}
+            {/* Full-Width Section 1a: Your Event, Our Priority */}
             <div className="py-12 text-center border-b border-border/50">
               <h3 className="font-display text-2xl font-bold text-foreground mb-4">
                 Your {city} Event, Our Priority
               </h3>
               <p className="text-muted-foreground leading-relaxed max-w-3xl mx-auto">
                 Planning a {serviceName.toLowerCase()} party in {city}? We make it easy! From the moment you request a quote to the final pickup, our team is dedicated to ensuring your event is a success. We handle all the heavy lifting so you can focus on celebrating.
+              </p>
+            </div>
+
+            {/* Full-Width Section 1b: Professional Service */}
+            <div className="py-12 text-center border-b border-border/50">
+              <h3 className="font-display text-2xl font-bold text-foreground mb-4">
+                Professional Service You Can Trust
+              </h3>
+              <p className="text-muted-foreground leading-relaxed max-w-3xl mx-auto">
+                Our experienced team has delivered thousands of successful {serviceName.toLowerCase()} rentals throughout {city} and the surrounding Orlando area. We show up on time, every time, with spotless equipment ready for your celebration.
               </p>
             </div>
 
@@ -263,13 +273,23 @@ export function CityServicePage({ city, citySlug, serviceType, nearbyAreas, loca
               </p>
             </ContentImageWithText>
 
-            {/* Full-Width Section 2: Safe & Clean Equipment */}
+            {/* Full-Width Section 2a: Safe & Clean Equipment */}
             <div className="py-12 text-center border-b border-border/50">
               <h3 className="font-display text-2xl font-bold text-foreground mb-4">
                 Safe & Clean Equipment Guaranteed
               </h3>
               <p className="text-muted-foreground leading-relaxed max-w-3xl mx-auto">
                 Every {serviceName.toLowerCase()} we deliver to {city} is thoroughly cleaned, sanitized with hospital-grade disinfectants, and inspected before each rental. Your children's safety is our top priority, and we're fully licensed and insured.
+              </p>
+            </div>
+
+            {/* Full-Width Section 2b: Inspected Before Every Rental */}
+            <div className="py-12 text-center border-b border-border/50">
+              <h3 className="font-display text-2xl font-bold text-foreground mb-4">
+                Inspected Before Every Rental
+              </h3>
+              <p className="text-muted-foreground leading-relaxed max-w-3xl mx-auto">
+                Before any {serviceName.toLowerCase()} leaves our facility for {city}, it undergoes a comprehensive safety inspection. We check all seams, anchor points, blower systems, and safety features to ensure everything meets our rigorous standards.
               </p>
             </div>
 
@@ -292,13 +312,23 @@ export function CityServicePage({ city, citySlug, serviceType, nearbyAreas, loca
               </ul>
             </ContentImageWithText>
 
-            {/* Full-Width Section 3: Book with Confidence */}
+            {/* Full-Width Section 3a: Book with Confidence */}
             <div className="py-12 text-center border-b border-border/50">
               <h3 className="font-display text-2xl font-bold text-foreground mb-4">
                 Book with Confidence
               </h3>
               <p className="text-muted-foreground leading-relaxed max-w-3xl mx-auto">
                 When you choose Orlando Inflatables for your {city} event, you're choosing reliability. We offer transparent pricing with no hidden fees, flexible scheduling, and a 100% satisfaction guarantee. Join thousands of happy {city} customers!
+              </p>
+            </div>
+
+            {/* Full-Width Section 3b: Simple Booking Process */}
+            <div className="py-12 text-center border-b border-border/50">
+              <h3 className="font-display text-2xl font-bold text-foreground mb-4">
+                Simple & Easy Booking Process
+              </h3>
+              <p className="text-muted-foreground leading-relaxed max-w-3xl mx-auto">
+                Getting your {serviceName.toLowerCase()} rental in {city} is quick and hassle-free. Browse our inventory, pick your date, and request a quote. We'll confirm availability and handle all the logistics so you can focus on planning the perfect event.
               </p>
             </div>
 
