@@ -44,7 +44,7 @@ export function CategoryCarousel({
           </div>
           <Link to={categoryLink}>
             <Button variant="outline" className="btn-bounce">
-              View All {categoryLabel}
+              See More
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </Link>
