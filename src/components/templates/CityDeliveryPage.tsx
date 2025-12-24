@@ -177,6 +177,9 @@ export function CityDeliveryPage({
         </div>
       </section>
 
+      {/* Reviews Section */}
+      <ReviewsSection />
+
       {/* Main Content with Staggered Images */}
       <section className="section-padding section-alt">
         <div className="container-page">
@@ -430,8 +433,6 @@ export function CityDeliveryPage({
         </section>
       ))}
 
-      {/* Reviews Section */}
-      <ReviewsSection />
 
       {/* FAQ Section */}
       <section className="section-padding section-alt">
