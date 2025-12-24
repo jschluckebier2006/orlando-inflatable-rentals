@@ -3,6 +3,7 @@ import { SEOHead } from "@/components/seo/SEOHead";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
 import { LocalBusinessSchema } from "@/components/seo/LocalBusinessSchema";
 import { FAQPageSchema } from "@/components/seo/FAQPageSchema";
+import { ServiceAreaSchema } from "@/components/seo/ServiceAreaSchema";
 import { CTASection } from "@/components/home/CTASection";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -93,7 +94,8 @@ export function CityDeliveryPage({
         description={metaDescription}
         canonical={`/water-slide-and-bounce-house-rental-${citySlug}`}
       />
-      <LocalBusinessSchema cityName={cityName} />
+      <LocalBusinessSchema cityName={cityName} citySlug={citySlug} />
+      <ServiceAreaSchema cityName={cityName} citySlug={citySlug} nearbyAreas={nearbyAreas} />
       <FAQPageSchema faqs={faqSchemaItems} />
       <BreadcrumbSchema
         items={[
