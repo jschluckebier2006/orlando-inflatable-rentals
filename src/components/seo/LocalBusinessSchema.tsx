@@ -4,35 +4,52 @@ interface LocalBusinessSchemaProps {
   pageName?: string;
   pageDescription?: string;
   cityName?: string;
+  citySlug?: string;
 }
 
-export function LocalBusinessSchema({ pageName, pageDescription, cityName }: LocalBusinessSchemaProps) {
+export function LocalBusinessSchema({ pageName, pageDescription, cityName, citySlug }: LocalBusinessSchemaProps) {
   const baseUrl = "https://orlandoinflatables.com";
   
+  // City-specific canonical URL
+  const cityUrl = citySlug 
+    ? `${baseUrl}/water-slide-and-bounce-house-rental-${citySlug}`
+    : baseUrl;
+
+  // Enhanced description for city pages
+  const description = cityName
+    ? `Orlando Inflatables provides professional bounce house and water slide rentals in ${cityName}, Florida. Serving ${cityName} with clean, safe party inflatables for birthday parties, school events, church events, and community celebrations. Free delivery and setup included.`
+    : pageDescription || "Orlando Inflatables is your one-stop shop for bounce house and water slide rentals in East Orlando, Orange County, and Central Florida. We offer bounce houses, water slides, obstacle courses, interactive games, concessions, and table & chair rentals for birthday parties, school events, church events, corporate events, and graduations.";
+
   const schema = {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
-    "@id": `${baseUrl}/#organization`,
-    name: "Orlando Inflatables",
+    "@id": cityName ? `${baseUrl}/#${citySlug}-location` : `${baseUrl}/#organization`,
+    name: cityName ? `Orlando Inflatables - ${cityName}` : "Orlando Inflatables",
     alternateName: "Orlando Inflatable Rentals LLC",
-    description: pageDescription || "Orlando Inflatables is your one-stop shop for bounce house and water slide rentals in East Orlando, Orange County, and Central Florida. We offer bounce houses, water slides, obstacle courses, interactive games, concessions, and table & chair rentals for birthday parties, school events, church events, corporate events, and graduations.",
-    url: baseUrl,
+    description: description,
+    url: cityUrl,
     telephone: "+1-407-497-1840",
     email: "orlandoinflatablesllc@gmail.com",
     image: `${baseUrl}/logo.png`,
     priceRange: "$$",
     paymentAccepted: ["Cash", "Credit Card", "Debit Card"],
     currenciesAccepted: "USD",
-    areaServed: cityName ? [
-      {
-        "@type": "City",
-        name: cityName,
+    areaServed: cityName ? {
+      "@type": "City",
+      name: cityName,
+      containedInPlace: {
+        "@type": "AdministrativeArea",
+        name: "Orange County",
         containedInPlace: {
           "@type": "State",
-          name: "Florida"
+          name: "Florida",
+          containedInPlace: {
+            "@type": "Country",
+            name: "United States"
+          }
         }
       }
-    ] : [
+    } : [
       {
         "@type": "City",
         name: "Orlando",
@@ -52,14 +69,64 @@ export function LocalBusinessSchema({ pageName, pageDescription, cityName }: Loc
       { "@type": "City", name: "Waterford Lakes" },
       { "@type": "City", name: "Wedgefield" }
     ],
-    serviceType: [
-      "Bounce House Rental",
-      "Water Slide Rental",
-      "Obstacle Course Rental",
-      "Interactive Game Rental",
-      "Concession Rental",
-      "Table and Chair Rental"
-    ],
+    hasOfferCatalog: {
+      "@type": "OfferCatalog",
+      name: cityName ? `Party Rentals in ${cityName}` : "Party Rental Services",
+      itemListElement: [
+        {
+          "@type": "Offer",
+          itemOffered: {
+            "@type": "Service",
+            name: "Bounce House Rental",
+            description: cityName 
+              ? `Professional bounce house rentals in ${cityName}, FL with free delivery and setup`
+              : "Professional bounce house rentals with free delivery and setup"
+          }
+        },
+        {
+          "@type": "Offer",
+          itemOffered: {
+            "@type": "Service",
+            name: "Water Slide Rental",
+            description: cityName
+              ? `Exciting water slide rentals in ${cityName}, FL for summer parties and events`
+              : "Exciting water slide rentals for summer parties and events"
+          }
+        },
+        {
+          "@type": "Offer",
+          itemOffered: {
+            "@type": "Service",
+            name: "Obstacle Course Rental",
+            description: "Commercial-grade obstacle courses for school events and large gatherings"
+          }
+        },
+        {
+          "@type": "Offer",
+          itemOffered: {
+            "@type": "Service",
+            name: "Interactive Game Rental",
+            description: "Fun interactive inflatable games for parties and events"
+          }
+        },
+        {
+          "@type": "Offer",
+          itemOffered: {
+            "@type": "Service",
+            name: "Concession Rental",
+            description: "Cotton candy, popcorn, and snow cone machine rentals"
+          }
+        },
+        {
+          "@type": "Offer",
+          itemOffered: {
+            "@type": "Service",
+            name: "Table and Chair Rental",
+            description: "Tables and chairs for party seating"
+          }
+        }
+      ]
+    },
     openingHoursSpecification: {
       "@type": "OpeningHoursSpecification",
       dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
