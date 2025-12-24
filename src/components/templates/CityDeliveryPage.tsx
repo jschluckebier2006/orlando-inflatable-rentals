@@ -16,13 +16,13 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import bounceHouseCategoryImg from "@/assets/bounce-house-category.png";
-import bounceSlideComboImg from "@/assets/bounce-slide-combo-category.png";
-import waterSlideCategoryImg from "@/assets/water-slide-category.png";
-import obstacleCourseImg from "@/assets/obstacle-course-category.png";
-import interactiveGamesImg from "@/assets/interactive-games-category.png";
-import concessionsImg from "@/assets/concessions-category.png";
-import tablesChairsImg from "@/assets/tables-chairs-category.png";
+import bounceHouseCategoryImg from "@/assets/bounce-house-category.webp";
+import bounceSlideComboImg from "@/assets/bounce-slide-combo-category.webp";
+import waterSlideCategoryImg from "@/assets/water-slide-category.webp";
+import obstacleCourseImg from "@/assets/obstacle-course-category.webp";
+import interactiveGamesImg from "@/assets/interactive-games-category.webp";
+import concessionsImg from "@/assets/concessions-category.webp";
+import tablesChairsImg from "@/assets/tables-chairs-category.webp";
 import { ContentImageRow, deliveryPageImages, deliveryPageImages2, getHeroBackground } from "@/components/home/ContentImages";
 import { ReviewsSection } from "@/components/home/ReviewsSection";
 
@@ -151,6 +151,7 @@ export function CityDeliveryPage({
                         <img 
                           src={service.image} 
                           alt={service.name} 
+                          loading="lazy"
                           className="w-full h-full object-cover"
                         />
                       </div>
