@@ -76,6 +76,7 @@ export const products: Product[] = [
     category: "water-slides",
     price: 259,
     image: tropicShockSlide,
+    size: "30'L x 17'W x 15'H",
   },
   {
     id: "lava-falls-17",
@@ -84,6 +85,7 @@ export const products: Product[] = [
     category: "water-slides",
     price: 299,
     image: lavaFallsSlide,
+    size: "32'L x 16'W x 17'H",
   },
   {
     id: "tiki-plunge-18",
@@ -92,6 +94,7 @@ export const products: Product[] = [
     category: "water-slides",
     price: 309,
     image: tikiPlungeSlide,
+    size: "32'L x 16'W x 18'H",
   },
   {
     id: "island-drop-18",
@@ -100,6 +103,7 @@ export const products: Product[] = [
     category: "water-slides",
     price: 319,
     image: islandDropSlide,
+    size: "32'L x 16'W x 18'H",
   },
   {
     id: "purple-hurricane-18",
@@ -108,6 +112,7 @@ export const products: Product[] = [
     category: "water-slides",
     price: 279,
     image: purpleHurricaneSlide,
+    size: "32'L x 13'W x 18'H",
   },
   {
     id: "baja-hybrid-20",
@@ -116,6 +121,7 @@ export const products: Product[] = [
     category: "water-slides",
     price: 369,
     image: bajaHybridSlide,
+    size: "38'L x 17'W x 20'H",
   },
   {
     id: "goombay-splash-20",
@@ -124,6 +130,7 @@ export const products: Product[] = [
     category: "water-slides",
     price: 369,
     image: goombaySplashSlide,
+    size: "38'L x 18'W x 20'H",
   },
   {
     id: "paradise-falls-20",
@@ -132,6 +139,7 @@ export const products: Product[] = [
     category: "water-slides",
     price: 369,
     image: paradiseFallsSlide,
+    size: "38'L x 17'W x 20'H",
   },
   {
     id: "toxic-21",
@@ -140,6 +148,7 @@ export const products: Product[] = [
     category: "water-slides",
     price: 399,
     image: toxicSlide,
+    size: "38'L x 18'W x 21'H",
   },
   {
     id: "reggae-rush-25",
@@ -148,6 +157,7 @@ export const products: Product[] = [
     category: "water-slides",
     price: 559,
     image: reggaeRushSlide,
+    size: "70'L x 20'W x 25'H",
   },
   {
     id: "insane-hurricane-27",
@@ -156,6 +166,7 @@ export const products: Product[] = [
     category: "water-slides",
     price: 599,
     image: insaneHurricaneSlide,
+    size: "70'L x 20'W x 27'H",
   },
   
   // Bounce & Slide Combos
@@ -166,6 +177,7 @@ export const products: Product[] = [
     category: "bounce-slide-combos",
     price: 209,
     image: aquaPalmsCombo,
+    size: "30'L x 14'W x 14'H",
   },
   {
     id: "economy-4in1",
@@ -174,6 +186,7 @@ export const products: Product[] = [
     category: "bounce-slide-combos",
     price: 209,
     image: economyCombo,
+    size: "30'L x 14'W x 14'H",
   },
   {
     id: "green-gush-7in1",
@@ -182,6 +195,7 @@ export const products: Product[] = [
     category: "bounce-slide-combos",
     price: 259,
     image: greenGushCombo,
+    size: "32'L x 15'W x 15'H",
   },
   {
     id: "marble-7in1",
@@ -190,6 +204,7 @@ export const products: Product[] = [
     category: "bounce-slide-combos",
     price: 259,
     image: marbleCombo,
+    size: "32'L x 15'W x 15'H",
   },
   {
     id: "mystic-castle-7in1",
@@ -198,6 +213,7 @@ export const products: Product[] = [
     category: "bounce-slide-combos",
     price: 259,
     image: mysticCastleCombo,
+    size: "32'L x 15'W x 15'H",
   },
   
   // Interactive Games
@@ -208,6 +224,7 @@ export const products: Product[] = [
     category: "interactive-games",
     price: 189,
     image: sportsGame,
+    size: "12'L x 12'W x 8'H",
   },
   
   // Obstacle Courses
@@ -218,6 +235,7 @@ export const products: Product[] = [
     category: "obstacle-courses",
     price: 259,
     image: backyardObstacle,
+    size: "30'L x 12'W x 12'H",
   },
   {
     id: "flashpoint-obstacle-46",
@@ -226,6 +244,7 @@ export const products: Product[] = [
     category: "obstacle-courses",
     price: 389,
     image: flashpointObstacle,
+    size: "46'L x 12'W x 14'H",
   },
   {
     id: "radioactive-run-53",
@@ -234,6 +253,7 @@ export const products: Product[] = [
     category: "obstacle-courses",
     price: 395,
     image: radioactiveRunObstacle,
+    size: "53'L x 24'W x 16'H",
   },
   
   // Bounce Houses
@@ -244,6 +264,7 @@ export const products: Product[] = [
     category: "bounce-houses",
     price: 149,
     image: dinosaurRaptorBounce,
+    size: "15'L x 15'W x 15'H",
   },
   {
     id: "disney-princess-bounce",
@@ -252,6 +273,7 @@ export const products: Product[] = [
     category: "bounce-houses",
     price: 139,
     image: disneyPrincessBounce,
+    size: "13'L x 13'W x 13'H",
   },
   
   // Interactive Games (additional)
@@ -262,6 +284,7 @@ export const products: Product[] = [
     category: "interactive-games",
     price: 229,
     image: dunkTank,
+    size: "8'L x 8'W x 8'H",
   },
   {
     id: "full-court-press",
@@ -270,6 +293,7 @@ export const products: Product[] = [
     category: "interactive-games",
     price: 199,
     image: fullCourtPressGame,
+    size: "14'L x 12'W x 10'H",
   },
   
   // Bounce & Slide Combos (additional)
@@ -280,6 +304,7 @@ export const products: Product[] = [
     category: "bounce-slide-combos",
     price: 219,
     image: lavaRaptorCombo,
+    size: "30'L x 14'W x 14'H",
   },
   
   // Concessions
@@ -290,6 +315,7 @@ export const products: Product[] = [
     category: "concessions",
     price: 25,
     image: bubbleMachine,
+    size: "Tabletop Unit",
   },
   {
     id: "cotton-candy-machine",
@@ -298,6 +324,7 @@ export const products: Product[] = [
     category: "concessions",
     price: 65,
     image: cottonCandyMachine,
+    size: "20\"W x 20\"D x 36\"H",
   },
   {
     id: "popcorn-machine",
@@ -306,6 +333,7 @@ export const products: Product[] = [
     category: "concessions",
     price: 65,
     image: popcornMachine,
+    size: "20\"W x 18\"D x 30\"H",
   },
   
   // Tables & Chairs
@@ -316,6 +344,7 @@ export const products: Product[] = [
     category: "tables-chairs",
     price: 1.75,
     image: whiteFoldingChair,
+    size: "18\"W x 20\"D x 32\"H",
   },
   {
     id: "kids-picnic-table",
@@ -324,6 +353,7 @@ export const products: Product[] = [
     category: "tables-chairs",
     price: 10,
     image: kidsPicnicTable,
+    size: "4'L x 3'W x 22\"H",
   },
   {
     id: "white-folding-table",
@@ -332,6 +362,7 @@ export const products: Product[] = [
     category: "tables-chairs",
     price: 7,
     image: whiteFoldingTable,
+    size: "6'L x 30\"W x 30\"H",
   },
   
   // Final batch - Water Slides
@@ -342,6 +373,7 @@ export const products: Product[] = [
     category: "water-slides",
     price: 239,
     image: summerSplashSlide,
+    size: "30'L x 16'W x 14'H",
   },
   
   // Final batch - Bounce Houses
@@ -352,6 +384,7 @@ export const products: Product[] = [
     category: "bounce-houses",
     price: 139,
     image: primaryColorBounce,
+    size: "13'L x 13'W x 13'H",
   },
   
   // Final batch - Bounce/Slide Combos
@@ -362,6 +395,7 @@ export const products: Product[] = [
     category: "bounce-slide-combos",
     price: 269,
     image: southBeachCombo,
+    size: "32'L x 15'W x 15'H",
   },
   {
     id: "tropical-crush-combo",
@@ -370,6 +404,7 @@ export const products: Product[] = [
     category: "bounce-slide-combos",
     price: 269,
     image: tropicalCrushCombo,
+    size: "32'L x 15'W x 15'H",
   },
   
   // Final batch - Interactive Games
@@ -380,6 +415,7 @@ export const products: Product[] = [
     category: "interactive-games",
     price: 249,
     image: wreckingBallGame,
+    size: "29'L x 29'W x 17'H",
   },
   
   // Final batch - Concessions
@@ -390,6 +426,7 @@ export const products: Product[] = [
     category: "concessions",
     price: 65,
     image: snoKoneMachine,
+    size: "18\"W x 18\"D x 24\"H",
   },
   {
     id: "power-generator",
@@ -398,6 +435,7 @@ export const products: Product[] = [
     category: "concessions",
     price: 125,
     image: powerGenerator,
+    size: "24\"L x 20\"W x 22\"H",
   },
 ];
 
