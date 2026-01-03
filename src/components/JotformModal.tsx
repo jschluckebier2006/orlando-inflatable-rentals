@@ -18,14 +18,16 @@ export function JotformModal({ open, onOpenChange }: JotformModalProps) {
           <DialogTitle className="font-display text-xl">Get a Free Quote</DialogTitle>
         </DialogHeader>
         <div className="flex-1 overflow-hidden px-4 pb-4">
-          <iframe
-            title="Contact Form"
-            src="https://form.jotform.com/252645641478162?nofs=1"
-            className="w-full h-full border-0 rounded-lg"
-            style={{ marginTop: '-280px', height: 'calc(100% + 280px)' }}
-            sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
-            allow="geolocation; microphone; camera"
-          />
+          <div className="w-full h-full overflow-hidden rounded-lg">
+            <iframe
+              title="Contact Form"
+              src="https://form.jotform.com/252645641478162?nofs=1"
+              className="w-full border-0"
+              style={{ marginTop: '-320px', height: 'calc(100% + 380px)' }}
+              sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+              allow="geolocation; microphone; camera"
+            />
+          </div>
         </div>
       </DialogContent>
     </Dialog>
