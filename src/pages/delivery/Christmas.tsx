@@ -278,7 +278,7 @@ export default function ChristmasDelivery() {
       <CityDeliveryPage
         cityName="Christmas"
         citySlug="christmas"
-        metaTitle="Bounce House & Water Slide Rentals Christmas FL | Orlando Inflatables"
+        metaTitle="Bounce House & Water Slide Rentals Christmas FL"
         metaDescription="Bounce house & water slide rentals in Christmas FL. Party inflatables for Florida's most festive town! Free delivery year-round. Call (407) 497-1840."
         nearbyAreas={nearbyAreas}
         cityWikipediaUrl="https://en.wikipedia.org/wiki/Christmas,_Florida"

@@ -307,7 +307,7 @@ export default function AvalonParkDelivery() {
       <CityDeliveryPage
         cityName="Avalon Park"
         citySlug="avalon-park"
-        metaTitle="Bounce House & Water Slide Rentals Avalon Park FL | Orlando Inflatables"
+        metaTitle="Bounce House & Water Slide Rentals Avalon Park FL"
         metaDescription="Bounce house & water slide rentals in Avalon Park FL. Serving Downtown Avalon Park & all villages with party inflatables. Free delivery! Call (407) 497-1840."
         nearbyAreas={nearbyAreas}
         cityWikipediaUrl="https://en.wikipedia.org/wiki/Avalon_Park,_Florida"

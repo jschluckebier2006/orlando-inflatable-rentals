@@ -9,7 +9,7 @@ interface AggregateRatingSchemaProps {
 
 export function AggregateRatingSchema({
   ratingValue = "5.0",
-  reviewCount = "89",
+  reviewCount = "97",
   bestRating = "5",
   worstRating = "1",
 }: AggregateRatingSchemaProps) {
