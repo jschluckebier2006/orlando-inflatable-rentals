@@ -281,6 +281,7 @@ export default function BithloDelivery() {
         metaTitle="Bounce House & Water Slide Rentals Bithlo FL"
         metaDescription="Bounce house & water slide rentals in Bithlo FL. Large inflatables for spacious country properties. Free delivery on rural routes! Call (407) 497-1840."
         nearbyAreas={nearbyAreas}
+        ogImage="/og-images/og-bithlo.jpg"
         cityWikipediaUrl="https://en.wikipedia.org/wiki/Bithlo,_Florida"
         cityDescription="Welcome to Bithlo, where country living meets Florida sunshine! This unincorporated community in eastern Orange County offers the space and freedom that make outdoor celebrations truly special. Bithlo's larger properties are ideal for our biggest bounce houses, tallest water slides, and most exciting obstacle courses. If you've got the space, we've got the inflatables to fill it with fun!"
         additionalCityInfo="Bithlo is an unincorporated community located along State Road 50 between Orlando and Christmas. The area has a rich history dating back to the early 20th century and maintains its rural, country character that distinguishes it from more developed areas of Orange County. Residents enjoy larger lots, agricultural properties, and a peaceful lifestyle while remaining within reach of Orlando's amenities. The community's outdoor-oriented culture makes it perfect for big celebrations under the Florida sky."

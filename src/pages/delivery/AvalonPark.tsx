@@ -310,6 +310,7 @@ export default function AvalonParkDelivery() {
         metaTitle="Bounce House & Water Slide Rentals Avalon Park FL"
         metaDescription="Bounce house & water slide rentals in Avalon Park FL. Serving Downtown Avalon Park & all villages with party inflatables. Free delivery! Call (407) 497-1840."
         nearbyAreas={nearbyAreas}
+        ogImage="/og-images/og-avalon-park.jpg"
         cityWikipediaUrl="https://en.wikipedia.org/wiki/Avalon_Park,_Florida"
         cityDescription="Welcome to Avalon Park, one of East Orlando's most beloved master-planned communities! Known for its charming New Urbanism design, tree-lined boulevards, and vibrant Downtown center, Avalon Park is home to thousands of families who know how to celebrate in style. Whether you're hosting a birthday party, graduation celebration, or community gathering, Orlando Inflatables delivers the excitement."
         additionalCityInfo="Avalon Park was developed with New Urbanism principles that emphasize walkability, community gathering spaces, and traditional neighborhood design. The community features a charming downtown area with shops, restaurants, and event venues. Multiple villages make up this thriving community, including East Park, West Park, and surrounding neighborhoods. Avalon Park's family-oriented culture, excellent schools, and active HOAs create the perfect environment for memorable celebrations."

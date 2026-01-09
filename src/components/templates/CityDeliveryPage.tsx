@@ -65,6 +65,7 @@ interface CityDeliveryPageProps {
   localLandmarks?: string;
   faqs: FAQ[];
   customSections?: CustomSection[];
+  ogImage?: string;
 }
 
 export function CityDeliveryPage({
@@ -79,6 +80,7 @@ export function CityDeliveryPage({
   localLandmarks,
   faqs,
   customSections,
+  ogImage,
 }: CityDeliveryPageProps) {
   const [showJotform, setShowJotform] = useState(false);
   
@@ -94,6 +96,7 @@ export function CityDeliveryPage({
         title={metaTitle}
         description={metaDescription}
         canonical={`/water-slide-and-bounce-house-rental-${citySlug}`}
+        ogImage={ogImage}
       />
       <LocalBusinessSchema cityName={cityName} citySlug={citySlug} />
       <ServiceAreaSchema cityName={cityName} citySlug={citySlug} nearbyAreas={nearbyAreas} />

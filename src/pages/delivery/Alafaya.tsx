@@ -310,6 +310,7 @@ export default function AlafayaDelivery() {
         metaTitle="Bounce House & Water Slide Rentals Alafaya FL"
         metaDescription="Bounce house & water slide rentals in Alafaya FL. Serving UCF area with party inflatables, obstacle courses & more. Free delivery! Call (407) 497-1840."
         nearbyAreas={nearbyAreas}
+        ogImage="/og-images/og-alafaya.jpg"
         cityWikipediaUrl="https://en.wikipedia.org/wiki/Alafaya,_Florida"
         cityDescription="Located in Orange County near the University of Central Florida, Alafaya is home to thousands of families, students, and young professionals who know how to celebrate! Whether you're hosting a birthday party, graduation celebration, or community event, we have the perfect inflatable rentals for your occasion."
         additionalCityInfo="Alafaya is a census-designated place (CDP) in Orange County, Florida, situated in the heart of East Orlando. The community has experienced tremendous growth over the past two decades, largely driven by its proximity to the University of Central Florida, one of the largest universities in the nation. The area features excellent schools, family-friendly neighborhoods, and convenient access to major employers in the Research Park corridor."
