@@ -310,6 +310,7 @@ export default function WaterfordLakesDelivery() {
         metaTitle="Bounce House & Water Slide Rentals Waterford Lakes FL"
         metaDescription="Premium bounce house & water slide rentals in Waterford Lakes FL. Near Town Center with free delivery! Call (407) 497-1840 for your party quote."
         nearbyAreas={nearbyAreas}
+        ogImage="/og-images/og-waterford-lakes.jpg"
         cityWikipediaUrl="https://en.wikipedia.org/wiki/Waterford_Lakes,_Florida"
         cityDescription="Welcome to Waterford Lakes, one of East Orlando's most popular and vibrant communities! Anchored by the bustling Waterford Lakes Town Center, this thriving area is home to thousands of families who appreciate quality, convenience, and community. Whether you're celebrating near the shops or in your beautiful backyard, Orlando Inflatables delivers the party excitement Waterford Lakes families love."
         additionalCityInfo="Waterford Lakes is a census-designated place in Orange County, Florida, centered around the Waterford Lakes Town Center—one of the largest open-air shopping centers in the Orlando area. The community has experienced tremendous growth since the 1990s and now hosts a diverse, dynamic population of families and young professionals. Multiple neighborhoods make up the greater Waterford Lakes area, including The Villages at Waterford Lakes and surrounding developments. Excellent schools, abundant shopping, and easy access to major roads make Waterford Lakes one of East Orlando's most desirable places to live and celebrate."

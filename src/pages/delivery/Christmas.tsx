@@ -281,6 +281,7 @@ export default function ChristmasDelivery() {
         metaTitle="Bounce House & Water Slide Rentals Christmas FL"
         metaDescription="Bounce house & water slide rentals in Christmas FL. Party inflatables for Florida's most festive town! Free delivery year-round. Call (407) 497-1840."
         nearbyAreas={nearbyAreas}
+        ogImage="/og-images/og-christmas.jpg"
         cityWikipediaUrl="https://en.wikipedia.org/wiki/Christmas,_Florida"
         cityDescription="Welcome to Christmas, Florida—one of the most uniquely named communities in the United States! Located in eastern Orange County along State Road 50, Christmas offers a rural Florida lifestyle with a special festive spirit that lasts all year long. Whether it's July or December, Orlando Inflatables delivers the excitement and fun to make your Christmas celebration unforgettable."
         additionalCityInfo="Christmas is a small, unincorporated community famous for its year-round holiday theme and the beloved Christmas Post Office, which attracts visitors from around the world seeking that special postmark. The town gets its name from Fort Christmas, established on Christmas Day in 1837 during the Second Seminole War. Today, Fort Christmas Historical Park preserves this history with nature trails and a pioneer village. The community's residents enjoy rural Florida living with spacious properties and a tight-knit neighborhood feel."

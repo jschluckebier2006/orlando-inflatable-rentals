@@ -313,6 +313,7 @@ export default function AzaleaParkDelivery() {
         metaTitle="Bounce House & Water Slide Rentals Azalea Park FL"
         metaDescription="Affordable bounce house & water slide rentals in Azalea Park FL. Bilingual service, free delivery. Perfect for birthdays & quinceañeras! Call (407) 497-1840."
         nearbyAreas={nearbyAreas}
+        ogImage="/og-images/og-azalea-park.jpg"
         cityWikipediaUrl="https://en.wikipedia.org/wiki/Azalea_Park,_Florida"
         cityDescription="Welcome to Azalea Park, a welcoming and diverse East Orlando community with deep roots and strong neighborhood spirit! Located conveniently near major corridors, Azalea Park offers families an affordable place to live with easy access to everything Orlando has to offer. Orlando Inflatables is proud to serve this vibrant community with top-quality party rentals at prices that work for every family."
         additionalCityInfo="Azalea Park is a census-designated place in Orange County, Florida, established primarily in the mid-20th century. The neighborhood has maintained its character as a welcoming place for families of all backgrounds. Known for its diverse, close-knit community, Azalea Park residents take pride in their neighborhood. The area's convenient location near Semoran Boulevard and East Colonial Drive provides easy access to shopping, dining, and entertainment while maintaining a residential, family-friendly atmosphere."

@@ -281,6 +281,7 @@ export default function WedgefieldDelivery() {
         metaTitle="Bounce House & Water Slide Rentals Wedgefield FL"
         metaDescription="Bounce house & water slide rentals in Wedgefield FL. Large inflatables for golf course community properties. Free delivery! Call (407) 497-1840."
         nearbyAreas={nearbyAreas}
+        ogImage="/og-images/og-wedgefield.jpg"
         cityWikipediaUrl="https://en.wikipedia.org/wiki/Wedgefield,_Florida"
         cityDescription="Welcome to Wedgefield, a beautiful golf course community in eastern Orange County! Centered around the Wedgefield Golf & Country Club, this peaceful, family-oriented neighborhood offers larger lots, stunning golf course views, and a relaxed Florida lifestyle. Wedgefield's spacious properties are perfect for our biggest inflatables—bring the water park experience right to your backyard!"
         additionalCityInfo="Wedgefield is a census-designated place in Orange County, Florida, developed as a golf course community around the Wedgefield Golf & Country Club. The community maintains its character as a peaceful, family-friendly neighborhood where residents enjoy larger lots, many with beautiful golf course views. Wedgefield offers a perfect blend of recreational amenities and natural Florida beauty. The community's location provides convenient access to Orlando while maintaining a quiet, residential atmosphere ideal for raising families and hosting celebrations."

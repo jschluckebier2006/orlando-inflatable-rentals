@@ -281,6 +281,7 @@ export default function ChuluotaDelivery() {
         metaTitle="Bounce House & Water Slide Rentals Chuluota FL"
         metaDescription="Bounce house & water slide rentals in Chuluota FL. Large inflatables for horse properties & spacious lots. Free delivery! Call (407) 497-1840."
         nearbyAreas={nearbyAreas}
+        ogImage="/og-images/og-chuluota.jpg"
         cityWikipediaUrl="https://en.wikipedia.org/wiki/Chuluota,_Florida"
         cityDescription="Welcome to Chuluota, a charming rural community on the border of Seminole and Orange Counties! Known for its peaceful atmosphere, historic character, and thriving equestrian community, Chuluota is a wonderful place to raise a family and celebrate life's special moments. With larger lots and a country feel, Chuluota properties are perfect for our biggest and most exciting inflatables."
         additionalCityInfo="Chuluota's name comes from the Seminole word meaning 'pine island,' reflecting the area's natural beauty and Native American heritage. The community maintains a distinctly rural character with larger lots, horse properties, and a strong equestrian presence while providing convenient access to Orlando and surrounding areas. The historic downtown area adds charm, and residents enjoy a close-knit community feel that's increasingly rare in Central Florida. Chuluota offers the best of both worlds—country living with city convenience."
