@@ -278,7 +278,7 @@ export default function WedgefieldDelivery() {
       <CityDeliveryPage
         cityName="Wedgefield"
         citySlug="wedgefield"
-        metaTitle="Bounce House & Water Slide Rentals Wedgefield FL | Orlando Inflatables"
+        metaTitle="Bounce House & Water Slide Rentals Wedgefield FL"
         metaDescription="Bounce house & water slide rentals in Wedgefield FL. Large inflatables for golf course community properties. Free delivery! Call (407) 497-1840."
         nearbyAreas={nearbyAreas}
         cityWikipediaUrl="https://en.wikipedia.org/wiki/Wedgefield,_Florida"

@@ -310,7 +310,7 @@ export default function AzaleaParkDelivery() {
       <CityDeliveryPage
         cityName="Azalea Park"
         citySlug="azalea-park"
-        metaTitle="Bounce House & Water Slide Rentals Azalea Park FL | Orlando Inflatables"
+        metaTitle="Bounce House & Water Slide Rentals Azalea Park FL"
         metaDescription="Affordable bounce house & water slide rentals in Azalea Park FL. Bilingual service, free delivery. Perfect for birthdays & quinceañeras! Call (407) 497-1840."
         nearbyAreas={nearbyAreas}
         cityWikipediaUrl="https://en.wikipedia.org/wiki/Azalea_Park,_Florida"
