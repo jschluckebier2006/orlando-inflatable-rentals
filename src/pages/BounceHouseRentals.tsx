@@ -68,7 +68,7 @@ export default function BounceHouseRentals() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button onClick={() => setShowJotform(true)} size="lg" className="bg-secondary hover:bg-secondary/90 text-secondary-foreground btn-bounce text-lg px-8">
-                Get a Free Quote
+                Check Availability
               </Button>
               <a href="tel:4074971840">
                 <Button size="lg" variant="outline" className="bg-transparent border-white text-white hover:bg-white/20 btn-bounce text-lg px-8 font-semibold">

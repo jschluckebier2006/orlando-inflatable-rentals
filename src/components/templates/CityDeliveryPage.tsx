@@ -133,7 +133,7 @@ export function CityDeliveryPage({
                 size="lg"
                 className="bg-secondary hover:bg-secondary/90 text-secondary-foreground btn-bounce text-lg px-8"
               >
-                Get a Free Quote
+                Check Availability
               </Button>
               <a href="tel:4074971840">
                 <Button

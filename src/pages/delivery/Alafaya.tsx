@@ -271,7 +271,7 @@ function BookNowSection({ onOpenForm }: { onOpenForm: () => void }) {
             size="lg"
             className="bg-primary hover:bg-primary/90 text-primary-foreground btn-bounce"
           >
-            Get a Free Quote Today
+            Check Availability
           </Button>
           <a href="tel:4074971840">
             <Button
