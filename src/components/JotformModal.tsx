@@ -15,7 +15,7 @@ export function JotformModal({ open, onOpenChange }: JotformModalProps) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl h-[90vh] p-0 flex flex-col">
         <DialogHeader className="p-4 pb-2 shrink-0">
-          <DialogTitle className="font-display text-xl">Get a Free Quote</DialogTitle>
+          <DialogTitle className="font-display text-xl">Submit A Booking Request</DialogTitle>
         </DialogHeader>
         <div className="flex-1 overflow-hidden px-4 pb-4">
           <div className="w-full h-full overflow-hidden rounded-lg">
