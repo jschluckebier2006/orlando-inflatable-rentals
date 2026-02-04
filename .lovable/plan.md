@@ -1,67 +1,62 @@
 
-# Replace Hero Video with Water Slide Photo
+# Update All "Get a Free Quote" Buttons to "Check Availability"
 
 ## Summary
-Replace the homepage hero section's video background with the uploaded water slide photo, optimized for mobile viewing.
+Change the display text of all CTA buttons across the website from "Get a Free Quote" to "Check Availability" for consistency with the previously updated header buttons.
 
-## Current vs. New
+## Files to Update
 
-| Element | Current | New |
-|---------|---------|-----|
-| Background | Video (`/videos/hero-background.mov`) | Static image (water slide lineup) |
-| Mobile optimization | Video (heavier load) | Image with mobile-friendly positioning |
-| Performance | Higher bandwidth usage | Faster load, better for mobile |
+| File | Line(s) | Current Text | New Text |
+|------|---------|--------------|----------|
+| `src/components/home/HeroSection.tsx` | 51 | Get a Free Quote | Check Availability |
+| `src/components/home/CTASection.tsx` | 25 | Get a Free Quote | Check Availability |
+| `src/components/templates/CityServicePage.tsx` | 114, 480 | Get a Free Quote | Check Availability |
+| `src/components/templates/CityDeliveryPage.tsx` | Multiple | Get a Free Quote | Check Availability |
+| `src/pages/BounceHouseRentals.tsx` | ~75 | Get a Free Quote | Check Availability |
+| `src/pages/BounceSlideComboRentals.tsx` | 75 | Get a Free Quote | Check Availability |
+| `src/pages/WaterSlideRentals.tsx` | 71 | Get a Free Quote | Check Availability |
+| `src/pages/ObstacleCourseRentals.tsx` | 75 | Get a Free Quote | Check Availability |
+| `src/pages/InteractiveGameRentals.tsx` | 75 | Get a Free Quote | Check Availability |
+| `src/pages/ConcessionRentals.tsx` | 75 | Get a Free Quote | Check Availability |
+| `src/pages/TableChairRentals.tsx` | 75 | Get a Free Quote | Check Availability |
+| `src/pages/events/BirthdayParties.tsx` | 174 | Get a Free Quote | Check Availability |
+| `src/pages/events/GraduationEvents.tsx` | 184 | Get a Free Quote | Check Availability |
+| `src/pages/delivery/Alafaya.tsx` | 274 | Get a Free Quote Today | Check Availability |
+| `src/pages/delivery/AvalonPark.tsx` | 274 | Get a Free Quote Today | Check Availability |
+| `src/pages/delivery/AzaleaPark.tsx` | 277 | Get a Free Quote Today | Check Availability |
+| `src/pages/delivery/Bithlo.tsx` | 246 | Get a Free Quote Today | Check Availability |
+| `src/pages/delivery/Christmas.tsx` | ~246 | Get a Free Quote Today | Check Availability |
+| `src/pages/delivery/Chuluota.tsx` | ~274 | Get a Free Quote Today | Check Availability |
+| `src/pages/delivery/Eastwood.tsx` | 274 | Get a Free Quote Today | Check Availability |
+| `src/pages/delivery/Stoneybrook.tsx` | 274 | Get a Free Quote Today | Check Availability |
+| `src/pages/delivery/WaterfordLakes.tsx` | ~274 | Get a Free Quote Today | Check Availability |
+| `src/pages/delivery/Wedgefield.tsx` | 246 | Get a Free Quote Today | Check Availability |
 
-## Implementation Details
+## Exclusions (No Changes)
 
-### Step 1: Copy Image to Project
-- Copy from: `user-uploads://orlando_inflatables_water_slide_line_up_header.webp`
-- Copy to: `src/assets/hero-background.webp`
+The following occurrences will **NOT** be changed as they are descriptive text in SEO metadata, not button labels:
 
-### Step 2: Update HeroSection Component
+- `src/pages/Contact.tsx` - SEO title text
+- `src/pages/events/ChurchEvents.tsx` - SEO description text
+- `src/pages/events/SchoolEvents.tsx` - SEO description text
+- `src/pages/events/CorporateEvents.tsx` - SEO description text
+- `src/components/home/CTASection.tsx` line 17 - Paragraph text ("Get a free quote today and let us help...")
 
-**File:** `src/components/home/HeroSection.tsx`
+## Implementation
 
-**Changes:**
-1. Add import for the new hero background image
-2. Replace the `<video>` element with an `<img>` element
-3. Apply mobile-optimized styling:
-   - Use `object-cover` to fill the container
-   - Use `object-position` to focus on the water slides (center-top) on mobile, and center on desktop
-   - The water slides are in the upper portion of the image, so on mobile we'll position to show the slides prominently
-
-**Updated Background Code:**
+For each file, the button text will be updated from:
 ```tsx
-// Import at top of file
-import heroBackground from "@/assets/hero-background.webp";
-
-// Replace video element with:
-<img
-  src={heroBackground}
-  alt=""
-  aria-hidden="true"
-  className="absolute inset-0 w-full h-full object-cover object-top md:object-center"
-/>
+Get a Free Quote
+// or
+Get a Free Quote Today
 ```
 
-**Mobile Optimization:**
-- `object-top` on mobile ensures the colorful water slides (upper portion) are visible
-- `md:object-center` on desktop shows the full balanced composition
-- The image naturally has the water slides in the upper 2/3, with green grass below - perfect for cropping on mobile
+To:
+```tsx
+Check Availability
+```
 
-### Visual Result
+All button styling, behavior, and functionality will remain unchanged - only the display text is updated.
 
-**Mobile View:**
-- Water slides prominently displayed (focused on top of image)
-- Text overlay remains readable with existing dark overlay
-- Faster page load compared to video
-
-**Desktop View:**
-- Full panoramic view of water slide lineup
-- Green grass and blue sky create nice framing
-- Same visual impact as before, but with actual product showcase
-
-## Notes
-- The existing dark overlay (`bg-black/50`) will still be applied over the image for text readability
-- No changes to text content, CTA buttons, or other hero section elements
-- The `.webp` format provides excellent compression for fast mobile loading
+## Result
+All CTA buttons across the site will display "Check Availability" consistently, matching the header buttons that were previously updated.
