@@ -1,5 +1,6 @@
-import { Helmet } from "react-helmet-async";
 import { Layout } from "@/components/layout/Layout";
+import { SEOHead } from "@/components/seo/SEOHead";
+import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
 import { BlogCard } from "@/components/blog/BlogCard";
 import { blogPosts } from "@/data/blogPosts";
 import { siteImages } from "@/components/home/ContentImages";
@@ -8,13 +9,12 @@ import { CTASection } from "@/components/home/CTASection";
 export default function Blog() {
   return (
     <Layout>
-      <Helmet>
-        <title>Blog | Orlando Inflatable Rentals - Party Tips & Guides</title>
-        <meta 
-          name="description" 
-          content="Read our blog for bounce house rental tips, party planning guides, safety information, and local Orlando insights from Orlando Inflatable Rentals LLC."
-        />
-      </Helmet>
+      <SEOHead
+        title="Blog - Party Tips & Guides"
+        description="Read our blog for bounce house rental tips, party planning guides, safety information, and local Orlando insights from Orlando Inflatable Rentals LLC."
+        canonical="/blog"
+      />
+      <BreadcrumbSchema items={[{ name: "Blog", href: "/blog" }]} />
 
       {/* Hero Section */}
       <section 

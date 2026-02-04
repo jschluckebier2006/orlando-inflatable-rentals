@@ -9,6 +9,7 @@ interface SEOHeadProps {
   noindex?: boolean;
   datePublished?: string;
   dateModified?: string;
+  schemaJson?: object | object[];
 }
 
 export function SEOHead({
@@ -20,6 +21,7 @@ export function SEOHead({
   noindex = false,
   datePublished,
   dateModified,
+  schemaJson,
 }: SEOHeadProps) {
   const siteName = "Orlando Inflatables";
   const baseUrl = "https://orlandoinflatables.com";
@@ -62,6 +64,13 @@ export function SEOHead({
       {/* Additional */}
       <meta name="geo.region" content="US-FL" />
       <meta name="geo.placename" content="Orlando" />
+      
+      {/* Custom Schema JSON-LD */}
+      {schemaJson && (
+        <script type="application/ld+json">
+          {JSON.stringify(schemaJson)}
+        </script>
+      )}
     </Helmet>
   );
 }
