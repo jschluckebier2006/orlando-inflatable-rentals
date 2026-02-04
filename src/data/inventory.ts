@@ -66,6 +66,7 @@ import summerSplashSlide from "@/assets/inventory/summer-splash-water-slide.webp
 import whiteFoldingTable from "@/assets/inventory/white-folding-table.webp";
 import tropicalCrushCombo from "@/assets/inventory/tropical-crush-combo.webp";
 import wreckingBallGame from "@/assets/inventory/wrecking-ball-game.webp";
+import unicornCombo from "@/assets/inventory/unicorn-7-in-1-combo.webp";
 
 export const products: Product[] = [
   // Water Slides
@@ -305,6 +306,15 @@ export const products: Product[] = [
     price: 219,
     image: lavaRaptorCombo,
     size: "30'L x 14'W x 14'H",
+  },
+  {
+    id: "unicorn-7in1",
+    name: "Unicorn 7-in-1 Combo",
+    slug: "unicorn-7-in-1-combo",
+    category: "bounce-slide-combos",
+    price: 209,
+    image: unicornCombo,
+    size: "32'L x 15'W x 15'H",
   },
   
   // Concessions
