@@ -1,29 +1,85 @@
 
-# Replace 24' Firestorm Falls Product Image
+# Update Mobile Product Cards UI
 
 ## Summary
-Replace the current product image for the 24' Firestorm Falls Dual Lane Water Slide with the new uploaded photo.
+Enhance the mobile product card experience with a larger price badge, updated pricing format, and a prominent "Book Your Date" CTA button.
 
-## Current Setup
+## Changes Overview
 
-The product in `src/data/inventory.ts` references:
-```typescript
-import firestormFallsSlide from "@/assets/inventory/24ft-firestorm-falls-water-slide.webp";
+| Change | Current | Updated |
+|--------|---------|---------|
+| Price badge size (mobile) | `text-sm px-3 py-1` | ~25% larger with responsive sizing |
+| Price format | `$559` | `$559 / day` |
+| Badge shadow | None | Subtle drop shadow |
+| Mobile CTA button | None | "Book Your Date" button below content |
+
+## Technical Implementation
+
+### File: `src/components/inventory/ProductCard.tsx`
+
+**1. Price Badge Updates:**
+- Add responsive sizing: smaller on desktop, ~25% larger on mobile
+- Update text format to include "/ day"
+- Add subtle drop shadow for visibility on bright photos
+- Keep top-right corner positioning
+
+**2. Add Mobile CTA Button:**
+- Add "Book Your Date" button inside CardContent
+- Use `bg-secondary` (orange) with dark text for contrast
+- Make it thumb-friendly: `min-h-[44px]` with generous padding
+- Full-width within the card on mobile, hidden on desktop
+- Wire to the same `onClick` handler that triggers the booking modal
+
+### Code Changes
+
+```tsx
+// Updated ProductCard component structure:
+
+<Card ...>
+  <div className="aspect-square overflow-hidden relative bg-muted/30">
+    <img ... />
+    {/* Updated Badge with responsive sizing and shadow */}
+    <Badge className="absolute top-3 right-3 md:top-3 md:right-3 
+      bg-secondary text-secondary-foreground font-bold 
+      text-base md:text-sm px-3 py-1.5 md:px-3 md:py-1
+      shadow-md">
+      ${product.price} / day
+    </Badge>
+  </div>
+  <CardContent className="p-4">
+    <h3>...</h3>
+    {product.size && <p>...</p>}
+    {product.ageRange && <p>...</p>}
+    
+    {/* New mobile CTA button */}
+    <Button 
+      onClick={onClick}
+      className="w-full mt-3 min-h-[44px] bg-secondary hover:bg-secondary/90 
+        text-secondary-foreground font-semibold md:hidden"
+    >
+      Book Your Date
+    </Button>
+  </CardContent>
+</Card>
 ```
 
-## Implementation
+### Dependencies
+- Import `Button` from `@/components/ui/button`
+- The `onClick` prop already exists and triggers the JotformModal
 
-### Step 1: Replace Product Image
-Copy the new uploaded image to overwrite the existing file:
-- **From:** `user-uploads://24_firestorm_falls_dual_lane_water_slide.webp`
-- **To:** `src/assets/inventory/24ft-firestorm-falls-water-slide.webp`
+## Visual Result
 
-No code changes are needed - the import path remains the same, so the new image will automatically display everywhere the product appears.
+**Before (Mobile):**
+- Small price badge: `$509`
+- No CTA button, entire card is clickable
 
-## Result
-After replacing the image file, the new photo will automatically appear on:
-- Water Slide Rentals page (where you are now)
-- Homepage water slides carousel
-- Any city-specific water slide pages
+**After (Mobile):**
+- Larger price badge with shadow: `$509 / day`
+- Prominent orange "Book Your Date" button below product details
+- Card still clickable for desktop users
 
-The new image shows a better angle of the Firestorm Falls water slide with the full length visible including the splash pool.
+## Layout Rules Addressed
+- Price badge stays on the image (top-right corner)
+- CTA button sits below title/dimensions with proper spacing (`mt-3`)
+- Button is hidden on desktop (`md:hidden`) to preserve current layout
+- Full-width button ensures consistent appearance across varying product name lengths
