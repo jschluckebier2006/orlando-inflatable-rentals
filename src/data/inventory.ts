@@ -28,7 +28,7 @@ export interface Product {
 // Import images
 import sportsGame from "@/assets/inventory/3-in-1-sports-game.webp";
 import aquaPalmsCombo from "@/assets/inventory/4-in-1-aqua-palms-combo.webp";
-import economyCombo from "@/assets/inventory/4-in-1-economy-combo.webp";
+
 import greenGushCombo from "@/assets/inventory/7-in-1-green-gush-combo.webp";
 import marbleCombo from "@/assets/inventory/7-in-1-marble-combo.webp";
 import mysticCastleCombo from "@/assets/inventory/7-in-1-mystic-castle-combo.webp";
@@ -63,11 +63,11 @@ import powerGenerator from "@/assets/inventory/power-generator.webp";
 import primaryColorBounce from "@/assets/inventory/primary-color-bounce-house.webp";
 import snoKoneMachine from "@/assets/inventory/sno-kone-machine.webp";
 import southBeachCombo from "@/assets/inventory/south-beach-combo.webp";
-import summerSplashSlide from "@/assets/inventory/summer-splash-water-slide.webp";
+
 import whiteFoldingTable from "@/assets/inventory/white-folding-table.webp";
 import tropicalCrushCombo from "@/assets/inventory/tropical-crush-combo.webp";
 import wreckingBallGame from "@/assets/inventory/wrecking-ball-game.webp";
-import unicornCombo from "@/assets/inventory/unicorn-7-in-1-combo.webp";
+
 
 export const products: Product[] = [
   // Water Slides
@@ -76,7 +76,7 @@ export const products: Product[] = [
     name: "15' Tropic Shock Dual Lane Water Slide",
     slug: "15-tropic-shock-water-slide",
     category: "water-slides",
-    price: 259,
+    price: 279,
     image: tropicShockSlide,
     size: "30'L x 17'W x 15'H",
   },
@@ -103,7 +103,7 @@ export const products: Product[] = [
     name: "18' Island Drop Dual Lane Water Slide",
     slug: "18-island-drop-water-slide",
     category: "water-slides",
-    price: 319,
+    price: 329,
     image: islandDropSlide,
     size: "32'L x 16'W x 18'H",
   },
@@ -148,7 +148,7 @@ export const products: Product[] = [
     name: "21' Toxic Dual Lane Water Slide",
     slug: "21-toxic-water-slide",
     category: "water-slides",
-    price: 399,
+    price: 409,
     image: toxicSlide,
     size: "38'L x 18'W x 21'H",
   },
@@ -175,7 +175,7 @@ export const products: Product[] = [
     name: "27' Insane Hurricane Water Slide",
     slug: "27-insane-hurricane-water-slide",
     category: "water-slides",
-    price: 599,
+    price: 649,
     image: insaneHurricaneSlide,
     size: "70'L x 20'W x 27'H",
   },
@@ -188,15 +188,6 @@ export const products: Product[] = [
     category: "bounce-slide-combos",
     price: 209,
     image: aquaPalmsCombo,
-    size: "30'L x 14'W x 14'H",
-  },
-  {
-    id: "economy-4in1",
-    name: "4-in-1 Economy Combo",
-    slug: "4-in-1-economy-combo",
-    category: "bounce-slide-combos",
-    price: 209,
-    image: economyCombo,
     size: "30'L x 14'W x 14'H",
   },
   {
@@ -313,18 +304,9 @@ export const products: Product[] = [
     name: "Lava Raptor 4-in-1 Wet/Dry Combo",
     slug: "lava-raptor-combo",
     category: "bounce-slide-combos",
-    price: 219,
+    price: 229,
     image: lavaRaptorCombo,
     size: "30'L x 14'W x 14'H",
-  },
-  {
-    id: "unicorn-7in1",
-    name: "Unicorn 7-in-1 Combo",
-    slug: "unicorn-7-in-1-combo",
-    category: "bounce-slide-combos",
-    price: 209,
-    image: unicornCombo,
-    size: "32'L x 15'W x 15'H",
   },
   
   // Concessions
@@ -362,7 +344,7 @@ export const products: Product[] = [
     name: "White Folding Chair",
     slug: "white-folding-chair",
     category: "tables-chairs",
-    price: 1.75,
+    price: 2,
     image: whiteFoldingChair,
     size: "18\"W x 20\"D x 32\"H",
   },
@@ -385,16 +367,6 @@ export const products: Product[] = [
     size: "6'L x 30\"W x 30\"H",
   },
   
-  // Final batch - Water Slides
-  {
-    id: "summer-splash-water-slide",
-    name: "Summer Splash Water Slide",
-    slug: "summer-splash-water-slide",
-    category: "water-slides",
-    price: 239,
-    image: summerSplashSlide,
-    size: "30'L x 16'W x 14'H",
-  },
   
   // Final batch - Bounce Houses
   {
