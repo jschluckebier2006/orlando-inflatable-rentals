@@ -1,41 +1,52 @@
 
-# Add Unicorn Combo to Inventory
+# Add 24' Firestorm Falls Dual Lane Water Slide to Inventory
 
 ## Summary
-Add a new "Unicorn 7-in-1 Combo" bounce and slide combo to the inventory at the $209 price point.
+Add the new "24' Firestorm Falls Dual Lane Water Slide" to your water slide inventory. You've provided all the details and uploaded the product image.
 
-## What You Need to Do First
-**Upload the product image:**
-1. Get your product image for the Unicorn Combo
-2. Convert it to `.webp` format (you can use free tools like squoosh.app)
-3. Name the file: `unicorn-7-in-1-combo.webp`
-4. Upload it to the `src/assets/inventory/` folder in your project
-
-## What I'll Implement
-
-### 1. Add Image Import
-Add an import statement at the top of `src/data/inventory.ts`:
-```typescript
-import unicornCombo from "@/assets/inventory/unicorn-7-in-1-combo.webp";
-```
-
-### 2. Add Product Entry
-Add the new combo to the products array in the Bounce & Slide Combos section:
+## Product Details
 
 | Field | Value |
 |-------|-------|
-| **ID** | `unicorn-7in1` |
-| **Name** | Unicorn 7-in-1 Combo |
-| **Slug** | `unicorn-7-in-1-combo` |
-| **Category** | `bounce-slide-combos` |
-| **Price** | $209 |
-| **Size** | 32'L x 15'W x 15'H (standard 7-in-1 dimensions) |
+| **Name** | 24' Firestorm Falls Dual Lane Water Slide |
+| **ID** | `firestorm-falls-24` |
+| **Slug** | `24-firestorm-falls-water-slide` |
+| **Category** | `water-slides` |
+| **Price** | $509 |
+| **Size** | 63'L x 23'W x 24'H |
+
+## Implementation Steps
+
+### 1. Copy Product Image
+Copy the uploaded image to the inventory assets folder:
+- From: `user-uploads://Firestorm_Falls_24_Dual_Lane_Water_Slide.webp`
+- To: `src/assets/inventory/24ft-firestorm-falls-water-slide.webp`
+
+### 2. Update Inventory Data
+Modify `src/data/inventory.ts`:
+
+**Add import statement** (with other water slide imports):
+```typescript
+import firestormFallsSlide from "@/assets/inventory/24ft-firestorm-falls-water-slide.webp";
+```
+
+**Add product entry** in the Water Slides section (positioned between the 21' Toxic and 25' Reggae Rush based on height):
+```typescript
+{
+  id: "firestorm-falls-24",
+  name: "24' Firestorm Falls Dual Lane Water Slide",
+  slug: "24-firestorm-falls-water-slide",
+  category: "water-slides",
+  price: 509,
+  image: firestormFallsSlide,
+  size: "63'L x 23'W x 24'H",
+},
+```
 
 ## Result
-Once implemented, the Unicorn Combo will automatically appear on:
-- The Bounce & Slide Combo Rentals page (where you are now)
-- The homepage category carousel
-- Any other pages that display combo products
+Once implemented, the Firestorm Falls water slide will automatically appear on:
+- The Water Slide Rentals page (where you are now)
+- The homepage water slides carousel
+- Any city-specific water slide pages
 
-## Next Step
-**Please upload the image first**, then approve this plan to add the product entry!
+This will be your second-tallest water slide (after the 27' Insane Hurricane) and a great mid-premium option between the 21' Toxic ($399) and the 25' Reggae Rush ($559).
