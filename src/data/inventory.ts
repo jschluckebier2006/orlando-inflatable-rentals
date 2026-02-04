@@ -41,6 +41,7 @@ import bajaHybridSlide from "@/assets/inventory/20ft-baja-hybrid-water-slide.web
 import goombaySplashSlide from "@/assets/inventory/20ft-goombay-splash-water-slide.webp";
 import paradiseFallsSlide from "@/assets/inventory/20ft-paradise-falls-water-slide.webp";
 import toxicSlide from "@/assets/inventory/21ft-toxic-water-slide.webp";
+import firestormFallsSlide from "@/assets/inventory/24ft-firestorm-falls-water-slide.webp";
 import reggaeRushSlide from "@/assets/inventory/25ft-reggae-rush-water-slide.webp";
 import insaneHurricaneSlide from "@/assets/inventory/27ft-insane-hurricane-water-slide.webp";
 import backyardObstacle from "@/assets/inventory/30ft-backyard-obstacle-course.webp";
@@ -150,6 +151,15 @@ export const products: Product[] = [
     price: 399,
     image: toxicSlide,
     size: "38'L x 18'W x 21'H",
+  },
+  {
+    id: "firestorm-falls-24",
+    name: "24' Firestorm Falls Dual Lane Water Slide",
+    slug: "24-firestorm-falls-water-slide",
+    category: "water-slides",
+    price: 509,
+    image: firestormFallsSlide,
+    size: "63'L x 23'W x 24'H",
   },
   {
     id: "reggae-rush-25",
