@@ -1,52 +1,29 @@
 
-# Add 24' Firestorm Falls Dual Lane Water Slide to Inventory
+# Replace 24' Firestorm Falls Product Image
 
 ## Summary
-Add the new "24' Firestorm Falls Dual Lane Water Slide" to your water slide inventory. You've provided all the details and uploaded the product image.
+Replace the current product image for the 24' Firestorm Falls Dual Lane Water Slide with the new uploaded photo.
 
-## Product Details
+## Current Setup
 
-| Field | Value |
-|-------|-------|
-| **Name** | 24' Firestorm Falls Dual Lane Water Slide |
-| **ID** | `firestorm-falls-24` |
-| **Slug** | `24-firestorm-falls-water-slide` |
-| **Category** | `water-slides` |
-| **Price** | $509 |
-| **Size** | 63'L x 23'W x 24'H |
-
-## Implementation Steps
-
-### 1. Copy Product Image
-Copy the uploaded image to the inventory assets folder:
-- From: `user-uploads://Firestorm_Falls_24_Dual_Lane_Water_Slide.webp`
-- To: `src/assets/inventory/24ft-firestorm-falls-water-slide.webp`
-
-### 2. Update Inventory Data
-Modify `src/data/inventory.ts`:
-
-**Add import statement** (with other water slide imports):
+The product in `src/data/inventory.ts` references:
 ```typescript
 import firestormFallsSlide from "@/assets/inventory/24ft-firestorm-falls-water-slide.webp";
 ```
 
-**Add product entry** in the Water Slides section (positioned between the 21' Toxic and 25' Reggae Rush based on height):
-```typescript
-{
-  id: "firestorm-falls-24",
-  name: "24' Firestorm Falls Dual Lane Water Slide",
-  slug: "24-firestorm-falls-water-slide",
-  category: "water-slides",
-  price: 509,
-  image: firestormFallsSlide,
-  size: "63'L x 23'W x 24'H",
-},
-```
+## Implementation
+
+### Step 1: Replace Product Image
+Copy the new uploaded image to overwrite the existing file:
+- **From:** `user-uploads://24_firestorm_falls_dual_lane_water_slide.webp`
+- **To:** `src/assets/inventory/24ft-firestorm-falls-water-slide.webp`
+
+No code changes are needed - the import path remains the same, so the new image will automatically display everywhere the product appears.
 
 ## Result
-Once implemented, the Firestorm Falls water slide will automatically appear on:
-- The Water Slide Rentals page (where you are now)
-- The homepage water slides carousel
+After replacing the image file, the new photo will automatically appear on:
+- Water Slide Rentals page (where you are now)
+- Homepage water slides carousel
 - Any city-specific water slide pages
 
-This will be your second-tallest water slide (after the 27' Insane Hurricane) and a great mid-premium option between the 21' Toxic ($399) and the 25' Reggae Rush ($559).
+The new image shows a better angle of the Firestorm Falls water slide with the full length visible including the splash pool.
