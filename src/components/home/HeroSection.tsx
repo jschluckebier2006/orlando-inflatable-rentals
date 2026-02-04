@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Phone, ArrowRight } from "lucide-react";
 import { JotformModal } from "@/components/JotformModal";
+import heroBackground from "@/assets/hero-background.webp";
 
 export function HeroSection() {
   const [showJotform, setShowJotform] = useState(false);
@@ -9,18 +10,13 @@ export function HeroSection() {
   return (
     <>
       <section className="relative text-white overflow-hidden min-h-[600px] md:min-h-[700px]">
-        {/* Video Background */}
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
+        {/* Hero Background Image */}
+        <img
+          src={heroBackground}
+          alt=""
           aria-hidden="true"
-          className="absolute inset-0 w-full h-full object-cover"
-        >
-          <source src="/videos/hero-background.mov" type="video/quicktime" />
-          <source src="/videos/hero-background.mov" type="video/mp4" />
-        </video>
+          className="absolute inset-0 w-full h-full object-cover object-top md:object-center"
+        />
 
         {/* Dark Overlay for Text Readability */}
         <div className="absolute inset-0 bg-black/50" />
