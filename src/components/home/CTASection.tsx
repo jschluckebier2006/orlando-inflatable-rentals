@@ -22,7 +22,7 @@ export function CTASection() {
               size="lg"
               className="bg-secondary hover:bg-secondary/90 text-secondary-foreground btn-bounce text-lg px-8"
             >
-              Get a Free Quote
+              Check Availability
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
             <a href="tel:4074971840">
