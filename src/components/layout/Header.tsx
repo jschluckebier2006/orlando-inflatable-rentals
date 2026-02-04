@@ -234,7 +234,7 @@ export function Header() {
               className="hidden md:flex btn-bounce"
               size="lg"
             >
-              Get a Free Quote
+              Check Availability
             </Button>
 
             {/* Mobile menu button */}
@@ -330,7 +330,7 @@ export function Header() {
                 className="w-full btn-bounce"
                 size="lg"
               >
-                Get a Free Quote
+                Check Availability
               </Button>
             </div>
           </div>
