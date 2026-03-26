@@ -16,9 +16,9 @@ export function JotformModal({ open, onOpenChange }: JotformModalProps) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl h-[90vh] p-0 flex flex-col">
         <DialogHeader className="p-4 pb-2 shrink-0">
-          <DialogTitle className="font-display text-xl">Check Availability for Your Event Date</DialogTitle>
+          <DialogTitle className="font-display text-xl">Select Your Rentals & Check Availability</DialogTitle>
           <DialogDescription className="text-sm text-muted-foreground">
-            Submit the form below and we'll confirm availability.
+            Submit the booking request form below and we'll contact you to confirm availability as soon as possible.
           </DialogDescription>
         </DialogHeader>
         <div className="flex-1 overflow-hidden px-4 pb-4">
