@@ -61,6 +61,7 @@ import ElevateCelebration from "./pages/blog/ElevateCelebration";
 import BounceHouseRentalsNearMe from "./pages/blog/BounceHouseRentalsNearMe";
 import FoundingOfChristmasFlorida from "./pages/blog/FoundingOfChristmasFlorida";
 import NotFound from "./pages/NotFound";
+import ThankYou from "./pages/ThankYou";
 
 const queryClient = new QueryClient();
 
@@ -129,6 +130,7 @@ const App = () => (
             <Route path="/blog/elevate-celebration-bounce-house-rental" element={<ElevateCelebration />} />
             <Route path="/blog/bounce-house-rentals-near-me" element={<BounceHouseRentalsNearMe />} />
             <Route path="/blog/founding-of-christmas-florida" element={<FoundingOfChristmasFlorida />} />
+            <Route path="/thank-you" element={<ThankYou />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </TooltipProvider>
