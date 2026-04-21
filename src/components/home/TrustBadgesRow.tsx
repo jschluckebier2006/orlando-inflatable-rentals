@@ -10,7 +10,7 @@ export function TrustBadgesRow() {
   return (
     <section className="bg-secondary/30 border-y border-border py-5">
       <div className="container-page">
-        <div className="flex flex-wrap items-center justify-center gap-4 md:gap-10">
+        <div className="flex flex-nowrap items-center justify-center gap-4 md:gap-10 overflow-x-auto">
           {badges.map(({ icon: Icon, label }) => (
             <div
               key={label}
