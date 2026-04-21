@@ -1,73 +1,108 @@
 
-# Replace Default Testimonials with 4 Verified Google Reviews
 
-## Summary
-Replace the 4 placeholder reviews (Sarah M., Michael T., Jennifer K., David R.) shown on the homepage and other non-city pages with 4 real, verified Google reviews. Update the card design to include an event-type tag and a "Verified Google Review" badge. City-specific reviews and section structure remain untouched.
+# Add Service Area Header + Trust Badge Row
 
-## Changes
+## FIX 1 — Add city-level service area header
 
-**File:** `src/components/home/ReviewsSection.tsx`
+**File:** `src/components/home/DeliveryAreasSection.tsx`
 
-### 1. Update `Review` interface
-Add `eventType` field; replace `location`/`date` usage on default cards with event type + verified badge. Keep `location`/`date` optional so existing `cityReviews` data continues to work without changes.
+Insert a prominent service area statement **above** the existing neighborhood grid. All current neighborhood data (Alafaya, Avalon Park, etc.) stays exactly as-is.
 
-```ts
-interface Review {
-  name: string;
-  rating: number;
-  text: string;
-  eventType?: string;   // NEW — used by default reviews
-  location?: string;    // kept optional for city reviews
-  date?: string;        // kept optional for city reviews
+### Placement
+Between the section header block (`text-center mb-12`) and the existing neighborhoods grid.
+
+### Markup
+```tsx
+{/* Primary Service Area Statement */}
+<div className="bg-primary/5 border border-primary/20 rounded-xl px-6 py-5 mb-10 text-center">
+  <p className="text-base md:text-lg font-semibold text-foreground">
+    <span className="text-primary font-bold">We serve:</span>{" "}
+    Orlando · Winter Park · Kissimmee · Apopka · Sanford · Cocoa · Cocoa Beach
+    <span className="text-muted-foreground font-normal"> · and surrounding areas</span>
+  </p>
+</div>
+
+{/* Sub-label for the existing neighborhood chips */}
+<h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide text-center mb-4">
+  East Orlando Neighborhoods
+</h3>
+```
+
+### Visual hierarchy
+- City row: larger, bolder, primary-tinted pill — reads as the headline
+- Neighborhood chips: existing styling untouched, now grouped under a small "East Orlando Neighborhoods" sub-label so the two tiers read clearly
+
+---
+
+## FIX 2 — Trust badge row in hero/welcome whitespace
+
+**File:** `src/pages/Index.tsx`
+
+Insert a new lightweight inline trust badge row **between** `<HeroSection />` and `<CategoriesSection />` (the "Welcome to Orlando Inflatables" section is part of `SEOContentSection` further down, but `CategoriesSection` is what immediately follows the hero — confirmed during plan exploration; the gap referenced is the band between hero and the first content section).
+
+Created as a small inline component (no new file needed — kept inline in `Index.tsx` for scope tightness, OR extracted to `src/components/home/TrustBadgesRow.tsx` for cleanliness).
+
+### Recommended: new file `src/components/home/TrustBadgesRow.tsx`
+
+```tsx
+import { Shield, Zap, Award } from "lucide-react";
+
+const badges = [
+  { icon: Shield, label: "Fully Insured" },
+  { icon: Zap, label: "Same-Day Response" },
+  { icon: Award, label: "5-Star Rated on Google" },
+];
+
+export function TrustBadgesRow() {
+  return (
+    <section className="bg-secondary/30 border-y border-border py-5">
+      <div className="container-page">
+        <div className="flex flex-wrap items-center justify-center gap-4 md:gap-10">
+          {badges.map(({ icon: Icon, label }) => (
+            <div
+              key={label}
+              className="inline-flex items-center gap-2 text-foreground"
+            >
+              <Icon className="h-5 w-5 text-primary" strokeWidth={2.25} />
+              <span className="text-sm md:text-base font-semibold">
+                {label}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
 }
 ```
 
-### 2. Replace `defaultReviews` array
-Replace the 4 fake entries with the 4 verified Google reviews:
-
-```ts
-const defaultReviews: Review[] = [
-  { name: "Vishal P.", rating: 5, eventType: "Daughter's Birthday Party",
-    text: "Great to deal with from start to finish! I got the 27' slide and man it is BIG! Thank you guys for making my daughter's birthday exciting." },
-  { name: "JJ C.", rating: 5, eventType: "Kids Party",
-    text: "We got the hurricane water slide. The kids had a blast, Chandler was very professional and on time. I recommend this company!" },
-  { name: "Ben P.", rating: 5, eventType: "Backyard Party",
-    text: "We rented the Crimson Wave 24' high water slide — BEST party addition ever, enjoyed by both kids and adults. I don't know how we're going to top it next year! These guys are super professional and helpful. Highly recommend." },
-  { name: "Adam K.", rating: 5, eventType: "Inflatable Rental",
-    text: "I had a great experience with them. Booking was very simple and easy to talk to them on the phone. Chandler was great on delivery and pick up." },
-];
-```
-
-### 3. Update section header (default state only)
-Change H2 from "What Our Customers Say" to **"What Orlando Families Are Saying"** when no `cityName` is provided. City-specific header (e.g. "What Our Waterford Lakes Customers Say") preserved.
-
-Subline (default): "Real reviews from real customers across Orlando, Winter Park, Kissimmee, and surrounding areas."
-
-### 4. Update card design
-Each card renders:
-- Quote icon (existing)
-- Full review text (existing)
-- 5 gold stars (existing)
-- **Bold reviewer name** (existing — `Vishal P.`, `JJ C.`, etc.)
-- **Event-type tag** as a subtle pill below the name (e.g. `bg-primary/10 text-primary text-xs rounded-full px-2 py-0.5`) — only renders if `eventType` exists
-- For city reviews (where `eventType` is absent), fall back to the existing `location • date` line so nothing breaks
-- **"✓ Verified Google Review"** badge at the bottom of every card — small green/success-toned pill (`bg-success/10 text-success`) with a checkmark icon
-
-Sketch:
+### Wire-in (`src/pages/Index.tsx`)
 ```tsx
-<div className="mt-3 inline-flex items-center gap-1 text-xs font-medium bg-success/10 text-success rounded-full px-2 py-1">
-  <Check className="h-3 w-3" /> Verified Google Review
-</div>
+import { TrustBadgesRow } from "@/components/home/TrustBadgesRow";
+
+// ...
+<HeroSection />
+<TrustBadgesRow />        {/* NEW */}
+<CategoriesSection />
 ```
 
-### 5. Grid layout
-Keep existing `grid-cols-1 md:grid-cols-2 lg:grid-cols-4` so all 4 reviews fit on one row at desktop and stack cleanly on mobile.
+### Visual approach
+- Lucide icons (Shield, Zap, Award) — consistent with the rest of the site (no emoji rendering inconsistency across OS/browsers)
+- Muted `bg-secondary/30` band with thin top/bottom borders — visible but quiet, sits naturally in the whitespace
+- Horizontal on desktop/tablet, wraps to 2-3 lines on mobile (390px) gracefully
+- Primary-color icons, foreground text — matches site palette
+
+---
 
 ## Out of Scope
-- City-specific reviews in `cityReviews` (untouched — they still drive city pages)
-- Hero section, booking modal, rating badge in hero, CTAs
-- `AggregateRatingSchema` / `LocalBusinessSchema` (review count of 63 already handled there)
-- Any other page or section
+- Hero section, hero images, hero CTAs, review badge in hero
+- Booking modal / Jotform
+- Testimonials section
+- `SEOContentSection`, `CategoriesSection`, FAQs, footer
+- All other pages (changes are homepage + shared `DeliveryAreasSection` only)
 
 ## Files Changed
-- `src/components/home/ReviewsSection.tsx` — replace `defaultReviews` data, extend `Review` interface, update default-state header copy, redesign card to include event-type tag and "Verified Google Review" badge
+- `src/components/home/DeliveryAreasSection.tsx` — add city-level service area pill + sub-label above existing neighborhood grid
+- `src/components/home/TrustBadgesRow.tsx` — **new** component for the 3 trust badges
+- `src/pages/Index.tsx` — import and render `<TrustBadgesRow />` between `<HeroSection />` and `<CategoriesSection />`
+
