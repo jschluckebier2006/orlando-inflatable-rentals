@@ -1,41 +1,41 @@
 
 
-# Remove Inline Trust Indicators from Hero Section
+# Tighten Trust Badges for Mobile Fit
 
-## Change
-**File:** `src/components/home/HeroSection.tsx`
+## Changes
+**File:** `src/components/home/TrustBadgesRow.tsx`
 
-Remove the entire "Trust Indicators" block that sits below the CTA buttons — the flex row containing the 3 checkmark items: "Licensed & Insured", "Free Delivery", and "Same-Day Setup".
+Two className edits only.
 
-### Block to remove
+### 1. Flex container — reduce mobile gap
+**From:**
 ```tsx
-{/* Trust Indicators */}
-<div className="flex flex-wrap items-center justify-center gap-6 mt-10 text-sm text-white/90 animate-fade-in drop-shadow-lg" style={{ animationDelay: "0.6s" }}>
-  <div className="flex items-center gap-2">
-    <svg ...>...</svg>
-    <span className="font-medium">Licensed & Insured</span>
-  </div>
-  <div className="flex items-center gap-2">
-    <svg ...>...</svg>
-    <span className="font-medium">Free Delivery</span>
-  </div>
-  <div className="flex items-center gap-2">
-    <svg ...>...</svg>
-    <span className="font-medium">Same-Day Setup</span>
-  </div>
-</div>
+<div className="flex flex-nowrap items-center justify-center gap-4 md:gap-10 overflow-x-auto">
+```
+**To:**
+```tsx
+<div className="flex flex-nowrap items-center justify-center gap-3 md:gap-10 overflow-x-auto">
 ```
 
-This is the only edit. Everything above it (badge, H1, star/Google review badge, subheading, CTA buttons, phone button) and everything around it (hero background image, dark overlay, wave divider, JotformModal) remains exactly as-is.
+### 2. Badge label `<span>` — smaller mobile text + prevent intra-label wrap
+**From:**
+```tsx
+<span className="text-sm md:text-base font-semibold">
+```
+**To:**
+```tsx
+<span className="text-xs md:text-sm font-semibold whitespace-nowrap">
+```
 
-## Rationale
-The dedicated `TrustBadgesRow` component now sits directly below the hero and serves this purpose, making the in-hero indicators redundant.
+## Effect
+- Mobile (390px): tighter `gap-3` + `text-xs` + `whitespace-nowrap` keeps all 3 badges on a single visible row without horizontal scroll
+- Desktop (≥768px): `gap-10` + `text-sm` preserved — visually unchanged
+- `overflow-x-auto` retained as safety fallback
 
 ## Out of Scope
-- Hero CTAs, phone button, star badge, H1, subheading, hero background, wave divider, JotformModal
-- `TrustBadgesRow` component (kept as-is)
-- Any other file
+- Icons, icon size, section background, borders, padding, container, badge data — all unchanged
+- No other files
 
 ## Files Changed
-- `src/components/home/HeroSection.tsx` — delete the Trust Indicators flex block only
+- `src/components/home/TrustBadgesRow.tsx` — two className updates
 
