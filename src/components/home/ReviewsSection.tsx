@@ -356,10 +356,12 @@ export function ReviewsSection({ cityName }: ReviewsSectionProps) {
         {/* Section Header */}
         <div className="text-center mb-12">
           <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-4">
-            What Our {cityName ? `${cityName} ` : ""}Customers Say
+            {cityName ? `What Our ${cityName} Customers Say` : "What Orlando Families Are Saying"}
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Don't just take our word for it - hear from families{cityName ? ` in ${cityName}` : " across East Orlando"}!
+            {cityName
+              ? `Don't just take our word for it - hear from families in ${cityName}!`
+              : "Real reviews from real customers across Orlando, Winter Park, Kissimmee, and surrounding areas."}
           </p>
         </div>
 
@@ -387,9 +389,18 @@ export function ReviewsSection({ cityName }: ReviewsSectionProps) {
                 </div>
                 <div>
                   <p className="font-semibold text-foreground">{review.name}</p>
-                  <p className="text-sm text-muted-foreground">
-                    {review.location} • {review.date}
-                  </p>
+                  {review.eventType ? (
+                    <span className="inline-block mt-1 bg-primary/10 text-primary text-xs font-medium rounded-full px-2 py-0.5">
+                      {review.eventType}
+                    </span>
+                  ) : (
+                    <p className="text-sm text-muted-foreground">
+                      {review.location} • {review.date}
+                    </p>
+                  )}
+                  <div className="mt-3 inline-flex items-center gap-1 text-xs font-medium bg-success/10 text-success rounded-full px-2 py-1">
+                    <Check className="h-3 w-3" aria-hidden="true" /> Verified Google Review
+                  </div>
                 </div>
               </CardContent>
             </Card>
