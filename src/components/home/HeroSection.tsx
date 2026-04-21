@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Phone, ArrowRight } from "lucide-react";
+import { Phone, ArrowRight, Star } from "lucide-react";
 import { JotformModal } from "@/components/JotformModal";
 import heroBackground from "@/assets/hero-background.webp";
 
