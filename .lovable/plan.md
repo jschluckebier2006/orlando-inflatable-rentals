@@ -1,30 +1,41 @@
 
 
-# Force Trust Badges to Single Horizontal Row
+# Remove Inline Trust Indicators from Hero Section
 
 ## Change
-**File:** `src/components/home/TrustBadgesRow.tsx`
+**File:** `src/components/home/HeroSection.tsx`
 
-Update the flex container className only.
+Remove the entire "Trust Indicators" block that sits below the CTA buttons — the flex row containing the 3 checkmark items: "Licensed & Insured", "Free Delivery", and "Same-Day Setup".
 
-**From:**
+### Block to remove
 ```tsx
-<div className="flex flex-wrap items-center justify-center gap-4 md:gap-10">
+{/* Trust Indicators */}
+<div className="flex flex-wrap items-center justify-center gap-6 mt-10 text-sm text-white/90 animate-fade-in drop-shadow-lg" style={{ animationDelay: "0.6s" }}>
+  <div className="flex items-center gap-2">
+    <svg ...>...</svg>
+    <span className="font-medium">Licensed & Insured</span>
+  </div>
+  <div className="flex items-center gap-2">
+    <svg ...>...</svg>
+    <span className="font-medium">Free Delivery</span>
+  </div>
+  <div className="flex items-center gap-2">
+    <svg ...>...</svg>
+    <span className="font-medium">Same-Day Setup</span>
+  </div>
+</div>
 ```
 
-**To:**
-```tsx
-<div className="flex flex-nowrap items-center justify-center gap-4 md:gap-10 overflow-x-auto">
-```
+This is the only edit. Everything above it (badge, H1, star/Google review badge, subheading, CTA buttons, phone button) and everything around it (hero background image, dark overlay, wave divider, JotformModal) remains exactly as-is.
 
-## Effect
-- `flex-nowrap` keeps all 3 badges on one line at every breakpoint (including 390px mobile)
-- `overflow-x-auto` provides horizontal scroll fallback if total width ever exceeds viewport, preventing layout breakage
+## Rationale
+The dedicated `TrustBadgesRow` component now sits directly below the hero and serves this purpose, making the in-hero indicators redundant.
 
 ## Out of Scope
-- Badge content, icons, labels, colors, padding, section background, borders — all unchanged
-- No other files touched
+- Hero CTAs, phone button, star badge, H1, subheading, hero background, wave divider, JotformModal
+- `TrustBadgesRow` component (kept as-is)
+- Any other file
 
 ## Files Changed
-- `src/components/home/TrustBadgesRow.tsx` — single className update on the inner flex div
+- `src/components/home/HeroSection.tsx` — delete the Trust Indicators flex block only
 
