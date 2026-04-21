@@ -1,72 +1,73 @@
 
-# Add Google Review Trust Badge to Hero
+# Replace Default Testimonials with 4 Verified Google Reviews
 
 ## Summary
-Add a compact 5-star Google review trust badge to the hero section of the homepage, positioned directly below the main H1 headline so it's visible before the fold on both mobile and desktop.
+Replace the 4 placeholder reviews (Sarah M., Michael T., Jennifer K., David R.) shown on the homepage and other non-city pages with 4 real, verified Google reviews. Update the card design to include an event-type tag and a "Verified Google Review" badge. City-specific reviews and section structure remain untouched.
 
 ## Changes
 
-**File:** `src/components/home/HeroSection.tsx`
+**File:** `src/components/home/ReviewsSection.tsx`
 
-Insert a new trust badge element between the H1 heading and the existing subheading paragraph.
+### 1. Update `Review` interface
+Add `eventType` field; replace `location`/`date` usage on default cards with event type + verified badge. Keep `location`/`date` optional so existing `cityReviews` data continues to work without changes.
 
-### Layout & Position
-- Placed immediately after the `<h1>` (before the subheading `<p>`)
-- Centered horizontally to match the existing hero text alignment
-- Compact inline-flex pill: stars + rating number + clickable review count
-- Visible above the fold at both 390px mobile width and desktop widths
-- Margin tuned to sit tight under the headline (`mb-6` on the badge, reduce H1 `mb-6` to `mb-4` so spacing stays balanced)
-
-### Visual Design
-- Background: `bg-white/15 backdrop-blur-sm` pill with subtle border `border border-white/20` — matches the existing "Serving East Orlando" badge style above the H1 for consistency
-- Rounded full pill: `rounded-full px-4 py-2`
-- Stars: 5 filled `Star` icons from `lucide-react`, color `text-accent` (site's yellow/orange accent), size `h-4 w-4` or `h-5 w-5`
-- Rating text: `5.0` in bold white
-- Em-dash separator
-- Link: "63 Google Reviews" — white text, underline on hover, opens in new tab
-- Drop shadow to maintain readability over the hero image: `drop-shadow-lg`
-
-### Link Behavior
-```tsx
-<a
-  href="https://www.google.com/maps/place/Orlando+Inflatable+Rentals+LLC"
-  target="_blank"
-  rel="noopener noreferrer"
-  className="underline hover:text-accent transition-colors"
->
-  63 Google Reviews
-</a>
+```ts
+interface Review {
+  name: string;
+  rating: number;
+  text: string;
+  eventType?: string;   // NEW — used by default reviews
+  location?: string;    // kept optional for city reviews
+  date?: string;        // kept optional for city reviews
+}
 ```
 
-### Markup Sketch
+### 2. Replace `defaultReviews` array
+Replace the 4 fake entries with the 4 verified Google reviews:
+
+```ts
+const defaultReviews: Review[] = [
+  { name: "Vishal P.", rating: 5, eventType: "Daughter's Birthday Party",
+    text: "Great to deal with from start to finish! I got the 27' slide and man it is BIG! Thank you guys for making my daughter's birthday exciting." },
+  { name: "JJ C.", rating: 5, eventType: "Kids Party",
+    text: "We got the hurricane water slide. The kids had a blast, Chandler was very professional and on time. I recommend this company!" },
+  { name: "Ben P.", rating: 5, eventType: "Backyard Party",
+    text: "We rented the Crimson Wave 24' high water slide — BEST party addition ever, enjoyed by both kids and adults. I don't know how we're going to top it next year! These guys are super professional and helpful. Highly recommend." },
+  { name: "Adam K.", rating: 5, eventType: "Inflatable Rental",
+    text: "I had a great experience with them. Booking was very simple and easy to talk to them on the phone. Chandler was great on delivery and pick up." },
+];
+```
+
+### 3. Update section header (default state only)
+Change H2 from "What Our Customers Say" to **"What Orlando Families Are Saying"** when no `cityName` is provided. City-specific header (e.g. "What Our Waterford Lakes Customers Say") preserved.
+
+Subline (default): "Real reviews from real customers across Orlando, Winter Park, Kissimmee, and surrounding areas."
+
+### 4. Update card design
+Each card renders:
+- Quote icon (existing)
+- Full review text (existing)
+- 5 gold stars (existing)
+- **Bold reviewer name** (existing — `Vishal P.`, `JJ C.`, etc.)
+- **Event-type tag** as a subtle pill below the name (e.g. `bg-primary/10 text-primary text-xs rounded-full px-2 py-0.5`) — only renders if `eventType` exists
+- For city reviews (where `eventType` is absent), fall back to the existing `location • date` line so nothing breaks
+- **"✓ Verified Google Review"** badge at the bottom of every card — small green/success-toned pill (`bg-success/10 text-success`) with a checkmark icon
+
+Sketch:
 ```tsx
-<div className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm border border-white/20 rounded-full px-4 py-2 mb-6 animate-fade-in drop-shadow-lg">
-  <div className="flex items-center gap-0.5" aria-label="5 out of 5 stars">
-    {[...Array(5)].map((_, i) => (
-      <Star key={i} className="h-4 w-4 fill-accent text-accent" />
-    ))}
-  </div>
-  <span className="font-bold text-white text-sm md:text-base">5.0</span>
-  <span className="text-white/80 text-sm md:text-base">—</span>
-  <a
-    href="https://www.google.com/maps/place/Orlando+Inflatable+Rentals+LLC"
-    target="_blank"
-    rel="noopener noreferrer"
-    className="text-white text-sm md:text-base font-medium underline underline-offset-2 hover:text-accent transition-colors"
-  >
-    63 Google Reviews
-  </a>
+<div className="mt-3 inline-flex items-center gap-1 text-xs font-medium bg-success/10 text-success rounded-full px-2 py-1">
+  <Check className="h-3 w-3" /> Verified Google Review
 </div>
 ```
 
-### Imports
-- Add `Star` to the existing `lucide-react` import line
+### 5. Grid layout
+Keep existing `grid-cols-1 md:grid-cols-2 lg:grid-cols-4` so all 4 reviews fit on one row at desktop and stack cleanly on mobile.
 
 ## Out of Scope
-- No changes to the existing top "Serving East Orlando & Orange County" badge
-- No changes to CTA buttons, phone link, or trust indicators row at the bottom of the hero
-- No changes to other pages (only the homepage hero)
-- No new schema markup (existing `AggregateRatingSchema` / `LocalBusinessSchema` already handle review structured data)
+- City-specific reviews in `cityReviews` (untouched — they still drive city pages)
+- Hero section, booking modal, rating badge in hero, CTAs
+- `AggregateRatingSchema` / `LocalBusinessSchema` (review count of 63 already handled there)
+- Any other page or section
 
 ## Files Changed
-- `src/components/home/HeroSection.tsx` — add `Star` import and insert the trust badge between the H1 and the subheading
+- `src/components/home/ReviewsSection.tsx` — replace `defaultReviews` data, extend `Review` interface, update default-state header copy, redesign card to include event-type tag and "Verified Google Review" badge
