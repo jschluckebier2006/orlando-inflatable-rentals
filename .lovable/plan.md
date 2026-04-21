@@ -1,51 +1,48 @@
 
-
-# Create /thank-you Page
+# Replace Hero CTA with Prominent Booking Button
 
 ## Summary
-Create a simple thank you page at `/thank-you` that matches the existing site design and displays a confirmation message for form submissions.
+Replace the existing "Check Availability" button in the hero section with a larger, higher-contrast "Check Availability for Your Date" button. Keep the phone button. Hero will have exactly two CTAs.
 
 ## Changes
 
-**1. Create new page component**
-- File: `src/pages/ThankYou.tsx`
-- Uses `Layout` wrapper for consistent header/footer
-- Uses `SEOHead` with `noindex={true}` (form confirmation pages shouldn't be indexed)
-- Simple centered message design matching NotFound page styling
-- Message: "Thank you for reaching out! We'll be in touch shortly."
+**File:** `src/components/home/HeroSection.tsx`
 
-**2. Add route to App.tsx**
-- Import ThankYou component
-- Add route: `<Route path="/thank-you" element={<ThankYou />} />`
+Replace the current "Check Availability" button (lines ~42-49) with a more prominent version. The phone button stays unchanged. No new buttons added.
 
-## Design
-- Centered layout with `flex min-h-screen items-center justify-center`
-- Primary heading with `font-display text-4xl font-bold`
-- Subtext with muted color
-- Optional "Return to Home" link for navigation
+### Before (two buttons)
+1. Check Availability (secondary styling)
+2. (407) 497-1840
 
-## Code Structure
+### After (two buttons)
+1. **Check Availability for Your Date** (large, high-contrast accent)
+2. (407) 497-1840 (unchanged)
+
+### New button styling
+- `size="lg"` with extra padding (`px-10 py-7`) for visual prominence
+- High-contrast accent background: `bg-accent hover:bg-accent/90 text-accent-foreground`
+- Bold weight, `text-lg md:text-xl`, `shadow-2xl`, `btn-bounce` animation
+- Full-width on mobile (`w-full sm:w-auto`)
+- Trailing `ArrowRight` icon retained
+
+### Wiring
+Reuses the existing `showJotform` state and mounted `JotformModal` — no JotForm changes, no new modal instance.
+
 ```tsx
-import { Layout } from "@/components/layout/Layout";
-import { SEOHead } from "@/components/seo/SEOHead";
-
-export default function ThankYou() {
-  return (
-    <Layout>
-      <SEOHead title="Thank You" noindex={true} />
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <div className="text-center">
-          <h1 className="font-display text-4xl font-bold mb-4">Thank You!</h1>
-          <p className="text-muted-foreground text-lg mb-6">
-            Thank you for reaching out! We'll be in touch shortly.
-          </p>
-          <a href="/" className="text-primary underline hover:text-primary/90">
-            Return to Home
-          </a>
-        </div>
-      </div>
-    </Layout>
-  );
-}
+<Button
+  onClick={() => setShowJotform(true)}
+  size="lg"
+  className="bg-accent hover:bg-accent/90 text-accent-foreground btn-bounce text-lg md:text-xl px-10 py-7 font-bold shadow-2xl w-full sm:w-auto"
+>
+  Check Availability for Your Date
+  <ArrowRight className="ml-2 h-5 w-5" />
+</Button>
 ```
 
+## Out of Scope
+- No changes to `JotformModal.tsx`, the JotForm URL, or modal behavior
+- No changes to header buttons, sticky button, CTASection, or other pages
+- No new third button — strictly a replacement of the existing one
+
+## Files Changed
+- `src/components/home/HeroSection.tsx` — replace existing "Check Availability" button with the prominent "Check Availability for Your Date" button
