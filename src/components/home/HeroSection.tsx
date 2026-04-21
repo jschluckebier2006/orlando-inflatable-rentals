@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Phone, ArrowRight, Star } from "lucide-react";
 import { JotformModal } from "@/components/JotformModal";
-import heroBackground from "@/assets/hero-background.webp";
+import heroBackground from "@/assets/orlando-inflatables-hero.webp";
 
 export function HeroSection() {
   const [showJotform, setShowJotform] = useState(false);
@@ -13,9 +13,10 @@ export function HeroSection() {
         {/* Hero Background Image */}
         <img
           src={heroBackground}
-          alt=""
-          aria-hidden="true"
-          className="absolute inset-0 w-full h-full object-cover object-top md:object-center"
+          alt="Orlando inflatable rentals fleet — water slides and bounce houses available for rent in Orlando FL"
+          className="absolute inset-0 w-full h-full object-cover object-center"
+          fetchPriority="high"
+          decoding="async"
         />
 
         {/* Dark Overlay for Text Readability */}
