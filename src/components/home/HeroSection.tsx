@@ -46,9 +46,9 @@ export function HeroSection() {
               <Button
                 onClick={() => setShowJotform(true)}
                 size="lg"
-                className="bg-secondary hover:bg-secondary/90 text-secondary-foreground btn-bounce text-lg px-8 py-6 shadow-xl"
+                className="bg-accent hover:bg-accent/90 text-accent-foreground btn-bounce text-lg md:text-xl px-10 py-7 font-bold shadow-2xl w-full sm:w-auto"
               >
-                Check Availability
+                Check Availability for Your Date
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
               <a href="tel:4074971840">
