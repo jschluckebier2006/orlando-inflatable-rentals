@@ -8,18 +8,16 @@ const badges = [
 
 export function TrustBadgesRow() {
   return (
-    <section className="bg-secondary/30 border-y border-border py-5">
-      <div className="container-page">
-        <div className="flex flex-nowrap items-center justify-center gap-3 md:gap-10 overflow-x-auto">
+    <section className="bg-secondary/30 border-y border-border py-4">
+      <div className="container-page px-4">
+        <div className="flex flex-row flex-wrap items-center justify-center gap-x-6 gap-y-2">
           {badges.map(({ icon: Icon, label }) => (
             <div
               key={label}
-              className="inline-flex items-center gap-2 text-foreground"
+              className="inline-flex items-center gap-1.5 text-foreground whitespace-nowrap"
             >
-              <Icon className="h-5 w-5 text-primary" strokeWidth={2.25} />
-              <span className="text-xs md:text-sm font-semibold whitespace-nowrap">
-                {label}
-              </span>
+              <Icon className="h-4 w-4 text-primary" strokeWidth={2.25} />
+              <span className="text-sm font-semibold">{label}</span>
             </div>
           ))}
         </div>
