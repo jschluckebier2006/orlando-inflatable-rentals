@@ -5,6 +5,7 @@ import { OrganizationSchema } from "@/components/seo/OrganizationSchema";
 import { FAQPageSchema } from "@/components/seo/FAQPageSchema";
 import { HeroSection } from "@/components/home/HeroSection";
 import { CategoriesSection } from "@/components/home/CategoriesSection";
+import { TrustBadgesRow } from "@/components/home/TrustBadgesRow";
 import { SEOContentSection } from "@/components/home/SEOContentSection";
 import { PopularRentalsSection } from "@/components/home/PopularRentalsSection";
 import { AllCategoryCarousels } from "@/components/home/AllCategoryCarousels";
@@ -51,6 +52,7 @@ const Index = () => {
       <FAQPageSchema faqs={homepageFaqs} />
       
       <HeroSection />
+      <TrustBadgesRow />
       <CategoriesSection />
       <SEOContentSection />
       <PopularRentalsSection />

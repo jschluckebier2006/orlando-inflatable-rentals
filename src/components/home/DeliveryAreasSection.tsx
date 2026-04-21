@@ -29,6 +29,20 @@ export function DeliveryAreasSection() {
           </p>
         </div>
 
+        {/* Primary Service Area Statement */}
+        <div className="bg-primary/5 border border-primary/20 rounded-xl px-6 py-5 mb-10 text-center">
+          <p className="text-base md:text-lg font-semibold text-foreground">
+            <span className="text-primary font-bold">We serve:</span>{" "}
+            Orlando · Winter Park · Kissimmee · Apopka · Sanford · Cocoa · Cocoa Beach
+            <span className="text-muted-foreground font-normal"> · and surrounding areas</span>
+          </p>
+        </div>
+
+        {/* Sub-label for the existing neighborhood chips */}
+        <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide text-center mb-4">
+          East Orlando Neighborhoods
+        </h3>
+
         {/* Areas Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 mb-8">
           {deliveryAreas.map((area) => (
