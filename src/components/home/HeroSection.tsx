@@ -29,11 +29,30 @@ export function HeroSection() {
             </div>
 
             {/* Main Heading */}
-            <h1 className="font-display text-4xl md:text-5xl lg:text-7xl font-bold mb-6 leading-tight animate-fade-in drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)]">
+            <h1 className="font-display text-4xl md:text-5xl lg:text-7xl font-bold mb-4 leading-tight animate-fade-in drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)]">
               Your One-Stop Shop for{" "}
               <span className="text-accent drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]">Bounce House</span> &{" "}
               <span className="text-accent drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]">Water Slide</span> Rentals in Orlando
             </h1>
+
+            {/* Google Review Trust Badge */}
+            <div className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm border border-white/20 rounded-full px-4 py-2 mb-6 animate-fade-in drop-shadow-lg">
+              <div className="flex items-center gap-0.5" aria-label="5 out of 5 stars">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="h-4 w-4 fill-accent text-accent" />
+                ))}
+              </div>
+              <span className="font-bold text-white text-sm md:text-base">5.0</span>
+              <span className="text-white/80 text-sm md:text-base">—</span>
+              <a
+                href="https://www.google.com/maps/place/Orlando+Inflatable+Rentals+LLC"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-white text-sm md:text-base font-medium underline underline-offset-2 hover:text-accent transition-colors"
+              >
+                63 Google Reviews
+              </a>
+            </div>
 
             {/* Subheading */}
             <p className="text-lg md:text-2xl text-white/95 mb-8 max-w-2xl mx-auto animate-fade-in drop-shadow-lg font-medium" style={{ animationDelay: "0.2s" }}>
