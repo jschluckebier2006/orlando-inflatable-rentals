@@ -110,9 +110,14 @@ export function CityDeliveryPage({
 
       {/* Hero Section with Background Image */}
       <section className="relative text-white py-20 md:py-28 overflow-hidden">
-        <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: `url(${getHeroBackground(citySlug)})` }}
+        <img
+          src={getHeroBackground(citySlug)}
+          alt={`Bounce house and water slide rentals in ${cityName}, FL — Orlando Inflatables`}
+          className="absolute inset-0 w-full h-full object-cover object-center"
+          width={1920}
+          height={800}
+          fetchPriority="high"
+          decoding="async"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/60 to-black/70" />
         <div className="container-page relative z-10">
