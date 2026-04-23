@@ -123,7 +123,7 @@ export default function WebVitals() {
       <SEOHead
         title="Core Web Vitals Monitor | Orlando Inflatables"
         description="Internal Core Web Vitals dashboard tracking LCP, CLS, and INP across city, service, and event templates."
-        canonical="https://orlandoinflatables.com/web-vitals"
+        canonical="/web-vitals"
         noindex
       />
 
