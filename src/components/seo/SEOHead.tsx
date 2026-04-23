@@ -57,13 +57,20 @@ export function SEOHead({
       <meta name="twitter:image" content={ogImageUrl} />
       <meta name="twitter:site" content="@orlandoinflata1" />
       
+      {/* OG image dimensions */}
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
+      <meta property="og:image:alt" content={`${siteName} - ${title}`} />
+
       {/* Article dates for blog posts */}
       {datePublished && <meta property="article:published_time" content={datePublished} />}
       {dateModified && <meta property="article:modified_time" content={dateModified} />}
       
-      {/* Additional */}
+      {/* Local SEO geo tags */}
       <meta name="geo.region" content="US-FL" />
       <meta name="geo.placename" content="Orlando" />
+      <meta name="geo.position" content="28.5383;-81.3792" />
+      <meta name="ICBM" content="28.5383, -81.3792" />
       
       {/* Custom Schema JSON-LD */}
       {schemaJson && (
