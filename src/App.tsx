@@ -66,6 +66,7 @@ const ElevateCelebration = lazy(() => import("./pages/blog/ElevateCelebration"))
 const BounceHouseRentalsNearMe = lazy(() => import("./pages/blog/BounceHouseRentalsNearMe"));
 const FoundingOfChristmasFlorida = lazy(() => import("./pages/blog/FoundingOfChristmasFlorida"));
 const ThankYou = lazy(() => import("./pages/ThankYou"));
+const WebVitals = lazy(() => import("./pages/WebVitals"));
 
 const queryClient = new QueryClient();
 
@@ -140,6 +141,7 @@ const App = () => (
               <Route path="/blog/bounce-house-rentals-near-me" element={<BounceHouseRentalsNearMe />} />
               <Route path="/blog/founding-of-christmas-florida" element={<FoundingOfChristmasFlorida />} />
               <Route path="/thank-you" element={<ThankYou />} />
+              <Route path="/web-vitals" element={<WebVitals />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Suspense>
