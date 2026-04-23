@@ -1,13 +1,13 @@
-import kidsBouncHouse1 from "@/assets/kids-bounce-house-1.jpg";
-import kidsSlide1 from "@/assets/kids-slide-1.jpg";
-import toddlerBounce1 from "@/assets/toddler-bounce-1.jpg";
-import waterSlideFun1 from "@/assets/water-slide-fun-1.jpg";
-import slideTunnel1 from "@/assets/slide-tunnel-1.jpg";
-import kidsGroupBounce1 from "@/assets/kids-group-bounce-1.jpg";
-import girlsJumping1 from "@/assets/girls-jumping-1.jpg";
-import kidsSmilingBounce1 from "@/assets/kids-smiling-bounce-1.jpg";
-import waterSlideBoy1 from "@/assets/water-slide-boy-1.jpg";
-import kidsGroupSlide1 from "@/assets/kids-group-slide-1.jpg";
+import kidsBouncHouse1 from "@/assets/kids-bounce-house-1.webp";
+import kidsSlide1 from "@/assets/kids-slide-1.webp";
+import toddlerBounce1 from "@/assets/toddler-bounce-1.webp";
+import waterSlideFun1 from "@/assets/water-slide-fun-1.webp";
+import slideTunnel1 from "@/assets/slide-tunnel-1.webp";
+import kidsGroupBounce1 from "@/assets/kids-group-bounce-1.webp";
+import girlsJumping1 from "@/assets/girls-jumping-1.webp";
+import kidsSmilingBounce1 from "@/assets/kids-smiling-bounce-1.webp";
+import waterSlideBoy1 from "@/assets/water-slide-boy-1.webp";
+import kidsGroupSlide1 from "@/assets/kids-group-slide-1.webp";
 
 // All available images for use throughout the site
 export const siteImages = {
@@ -62,8 +62,11 @@ export function ContentImage({ src, alt, className = "" }: ContentImageProps) {
       <img
         src={src}
         alt={alt}
+        width={1200}
+        height={600}
         className="w-full h-64 md:h-80 object-cover object-center"
         loading="lazy"
+        decoding="async"
       />
     </div>
   );
@@ -83,8 +86,11 @@ export function ContentImageRow({ images, alts, className = "" }: ContentImageRo
           <img
             src={src}
             alt={alts[index] || `Party rental fun ${index + 1}`}
+            width={800}
+            height={500}
             className="w-full h-48 md:h-56 object-cover object-center"
             loading="lazy"
+            decoding="async"
           />
         </div>
       ))}

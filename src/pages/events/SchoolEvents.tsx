@@ -34,8 +34,8 @@ import {
   Trophy,
   PartyPopper
 } from "lucide-react";
-import kidsGroupSlide from "@/assets/kids-group-slide-1.jpg";
-import kidsSmilingBounce from "@/assets/kids-smiling-bounce-1.jpg";
+import kidsGroupSlide from "@/assets/kids-group-slide-1.webp";
+import kidsSmilingBounce from "@/assets/kids-smiling-bounce-1.webp";
 
 const SchoolEvents = () => {
   const [showSchoolFAQ, setShowSchoolFAQ] = useState(false);

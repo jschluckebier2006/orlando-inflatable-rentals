@@ -44,6 +44,10 @@ export function CategoryCard({ title, products, categoryLink }: CategoryCardProp
                   <img
                     src={item.image}
                     alt={item.name}
+                    width={200}
+                    height={200}
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
                   />
                 </div>

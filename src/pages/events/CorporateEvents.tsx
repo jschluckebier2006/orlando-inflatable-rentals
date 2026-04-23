@@ -35,8 +35,8 @@ import {
   Megaphone,
   PartyPopper
 } from "lucide-react";
-import slideTunnel from "@/assets/slide-tunnel-1.jpg";
-import kidsGroupSlide from "@/assets/kids-group-slide-1.jpg";
+import slideTunnel from "@/assets/slide-tunnel-1.webp";
+import kidsGroupSlide from "@/assets/kids-group-slide-1.webp";
 
 const CorporateEvents = () => {
   const [showCorporateFAQ, setShowCorporateFAQ] = useState(false);

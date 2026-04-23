@@ -32,8 +32,8 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import kidsGroupBounce from "@/assets/kids-group-bounce-1.jpg";
-import waterSlideFun from "@/assets/water-slide-fun-1.jpg";
+import kidsGroupBounce from "@/assets/kids-group-bounce-1.webp";
+import waterSlideFun from "@/assets/water-slide-fun-1.webp";
 
 const BirthdayParties = () => {
   const [showEastOrlandoFAQ, setShowEastOrlandoFAQ] = useState(false);

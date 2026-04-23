@@ -110,9 +110,14 @@ export function CityDeliveryPage({
 
       {/* Hero Section with Background Image */}
       <section className="relative text-white py-20 md:py-28 overflow-hidden">
-        <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: `url(${getHeroBackground(citySlug)})` }}
+        <img
+          src={getHeroBackground(citySlug)}
+          alt={`Bounce house and water slide rentals in ${cityName}, FL — Orlando Inflatables`}
+          className="absolute inset-0 w-full h-full object-cover object-center"
+          width={1920}
+          height={800}
+          fetchPriority="high"
+          decoding="async"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/60 to-black/70" />
         <div className="container-page relative z-10">
@@ -190,7 +195,8 @@ export function CityDeliveryPage({
             {/* H2: Party Rental Equipment - Image Right */}
             <ContentImageWithText
               src={deliveryPageImages[0]}
-              alt={`${cityName} bounce house rental`}
+              alt={`Bounce house rental setup at a ${cityName}, FL backyard party`}
+              priority
               imagePosition="right"
             >
               <h2 className="font-display text-3xl font-bold text-foreground mb-6">
@@ -243,7 +249,7 @@ export function CityDeliveryPage({
             {/* H2: Bounce House Rentals - Image Left */}
             <ContentImageWithText
               src={deliveryPageImages[1]}
-              alt={`Kids party fun in ${cityName}`}
+              alt={`Kids enjoying a themed bounce house at a ${cityName} birthday party`}
               imagePosition="left"
             >
               <h2 className="font-display text-3xl font-bold text-foreground mb-6">
@@ -286,7 +292,7 @@ export function CityDeliveryPage({
             {/* H2: Water Slide Rentals - Image Right */}
             <ContentImageWithText
               src={deliveryPageImages[2]}
-              alt={`${cityName} inflatable rentals`}
+              alt={`Inflatable water slide rental delivered to a ${cityName}, Florida event`}
               imagePosition="right"
             >
               <h2 className="font-display text-3xl font-bold text-foreground mb-6">
@@ -326,7 +332,7 @@ export function CityDeliveryPage({
             {/* H2: About the City - Image Left */}
             <ContentImageWithText
               src={deliveryPageImages2[0]}
-              alt={`Party celebration in ${cityName}`}
+              alt={`Family celebration with party rentals in ${cityName}, Orange County`}
               imagePosition="left"
             >
               <h2 className="font-display text-3xl font-bold text-foreground mb-6">

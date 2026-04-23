@@ -34,8 +34,8 @@ import {
   Home,
   Trophy
 } from "lucide-react";
-import waterSlideBoy from "@/assets/water-slide-boy-1.jpg";
-import girlsJumping from "@/assets/girls-jumping-1.jpg";
+import waterSlideBoy from "@/assets/water-slide-boy-1.webp";
+import girlsJumping from "@/assets/girls-jumping-1.webp";
 
 const GraduationEvents = () => {
   const [showGraduationFAQ, setShowGraduationFAQ] = useState(false);
