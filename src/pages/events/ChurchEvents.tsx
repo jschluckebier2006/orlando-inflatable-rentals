@@ -34,8 +34,8 @@ import {
   BookOpen,
   Leaf
 } from "lucide-react";
-import toddlerBounce from "@/assets/toddler-bounce-1.jpg";
-import kidsGroupBounce from "@/assets/kids-group-bounce-1.jpg";
+import toddlerBounce from "@/assets/toddler-bounce-1.webp";
+import kidsGroupBounce from "@/assets/kids-group-bounce-1.webp";
 
 const ChurchEvents = () => {
   const [showChurchFAQ, setShowChurchFAQ] = useState(false);

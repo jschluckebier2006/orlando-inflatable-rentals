@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronUp, Check } from "lucide-react";
-import waterSlideFun from "@/assets/water-slide-fun-1.jpg";
-import kidsBouncingGroup from "@/assets/kids-group-bounce-1.jpg";
-import kidsSlide from "@/assets/kids-slide-1.jpg";
+import waterSlideFun from "@/assets/water-slide-fun-1.webp";
+import kidsBouncingGroup from "@/assets/kids-group-bounce-1.webp";
+import kidsSlide from "@/assets/kids-slide-1.webp";
 
 export function SEOContentSection() {
   const [expanded, setExpanded] = useState(false);
