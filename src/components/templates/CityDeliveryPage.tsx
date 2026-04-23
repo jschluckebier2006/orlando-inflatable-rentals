@@ -195,7 +195,8 @@ export function CityDeliveryPage({
             {/* H2: Party Rental Equipment - Image Right */}
             <ContentImageWithText
               src={deliveryPageImages[0]}
-              alt={`${cityName} bounce house rental`}
+              alt={`Bounce house rental setup at a ${cityName}, FL backyard party`}
+              priority
               imagePosition="right"
             >
               <h2 className="font-display text-3xl font-bold text-foreground mb-6">
@@ -248,7 +249,7 @@ export function CityDeliveryPage({
             {/* H2: Bounce House Rentals - Image Left */}
             <ContentImageWithText
               src={deliveryPageImages[1]}
-              alt={`Kids party fun in ${cityName}`}
+              alt={`Kids enjoying a themed bounce house at a ${cityName} birthday party`}
               imagePosition="left"
             >
               <h2 className="font-display text-3xl font-bold text-foreground mb-6">
@@ -291,7 +292,7 @@ export function CityDeliveryPage({
             {/* H2: Water Slide Rentals - Image Right */}
             <ContentImageWithText
               src={deliveryPageImages[2]}
-              alt={`${cityName} inflatable rentals`}
+              alt={`Inflatable water slide rental delivered to a ${cityName}, Florida event`}
               imagePosition="right"
             >
               <h2 className="font-display text-3xl font-bold text-foreground mb-6">
@@ -331,7 +332,7 @@ export function CityDeliveryPage({
             {/* H2: About the City - Image Left */}
             <ContentImageWithText
               src={deliveryPageImages2[0]}
-              alt={`Party celebration in ${cityName}`}
+              alt={`Family celebration with party rentals in ${cityName}, Orange County`}
               imagePosition="left"
             >
               <h2 className="font-display text-3xl font-bold text-foreground mb-6">

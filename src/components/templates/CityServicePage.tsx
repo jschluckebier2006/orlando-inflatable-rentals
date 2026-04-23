@@ -137,7 +137,8 @@ export function CityServicePage({ city, citySlug, serviceType, nearbyAreas, loca
           <div className="max-w-5xl mx-auto">
             <ContentImageWithText
               src={cityServiceImages[0]}
-              alt={`${city} bounce house party`}
+              alt={`${serviceName} rental delivered to a ${city}, FL party`}
+              priority
               imagePosition="right"
             >
               <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-6">
@@ -174,7 +175,7 @@ export function CityServicePage({ city, citySlug, serviceType, nearbyAreas, loca
             {/* H3: Best Bounce Houses/Water Slides - Image Left */}
             <ContentImageWithText
               src={cityServiceImages[1]}
-              alt={`Kids enjoying inflatables in ${city}`}
+              alt={`Children enjoying a ${serviceName.toLowerCase()} rental at a ${city} celebration`}
               imagePosition="left"
             >
               <h3 className="font-display text-2xl font-bold text-foreground mb-4">
@@ -264,7 +265,7 @@ export function CityServicePage({ city, citySlug, serviceType, nearbyAreas, loca
           <div className="max-w-5xl mx-auto">
             <ContentImageWithText
               src={cityServiceImages[2]}
-              alt={`${city} party rental fun`}
+              alt={`${serviceName} rental at a backyard event in ${city}, Florida`}
               imagePosition="right"
             >
               <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-6">
@@ -304,7 +305,7 @@ export function CityServicePage({ city, citySlug, serviceType, nearbyAreas, loca
             {/* Additional Image Section - Image Left */}
             <ContentImageWithText
               src={cityServiceImages2[0]}
-              alt={`Fun ${serviceName.toLowerCase()} in ${city}`}
+              alt={`Local ${serviceName.toLowerCase()} rental setup for a ${city} party`}
               imagePosition="left"
             >
               <h3 className="font-display text-2xl font-bold text-foreground mb-4">
