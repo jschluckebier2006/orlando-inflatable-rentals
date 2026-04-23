@@ -18,6 +18,10 @@ export function ProductCard({ product, onClick }: ProductCardProps) {
         <img 
           src={product.image} 
           alt={product.name} 
+          width={600}
+          height={600}
+          loading="lazy"
+          decoding="async"
           className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105" 
         />
         <Badge className="absolute top-3 right-3 bg-secondary text-secondary-foreground font-bold text-base md:text-sm px-4 py-2 md:px-3 md:py-1 shadow-md">

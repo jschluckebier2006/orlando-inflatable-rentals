@@ -62,8 +62,11 @@ export function ContentImage({ src, alt, className = "" }: ContentImageProps) {
       <img
         src={src}
         alt={alt}
+        width={1200}
+        height={600}
         className="w-full h-64 md:h-80 object-cover object-center"
         loading="lazy"
+        decoding="async"
       />
     </div>
   );
@@ -83,8 +86,11 @@ export function ContentImageRow({ images, alts, className = "" }: ContentImageRo
           <img
             src={src}
             alt={alts[index] || `Party rental fun ${index + 1}`}
+            width={800}
+            height={500}
             className="w-full h-48 md:h-56 object-cover object-center"
             loading="lazy"
+            decoding="async"
           />
         </div>
       ))}

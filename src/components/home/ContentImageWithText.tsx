@@ -4,6 +4,8 @@ interface ContentImageWithTextProps {
   imagePosition?: "left" | "right";
   children: React.ReactNode;
   className?: string;
+  /** When true, treats image as LCP candidate — eager load + high priority. Default lazy. */
+  priority?: boolean;
 }
 
 export function ContentImageWithText({ 
@@ -11,7 +13,8 @@ export function ContentImageWithText({
   alt, 
   imagePosition = "right",
   children,
-  className = "" 
+  className = "",
+  priority = false,
 }: ContentImageWithTextProps) {
   return (
     <div className={`grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 my-12 items-center ${className}`}>
@@ -20,8 +23,12 @@ export function ContentImageWithText({
           <img
             src={src}
             alt={alt}
+            width={1200}
+            height={800}
             className="w-full h-64 md:h-80 object-cover object-center"
-            loading="lazy"
+            loading={priority ? "eager" : "lazy"}
+            decoding="async"
+            {...(priority ? { fetchPriority: "high" as const } : {})}
           />
         </div>
       )}
@@ -33,8 +40,12 @@ export function ContentImageWithText({
           <img
             src={src}
             alt={alt}
+            width={1200}
+            height={800}
             className="w-full h-64 md:h-80 object-cover object-center"
-            loading="lazy"
+            loading={priority ? "eager" : "lazy"}
+            decoding="async"
+            {...(priority ? { fetchPriority: "high" as const } : {})}
           />
         </div>
       )}
