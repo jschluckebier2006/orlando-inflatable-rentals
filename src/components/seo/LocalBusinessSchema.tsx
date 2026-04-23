@@ -31,9 +31,31 @@ export function LocalBusinessSchema({ pageName, pageDescription, cityName, cityS
     telephone: "+1-407-497-1840",
     email: "orlandoinflatablesllc@gmail.com",
     image: `${baseUrl}/logo.png`,
+    logo: `${baseUrl}/logo.png`,
     priceRange: "$$",
     paymentAccepted: ["Cash", "Credit Card", "Debit Card"],
     currenciesAccepted: "USD",
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: cityName || "Orlando",
+      addressRegion: "FL",
+      postalCode: "32828",
+      addressCountry: "US"
+    },
+    geo: {
+      "@type": "GeoCoordinates",
+      latitude: 28.5383,
+      longitude: -81.3792
+    },
+    serviceArea: {
+      "@type": "GeoCircle",
+      geoMidpoint: {
+        "@type": "GeoCoordinates",
+        latitude: 28.5383,
+        longitude: -81.3792
+      },
+      geoRadius: "40000"
+    },
     areaServed: cityName ? {
       "@type": "City",
       name: cityName,

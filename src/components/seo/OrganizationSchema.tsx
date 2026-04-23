@@ -12,6 +12,13 @@ export function OrganizationSchema() {
     "telephone": "+1-407-497-1840",
     "email": "orlandoinflatablesllc@gmail.com",
     "foundingDate": "2019",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Orlando",
+      "addressRegion": "FL",
+      "postalCode": "32828",
+      "addressCountry": "US"
+    },
     "areaServed": {
       "@type": "State",
       "name": "Florida"
