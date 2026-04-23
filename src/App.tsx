@@ -62,6 +62,7 @@ import BounceHouseRentalsNearMe from "./pages/blog/BounceHouseRentalsNearMe";
 import FoundingOfChristmasFlorida from "./pages/blog/FoundingOfChristmasFlorida";
 import NotFound from "./pages/NotFound";
 import ThankYou from "./pages/ThankYou";
+import { ScrollToTop } from "./components/ScrollToTop";
 
 const queryClient = new QueryClient();
 
@@ -72,6 +73,7 @@ const App = () => (
         <TooltipProvider>
           <Toaster />
           <Sonner />
+          <ScrollToTop />
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/water-slide-and-bounce-house-rentals-orlando" element={<Index />} />
