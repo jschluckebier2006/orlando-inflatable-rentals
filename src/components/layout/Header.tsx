@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Menu, X, Phone, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -49,6 +49,16 @@ export function Header() {
   const [eventsOpen, setEventsOpen] = useState(false);
   const [contactOpen, setContactOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleHomeClick = (e: React.MouseEvent) => {
+    if (location.pathname === "/") {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else {
+      navigate("/");
+    }
+  };
 
   return (
     <>
@@ -71,7 +81,7 @@ export function Header() {
         <div className="container-page">
           <div className="flex h-16 items-center justify-between">
             {/* Logo */}
-            <Link to="/" className="flex items-center">
+            <Link to="/" className="flex items-center" onClick={handleHomeClick}>
               <img 
                 src={logo} 
                 alt="Orlando Inflatables - Bounce House & Water Slide Rentals" 
@@ -87,6 +97,7 @@ export function Header() {
                     <NavigationMenuLink asChild>
                       <Link 
                         to="/"
+                        onClick={handleHomeClick}
                         className={cn(
                           "group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none",
                           location.pathname === "/" && "bg-accent"
@@ -255,7 +266,10 @@ export function Header() {
               <Link 
                 to="/" 
                 className="block py-2 text-foreground hover:text-primary"
-                onClick={() => setMobileMenuOpen(false)}
+                onClick={(e) => {
+                  setMobileMenuOpen(false);
+                  handleHomeClick(e);
+                }}
               >
                 Home
               </Link>
