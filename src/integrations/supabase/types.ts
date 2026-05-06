@@ -54,10 +54,13 @@ export type Database = {
       }
       bookings: {
         Row: {
+          amount_paid: number
+          balance_due: number | null
           created_at: string
           customer_email: string
           customer_name: string
           customer_phone: string
+          deposit_amount: number
           duration_type: string
           event_address_line: string
           event_city: string
@@ -69,18 +72,25 @@ export type Database = {
           event_zip: string
           id: string
           notes: string | null
+          payment_status: string
           price_multiplier: number
           product_id: string | null
           product_name: string | null
           product_price: number | null
           status: Database["public"]["Enums"]["booking_status"]
+          stripe_payment_intent_id: string | null
+          stripe_session_id: string | null
+          total_amount: number | null
           updated_at: string
         }
         Insert: {
+          amount_paid?: number
+          balance_due?: number | null
           created_at?: string
           customer_email: string
           customer_name: string
           customer_phone: string
+          deposit_amount?: number
           duration_type?: string
           event_address_line: string
           event_city: string
@@ -92,18 +102,25 @@ export type Database = {
           event_zip: string
           id?: string
           notes?: string | null
+          payment_status?: string
           price_multiplier?: number
           product_id?: string | null
           product_name?: string | null
           product_price?: number | null
           status?: Database["public"]["Enums"]["booking_status"]
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
+          total_amount?: number | null
           updated_at?: string
         }
         Update: {
+          amount_paid?: number
+          balance_due?: number | null
           created_at?: string
           customer_email?: string
           customer_name?: string
           customer_phone?: string
+          deposit_amount?: number
           duration_type?: string
           event_address_line?: string
           event_city?: string
@@ -115,12 +132,46 @@ export type Database = {
           event_zip?: string
           id?: string
           notes?: string | null
+          payment_status?: string
           price_multiplier?: number
           product_id?: string | null
           product_name?: string | null
           product_price?: number | null
           status?: Database["public"]["Enums"]["booking_status"]
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
+          total_amount?: number | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      pending_bookings: {
+        Row: {
+          amount_charged: number
+          amount_total: number
+          created_at: string
+          deposit_amount: number
+          id: string
+          payload: Json
+          stripe_session_id: string
+        }
+        Insert: {
+          amount_charged: number
+          amount_total: number
+          created_at?: string
+          deposit_amount: number
+          id?: string
+          payload: Json
+          stripe_session_id: string
+        }
+        Update: {
+          amount_charged?: number
+          amount_total?: number
+          created_at?: string
+          deposit_amount?: number
+          id?: string
+          payload?: Json
+          stripe_session_id?: string
         }
         Relationships: []
       }
@@ -170,7 +221,12 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "staff" | "user"
-      booking_status: "pending" | "confirmed" | "cancelled" | "completed"
+      booking_status:
+        | "awaiting_payment"
+        | "pending"
+        | "confirmed"
+        | "cancelled"
+        | "completed"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -299,7 +355,13 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "staff", "user"],
-      booking_status: ["pending", "confirmed", "cancelled", "completed"],
+      booking_status: [
+        "awaiting_payment",
+        "pending",
+        "confirmed",
+        "cancelled",
+        "completed",
+      ],
     },
   },
 } as const
