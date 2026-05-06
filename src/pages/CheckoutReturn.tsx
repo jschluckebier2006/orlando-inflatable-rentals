@@ -3,19 +3,34 @@ import { Link, useSearchParams } from "react-router-dom";
 import { CheckCircle2, Loader2, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/contexts/CartContext";
+import { supabase } from "@/integrations/supabase/client";
 
 export default function CheckoutReturn() {
   const [params] = useSearchParams();
   const sessionId = params.get("session_id");
   const { clear } = useCart();
-  const [state, setState] = useState<"loading" | "ok" | "missing">(sessionId ? "loading" : "missing");
+  const [state, setState] = useState<"loading" | "ok" | "pending" | "missing">(sessionId ? "loading" : "missing");
 
   useEffect(() => {
     if (!sessionId) return;
-    // Webhook does the actual booking creation. Just give it a beat and clear the cart.
     clear();
-    const t = setTimeout(() => setState("ok"), 1500);
-    return () => clearTimeout(t);
+    let cancelled = false;
+    let attempts = 0;
+    const maxAttempts = 10;
+    const tick = async () => {
+      attempts++;
+      const { data } = await supabase
+        .from("bookings")
+        .select("id")
+        .eq("stripe_session_id", sessionId)
+        .maybeSingle();
+      if (cancelled) return;
+      if (data?.id) { setState("ok"); return; }
+      if (attempts >= maxAttempts) { setState("pending"); return; }
+      setTimeout(tick, 1000);
+    };
+    tick();
+    return () => { cancelled = true; };
   }, [sessionId, clear]);
 
   return (
@@ -41,6 +56,21 @@ export default function CheckoutReturn() {
             <div className="flex flex-col sm:flex-row gap-2 justify-center pt-2">
               <Button asChild><Link to="/">Back to home</Link></Button>
               <Button asChild variant="outline"><Link to="/rentals">Browse more rentals</Link></Button>
+            </div>
+          </>
+        )}
+        {state === "pending" && (
+          <>
+            <CheckCircle2 className="mx-auto h-12 w-12 text-primary" />
+            <h1 className="font-display text-2xl font-bold">Payment received</h1>
+            <p className="text-muted-foreground">
+              We're finalizing your reservation. You'll get an email confirmation shortly, and our team will reach out to confirm delivery details.
+            </p>
+            <p className="text-xs text-muted-foreground">
+              Reference: <span className="font-mono">{sessionId?.slice(-12)}</span>
+            </p>
+            <div className="flex flex-col sm:flex-row gap-2 justify-center pt-2">
+              <Button asChild><Link to="/">Back to home</Link></Button>
             </div>
           </>
         )}
