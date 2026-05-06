@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { SEOHead } from "@/components/seo/SEOHead";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
@@ -169,7 +170,7 @@ export default function WaterSlideRentals() {
               Professional Delivery Throughout East Orlando
             </h2>
             <p className="text-muted-foreground leading-relaxed mb-6">
-              Orlando Inflatables delivers water slides to homes, parks, schools, and event venues throughout East Orlando and Orange County. Our service area includes Alafaya, Avalon Park, Azalea Park, Bithlo, Christmas, Chuluota, Eastwood, Stoneybrook, Waterford Lakes, Wedgefield, and surrounding communities.
+              Orlando Inflatables delivers water slides to homes, parks, schools, and event venues throughout East Orlando and Orange County. Our service area includes <Link to="/water-slide-and-bounce-house-rental-alafaya" className="text-primary hover:underline">Alafaya</Link>, <Link to="/water-slide-and-bounce-house-rental-avalon-park" className="text-primary hover:underline">Avalon Park</Link>, <Link to="/water-slide-and-bounce-house-rental-azalea-park" className="text-primary hover:underline">Azalea Park</Link>, <Link to="/water-slide-and-bounce-house-rental-bithlo" className="text-primary hover:underline">Bithlo</Link>, <Link to="/water-slide-and-bounce-house-rental-christmas" className="text-primary hover:underline">Christmas</Link>, <Link to="/water-slide-and-bounce-house-rental-chuluota" className="text-primary hover:underline">Chuluota</Link>, <Link to="/water-slide-and-bounce-house-rental-eastwood" className="text-primary hover:underline">Eastwood</Link>, <Link to="/water-slide-and-bounce-house-rental-stoneybrook" className="text-primary hover:underline">Stoneybrook</Link>, <Link to="/water-slide-and-bounce-house-rental-waterford-lakes" className="text-primary hover:underline">Waterford Lakes</Link>, <Link to="/water-slide-and-bounce-house-rental-wedgefield" className="text-primary hover:underline">Wedgefield</Link>, and surrounding communities.
             </p>
             <p className="text-muted-foreground leading-relaxed mb-8">
               Our professional team handles all delivery, setup, and pickup. We'll ensure the water slide is properly anchored, connected to your water source, and ready for fun before your guests arrive. After the party, we return to carefully take down and remove everything.
