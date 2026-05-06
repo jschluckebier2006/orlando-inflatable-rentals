@@ -14,13 +14,20 @@ import { useToast } from "@/hooks/use-toast";
 
 type BookingStatus = "pending" | "confirmed" | "cancelled" | "completed";
 
-interface Booking {
+interface BookingItem {
   id: string;
-  product_id: string;
   product_name: string;
   product_price: number;
+}
+
+interface Booking {
+  id: string;
+  product_id: string | null;
+  product_name: string | null;
+  product_price: number | null;
   event_date: string;
   event_start_time: string | null;
+  event_end_time: string | null;
   event_type: string | null;
   customer_name: string;
   customer_email: string;
@@ -31,6 +38,7 @@ interface Booking {
   notes: string | null;
   status: BookingStatus;
   created_at: string;
+  booking_items?: BookingItem[];
 }
 
 const STATUS_COLORS: Record<BookingStatus, string> = {
@@ -73,7 +81,9 @@ export default function AdminBookings() {
   async function load() {
     setLoading(true);
     const { data, error } = await supabase
-      .from("bookings").select("*").order("event_date", { ascending: true });
+      .from("bookings")
+      .select("*, booking_items(id, product_name, product_price)")
+      .order("event_date", { ascending: true });
     if (error) {
       toast({ title: "Load failed", description: error.message, variant: "destructive" });
     } else {
@@ -153,11 +163,30 @@ export default function AdminBookings() {
                 <TableRow key={b.id}>
                   <TableCell className="whitespace-nowrap">
                     <div className="font-medium">{format(new Date(b.event_date + "T12:00:00"), "MMM d, yyyy")}</div>
-                    {b.event_start_time && <div className="text-xs text-muted-foreground">{b.event_start_time}</div>}
+                    {b.event_start_time && (
+                      <div className="text-xs text-muted-foreground">
+                        {b.event_start_time}{b.event_end_time ? ` – ${b.event_end_time}` : ""}
+                      </div>
+                    )}
                   </TableCell>
                   <TableCell>
-                    <div className="font-medium">{b.product_name}</div>
-                    <div className="text-xs text-muted-foreground">${b.product_price}/day</div>
+                    {b.booking_items && b.booking_items.length > 0 ? (
+                      <ul className="text-sm space-y-0.5">
+                        {b.booking_items.map((it) => (
+                          <li key={it.id}>
+                            <span className="font-medium">{it.product_name}</span>
+                            <span className="text-xs text-muted-foreground"> · ${it.product_price}/day</span>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : b.product_name ? (
+                      <>
+                        <div className="font-medium">{b.product_name}</div>
+                        <div className="text-xs text-muted-foreground">${b.product_price}/day</div>
+                      </>
+                    ) : (
+                      <span className="text-xs text-muted-foreground">—</span>
+                    )}
                   </TableCell>
                   <TableCell>
                     <div className="font-medium">{b.customer_name}</div>
