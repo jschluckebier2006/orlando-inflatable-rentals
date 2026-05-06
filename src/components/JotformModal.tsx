@@ -1,10 +1,6 @@
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+// Compatibility shim: legacy JotformModal now routes to the native BookingModal.
+// All existing imports keep working without changes.
+import { BookingModal } from "@/components/booking/BookingModal";
 
 interface JotformModalProps {
   open: boolean;
@@ -12,28 +8,5 @@ interface JotformModalProps {
 }
 
 export function JotformModal({ open, onOpenChange }: JotformModalProps) {
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl h-[90vh] p-0 flex flex-col">
-        <DialogHeader className="p-4 pb-2 shrink-0">
-          <DialogTitle className="font-display text-xl">Select Your Rentals & Check Availability</DialogTitle>
-          <DialogDescription className="text-sm text-muted-foreground">
-            Submit the booking request form below and we'll contact you to confirm availability as soon as possible.
-          </DialogDescription>
-        </DialogHeader>
-        <div className="flex-1 overflow-hidden px-4 pb-4">
-          <div className="w-full h-full overflow-hidden rounded-lg">
-            <iframe
-              title="Contact Form"
-              src="https://form.jotform.com/252645641478162?nofs=1"
-              className="w-full border-0"
-              style={{ marginTop: '-320px', height: 'calc(100% + 380px)' }}
-              sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
-              allow="geolocation; microphone; camera"
-            />
-          </div>
-        </div>
-      </DialogContent>
-    </Dialog>
-  );
+  return <BookingModal open={open} onOpenChange={onOpenChange} />;
 }
