@@ -1,81 +1,63 @@
-## Goal
+## Rental Duration & Pricing Tiers
 
-Replace the single-item booking modal with a **shopping cart flow**. Customers add multiple inflatables/items to a cart, then check out once with a single date, delivery start time (8 AM–8 PM), and contact info. Double-booking prevention still applies per item per date.
+Add three rental duration options applied **per order** (one choice for the whole cart), with multi-day availability blocking and clear pricing display.
 
-## User flow
+### Pricing formulas (applied to each item's base price)
+- **7-hour (1 day)** — base price (e.g. $499.00)
+- **Overnight** — base × 1.25 (e.g. $623.75). Default pickup 8:00 AM next day.
+- **Full Weekend** — base × 1.60 (e.g. $798.40). Saturday 8:00 AM delivery → Sunday 8:00 PM pickup.
 
-1. Browse rentals → click **Add to Cart** on each desired item (cart icon in header shows count).
-2. Open cart drawer → review items, adjust quantities (capped at 1 per unique unit per day), remove items.
-3. Click **Check Availability & Reserve** → checkout modal:
-   - Step 1: Pick event date → system checks every cart item's availability; flags any conflicts with option to remove.
-   - Step 2: Pick **delivery start time** (8:00 AM–8:00 PM, 30-min increments) and **pickup time** (same range, must be after start).
-   - Step 3: Customer info + address + notes → submit.
-4. Confirmation screen lists all reserved items + reference ID.
+### UX flow
 
-## Files to add
+**1. Cart drawer (`CartDrawer.tsx`)**
+- Add a Duration selector (radio group) at the top of the drawer:
+  - 7-Hour Rental — $X (base sum)
+  - Overnight (+25%) — $Y
+  - Full Weekend (+60%) — $Z
+- Each option shows the recalculated cart total beside it.
+- Default = `7-hour`. Selection stored in `CartContext`.
 
-- `src/contexts/CartContext.tsx` — cart state in `localStorage`, `addItem`, `removeItem`, `clear`, `items[]`.
-- `src/components/cart/CartDrawer.tsx` — slide-out (shadcn `Sheet`) listing items, totals, "Reserve" CTA.
-- `src/components/cart/CartButton.tsx` — header icon + badge count, opens drawer.
-- `src/components/booking/CheckoutModal.tsx` — replaces `BookingModal`. 3 steps as above. Uses new RPC for batch availability check.
+**2. Checkout step 1 — Date selection (`CheckoutModal.tsx`)**
+- Show the same Duration selector above the calendar (editable). Help text explains what each means.
+- Calendar disable logic depends on selection:
+  - **7-hour**: disable any date where any cart item is booked (current behavior).
+  - **Overnight**: disable date `D` if any cart item is booked on `D` OR `D+1`. Also disable if `D+1` is in the past… (n/a).
+  - **Full Weekend**: only Saturdays selectable. Disable Saturday `S` if any cart item is booked on `S` or `S+1` (Sunday).
+- For Overnight/Full Weekend, the "selected date" represents the **delivery date**.
 
-## Files to edit
+**3. Checkout step 2 — Times**
+- **7-hour**: keep current 8AM–8PM start + pickup dropdowns.
+- **Overnight**: show start time dropdown only (8AM–8PM). Pickup auto-set to **next day 8:00 AM**, displayed read-only.
+- **Full Weekend**: both times locked: Sat **8:00 AM** delivery, Sun **8:00 PM** pickup, displayed read-only.
 
-- `src/components/inventory/ProductCard.tsx` — change CTA from "Book Your Date" to **"Add to Cart"**; show "Added ✓" state briefly.
-- `src/components/inventory/ProductGrid.tsx` — drop `BookingModal`; cards just call `addToCart`.
-- `src/components/layout/Header.tsx` — mount `<CartButton />`.
-- `src/components/layout/StickyBookButton.tsx` & `src/components/home/CTASection.tsx` & `HeroSection.tsx` — open `CheckoutModal` directly (no preselected product) for "Check Availability".
-- `src/components/JotformModal.tsx` — keep shim, render `CheckoutModal` instead.
-- `src/App.tsx` — wrap with `<CartProvider>`.
+**4. Checkout step 3 — Summary**
+- Show duration label, date range, per-item price, multiplier, and grand total.
 
-## Backend
+### Backend changes
 
-**Migration:**
-- New RPC `get_booked_dates_for_products(_product_ids text[])` returning `(product_id, event_date)` so the checkout can disable dates that conflict with **any** cart item.
-- Add nullable `event_end_time text` column to `bookings` (pickup time).
-- New table `booking_items` (id, booking_id FK, product_id, product_name, product_price) + unique partial index `(product_id, event_date)` on the parent booking's date — enforced via the existing date+product check moved to `booking_items`. Drop the old single-product columns? **No** — keep `bookings` row as the order header (customer info, date, times, status); move per-item rows to `booking_items`. Remove the partial unique index from `bookings` and recreate it on a view or via trigger that joins items to the parent booking date.
+**Migration** (schema + trigger updates):
+- Add to `bookings`: `duration_type text not null default '7hour'` (values: `'7hour' | 'overnight' | 'weekend'`), `event_end_date date` (nullable; equals `event_date` for 7-hour, `event_date + 1` for overnight/weekend), `price_multiplier numeric not null default 1.0`.
+- Add to `booking_items`: `unit_price numeric` (already have `product_price` = base; keep base, store `unit_price` = base × multiplier as the charged amount).
+- **Replace** `prevent_double_booking` trigger to check the **date range** (`event_date` through `event_end_date`) overlaps any existing booking's range for the same `product_id` (status pending/confirmed). Uses a daterange overlap.
+- **Replace** `get_booked_dates_for_products` RPC to expand each existing booking into one row per day in its date range, so the calendar greys out every blocked day.
 
-Actual approach (simpler): keep `bookings` as the **order header** without product fields, and add `booking_items(id, booking_id, product_id, product_name, product_price)`. Enforce no-double-booking via a **BEFORE INSERT trigger** on `booking_items` that checks for any active booking_item whose parent booking has the same `event_date` and `status in ('pending','confirmed')`.
+**Edge function `submit-booking/index.ts`**:
+- Accept new fields: `duration_type`, derived `event_end_date`, `price_multiplier`.
+- Server-side enforce time defaults for overnight/weekend.
+- Validate weekend selection is a Saturday.
+- Insert booking with new fields; insert items with `unit_price = product_price * multiplier`.
 
-Schema changes:
-```sql
-alter table bookings add column event_end_time text;
--- product_id/name/price become nullable (legacy); new orders use booking_items
-alter table bookings alter column product_id drop not null;
-alter table bookings alter column product_name drop not null;
-alter table bookings alter column product_price drop not null;
-drop index if exists bookings_unit_day_active;
+**Admin (`pages/admin/Bookings.tsx`)**:
+- Display Duration column and date range.
+- Show item `unit_price` (charged) alongside base.
 
-create table booking_items (
-  id uuid primary key default gen_random_uuid(),
-  booking_id uuid not null references bookings(id) on delete cascade,
-  product_id text not null,
-  product_name text not null,
-  product_price numeric not null,
-  created_at timestamptz not null default now()
-);
-alter table booking_items enable row level security;
-create policy "anyone create booking items" on booking_items for insert with check (true);
-create policy "admins read items" on booking_items for select to authenticated using (has_role(auth.uid(),'admin'));
+### Files
 
--- trigger to prevent double booking across orders
-create function prevent_double_booking() returns trigger ...
-create trigger ... before insert on booking_items ...
-```
+**Edit**: `src/contexts/CartContext.tsx`, `src/components/cart/CartDrawer.tsx`, `src/components/booking/CheckoutModal.tsx`, `src/pages/admin/Bookings.tsx`, `supabase/functions/submit-booking/index.ts`
 
-**Edge function** `submit-booking/index.ts` — accept `items: [{product_id, product_name, product_price}]`, `event_end_time`, insert header + items in one transaction (use `.rpc` or sequential with cleanup). On conflict (P0001 from trigger), return list of conflicting product names.
+**Add**: one migration file (alter tables, replace trigger function, replace RPC), `src/lib/pricing.ts` (helpers: `MULTIPLIERS`, `formatTier`, `computeEndDate`, `isSaturday`).
 
-## Admin page
-
-- `src/pages/admin/Bookings.tsx` — join `booking_items`, render each booking with its item list and times.
-
-## Time slots
-
-Generate 30-min slots from `08:00` to `20:00` for both start and pickup. Validate `pickup > start`.
-
-## Out of scope
-
-- Stripe deposits (still phase 2).
-- Multi-day rentals.
-- Per-item different dates (cart = one event date).
-
+### Out of scope
+- Stripe deposits (phase 2).
+- Mixed durations across items in the same order.
+- Custom multi-day rentals beyond the three tiers.
