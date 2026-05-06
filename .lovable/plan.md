@@ -1,63 +1,37 @@
-## Rental Duration & Pricing Tiers
+## Wrap up Stripe payment integration
 
-Add three rental duration options applied **per order** (one choice for the whole cart), with multi-day availability blocking and clear pricing display.
+The payment infrastructure (deposit/full/custom flow, embedded Stripe Checkout, webhook → booking) is wired. Three pieces remain to make it production-ready.
 
-### Pricing formulas (applied to each item's base price)
-- **7-hour (1 day)** — base price (e.g. $499.00)
-- **Overnight** — base × 1.25 (e.g. $623.75). Default pickup 8:00 AM next day.
-- **Full Weekend** — base × 1.60 (e.g. $798.40). Saturday 8:00 AM delivery → Sunday 8:00 PM pickup.
+### 1. Admin Bookings: show payment info
 
-### UX flow
+Update `src/pages/admin/Bookings.tsx`:
+- Extend the `Booking` type with `payment_status`, `amount_paid`, `balance_due`, `deposit_amount`, `total_amount`, `stripe_session_id`.
+- Add a **Payment** column (between Status and Actions) showing:
+  - Badge for `payment_status` (`unpaid` / `deposit_paid` / `paid_in_full` / `refunded`)
+  - "Paid $X.XX of $Y.YY"
+  - "Balance due: $Z.ZZ" (highlighted when > 0)
+- Add a "Payment" filter option alongside the status filter (paid in full / deposit only / unpaid).
 
-**1. Cart drawer (`CartDrawer.tsx`)**
-- Add a Duration selector (radio group) at the top of the drawer:
-  - 7-Hour Rental — $X (base sum)
-  - Overnight (+25%) — $Y
-  - Full Weekend (+60%) — $Z
-- Each option shows the recalculated cart total beside it.
-- Default = `7-hour`. Selection stored in `CartContext`.
+### 2. Deploy & smoke-test edge functions
 
-**2. Checkout step 1 — Date selection (`CheckoutModal.tsx`)**
-- Show the same Duration selector above the calendar (editable). Help text explains what each means.
-- Calendar disable logic depends on selection:
-  - **7-hour**: disable any date where any cart item is booked (current behavior).
-  - **Overnight**: disable date `D` if any cart item is booked on `D` OR `D+1`. Also disable if `D+1` is in the past… (n/a).
-  - **Full Weekend**: only Saturdays selectable. Disable Saturday `S` if any cart item is booked on `S` or `S+1` (Sunday).
-- For Overnight/Full Weekend, the "selected date" represents the **delivery date**.
+- Deploy `create-booking-checkout` and `payments-webhook`.
+- Verify `create-booking-checkout` returns a `clientSecret` for a sample payload (sandbox env, $50 deposit choice).
+- Confirm `payments-webhook` is reachable. Webhook signature is validated by the Stripe SDK in code; sandbox webhook secret is already set.
+- Check edge logs for any cold-start errors.
 
-**3. Checkout step 2 — Times**
-- **7-hour**: keep current 8AM–8PM start + pickup dropdowns.
-- **Overnight**: show start time dropdown only (8AM–8PM). Pickup auto-set to **next day 8:00 AM**, displayed read-only.
-- **Full Weekend**: both times locked: Sat **8:00 AM** delivery, Sun **8:00 PM** pickup, displayed read-only.
+### 3. Cleanup / polish
 
-**4. Checkout step 3 — Summary**
-- Show duration label, date range, per-item price, multiplier, and grand total.
+- The `submit-booking` edge function and the legacy `handleSubmit` path in `CheckoutModal.tsx` are now bypassed (the cart goes straight from step 3 → PaymentStep → Stripe → webhook creates the booking). Remove the dead `handleSubmit` and unused imports from `CheckoutModal.tsx` to keep the file lean. Leave the `submit-booking` function deployed for now in case of fallback, but mark it unused in a code comment.
+- `CheckoutReturn.tsx` currently shows success after a 1.5s timer regardless. Improve it to **poll the bookings table by `stripe_session_id`** (up to ~10s) so we only display "Confirmed" once the webhook actually wrote the row. If polling times out, show "Payment received — finalizing your reservation. We'll email confirmation shortly."
 
-### Backend changes
+### Technical notes
 
-**Migration** (schema + trigger updates):
-- Add to `bookings`: `duration_type text not null default '7hour'` (values: `'7hour' | 'overnight' | 'weekend'`), `event_end_date date` (nullable; equals `event_date` for 7-hour, `event_date + 1` for overnight/weekend), `price_multiplier numeric not null default 1.0`.
-- Add to `booking_items`: `unit_price numeric` (already have `product_price` = base; keep base, store `unit_price` = base × multiplier as the charged amount).
-- **Replace** `prevent_double_booking` trigger to check the **date range** (`event_date` through `event_end_date`) overlaps any existing booking's range for the same `product_id` (status pending/confirmed). Uses a daterange overlap.
-- **Replace** `get_booked_dates_for_products` RPC to expand each existing booking into one row per day in its date range, so the calendar greys out every blocked day.
+- Webhook env: the handler reads `?env=sandbox|live` from the URL. The Stripe-registered webhook URLs already include this, so no change needed.
+- No DB schema changes needed — `payment_status`, `amount_paid`, `balance_due`, `deposit_amount`, `stripe_session_id` already exist on `bookings`.
+- Stripe sandbox test card: `4242 4242 4242 4242`, any future expiry, any CVC.
 
-**Edge function `submit-booking/index.ts`**:
-- Accept new fields: `duration_type`, derived `event_end_date`, `price_multiplier`.
-- Server-side enforce time defaults for overnight/weekend.
-- Validate weekend selection is a Saturday.
-- Insert booking with new fields; insert items with `unit_price = product_price * multiplier`.
+### Out of scope (ask before doing)
 
-**Admin (`pages/admin/Bookings.tsx`)**:
-- Display Duration column and date range.
-- Show item `unit_price` (charged) alongside base.
-
-### Files
-
-**Edit**: `src/contexts/CartContext.tsx`, `src/components/cart/CartDrawer.tsx`, `src/components/booking/CheckoutModal.tsx`, `src/pages/admin/Bookings.tsx`, `supabase/functions/submit-booking/index.ts`
-
-**Add**: one migration file (alter tables, replace trigger function, replace RPC), `src/lib/pricing.ts` (helpers: `MULTIPLIERS`, `formatTier`, `computeEndDate`, `isSaturday`).
-
-### Out of scope
-- Stripe deposits (phase 2).
-- Mixed durations across items in the same order.
-- Custom multi-day rentals beyond the three tiers.
+- Live-mode go-live / claiming the Stripe account.
+- Refund tooling in admin UI.
+- Email receipts beyond Stripe's built-in.
