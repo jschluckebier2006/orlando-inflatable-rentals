@@ -307,8 +307,8 @@ export default function AlafayaDelivery() {
       <CityDeliveryPage
         cityName="Alafaya"
         citySlug="alafaya"
-        metaTitle="Bounce House & Water Slide Rentals Alafaya FL"
-        metaDescription="Bounce house & water slide rentals in Alafaya FL. Serving UCF area with party inflatables, obstacle courses & more. Free delivery! Call (407) 497-1840."
+        metaTitle="Bounce House & Water Slide Rentals in Alafaya, FL"
+        metaDescription="Bounce house and water slide rentals in Alafaya, FL. Free delivery & setup to Alafaya from Orlando Inflatables. Book today at (407) 497-1840."
         nearbyAreas={nearbyAreas}
         ogImage="/og-images/og-alafaya.jpg"
         cityWikipediaUrl="https://en.wikipedia.org/wiki/Alafaya,_Florida"

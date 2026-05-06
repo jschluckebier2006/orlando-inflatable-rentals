@@ -111,8 +111,8 @@ const ChurchEvents = () => {
   return (
     <Layout>
       <SEOHead
-        title="Church Event Inflatable Rentals Orlando | VBS & Fall Festivals"
-        description="Professional inflatable rentals for church events in Orlando. VBS, fall festivals, community outreach & more. Safe, family-friendly entertainment. Get a free quote!"
+        title="Church Event Inflatable Rentals in Orlando, FL"
+        description="Church event inflatable rentals in Orlando, FL. Bounce houses, water slides & obstacle courses for festivals & family nights. Call (407) 497-1840."
         canonical="/events/church-event-inflatable-rentals-in-orlando"
       />
       <ServiceSchema

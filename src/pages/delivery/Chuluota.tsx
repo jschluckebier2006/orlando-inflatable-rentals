@@ -278,8 +278,8 @@ export default function ChuluotaDelivery() {
       <CityDeliveryPage
         cityName="Chuluota"
         citySlug="chuluota"
-        metaTitle="Bounce House & Water Slide Rentals Chuluota FL"
-        metaDescription="Bounce house & water slide rentals in Chuluota FL. Large inflatables for horse properties & spacious lots. Free delivery! Call (407) 497-1840."
+        metaTitle="Bounce House & Water Slide Rentals in Chuluota, FL"
+        metaDescription="Bounce house and water slide rentals in Chuluota, FL. Free delivery & setup to Chuluota from Orlando Inflatables. Call (407) 497-1840 to book."
         nearbyAreas={nearbyAreas}
         ogImage="/og-images/og-chuluota.jpg"
         cityWikipediaUrl="https://en.wikipedia.org/wiki/Chuluota,_Florida"

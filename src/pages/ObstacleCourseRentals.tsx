@@ -40,8 +40,8 @@ export default function ObstacleCourseRentals() {
   return (
     <Layout>
       <SEOHead
-        title="Obstacle Course Rentals Orlando FL | Inflatable Obstacles"
-        description="Rent thrilling inflatable obstacle courses in Orlando FL for parties, school field days & corporate events. Dual-lane racing fun! Call (407) 497-1840 for free delivery!"
+        title="Obstacle Course Rentals in Orlando, FL"
+        description="Obstacle course rentals in Orlando, FL for birthday parties, school events & corporate functions. Free delivery & setup in East Orlando. Call (407) 497-1840."
         canonical="/obstacle-course-rentals"
       />
       <ServiceSchema

@@ -307,8 +307,8 @@ export default function WaterfordLakesDelivery() {
       <CityDeliveryPage
         cityName="Waterford Lakes"
         citySlug="waterford-lakes"
-        metaTitle="Bounce House & Water Slide Rentals Waterford Lakes FL"
-        metaDescription="Premium bounce house & water slide rentals in Waterford Lakes FL. Near Town Center with free delivery! Call (407) 497-1840 for your party quote."
+        metaTitle="Bounce House & Water Slide Rentals in Waterford Lakes, FL"
+        metaDescription="Bounce house and water slide rentals in Waterford Lakes, FL. Free delivery & setup to Waterford Lakes from Orlando Inflatables. Call (407) 497-1840."
         nearbyAreas={nearbyAreas}
         ogImage="/og-images/og-waterford-lakes.jpg"
         cityWikipediaUrl="https://en.wikipedia.org/wiki/Waterford_Lakes,_Florida"

@@ -1,31 +1,41 @@
-## Fix FAQ section on /water-slide-rentals
+## Per-page SEO fix
 
-The FAQ section currently uses a Radix `Accordion` (collapsed by default), so answers are hidden in the DOM until clicked. Search engines can technically still read them, but the user wants them fully visible as plain text. We'll also update the four Q&A entries to the new copy.
+**1. `index.html`** — remove the hardcoded `<title>`, `<meta name="description">`, and `<link rel="canonical">` so react-helmet-async is the single source of truth.
 
-### Changes to `src/pages/WaterSlideRentals.tsx`
+**2. Update `<SEOHead>` props (title, description, canonical) on each page to the exact values provided.** `SEOHead` auto-appends `| Orlando Inflatables` when missing, so titles will be passed without that suffix to avoid duplication; final rendered titles match the spec.
 
-1. **Update the `faqs` array** with the four new questions/answers exactly as provided:
-   - Do I need to provide a water source? — 50 ft garden hose, minimal usage, normal spigot.
-   - How much water do water slides use? — ~2–5 gallons/minute, runs continuously.
-   - What surface can water slides be set up on? — Grass ideal; dirt/mulch OK; no concrete/asphalt/gravel.
-   - Are water slides safe for younger children? — Yes with right slide; tell us ages; adult supervision required.
+Category pages:
+- `src/pages/BounceHouseRentals.tsx`
+- `src/pages/BounceSlideComboRentals.tsx`
+- `src/pages/WaterSlideRentals.tsx`
+- `src/pages/ObstacleCourseRentals.tsx`
+- `src/pages/InteractiveGameRentals.tsx`
+- `src/pages/ConcessionRentals.tsx`
+- `src/pages/TableChairRentals.tsx`
 
-2. **Replace the Accordion markup** in the FAQ section with a static list. Each item renders the question as a heading and the answer as a paragraph, both always visible:
-   ```tsx
-   <div className="space-y-6">
-     {faqs.map((faq, i) => (
-       <div key={i} className="bg-card rounded-lg border border-border p-6">
-         <h3 className="font-display font-semibold text-lg text-foreground mb-2">
-           {faq.question}
-         </h3>
-         <p className="text-muted-foreground leading-relaxed">{faq.answer}</p>
-       </div>
-     ))}
-   </div>
-   ```
+Event pages:
+- `src/pages/events/BirthdayParties.tsx`
+- `src/pages/events/SchoolEvents.tsx`
+- `src/pages/events/ChurchEvents.tsx`
+- `src/pages/events/CorporateEvents.tsx`
+- `src/pages/events/GraduationEvents.tsx`
 
-3. **Remove unused imports** (`Accordion`, `AccordionContent`, `AccordionItem`, `AccordionTrigger`).
+City delivery pages (update `metaTitle` + `metaDescription` props passed to `CityDeliveryPage`; canonical already derived from slug):
+- `src/pages/delivery/Alafaya.tsx`
+- `src/pages/delivery/AvalonPark.tsx`
+- `src/pages/delivery/AzaleaPark.tsx`
+- `src/pages/delivery/Bithlo.tsx`
+- `src/pages/delivery/Christmas.tsx`
+- `src/pages/delivery/Chuluota.tsx`
+- `src/pages/delivery/Eastwood.tsx`
+- `src/pages/delivery/Stoneybrook.tsx`
+- `src/pages/delivery/WaterfordLakes.tsx`
+- `src/pages/delivery/Wedgefield.tsx`
 
-4. **Keep `FAQPageSchema`** with the updated `faqs` array so the structured data stays in sync with the visible copy (good for Google indexing).
+Other pages:
+- `src/pages/Contact.tsx`
+- `src/pages/DeliveryArea.tsx`
 
-No other files need to change.
+Homepage (`src/pages/Index.tsx`) is left unchanged per instruction.
+
+No structural/component changes; head plumbing already exists via `<HelmetProvider>` in `App.tsx` and `SEOHead`.

@@ -8,7 +8,7 @@ import { Phone, Mail, MapPin } from "lucide-react";
 export default function Contact() {
   return (
     <Layout>
-      <SEOHead title="Contact Us - Get a Free Quote" description="Contact Orlando Inflatables for bounce house and party rental quotes. Call (407) 497-1840 or fill out our form for fast, friendly service in East Orlando." canonical="/contact" />
+      <SEOHead title="Contact Orlando Inflatables | Bounce House & Water Slide Rentals in Orlando" description="Contact Orlando Inflatables to book bounce houses, water slides & party rentals in East Orlando & Orange County. Call (407) 497-1840 or email us today." canonical="/contact" />
       <BreadcrumbSchema items={[{ name: "Contact", href: "/contact" }]} />
       <section className="section-padding">
         <div className="container-page">

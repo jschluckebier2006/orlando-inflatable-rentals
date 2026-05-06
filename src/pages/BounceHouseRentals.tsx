@@ -37,8 +37,8 @@ export default function BounceHouseRentals() {
   return (
     <Layout>
       <SEOHead
-        title="Bounce House Rentals Orlando FL | Party Inflatables"
-        description="Rent clean, safe bounce houses in Orlando FL for birthday parties, school events & celebrations. Licensed & insured with free delivery to East Orlando. Call (407) 497-1840!"
+        title="Bounce House Rentals in Orlando, FL"
+        description="Rent bounce houses in Orlando, FL from Orlando Inflatables. Safe, clean, themed bounce houses for birthday parties & events. Free delivery & setup. Call (407) 497-1840."
         canonical="/bounce-house-rentals"
       />
       <ServiceSchema

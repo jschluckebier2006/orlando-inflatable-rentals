@@ -40,8 +40,8 @@ export default function ConcessionRentals() {
   return (
     <Layout>
       <SEOHead
-        title="Concession Rentals Orlando FL | Popcorn & Snow Cones"
-        description="Rent popcorn, snow cone, cotton candy machines & more in Orlando FL. Perfect for parties & events! Supplies included. Call (407) 497-1840 for free delivery!"
+        title="Concession Rentals in Orlando, FL"
+        description="Concession machine rentals in Orlando, FL including snow cone, popcorn, cotton candy & more. Perfect party add-ons. Free delivery in East Orlando. Call (407) 497-1840."
         canonical="/concession-rentals"
       />
       <ServiceSchema
