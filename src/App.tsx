@@ -67,6 +67,8 @@ const BounceHouseRentalsNearMe = lazy(() => import("./pages/blog/BounceHouseRent
 const FoundingOfChristmasFlorida = lazy(() => import("./pages/blog/FoundingOfChristmasFlorida"));
 const ThankYou = lazy(() => import("./pages/ThankYou"));
 const WebVitals = lazy(() => import("./pages/WebVitals"));
+const AdminLogin = lazy(() => import("./pages/admin/Login"));
+const AdminBookings = lazy(() => import("./pages/admin/Bookings"));
 
 const queryClient = new QueryClient();
 
@@ -142,6 +144,8 @@ const App = () => (
               <Route path="/blog/founding-of-christmas-florida" element={<FoundingOfChristmasFlorida />} />
               <Route path="/thank-you" element={<ThankYou />} />
               <Route path="/web-vitals" element={<WebVitals />} />
+              <Route path="/admin/login" element={<AdminLogin />} />
+              <Route path="/admin/bookings" element={<AdminBookings />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Suspense>
