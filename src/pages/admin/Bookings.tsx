@@ -1,6 +1,21 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { format } from "date-fns";
+import {
+  format,
+  startOfMonth,
+  endOfMonth,
+  startOfWeek,
+  endOfWeek,
+  eachDayOfInterval,
+  addMonths,
+  subMonths,
+  isSameMonth,
+  isSameDay,
+  isToday,
+  parseISO,
+  addDays,
+  startOfDay,
+} from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -11,6 +26,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import { ChevronLeft, ChevronRight, Phone, MapPin } from "lucide-react";
 
 type BookingStatus = "pending" | "confirmed" | "cancelled" | "completed";
 type PaymentStatus = "unpaid" | "deposit_paid" | "paid_in_full" | "refunded";
@@ -166,6 +182,9 @@ export default function AdminBookings() {
             <Button variant="outline" onClick={signOut}>Sign out</Button>
           </div>
         </div>
+
+        <BookingsCalendar bookings={bookings} />
+        <UpcomingWeekList bookings={bookings} />
 
         <div className="bg-card rounded-lg border border-border overflow-x-auto">
           <Table>
