@@ -5,6 +5,7 @@ import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
 import { ServiceSchema } from "@/components/seo/ServiceSchema";
 import { FAQPageSchema } from "@/components/seo/FAQPageSchema";
 import { CTASection } from "@/components/home/CTASection";
+import { DeliveryAreaLinks } from "@/components/home/DeliveryAreaLinks";
 import { ReviewsSection } from "@/components/home/ReviewsSection";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -203,6 +204,7 @@ export default function WaterSlideRentals() {
         </div>
       </section>
 
+      <DeliveryAreaLinks />
       <CTASection />
       <JotformModal open={showJotform} onOpenChange={setShowJotform} />
     </Layout>
