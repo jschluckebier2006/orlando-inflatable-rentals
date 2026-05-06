@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { JotformModal } from "@/components/JotformModal";
+import { CartButton } from "@/components/cart/CartButton";
 import logo from "@/assets/logo.png";
 
 const rentalCategories = [
@@ -239,23 +240,29 @@ export function Header() {
               </DropdownMenu>
             </nav>
 
-            {/* CTA Button */}
-            <Button 
-              onClick={() => setShowJotform(true)}
-              className="hidden md:flex btn-bounce"
-              size="lg"
-            >
-              Check Availability
-            </Button>
+            {/* CTA + Cart */}
+            <div className="hidden md:flex items-center gap-2">
+              <CartButton />
+              <Button
+                onClick={() => setShowJotform(true)}
+                className="btn-bounce"
+                size="lg"
+              >
+                Check Availability
+              </Button>
+            </div>
 
             {/* Mobile menu button */}
-            <button
-              type="button"
-              className="lg:hidden p-2 rounded-md text-foreground hover:bg-accent"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            >
-              {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-            </button>
+            <div className="lg:hidden flex items-center gap-2">
+              <span className="md:hidden"><CartButton /></span>
+              <button
+                type="button"
+                className="p-2 rounded-md text-foreground hover:bg-accent"
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              >
+                {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              </button>
+            </div>
           </div>
         </div>
 

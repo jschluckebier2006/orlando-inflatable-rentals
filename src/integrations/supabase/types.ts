@@ -14,6 +14,41 @@ export type Database = {
   }
   public: {
     Tables: {
+      booking_items: {
+        Row: {
+          booking_id: string
+          created_at: string
+          id: string
+          product_id: string
+          product_name: string
+          product_price: number
+        }
+        Insert: {
+          booking_id: string
+          created_at?: string
+          id?: string
+          product_id: string
+          product_name: string
+          product_price: number
+        }
+        Update: {
+          booking_id?: string
+          created_at?: string
+          id?: string
+          product_id?: string
+          product_name?: string
+          product_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "booking_items_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       bookings: {
         Row: {
           created_at: string
@@ -23,14 +58,15 @@ export type Database = {
           event_address_line: string
           event_city: string
           event_date: string
+          event_end_time: string | null
           event_start_time: string | null
           event_type: string | null
           event_zip: string
           id: string
           notes: string | null
-          product_id: string
-          product_name: string
-          product_price: number
+          product_id: string | null
+          product_name: string | null
+          product_price: number | null
           status: Database["public"]["Enums"]["booking_status"]
           updated_at: string
         }
@@ -42,14 +78,15 @@ export type Database = {
           event_address_line: string
           event_city: string
           event_date: string
+          event_end_time?: string | null
           event_start_time?: string | null
           event_type?: string | null
           event_zip: string
           id?: string
           notes?: string | null
-          product_id: string
-          product_name: string
-          product_price: number
+          product_id?: string | null
+          product_name?: string | null
+          product_price?: number | null
           status?: Database["public"]["Enums"]["booking_status"]
           updated_at?: string
         }
@@ -61,14 +98,15 @@ export type Database = {
           event_address_line?: string
           event_city?: string
           event_date?: string
+          event_end_time?: string | null
           event_start_time?: string | null
           event_type?: string | null
           event_zip?: string
           id?: string
           notes?: string | null
-          product_id?: string
-          product_name?: string
-          product_price?: number
+          product_id?: string | null
+          product_name?: string | null
+          product_price?: number | null
           status?: Database["public"]["Enums"]["booking_status"]
           updated_at?: string
         }
@@ -101,6 +139,13 @@ export type Database = {
         Args: { _product_id: string }
         Returns: {
           event_date: string
+        }[]
+      }
+      get_booked_dates_for_products: {
+        Args: { _product_ids: string[] }
+        Returns: {
+          event_date: string
+          product_id: string
         }[]
       }
       has_role: {
