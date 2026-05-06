@@ -253,8 +253,8 @@ export function Header() {
             </div>
 
             {/* Mobile menu button */}
-            <div className="md:hidden flex items-center gap-2">
-              <CartButton />
+            <div className="lg:hidden flex items-center gap-2">
+              <span className="md:hidden"><CartButton /></span>
               <button
                 type="button"
                 className="p-2 rounded-md text-foreground hover:bg-accent"
