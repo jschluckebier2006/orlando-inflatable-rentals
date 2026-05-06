@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { SEOHead } from "@/components/seo/SEOHead";
 import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
@@ -183,7 +184,7 @@ export default function TableChairRentals() {
               Reserve Your Tables and Chairs Today
             </h2>
             <p className="text-muted-foreground leading-relaxed mb-8">
-              Ready to ensure comfortable seating for all your guests? Contact Orlando Inflatables at (407) 497-1840 or complete our online quote form. We provide table and chair rentals throughout East Orlando including Alafaya, Avalon Park, Azalea Park, Bithlo, Christmas, Chuluota, Eastwood, Stoneybrook, Waterford Lakes, and Wedgefield.
+              Ready to ensure comfortable seating for all your guests? Contact Orlando Inflatables at (407) 497-1840 or complete our online quote form. We provide table and chair rentals throughout East Orlando including <Link to="/water-slide-and-bounce-house-rental-alafaya" className="text-primary hover:underline">Alafaya</Link>, <Link to="/water-slide-and-bounce-house-rental-avalon-park" className="text-primary hover:underline">Avalon Park</Link>, <Link to="/water-slide-and-bounce-house-rental-azalea-park" className="text-primary hover:underline">Azalea Park</Link>, <Link to="/water-slide-and-bounce-house-rental-bithlo" className="text-primary hover:underline">Bithlo</Link>, <Link to="/water-slide-and-bounce-house-rental-christmas" className="text-primary hover:underline">Christmas</Link>, <Link to="/water-slide-and-bounce-house-rental-chuluota" className="text-primary hover:underline">Chuluota</Link>, <Link to="/water-slide-and-bounce-house-rental-eastwood" className="text-primary hover:underline">Eastwood</Link>, <Link to="/water-slide-and-bounce-house-rental-stoneybrook" className="text-primary hover:underline">Stoneybrook</Link>, <Link to="/water-slide-and-bounce-house-rental-waterford-lakes" className="text-primary hover:underline">Waterford Lakes</Link>, and <Link to="/water-slide-and-bounce-house-rental-wedgefield" className="text-primary hover:underline">Wedgefield</Link>.
             </p>
           </div>
         </div>
