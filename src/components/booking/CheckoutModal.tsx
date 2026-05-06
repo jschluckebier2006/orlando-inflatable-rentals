@@ -19,6 +19,7 @@ import { cn } from "@/lib/utils";
 import {
   DURATION_LABELS, DURATION_MULTIPLIERS, DURATION_DESCRIPTIONS, type DurationType,
 } from "@/lib/pricing";
+import { PaymentStep } from "./PaymentStep";
 
 const EVENT_TYPES = [
   "Birthday Party", "School Event", "Church Event",
@@ -423,7 +424,7 @@ export function CheckoutModal() {
               </Button>
             </div>
           </div>
-        ) : (
+        ) : step === 3 ? (
           <div className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1">
@@ -487,16 +488,38 @@ export function CheckoutModal() {
             </div>
 
             <div className="flex justify-between gap-2 pt-2">
-              <Button variant="outline" onClick={() => setStep(2)} disabled={submitting}>Back</Button>
+              <Button variant="outline" onClick={() => setStep(2)}>Back</Button>
               <Button
-                onClick={handleSubmit}
-                disabled={!canSubmit || submitting}
+                onClick={() => setStep(4)}
+                disabled={!canSubmit}
                 className="bg-secondary hover:bg-secondary/90 text-secondary-foreground"
               >
-                {submitting ? (<><Loader2 className="mr-2 h-4 w-4 animate-spin" />Submitting...</>) : "Reserve Now"}
+                Continue to payment
               </Button>
             </div>
           </div>
+        ) : (
+          <PaymentStep
+            total={total}
+            onBack={() => setStep(3)}
+            payload={{
+              duration_type: duration,
+              event_date: date ? format(date, "yyyy-MM-dd") : "",
+              event_start_time: form.event_start_time,
+              event_end_time: form.event_end_time,
+              event_type: form.event_type || null,
+              customer_name: form.customer_name.trim(),
+              customer_email: form.customer_email.trim(),
+              customer_phone: form.customer_phone.trim(),
+              event_address_line: form.event_address_line.trim(),
+              event_city: form.event_city.trim(),
+              event_zip: form.event_zip.trim(),
+              notes: form.notes.trim() || null,
+              items: items.map((i) => ({
+                product_id: i.id, product_name: i.name, product_price: i.price,
+              })),
+            }}
+          />
         )}
       </DialogContent>
     </Dialog>
