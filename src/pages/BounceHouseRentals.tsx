@@ -5,6 +5,7 @@ import { BreadcrumbSchema } from "@/components/seo/BreadcrumbSchema";
 import { ServiceSchema } from "@/components/seo/ServiceSchema";
 import { FAQPageSchema } from "@/components/seo/FAQPageSchema";
 import { CTASection } from "@/components/home/CTASection";
+import { DeliveryAreaLinks } from "@/components/home/DeliveryAreaLinks";
 import { ReviewsSection } from "@/components/home/ReviewsSection";
 import { ProductGrid } from "@/components/inventory/ProductGrid";
 import { getBounceHouses } from "@/data/inventory";
@@ -207,6 +208,7 @@ export default function BounceHouseRentals() {
         </div>
       </section>
 
+      <DeliveryAreaLinks />
       <CTASection />
       <JotformModal open={showJotform} onOpenChange={setShowJotform} />
     </Layout>
