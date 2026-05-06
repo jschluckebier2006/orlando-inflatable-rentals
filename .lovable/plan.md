@@ -1,37 +1,47 @@
-## Wrap up Stripe payment integration
+# Admin Bookings Dashboard Expansion
 
-The payment infrastructure (deposit/full/custom flow, embedded Stripe Checkout, webhook → booking) is wired. Three pieces remain to make it production-ready.
+Add two new sections at the top of `/admin/bookings`, above the existing table:
 
-### 1. Admin Bookings: show payment info
+1. **Monthly calendar** — each day cell shows total rented items (sum of `booking_items` count) for confirmed + pending bookings on that date.
+2. **Next 7 days list** — every confirmed/pending booking in the upcoming week with date, customer name, phone, full address, items, and status.
 
-Update `src/pages/admin/Bookings.tsx`:
-- Extend the `Booking` type with `payment_status`, `amount_paid`, `balance_due`, `deposit_amount`, `total_amount`, `stripe_session_id`.
-- Add a **Payment** column (between Status and Actions) showing:
-  - Badge for `payment_status` (`unpaid` / `deposit_paid` / `paid_in_full` / `refunded`)
-  - "Paid $X.XX of $Y.YY"
-  - "Balance due: $Z.ZZ" (highlighted when > 0)
-- Add a "Payment" filter option alongside the status filter (paid in full / deposit only / unpaid).
+## What it will look like
 
-### 2. Deploy & smoke-test edge functions
+```text
++----------------------- Admin / Bookings ------------------------+
+| [< Nov 2026 >]                                                  |
+| Sun  Mon  Tue  Wed  Thu  Fri  Sat                               |
+|  -    -    -    1    -    -    2                                |
+|  -    3    -    -    5    -    1     <- number = total items   |
+|  ...                                                            |
++-----------------------------------------------------------------+
+| Next 7 Days                                                     |
+| Nov 7  John Smith   (407) 555-1234   123 Main St, Orlando 32801 |
+|        Items: Bounce House, Combo Slide        [confirmed]      |
+| Nov 8  Jane Doe     ...                                         |
++-----------------------------------------------------------------+
+| [existing filter + bookings table stays below]                  |
++-----------------------------------------------------------------+
+```
 
-- Deploy `create-booking-checkout` and `payments-webhook`.
-- Verify `create-booking-checkout` returns a `clientSecret` for a sample payload (sandbox env, $50 deposit choice).
-- Confirm `payments-webhook` is reachable. Webhook signature is validated by the Stripe SDK in code; sandbox webhook secret is already set.
-- Check edge logs for any cold-start errors.
+## Implementation
 
-### 3. Cleanup / polish
+**File: `src/pages/admin/Bookings.tsx`**
+- Reuse the `bookings` state already loaded (it includes `booking_items`, `event_date`, `event_end_date`, status, customer fields).
+- Build a `Map<dateString, totalItems>` by iterating bookings filtered to `status in (confirmed, pending)`. For multi-day bookings (`event_end_date`), count items on every date in the range.
+- New component `BookingsCalendar` (inline or `src/components/admin/BookingsCalendar.tsx`):
+  - Month grid built from `date-fns` (`startOfMonth`, `endOfMonth`, `eachDayOfInterval`, plus padding to align Sun–Sat).
+  - Prev/next month buttons, "Today" button.
+  - Each cell: day number top-left; if `count > 0`, a centered badge with the count using the bright-blue theme color. Empty days are muted.
+  - Clicking a day scrolls to / filters the table below to that date (nice-to-have; included).
+- New component `UpcomingWeekList` (inline or `src/components/admin/UpcomingWeekList.tsx`):
+  - Filters bookings where `event_date` is between today and today+7 days, status confirmed/pending.
+  - Sorted ascending. Each row shows: formatted date, customer name, `tel:` phone link, `event_address_line, event_city event_zip`, comma-joined `booking_items` names with quantities, and the existing status badge.
+  - Empty state: "No bookings in the next 7 days."
 
-- The `submit-booking` edge function and the legacy `handleSubmit` path in `CheckoutModal.tsx` are now bypassed (the cart goes straight from step 3 → PaymentStep → Stripe → webhook creates the booking). Remove the dead `handleSubmit` and unused imports from `CheckoutModal.tsx` to keep the file lean. Leave the `submit-booking` function deployed for now in case of fallback, but mark it unused in a code comment.
-- `CheckoutReturn.tsx` currently shows success after a 1.5s timer regardless. Improve it to **poll the bookings table by `stripe_session_id`** (up to ~10s) so we only display "Confirmed" once the webhook actually wrote the row. If polling times out, show "Payment received — finalizing your reservation. We'll email confirmation shortly."
+No DB schema changes, no new edge functions, no new dependencies — `date-fns` is already in use.
 
-### Technical notes
-
-- Webhook env: the handler reads `?env=sandbox|live` from the URL. The Stripe-registered webhook URLs already include this, so no change needed.
-- No DB schema changes needed — `payment_status`, `amount_paid`, `balance_due`, `deposit_amount`, `stripe_session_id` already exist on `bookings`.
-- Stripe sandbox test card: `4242 4242 4242 4242`, any future expiry, any CVC.
-
-### Out of scope (ask before doing)
-
-- Live-mode go-live / claiming the Stripe account.
-- Refund tooling in admin UI.
-- Email receipts beyond Stripe's built-in.
+## Out of scope
+- Editing bookings from the calendar (still done in the table below).
+- Revenue / payment totals on the calendar (per your choice: item count only).
+- Cancelled or awaiting_payment bookings (excluded per your choice).
