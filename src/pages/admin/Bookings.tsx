@@ -18,6 +18,7 @@ interface BookingItem {
   id: string;
   product_name: string;
   product_price: number;
+  unit_price?: number | null;
 }
 
 interface Booking {
@@ -26,6 +27,9 @@ interface Booking {
   product_name: string | null;
   product_price: number | null;
   event_date: string;
+  event_end_date?: string | null;
+  duration_type?: "7hour" | "overnight" | "weekend" | null;
+  price_multiplier?: number | null;
   event_start_time: string | null;
   event_end_time: string | null;
   event_type: string | null;
@@ -82,7 +86,7 @@ export default function AdminBookings() {
     setLoading(true);
     const { data, error } = await supabase
       .from("bookings")
-      .select("*, booking_items(id, product_name, product_price)")
+      .select("*, booking_items(id, product_name, product_price, unit_price)")
       .order("event_date", { ascending: true });
     if (error) {
       toast({ title: "Load failed", description: error.message, variant: "destructive" });
@@ -163,6 +167,16 @@ export default function AdminBookings() {
                 <TableRow key={b.id}>
                   <TableCell className="whitespace-nowrap">
                     <div className="font-medium">{format(new Date(b.event_date + "T12:00:00"), "MMM d, yyyy")}</div>
+                    {b.event_end_date && b.event_end_date !== b.event_date && (
+                      <div className="text-xs text-muted-foreground">
+                        → {format(new Date(b.event_end_date + "T12:00:00"), "MMM d, yyyy")}
+                      </div>
+                    )}
+                    {b.duration_type && (
+                      <div className="text-xs font-medium text-primary">
+                        {b.duration_type === "7hour" ? "7-Hour" : b.duration_type === "overnight" ? "Overnight" : "Full Weekend"}
+                      </div>
+                    )}
                     {b.event_start_time && (
                       <div className="text-xs text-muted-foreground">
                         {b.event_start_time}{b.event_end_time ? ` – ${b.event_end_time}` : ""}
@@ -175,7 +189,12 @@ export default function AdminBookings() {
                         {b.booking_items.map((it) => (
                           <li key={it.id}>
                             <span className="font-medium">{it.product_name}</span>
-                            <span className="text-xs text-muted-foreground"> · ${it.product_price}/day</span>
+                            <span className="text-xs text-muted-foreground">
+                              {" "}· ${Number(it.unit_price ?? it.product_price).toFixed(2)}
+                              {it.unit_price != null && it.unit_price !== it.product_price && (
+                                <> (base ${Number(it.product_price).toFixed(2)})</>
+                              )}
+                            </span>
                           </li>
                         ))}
                       </ul>
