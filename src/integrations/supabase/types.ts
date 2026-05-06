@@ -22,6 +22,7 @@ export type Database = {
           product_id: string
           product_name: string
           product_price: number
+          unit_price: number | null
         }
         Insert: {
           booking_id: string
@@ -30,6 +31,7 @@ export type Database = {
           product_id: string
           product_name: string
           product_price: number
+          unit_price?: number | null
         }
         Update: {
           booking_id?: string
@@ -38,6 +40,7 @@ export type Database = {
           product_id?: string
           product_name?: string
           product_price?: number
+          unit_price?: number | null
         }
         Relationships: [
           {
@@ -55,15 +58,18 @@ export type Database = {
           customer_email: string
           customer_name: string
           customer_phone: string
+          duration_type: string
           event_address_line: string
           event_city: string
           event_date: string
+          event_end_date: string
           event_end_time: string | null
           event_start_time: string | null
           event_type: string | null
           event_zip: string
           id: string
           notes: string | null
+          price_multiplier: number
           product_id: string | null
           product_name: string | null
           product_price: number | null
@@ -75,15 +81,18 @@ export type Database = {
           customer_email: string
           customer_name: string
           customer_phone: string
+          duration_type?: string
           event_address_line: string
           event_city: string
           event_date: string
+          event_end_date?: string
           event_end_time?: string | null
           event_start_time?: string | null
           event_type?: string | null
           event_zip: string
           id?: string
           notes?: string | null
+          price_multiplier?: number
           product_id?: string | null
           product_name?: string | null
           product_price?: number | null
@@ -95,15 +104,18 @@ export type Database = {
           customer_email?: string
           customer_name?: string
           customer_phone?: string
+          duration_type?: string
           event_address_line?: string
           event_city?: string
           event_date?: string
+          event_end_date?: string
           event_end_time?: string | null
           event_start_time?: string | null
           event_type?: string | null
           event_zip?: string
           id?: string
           notes?: string | null
+          price_multiplier?: number
           product_id?: string | null
           product_name?: string | null
           product_price?: number | null
