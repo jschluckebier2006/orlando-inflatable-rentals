@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { format } from "date-fns";
+import { format, addDays } from "date-fns";
 import { CalendarIcon, Check, Loader2, AlertTriangle, Trash2 } from "lucide-react";
 import {
   Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle,
@@ -16,13 +16,17 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useCart } from "@/contexts/CartContext";
 import { cn } from "@/lib/utils";
+import {
+  DURATION_LABELS, DURATION_MULTIPLIERS, DURATION_DESCRIPTIONS, type DurationType,
+} from "@/lib/pricing";
 
 const EVENT_TYPES = [
   "Birthday Party", "School Event", "Church Event",
   "Corporate Event", "Graduation", "Community Event", "Other",
 ];
 
-// 8:00 AM through 8:00 PM in 30-min increments
+const ORDER: DurationType[] = ["7hour", "overnight", "weekend"];
+
 function buildTimeSlots() {
   const slots: { value: string; label: string }[] = [];
   for (let h = 8; h <= 20; h++) {
@@ -37,14 +41,18 @@ function buildTimeSlots() {
   return slots;
 }
 const TIME_SLOTS = buildTimeSlots();
+const labelFor = (v: string) => TIME_SLOTS.find((t) => t.value === v)?.label ?? v;
 const toDateString = (d: Date) => format(d, "yyyy-MM-dd");
 
 export function CheckoutModal() {
   const { toast } = useToast();
-  const { items, total, removeItem, clear, isCheckoutOpen, setCheckoutOpen } = useCart();
+  const {
+    items, baseTotal, total, duration, setDuration,
+    removeItem, clear, isCheckoutOpen, setCheckoutOpen,
+  } = useCart();
   const [step, setStep] = useState(1);
   const [date, setDate] = useState<Date | undefined>();
-  const [bookedMap, setBookedMap] = useState<Record<string, string[]>>({}); // product_id -> dates
+  const [bookedMap, setBookedMap] = useState<Record<string, Set<string>>>({});
   const [submitting, setSubmitting] = useState(false);
   const [confirmedId, setConfirmedId] = useState<string | null>(null);
 
@@ -55,6 +63,21 @@ export function CheckoutModal() {
     event_type: "", notes: "",
   });
 
+  // Apply duration-based time defaults
+  useEffect(() => {
+    if (duration === "overnight") {
+      setForm((f) => ({
+        ...f,
+        event_start_time: f.event_start_time || "10:00",
+        event_end_time: "08:00",
+      }));
+    } else if (duration === "weekend") {
+      setForm((f) => ({ ...f, event_start_time: "08:00", event_end_time: "20:00" }));
+    }
+    // reset selected date if it no longer fits weekend
+    if (duration === "weekend" && date && date.getDay() !== 6) setDate(undefined);
+  }, [duration]); // eslint-disable-line react-hooks/exhaustive-deps
+
   useEffect(() => {
     if (isCheckoutOpen) {
       setStep(1);
@@ -63,7 +86,6 @@ export function CheckoutModal() {
     }
   }, [isCheckoutOpen]);
 
-  // Load booked dates for all cart items
   useEffect(() => {
     if (!isCheckoutOpen || items.length === 0) {
       setBookedMap({});
@@ -79,38 +101,49 @@ export function CheckoutModal() {
         setBookedMap({});
         return;
       }
-      const map: Record<string, string[]> = {};
+      const map: Record<string, Set<string>> = {};
       (data ?? []).forEach((r: { product_id: string; event_date: string }) => {
-        (map[r.product_id] ||= []).push(r.event_date);
+        (map[r.product_id] ||= new Set()).add(r.event_date);
       });
       setBookedMap(map);
     })();
     return () => { cancelled = true; };
   }, [isCheckoutOpen, items]);
 
-  // A date is disabled if ANY cart item is booked that day
-  const allBlockedDates = useMemo(() => {
-    const set = new Set<string>();
-    Object.values(bookedMap).forEach((arr) => arr.forEach((d) => set.add(d)));
-    return set;
-  }, [bookedMap]);
+  // Days the booking will occupy given start date + duration
+  function occupiedDates(start: Date): string[] {
+    if (duration === "7hour") return [toDateString(start)];
+    return [toDateString(start), toDateString(addDays(start, 1))];
+  }
 
   const isDateDisabled = (d: Date) => {
     const today = new Date(); today.setHours(0, 0, 0, 0);
     if (d < today) return true;
-    return allBlockedDates.has(toDateString(d));
+    if (duration === "weekend" && d.getDay() !== 6) return true;
+    const days = occupiedDates(d);
+    return items.some((i) => {
+      const set = bookedMap[i.id];
+      if (!set) return false;
+      return days.some((day) => set.has(day));
+    });
   };
 
   const conflictingItems = useMemo(() => {
     if (!date) return [];
-    const ds = toDateString(date);
-    return items.filter((i) => (bookedMap[i.id] ?? []).includes(ds));
-  }, [date, items, bookedMap]);
+    const days = occupiedDates(date);
+    return items.filter((i) => {
+      const set = bookedMap[i.id];
+      if (!set) return false;
+      return days.some((d) => set.has(d));
+    });
+  }, [date, items, bookedMap, duration]);
+
+  const endDate = date ? (duration === "7hour" ? date : addDays(date, 1)) : undefined;
 
   const canContinueStep1 = !!date && items.length > 0 && conflictingItems.length === 0;
   const canContinueStep2 =
     !!form.event_start_time && !!form.event_end_time &&
-    form.event_end_time > form.event_start_time;
+    (duration !== "7hour" || form.event_end_time > form.event_start_time);
   const canSubmit =
     form.customer_name.trim() && form.customer_email.trim() && form.customer_phone.trim() &&
     form.event_address_line.trim() && form.event_city.trim() && form.event_zip.trim();
@@ -121,7 +154,10 @@ export function CheckoutModal() {
     try {
       const { data, error } = await supabase.functions.invoke("submit-booking", {
         body: {
+          duration_type: duration,
           event_date: toDateString(date),
+          event_end_date: toDateString(endDate!),
+          price_multiplier: DURATION_MULTIPLIERS[duration],
           event_start_time: form.event_start_time,
           event_end_time: form.event_end_time,
           event_type: form.event_type || null,
@@ -133,7 +169,10 @@ export function CheckoutModal() {
           event_zip: form.event_zip.trim(),
           notes: form.notes.trim() || null,
           items: items.map((i) => ({
-            product_id: i.id, product_name: i.name, product_price: i.price,
+            product_id: i.id,
+            product_name: i.name,
+            product_price: i.price,
+            unit_price: Math.round(i.price * DURATION_MULTIPLIERS[duration] * 100) / 100,
           })),
         },
       });
@@ -164,7 +203,7 @@ export function CheckoutModal() {
           <DialogDescription>
             {confirmedId
               ? "We'll confirm by phone or email shortly."
-              : "Pick your date and times, then enter your event details."}
+              : "Choose your rental length, date, and event details."}
           </DialogDescription>
         </DialogHeader>
 
@@ -191,14 +230,48 @@ export function CheckoutModal() {
           </div>
         ) : step === 1 ? (
           <div className="space-y-4">
+            {/* Duration tier selector */}
+            <div className="space-y-2">
+              <p className="text-sm font-semibold text-foreground">Rental length</p>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                {ORDER.map((d) => {
+                  const tierTotal = Math.round(baseTotal * DURATION_MULTIPLIERS[d] * 100) / 100;
+                  const active = d === duration;
+                  const pct = Math.round((DURATION_MULTIPLIERS[d] - 1) * 100);
+                  return (
+                    <button
+                      key={d}
+                      type="button"
+                      onClick={() => setDuration(d)}
+                      className={cn(
+                        "text-left rounded-lg border p-3 transition-colors",
+                        active
+                          ? "border-primary bg-primary/5 ring-1 ring-primary"
+                          : "border-border hover:border-primary/40"
+                      )}
+                    >
+                      <p className="text-sm font-semibold">
+                        {DURATION_LABELS[d]}
+                        {pct > 0 && <span className="ml-1 text-xs text-muted-foreground">+{pct}%</span>}
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-0.5">{DURATION_DESCRIPTIONS[d]}</p>
+                      <p className="text-sm font-semibold mt-1">${tierTotal.toFixed(2)}</p>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
             <div className="rounded-md bg-muted/40 p-3 space-y-2">
               <p className="text-sm font-semibold text-foreground">Items in your cart ({items.length})</p>
               <ul className="space-y-1 text-sm">
                 {items.map((i) => {
-                  const conflict = date && (bookedMap[i.id] ?? []).includes(toDateString(date));
+                  const days = date ? occupiedDates(date) : [];
+                  const conflict = days.some((d) => bookedMap[i.id]?.has(d));
+                  const charged = Math.round(i.price * DURATION_MULTIPLIERS[duration] * 100) / 100;
                   return (
                     <li key={i.id} className={cn("flex items-center justify-between gap-2", conflict && "text-destructive")}>
-                      <span className="truncate">{i.name} — ${i.price}/day</span>
+                      <span className="truncate">{i.name} — ${charged.toFixed(2)}</span>
                       {conflict && (
                         <Button size="sm" variant="ghost" onClick={() => removeItem(i.id)}>
                           <Trash2 className="h-3 w-3 mr-1" /> Remove
@@ -212,7 +285,8 @@ export function CheckoutModal() {
 
             <div className="space-y-2">
               <Label className="flex items-center gap-2">
-                <CalendarIcon className="h-4 w-4" /> Pick your event date
+                <CalendarIcon className="h-4 w-4" />
+                {duration === "weekend" ? "Pick your weekend (Saturday delivery)" : "Pick your event date"}
               </Label>
               <div className="rounded-md border border-border flex justify-center">
                 <Calendar
@@ -224,16 +298,20 @@ export function CheckoutModal() {
                 />
               </div>
               <p className="text-xs text-muted-foreground">
-                Greyed-out dates are unavailable for at least one item in your cart.
+                {duration === "weekend"
+                  ? "Only Saturdays available. Greyed-out Saturdays mean at least one cart item is booked Sat or Sun."
+                  : duration === "overnight"
+                  ? "Greyed-out dates mean an item is booked that day or the following morning."
+                  : "Greyed-out dates are unavailable for at least one item in your cart."}
               </p>
               {conflictingItems.length > 0 && (
                 <div className="rounded-md border border-destructive/40 bg-destructive/10 p-3 text-sm flex gap-2">
                   <AlertTriangle className="h-4 w-4 text-destructive shrink-0 mt-0.5" />
                   <div>
                     <p className="font-semibold text-destructive">
-                      {conflictingItems.length} item(s) unavailable on this date
+                      {conflictingItems.length} item(s) unavailable for this date/length
                     </p>
-                    <p className="text-muted-foreground">Pick another date or remove the conflicting items above.</p>
+                    <p className="text-muted-foreground">Pick another date, change rental length, or remove the conflicting items above.</p>
                   </div>
                 </div>
               )}
@@ -252,40 +330,88 @@ export function CheckoutModal() {
           </div>
         ) : step === 2 ? (
           <div className="space-y-4">
-            <p className="text-sm text-muted-foreground">
-              Choose your delivery (start) time and pickup time. We deliver and pick up between 8:00 AM and 8:00 PM.
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-1">
-                <Label>Delivery / start time *</Label>
-                <Select value={form.event_start_time} onValueChange={(v) => setForm({ ...form, event_start_time: v })}>
-                  <SelectTrigger><SelectValue placeholder="Select start time" /></SelectTrigger>
-                  <SelectContent className="max-h-72">
-                    {TIME_SLOTS.map((t) => (<SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-1">
-                <Label>Pickup time *</Label>
-                <Select value={form.event_end_time} onValueChange={(v) => setForm({ ...form, event_end_time: v })}>
-                  <SelectTrigger><SelectValue placeholder="Select pickup time" /></SelectTrigger>
-                  <SelectContent className="max-h-72">
-                    {TIME_SLOTS
-                      .filter((t) => !form.event_start_time || t.value > form.event_start_time)
-                      .map((t) => (<SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-1 md:col-span-2">
-                <Label>Event type</Label>
-                <Select value={form.event_type} onValueChange={(v) => setForm({ ...form, event_type: v })}>
-                  <SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger>
-                  <SelectContent>
-                    {EVENT_TYPES.map((t) => (<SelectItem key={t} value={t}>{t}</SelectItem>))}
-                  </SelectContent>
-                </Select>
-              </div>
+            {duration === "7hour" && (
+              <>
+                <p className="text-sm text-muted-foreground">
+                  Choose your delivery (start) time and pickup time. We deliver and pick up between 8:00 AM and 8:00 PM.
+                </p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <Label>Delivery / start time *</Label>
+                    <Select value={form.event_start_time} onValueChange={(v) => setForm({ ...form, event_start_time: v })}>
+                      <SelectTrigger><SelectValue placeholder="Select start time" /></SelectTrigger>
+                      <SelectContent className="max-h-72">
+                        {TIME_SLOTS.map((t) => (<SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-1">
+                    <Label>Pickup time *</Label>
+                    <Select value={form.event_end_time} onValueChange={(v) => setForm({ ...form, event_end_time: v })}>
+                      <SelectTrigger><SelectValue placeholder="Select pickup time" /></SelectTrigger>
+                      <SelectContent className="max-h-72">
+                        {TIME_SLOTS
+                          .filter((t) => !form.event_start_time || t.value > form.event_start_time)
+                          .map((t) => (<SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </>
+            )}
+
+            {duration === "overnight" && (
+              <>
+                <p className="text-sm text-muted-foreground">
+                  Pick your delivery time. Pickup is locked to <strong>8:00 AM the next morning</strong>.
+                </p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <Label>Delivery time *</Label>
+                    <Select value={form.event_start_time} onValueChange={(v) => setForm({ ...form, event_start_time: v })}>
+                      <SelectTrigger><SelectValue placeholder="Select delivery time" /></SelectTrigger>
+                      <SelectContent className="max-h-72">
+                        {TIME_SLOTS.map((t) => (<SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-1">
+                    <Label>Pickup time</Label>
+                    <Input value="8:00 AM (next day)" readOnly disabled />
+                  </div>
+                </div>
+              </>
+            )}
+
+            {duration === "weekend" && (
+              <>
+                <p className="text-sm text-muted-foreground">
+                  Full weekend rentals are <strong>Saturday 8:00 AM</strong> delivery through{" "}
+                  <strong>Sunday 8:00 PM</strong> pickup.
+                </p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <Label>Delivery</Label>
+                    <Input value="Saturday 8:00 AM" readOnly disabled />
+                  </div>
+                  <div className="space-y-1">
+                    <Label>Pickup</Label>
+                    <Input value="Sunday 8:00 PM" readOnly disabled />
+                  </div>
+                </div>
+              </>
+            )}
+
+            <div className="space-y-1">
+              <Label>Event type</Label>
+              <Select value={form.event_type} onValueChange={(v) => setForm({ ...form, event_type: v })}>
+                <SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger>
+                <SelectContent>
+                  {EVENT_TYPES.map((t) => (<SelectItem key={t} value={t}>{t}</SelectItem>))}
+                </SelectContent>
+              </Select>
             </div>
+
             <div className="flex justify-between gap-2 pt-2">
               <Button variant="outline" onClick={() => setStep(1)}>Back</Button>
               <Button
@@ -339,17 +465,25 @@ export function CheckoutModal() {
             </div>
 
             <div className="rounded-md bg-muted/50 p-3 text-sm space-y-1">
-              <p className="font-semibold">{date && format(date, "EEEE, MMMM d, yyyy")}</p>
+              <p className="font-semibold">{DURATION_LABELS[duration]}</p>
               <p className="text-muted-foreground">
-                Delivery {TIME_SLOTS.find(t => t.value === form.event_start_time)?.label}
-                {" · "}Pickup {TIME_SLOTS.find(t => t.value === form.event_end_time)?.label}
+                {date && format(date, "EEEE, MMMM d, yyyy")}
+                {duration !== "7hour" && endDate && (
+                  <> → {format(endDate, "EEEE, MMMM d, yyyy")}</>
+                )}
+              </p>
+              <p className="text-muted-foreground">
+                Delivery {labelFor(form.event_start_time)}
+                {" · "}Pickup {labelFor(form.event_end_time)}
+                {duration === "overnight" && " (next day)"}
               </p>
               <ul className="text-muted-foreground">
-                {items.map((i) => (
-                  <li key={i.id}>• {i.name} — ${i.price}/day</li>
-                ))}
+                {items.map((i) => {
+                  const charged = Math.round(i.price * DURATION_MULTIPLIERS[duration] * 100) / 100;
+                  return <li key={i.id}>• {i.name} — ${charged.toFixed(2)}</li>;
+                })}
               </ul>
-              <p className="font-semibold pt-1">Total: ${total.toFixed(2)} / day</p>
+              <p className="font-semibold pt-1">Total: ${total.toFixed(2)}</p>
             </div>
 
             <div className="flex justify-between gap-2 pt-2">
