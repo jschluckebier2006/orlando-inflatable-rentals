@@ -39,8 +39,8 @@ export default function BounceSlideComboRentals() {
   return (
     <Layout>
       <SEOHead
-        title="Bounce Slide Combo Rentals Orlando FL | 2-in-1 Inflatables"
-        description="Rent bounce house & slide combos in Orlando FL for birthday parties & events. Double the fun with 2-in-1 inflatables! Licensed & insured with free delivery. Call (407) 497-1840!"
+        title="Bounce House & Slide Combo Rentals in Orlando, FL"
+        description="Double the fun with bounce house and slide combo rentals in Orlando, FL. Perfect for birthdays & parties. Free delivery & setup in East Orlando. Call (407) 497-1840."
         canonical="/bounce-slide-combo-rentals"
       />
       <ServiceSchema

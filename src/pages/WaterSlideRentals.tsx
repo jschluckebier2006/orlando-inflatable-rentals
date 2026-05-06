@@ -36,8 +36,8 @@ export default function WaterSlideRentals() {
   return (
     <Layout>
       <SEOHead
-        title="Water Slide Rentals Orlando FL | Inflatable Water Slides"
-        description="Rent exciting inflatable water slides in Orlando FL for summer parties & events. Beat the Florida heat! Licensed & insured with free delivery. Call (407) 497-1840!"
+        title="Water Slide Rentals in Orlando, FL"
+        description="Beat the heat with water slide rentals in Orlando, FL. Dual-lane & single-lane water slides for parties & events in East Orlando & Orange County. Call (407) 497-1840."
         canonical="/water-slide-rentals"
       />
       <ServiceSchema

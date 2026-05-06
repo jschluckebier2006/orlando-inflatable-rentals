@@ -121,8 +121,8 @@ const BirthdayParties = () => {
   return (
     <Layout>
       <SEOHead
-        title="Birthday Party Bounce House Rentals Orlando | Kids Party Fun"
-        description="Make your child's birthday unforgettable with bounce house rentals in Orlando. Professional delivery, setup & pickup. Safe, clean inflatables for all ages. Book today!"
+        title="Birthday Party Inflatable Rentals in Orlando, FL"
+        description={"Make your child's birthday unforgettable with inflatable rentals in Orlando, FL. Bounce houses, water slides & more. Free delivery & setup. Call (407) 497-1840."}
         canonical="/events/birthday-party-inflatable-rentals-in-orlando"
       />
       <ServiceSchema

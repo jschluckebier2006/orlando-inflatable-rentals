@@ -278,8 +278,8 @@ export default function BithloDelivery() {
       <CityDeliveryPage
         cityName="Bithlo"
         citySlug="bithlo"
-        metaTitle="Bounce House & Water Slide Rentals Bithlo FL"
-        metaDescription="Bounce house & water slide rentals in Bithlo FL. Large inflatables for spacious country properties. Free delivery on rural routes! Call (407) 497-1840."
+        metaTitle="Bounce House & Water Slide Rentals in Bithlo, FL"
+        metaDescription="Bounce house and water slide rentals in Bithlo, FL. Free delivery & setup to Bithlo from Orlando Inflatables. Call (407) 497-1840 to book."
         nearbyAreas={nearbyAreas}
         ogImage="/og-images/og-bithlo.jpg"
         cityWikipediaUrl="https://en.wikipedia.org/wiki/Bithlo,_Florida"

@@ -40,8 +40,8 @@ export default function InteractiveGameRentals() {
   return (
     <Layout>
       <SEOHead
-        title="Interactive Game Rentals Orlando FL | Party Games"
-        description="Rent exciting interactive games in Orlando FL for parties & events. Basketball, soccer darts, jousting & more! Licensed & insured. Call (407) 497-1840!"
+        title="Interactive Game Rentals in Orlando, FL"
+        description="Interactive game rentals in Orlando, FL including dunk tanks, bungee runs, and more. Fun for all ages at parties & events in East Orlando. Call (407) 497-1840."
         canonical="/interactive-game-rentals"
       />
       <ServiceSchema

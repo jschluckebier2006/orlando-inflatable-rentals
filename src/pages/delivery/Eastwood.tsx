@@ -307,8 +307,8 @@ export default function EastwoodDelivery() {
       <CityDeliveryPage
         cityName="Eastwood"
         citySlug="eastwood"
-        metaTitle="Bounce House & Water Slide Rentals Eastwood FL"
-        metaDescription="Affordable bounce house & water slide rentals in Eastwood FL. Budget-friendly party inflatables with free delivery. Call (407) 497-1840 for quotes!"
+        metaTitle="Bounce House & Water Slide Rentals in Eastwood, FL"
+        metaDescription="Bounce house and water slide rentals in Eastwood, FL. Free delivery & setup to Eastwood from Orlando Inflatables. Call (407) 497-1840 to book."
         nearbyAreas={nearbyAreas}
         ogImage="/og-images/og-eastwood.jpg"
         cityDescription="Welcome to Eastwood, an established East Orlando neighborhood offering families a convenient, affordable location in the heart of it all! With easy access to major roads and employment centers, Eastwood residents enjoy the best of Orlando living. Orlando Inflatables is proud to serve this community with quality party rentals at prices that work for every budget."

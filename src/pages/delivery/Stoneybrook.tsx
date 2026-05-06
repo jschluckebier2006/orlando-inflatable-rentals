@@ -307,8 +307,8 @@ export default function StoneybrookDelivery() {
       <CityDeliveryPage
         cityName="Stoneybrook"
         citySlug="stoneybrook"
-        metaTitle="Bounce House & Water Slide Rentals Stoneybrook FL"
-        metaDescription="Premium bounce house & water slide rentals in Stoneybrook FL. HOA-friendly party inflatables with free delivery. Call (407) 497-1840 today!"
+        metaTitle="Bounce House & Water Slide Rentals in Stoneybrook, FL"
+        metaDescription="Bounce house and water slide rentals in Stoneybrook, FL. Free delivery & setup to Stoneybrook from Orlando Inflatables. Call (407) 497-1840 to book."
         nearbyAreas={nearbyAreas}
         ogImage="/og-images/og-stoneybrook.jpg"
         cityDescription="Welcome to Stoneybrook, one of East Orlando's most desirable master-planned communities! Known for beautiful homes, well-maintained common areas, and an active community life, Stoneybrook families know how to celebrate in style. Orlando Inflatables delivers premium party rentals that match the quality and care Stoneybrook residents expect."

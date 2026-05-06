@@ -40,8 +40,8 @@ export default function TableChairRentals() {
   return (
     <Layout>
       <SEOHead
-        title="Table & Chair Rentals Orlando FL | Party Seating"
-        description="Rent tables and chairs in Orlando FL for parties, weddings & events. Folding chairs, banquet tables & more. Free delivery! Call (407) 497-1840!"
+        title="Table & Chair Rentals in Orlando, FL"
+        description="Table and chair rentals in Orlando, FL for parties, events & gatherings. Affordable & convenient add-ons in East Orlando & Orange County. Call (407) 497-1840."
         canonical="/table-chair-rentals"
       />
       <ServiceSchema

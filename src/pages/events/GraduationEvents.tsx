@@ -131,8 +131,8 @@ const GraduationEvents = () => {
   return (
     <Layout>
       <SEOHead
-        title="Graduation Party Water Slide Rentals Orlando | Celebrate Grads"
-        description="Celebrate your graduate with water slide and bounce house rentals in Orlando. Pre-K to college graduation parties. Games & concessions. Book your celebration today!"
+        title="Graduation Party Water Slide Rentals in Orlando, FL"
+        description="Celebrate graduation with water slide rentals in Orlando, FL. Fun for all ages at grad parties in East Orlando & Orange County. Call (407) 497-1840."
         canonical="/events/graduation-party-water-slide-rentals-in-orlando"
       />
       <ServiceSchema
