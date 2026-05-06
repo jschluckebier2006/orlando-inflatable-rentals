@@ -28,6 +28,8 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { ChevronLeft, ChevronRight, Phone, MapPin } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import BookingFormModal, { type BookingFormBooking } from "@/components/admin/BookingFormModal";
+import { Plus, Pencil } from "lucide-react";
 
 type BookingStatus = "pending" | "confirmed" | "cancelled" | "completed";
 type PaymentStatus = "unpaid" | "deposit_paid" | "paid_in_full" | "refunded";
@@ -97,6 +99,8 @@ export default function AdminBookings() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<"all" | BookingStatus>("all");
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
+  const [editing, setEditing] = useState<BookingFormBooking | null>(null);
+  const [formOpen, setFormOpen] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -179,6 +183,7 @@ export default function AdminBookings() {
                 <SelectItem value="completed">Completed</SelectItem>
               </SelectContent>
             </Select>
+            <Button onClick={() => { setEditing(null); setFormOpen(true); }}><Plus className="h-4 w-4 mr-1" />New booking</Button>
             <Button variant="outline" onClick={load} disabled={loading}>Refresh</Button>
             <Button variant="outline" onClick={signOut}>Sign out</Button>
           </div>
@@ -288,6 +293,7 @@ export default function AdminBookings() {
                     )}
                   </TableCell>
                   <TableCell className="text-right space-x-1 whitespace-nowrap">
+                    <Button size="sm" variant="outline" onClick={() => { setEditing(b as any); setFormOpen(true); }}><Pencil className="h-3 w-3" /></Button>
                     {b.status === "pending" && (
                       <Button size="sm" onClick={() => updateStatus(b.id, "confirmed")}>Confirm</Button>
                     )}
@@ -304,6 +310,7 @@ export default function AdminBookings() {
           </Table>
         </div>
       </div>
+      <BookingFormModal open={formOpen} onOpenChange={setFormOpen} booking={editing} onSaved={load} />
     </div>
   );
 }
