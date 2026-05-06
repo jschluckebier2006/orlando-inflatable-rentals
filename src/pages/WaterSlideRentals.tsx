@@ -7,7 +7,6 @@ import { CTASection } from "@/components/home/CTASection";
 import { ReviewsSection } from "@/components/home/ReviewsSection";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Check, Phone, Shield, Clock, Droplets, Sun } from "lucide-react";
 import { useState } from "react";
 import { JotformModal } from "@/components/JotformModal";
@@ -23,10 +22,10 @@ const features = [
 ];
 
 const faqs = [
-  { question: "Do I need to provide a water source?", answer: "Yes, you'll need access to a standard garden hose within 100 feet of the setup location. Our water slides connect directly to your hose and use continuous water flow during operation." },
-  { question: "How much water do water slides use?", answer: "Our water slides typically use about the same amount of water as a garden sprinkler. The water recirculates, making them relatively efficient while keeping the slide surface wet and slippery for maximum fun." },
-  { question: "What surface can water slides be set up on?", answer: "Water slides work best on flat grass surfaces. We can also set up on concrete or asphalt with proper anchoring, though grass is preferred for softer landings in the splash zone." },
-  { question: "Are water slides safe for younger children?", answer: "We offer water slides specifically designed for younger children with gentler slopes and smaller heights. Our team can recommend the best option based on the ages of your guests." },
+  { question: "Do I need to provide a water source?", answer: "Yes! You'll need access to a standard garden hose within 50 feet of the setup area. We connect the hose to the slide to keep the surface wet and slippery. Water usage is minimal and your normal outdoor spigot works perfectly." },
+  { question: "How much water do water slides use?", answer: "Most of our water slides use about the same amount of water as a standard garden sprinkler — roughly 2 to 5 gallons per minute depending on the slide size. The water runs continuously during use to keep the slide surface wet and safe." },
+  { question: "What surface can water slides be set up on?", answer: "Grass is ideal. We can also set up on dirt or mulch. We cannot set up on concrete, asphalt, or gravel as these surfaces don't allow for safe anchoring and can cause injury." },
+  { question: "Are water slides safe for younger children?", answer: "Yes, with the right slide choice. Several slides in our inventory are designed for younger riders, with gentler slopes and lower heights. When you book, let us know the ages of the children attending and we'll recommend the best fit. All slides require adult supervision at all times." },
 ];
 
 export default function WaterSlideRentals() {
@@ -191,14 +190,14 @@ export default function WaterSlideRentals() {
         <div className="container-page">
           <div className="max-w-3xl mx-auto">
             <h2 className="font-display text-3xl font-bold text-foreground mb-8 text-center">Frequently Asked Questions</h2>
-            <Accordion type="single" collapsible className="w-full space-y-4">
+            <div className="space-y-6">
               {faqs.map((faq, index) => (
-                <AccordionItem key={index} value={`item-${index}`} className="bg-card rounded-lg border border-border px-6">
-                  <AccordionTrigger className="text-left font-display font-semibold hover:no-underline">{faq.question}</AccordionTrigger>
-                  <AccordionContent className="text-muted-foreground leading-relaxed">{faq.answer}</AccordionContent>
-                </AccordionItem>
+                <div key={index} className="bg-card rounded-lg border border-border p-6">
+                  <h3 className="font-display font-semibold text-lg text-foreground mb-2">{faq.question}</h3>
+                  <p className="text-muted-foreground leading-relaxed">{faq.answer}</p>
+                </div>
               ))}
-            </Accordion>
+            </div>
           </div>
         </div>
       </section>
