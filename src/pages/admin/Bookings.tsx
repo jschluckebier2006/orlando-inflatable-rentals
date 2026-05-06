@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { ChevronLeft, ChevronRight, Phone, MapPin } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 type BookingStatus = "pending" | "confirmed" | "cancelled" | "completed";
 type PaymentStatus = "unpaid" | "deposit_paid" | "paid_in_full" | "refunded";
@@ -315,18 +316,37 @@ function getCountedDates(b: Booking): string[] {
   return eachDayOfInterval({ start, end }).map((d) => format(d, "yyyy-MM-dd"));
 }
 
+interface DayInfo {
+  deliveries: Booking[];
+  pickups: Booking[];
+  ongoing: Booking[];
+  itemCount: number;
+}
+
 function BookingsCalendar({ bookings }: { bookings: Booking[] }) {
   const [cursor, setCursor] = useState<Date>(startOfMonth(new Date()));
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
-  const counts = new Map<string, number>();
+  const dayMap = new Map<string, DayInfo>();
+  const get = (k: string): DayInfo => {
+    let d = dayMap.get(k);
+    if (!d) { d = { deliveries: [], pickups: [], ongoing: [], itemCount: 0 }; dayMap.set(k, d); }
+    return d;
+  };
   bookings
     .filter((b) => b.status === "confirmed" || b.status === "pending")
     .forEach((b) => {
       const items = b.booking_items?.length ?? (b.product_id ? 1 : 0);
-      if (!items) return;
-      for (const key of getCountedDates(b)) {
-        counts.set(key, (counts.get(key) ?? 0) + items);
-      }
+      const startKey = b.event_date;
+      const endKey = b.event_end_date || b.event_date;
+      const dates = getCountedDates(b);
+      dates.forEach((key) => {
+        const info = get(key);
+        info.itemCount += items;
+        if (key === startKey) info.deliveries.push(b);
+        else if (key === endKey) info.pickups.push(b);
+        else info.ongoing.push(b);
+      });
     });
 
   const monthStart = startOfMonth(cursor);
@@ -335,6 +355,11 @@ function BookingsCalendar({ bookings }: { bookings: Booking[] }) {
   const gridEnd = endOfWeek(monthEnd, { weekStartsOn: 0 });
   const days = eachDayOfInterval({ start: gridStart, end: gridEnd });
   const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+  const selectedInfo = selectedDate ? dayMap.get(selectedDate) : null;
+  const selectedAll: Booking[] = selectedInfo
+    ? [...selectedInfo.deliveries, ...selectedInfo.ongoing, ...selectedInfo.pickups]
+    : [];
 
   return (
     <div className="bg-card rounded-lg border border-border p-4">
@@ -362,16 +387,23 @@ function BookingsCalendar({ bookings }: { bookings: Booking[] }) {
       <div className="grid grid-cols-7 gap-1">
         {days.map((d) => {
           const key = format(d, "yyyy-MM-dd");
-          const count = counts.get(key) ?? 0;
+          const info = dayMap.get(key);
           const inMonth = isSameMonth(d, cursor);
           const today = isToday(d);
+          const hasAny = !!info && info.itemCount > 0;
+          const deliveryCount = info?.deliveries.reduce((s, b) => s + (b.booking_items?.length ?? (b.product_id ? 1 : 0)), 0) ?? 0;
+          const pickupCount = info?.pickups.reduce((s, b) => s + (b.booking_items?.length ?? (b.product_id ? 1 : 0)), 0) ?? 0;
           return (
-            <div
+            <button
+              type="button"
               key={key}
+              onClick={() => hasAny && setSelectedDate(key)}
+              disabled={!hasAny}
               className={[
-                "aspect-square rounded-md border p-1.5 flex flex-col",
+                "aspect-square rounded-md border p-1.5 flex flex-col text-left transition",
                 inMonth ? "bg-background" : "bg-muted/30",
                 today ? "border-primary" : "border-border",
+                hasAny ? "hover:bg-accent cursor-pointer" : "cursor-default",
               ].join(" ")}
             >
               <div
@@ -383,20 +415,102 @@ function BookingsCalendar({ bookings }: { bookings: Booking[] }) {
               >
                 {format(d, "d")}
               </div>
-              <div className="flex-1 flex items-center justify-center">
-                {count > 0 && (
-                  <div className="rounded-full bg-primary text-primary-foreground text-xs md:text-sm font-bold min-w-[1.75rem] h-7 px-2 flex items-center justify-center">
-                    {count}
-                  </div>
+              <div className="flex-1 flex items-center justify-center gap-1 flex-wrap">
+                {deliveryCount > 0 && (
+                  <span
+                    title="Deliveries"
+                    className="rounded-full bg-primary text-primary-foreground text-xs font-bold min-w-[1.5rem] h-6 px-1.5 flex items-center justify-center"
+                  >
+                    {deliveryCount}
+                  </span>
+                )}
+                {pickupCount > 0 && (
+                  <span
+                    title="Pickups"
+                    className="rounded-full bg-destructive text-destructive-foreground text-xs font-bold min-w-[1.5rem] h-6 px-1.5 flex items-center justify-center"
+                  >
+                    {pickupCount}
+                  </span>
                 )}
               </div>
-            </div>
+            </button>
           );
         })}
       </div>
-      <p className="text-xs text-muted-foreground mt-3">
-        Each number is the total rented items that day (confirmed + pending).
-      </p>
+      <div className="flex items-center gap-4 mt-3 text-xs text-muted-foreground flex-wrap">
+        <span className="inline-flex items-center gap-1.5">
+          <span className="inline-block w-3 h-3 rounded-full bg-primary" /> Delivery day
+        </span>
+        <span className="inline-flex items-center gap-1.5">
+          <span className="inline-block w-3 h-3 rounded-full bg-destructive" /> Pickup day
+        </span>
+        <span>Click a day to see bookings.</span>
+      </div>
+
+      <Dialog open={!!selectedDate} onOpenChange={(o) => !o && setSelectedDate(null)}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>
+              {selectedDate && format(parseISO(selectedDate), "EEEE, MMMM d, yyyy")}
+            </DialogTitle>
+          </DialogHeader>
+          {selectedInfo && (
+            <div className="space-y-4">
+              {(["deliveries", "ongoing", "pickups"] as const).map((kind) => {
+                const list = selectedInfo[kind];
+                if (list.length === 0) return null;
+                const label = kind === "deliveries" ? "Deliveries" : kind === "pickups" ? "Pickups" : "Ongoing";
+                const dot = kind === "deliveries" ? "bg-primary" : kind === "pickups" ? "bg-destructive" : "bg-muted-foreground";
+                return (
+                  <div key={kind}>
+                    <h3 className="font-semibold mb-2 inline-flex items-center gap-2">
+                      <span className={`inline-block w-2.5 h-2.5 rounded-full ${dot}`} />
+                      {label} ({list.length})
+                    </h3>
+                    <ul className="divide-y divide-border border border-border rounded-md">
+                      {list.map((b) => (
+                        <li key={b.id} className="p-3">
+                          <div className="font-medium">{b.customer_name}</div>
+                          {b.customer_phone && (
+                            <a href={`tel:${b.customer_phone}`} className="text-sm text-primary inline-flex items-center gap-1 hover:underline">
+                              <Phone className="h-3 w-3" /> {b.customer_phone}
+                            </a>
+                          )}
+                          {(b.event_address_line || b.event_city) && (
+                            <div className="text-sm text-muted-foreground inline-flex items-start gap-1 mt-0.5">
+                              <MapPin className="h-3 w-3 mt-0.5 shrink-0" />
+                              <span>
+                                {[b.event_address_line, [b.event_city, b.event_zip].filter(Boolean).join(" ")].filter(Boolean).join(", ")}
+                              </span>
+                            </div>
+                          )}
+                          <div className="text-sm mt-1">
+                            <span className="text-muted-foreground">Items: </span>
+                            {b.booking_items && b.booking_items.length > 0
+                              ? b.booking_items.map((it) => it.product_name).join(", ")
+                              : b.product_name ?? "—"}
+                          </div>
+                          {b.event_end_date && b.event_end_date !== b.event_date && (
+                            <div className="text-xs text-muted-foreground mt-1">
+                              {format(parseISO(b.event_date), "MMM d")} → {format(parseISO(b.event_end_date), "MMM d")}
+                            </div>
+                          )}
+                          <div className="mt-2">
+                            <Badge className={STATUS_COLORS[b.status]}>{b.status}</Badge>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                );
+              })}
+              {selectedAll.length === 0 && (
+                <p className="text-sm text-muted-foreground">No bookings.</p>
+              )}
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
