@@ -206,11 +206,11 @@ export default function BookingFormModal({ open, onOpenChange, booking, onSaved 
 
     let bookingId = booking?.id;
     if (isEdit && bookingId) {
-      const { error } = await supabase.from("bookings").update(payload).eq("id", bookingId);
+      const { error } = await (supabase.from("bookings") as any).update(payload).eq("id", bookingId);
       if (error) { setSaving(false); toast({ title: "Save failed", description: error.message, variant: "destructive" }); return; }
       await supabase.from("booking_items").delete().eq("booking_id", bookingId);
     } else {
-      const { data, error } = await supabase.from("bookings").insert(payload).select("id").single();
+      const { data, error } = await (supabase.from("bookings") as any).insert(payload).select("id").single();
       if (error || !data) { setSaving(false); toast({ title: "Create failed", description: error?.message, variant: "destructive" }); return; }
       bookingId = data.id;
     }
