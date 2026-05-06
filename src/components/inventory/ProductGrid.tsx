@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { ProductCard } from "./ProductCard";
-import { JotformModal } from "@/components/JotformModal";
+import { BookingModal } from "@/components/booking/BookingModal";
 import type { Product } from "@/data/inventory";
 
 interface ProductGridProps {
@@ -9,7 +9,8 @@ interface ProductGridProps {
 }
 
 export function ProductGrid({ products, columns = 4 }: ProductGridProps) {
-  const [showJotform, setShowJotform] = useState(false);
+  const [activeProduct, setActiveProduct] = useState<Product | undefined>();
+  const [open, setOpen] = useState(false);
 
   const gridCols = {
     2: "grid-cols-1 sm:grid-cols-2",
@@ -24,11 +25,11 @@ export function ProductGrid({ products, columns = 4 }: ProductGridProps) {
           <ProductCard 
             key={product.id} 
             product={product} 
-            onClick={() => setShowJotform(true)}
+            onClick={() => { setActiveProduct(product); setOpen(true); }}
           />
         ))}
       </div>
-      <JotformModal open={showJotform} onOpenChange={setShowJotform} />
+      <BookingModal open={open} onOpenChange={setOpen} product={activeProduct} />
     </>
   );
 }
