@@ -8,6 +8,9 @@ import { lazy, Suspense } from "react";
 import Index from "./pages/Index"; // Eager — homepage is the most common entry; avoid extra round-trip
 import { ScrollToTop } from "./components/ScrollToTop";
 import NotFound from "./pages/NotFound";
+import { CartProvider } from "./contexts/CartContext";
+import { CartDrawer } from "./components/cart/CartDrawer";
+import { CheckoutModal } from "./components/booking/CheckoutModal";
 
 // Lazy-load every other route so each page only ships its own JS
 const Rentals = lazy(() => import("./pages/Rentals"));
@@ -80,10 +83,11 @@ const App = () => (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <ScrollToTop />
-          <Suspense fallback={<RouteFallback />}>
+          <CartProvider>
+            <Toaster />
+            <Sonner />
+            <ScrollToTop />
+            <Suspense fallback={<RouteFallback />}>
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/water-slide-and-bounce-house-rentals-orlando" element={<Index />} />
@@ -149,6 +153,9 @@ const App = () => (
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Suspense>
+          <CartDrawer />
+          <CheckoutModal />
+          </CartProvider>
         </TooltipProvider>
       </BrowserRouter>
     </QueryClientProvider>
