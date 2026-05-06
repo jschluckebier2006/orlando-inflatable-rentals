@@ -306,3 +306,175 @@ export default function AdminBookings() {
     </div>
   );
 }
+
+// ---------- Calendar ----------
+
+function getCountedDates(b: Booking): string[] {
+  const start = parseISO(b.event_date);
+  const end = b.event_end_date ? parseISO(b.event_end_date) : start;
+  return eachDayOfInterval({ start, end }).map((d) => format(d, "yyyy-MM-dd"));
+}
+
+function BookingsCalendar({ bookings }: { bookings: Booking[] }) {
+  const [cursor, setCursor] = useState<Date>(startOfMonth(new Date()));
+
+  const counts = new Map<string, number>();
+  bookings
+    .filter((b) => b.status === "confirmed" || b.status === "pending")
+    .forEach((b) => {
+      const items = b.booking_items?.length ?? (b.product_id ? 1 : 0);
+      if (!items) return;
+      for (const key of getCountedDates(b)) {
+        counts.set(key, (counts.get(key) ?? 0) + items);
+      }
+    });
+
+  const monthStart = startOfMonth(cursor);
+  const monthEnd = endOfMonth(cursor);
+  const gridStart = startOfWeek(monthStart, { weekStartsOn: 0 });
+  const gridEnd = endOfWeek(monthEnd, { weekStartsOn: 0 });
+  const days = eachDayOfInterval({ start: gridStart, end: gridEnd });
+  const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+  return (
+    <div className="bg-card rounded-lg border border-border p-4">
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="font-display text-xl font-semibold">
+          {format(cursor, "MMMM yyyy")}
+        </h2>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm" onClick={() => setCursor((c) => subMonths(c, 1))}>
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => setCursor(startOfMonth(new Date()))}>
+            Today
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => setCursor((c) => addMonths(c, 1))}>
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+        </div>
+      </div>
+      <div className="grid grid-cols-7 gap-1 text-xs font-semibold text-muted-foreground mb-1">
+        {weekdays.map((w) => (
+          <div key={w} className="text-center py-1">{w}</div>
+        ))}
+      </div>
+      <div className="grid grid-cols-7 gap-1">
+        {days.map((d) => {
+          const key = format(d, "yyyy-MM-dd");
+          const count = counts.get(key) ?? 0;
+          const inMonth = isSameMonth(d, cursor);
+          const today = isToday(d);
+          return (
+            <div
+              key={key}
+              className={[
+                "aspect-square rounded-md border p-1.5 flex flex-col",
+                inMonth ? "bg-background" : "bg-muted/30",
+                today ? "border-primary" : "border-border",
+              ].join(" ")}
+            >
+              <div
+                className={[
+                  "text-xs font-medium",
+                  inMonth ? "text-foreground" : "text-muted-foreground",
+                  today ? "text-primary" : "",
+                ].join(" ")}
+              >
+                {format(d, "d")}
+              </div>
+              <div className="flex-1 flex items-center justify-center">
+                {count > 0 && (
+                  <div className="rounded-full bg-primary text-primary-foreground text-xs md:text-sm font-bold min-w-[1.75rem] h-7 px-2 flex items-center justify-center">
+                    {count}
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      <p className="text-xs text-muted-foreground mt-3">
+        Each number is the total rented items that day (confirmed + pending).
+      </p>
+    </div>
+  );
+}
+
+// ---------- Upcoming 7 days ----------
+
+function UpcomingWeekList({ bookings }: { bookings: Booking[] }) {
+  const today = startOfDay(new Date());
+  const weekEnd = addDays(today, 7);
+
+  const upcoming = bookings
+    .filter((b) => b.status === "confirmed" || b.status === "pending")
+    .filter((b) => {
+      const d = parseISO(b.event_date);
+      return d >= today && d <= weekEnd;
+    })
+    .sort((a, b) => a.event_date.localeCompare(b.event_date));
+
+  return (
+    <div className="bg-card rounded-lg border border-border p-4">
+      <h2 className="font-display text-xl font-semibold mb-3">Next 7 Days</h2>
+      {upcoming.length === 0 ? (
+        <p className="text-sm text-muted-foreground py-4 text-center">
+          No bookings in the next 7 days.
+        </p>
+      ) : (
+        <ul className="divide-y divide-border">
+          {upcoming.map((b) => {
+            const items =
+              b.booking_items && b.booking_items.length > 0
+                ? b.booking_items.map((it) => it.product_name).join(", ")
+                : b.product_name ?? "—";
+            const address = [
+              b.event_address_line,
+              [b.event_city, b.event_zip].filter(Boolean).join(" "),
+            ]
+              .filter(Boolean)
+              .join(", ");
+            return (
+              <li key={b.id} className="py-3 flex flex-col md:flex-row md:items-start md:gap-4">
+                <div className="md:w-32 shrink-0">
+                  <div className="text-sm font-semibold">
+                    {format(parseISO(b.event_date), "EEE, MMM d")}
+                  </div>
+                  {b.event_start_time && (
+                    <div className="text-xs text-muted-foreground">{b.event_start_time}</div>
+                  )}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="font-medium">{b.customer_name}</div>
+                  {b.customer_phone && (
+                    <a
+                      href={`tel:${b.customer_phone}`}
+                      className="text-sm text-primary inline-flex items-center gap-1 hover:underline"
+                    >
+                      <Phone className="h-3 w-3" />
+                      {b.customer_phone}
+                    </a>
+                  )}
+                  {address && (
+                    <div className="text-sm text-muted-foreground inline-flex items-start gap-1 mt-0.5">
+                      <MapPin className="h-3 w-3 mt-0.5 shrink-0" />
+                      <span>{address}</span>
+                    </div>
+                  )}
+                  <div className="text-sm mt-1">
+                    <span className="text-muted-foreground">Items: </span>
+                    {items}
+                  </div>
+                </div>
+                <div className="md:ml-auto mt-2 md:mt-0">
+                  <Badge className={STATUS_COLORS[b.status]}>{b.status}</Badge>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </div>
+  );
+}
