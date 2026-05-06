@@ -19,13 +19,11 @@ export default function CheckoutReturn() {
     const maxAttempts = 10;
     const tick = async () => {
       attempts++;
-      const { data } = await supabase
-        .from("bookings")
-        .select("id")
-        .eq("stripe_session_id", sessionId)
-        .maybeSingle();
+      const { data } = await supabase.functions.invoke("check-booking-status", {
+        body: { session_id: sessionId },
+      });
       if (cancelled) return;
-      if (data?.id) { setState("ok"); return; }
+      if (data?.confirmed) { setState("ok"); return; }
       if (attempts >= maxAttempts) { setState("pending"); return; }
       setTimeout(tick, 1000);
     };
