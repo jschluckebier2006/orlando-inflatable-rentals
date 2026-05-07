@@ -59,31 +59,28 @@ const createdSessionIds: string[] = [];
 
 // --- pending_bookings RLS / service-role insert path used by the webhook flow ---
 
-Deno.test("pending_bookings: service_role CAN insert (this is the path create-booking-checkout uses)", async () => {
+Deno.test("webhook flow: service_role CAN insert and read pending_bookings (create-booking-checkout + webhook lookup paths)", async () => {
   const sessionId = `cs_test_${crypto.randomUUID()}`;
   createdSessionIds.push(sessionId);
-  const r = await rest("pending_bookings", SERVICE_KEY, {
+
+  const insert = await rest("pending_bookings", SERVICE_KEY, {
     method: "POST",
     headers: { Prefer: "return=representation" },
     body: JSON.stringify(pendingPayload(sessionId)),
   });
-  assertEquals(r.status, 201, r.body);
-  const rows = JSON.parse(r.body);
-  assertEquals(rows.length, 1);
-  assertEquals(rows[0].stripe_session_id, sessionId);
-});
+  assertEquals(insert.status, 201, insert.body);
+  const inserted = JSON.parse(insert.body);
+  assertEquals(inserted.length, 1);
+  assertEquals(inserted[0].stripe_session_id, sessionId);
 
-Deno.test("pending_bookings: service_role CAN read the row (webhook lookup path)", async () => {
-  const sessionId = createdSessionIds[0];
-  assert(sessionId, "previous test must have created a session");
-  const r = await rest(
+  const read = await rest(
     `pending_bookings?stripe_session_id=eq.${sessionId}&select=*`,
     SERVICE_KEY,
   );
-  assertEquals(r.status, 200, r.body);
-  const rows = JSON.parse(r.body);
+  assertEquals(read.status, 200, read.body);
+  const rows = JSON.parse(read.body);
   assertEquals(rows.length, 1);
-  assertEquals(rows[0].amount_charged, 50);
+  assertEquals(Number(rows[0].amount_charged), 50);
 });
 
 Deno.test("pending_bookings: anon CANNOT insert (RLS deny)", async () => {
