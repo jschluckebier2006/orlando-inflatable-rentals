@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { products } from "@/data/inventory";
 import { DURATION_MULTIPLIERS, DURATION_LABELS, type DurationType, endDateFor } from "@/lib/pricing";
+import { TAX_RATE, DAMAGE_WAIVER_RATE } from "@/lib/pricing";
 import { format } from "date-fns";
 
 type BookingStatus = "pending" | "confirmed" | "cancelled" | "completed";
@@ -48,6 +49,10 @@ export interface BookingFormBooking {
   discount_value?: number | null;
   discount_amount?: number | null;
   discount_reason?: string | null;
+  damage_waiver_selected?: boolean | null;
+  damage_waiver_amount?: number | null;
+  tax_rate?: number | null;
+  tax_amount?: number | null;
   booking_items?: { id: string; product_id?: string; product_name: string; product_price: number; unit_price?: number | null }[];
 }
 
@@ -89,6 +94,7 @@ export default function BookingFormModal({ open, onOpenChange, booking, onSaved 
   const [discountType, setDiscountType] = useState<"none" | "amount" | "percent">("none");
   const [discountValue, setDiscountValue] = useState<string>("0");
   const [discountReason, setDiscountReason] = useState("");
+  const [damageWaiver, setDamageWaiver] = useState<boolean>(true);
 
   useEffect(() => {
     if (!open) return;
@@ -112,6 +118,7 @@ export default function BookingFormModal({ open, onOpenChange, booking, onSaved 
       setDiscountType((booking.discount_type as any) || "none");
       setDiscountValue(String(booking.discount_value ?? 0));
       setDiscountReason(booking.discount_reason || "");
+      setDamageWaiver(booking.damage_waiver_selected ?? true);
       setItems(
         (booking.booking_items || []).map((i) => ({
           id: i.id,
@@ -131,6 +138,7 @@ export default function BookingFormModal({ open, onOpenChange, booking, onSaved 
       setEventType(""); setNotes("");
       setStatus("confirmed"); setPaymentStatus("unpaid"); setAmountPaid("0");
       setDiscountType("none"); setDiscountValue("0"); setDiscountReason("");
+      setDamageWaiver(true);
       setItems([]);
     }
   }, [open, booking]);
@@ -146,7 +154,10 @@ export default function BookingFormModal({ open, onOpenChange, booking, onSaved 
     if (discountType === "amount") return Math.min(v, subtotal);
     return Math.round(subtotal * (v / 100) * 100) / 100;
   }, [discountType, discountValue, subtotal]);
-  const total = Math.max(0, Math.round((subtotal - discountAmount) * 100) / 100);
+  const afterDiscount = Math.max(0, Math.round((subtotal - discountAmount) * 100) / 100);
+  const damageWaiverAmount = damageWaiver ? Math.round(afterDiscount * DAMAGE_WAIVER_RATE * 100) / 100 : 0;
+  const taxAmount = Math.round((afterDiscount + damageWaiverAmount) * TAX_RATE * 100) / 100;
+  const total = Math.round((afterDiscount + damageWaiverAmount + taxAmount) * 100) / 100;
   const balanceDue = Math.max(0, Math.round((total - (Number(amountPaid) || 0)) * 100) / 100);
 
   function addProduct(productId: string) {
@@ -197,6 +208,10 @@ export default function BookingFormModal({ open, onOpenChange, booking, onSaved 
       discount_value: discountType === "none" ? null : Number(discountValue) || 0,
       discount_amount: discountAmount,
       discount_reason: discountType === "none" ? null : (discountReason.trim() || null),
+      damage_waiver_selected: damageWaiver,
+      damage_waiver_amount: damageWaiverAmount,
+      tax_rate: TAX_RATE,
+      tax_amount: taxAmount,
       total_amount: total,
       balance_due: balanceDue,
       product_id: items[0]?.product_id ?? null,
@@ -350,9 +365,24 @@ export default function BookingFormModal({ open, onOpenChange, booking, onSaved 
                 <span>−${discountAmount.toFixed(2)}</span>
               </div>
             )}
+            {damageWaiver && (
+              <div className="flex justify-between"><span>Damage Waiver (10%)</span><span>${damageWaiverAmount.toFixed(2)}</span></div>
+            )}
+            <div className="flex justify-between"><span>Sales Tax (7%)</span><span>${taxAmount.toFixed(2)}</span></div>
             <div className="flex justify-between font-semibold text-base"><span>Total</span><span>${total.toFixed(2)}</span></div>
             <div className="flex justify-between"><span>Paid</span><span>${(Number(amountPaid) || 0).toFixed(2)}</span></div>
             <div className="flex justify-between font-semibold"><span>Balance due</span><span>${balanceDue.toFixed(2)}</span></div>
+          </section>
+
+          <section className="space-y-2">
+            <Label>Damage Waiver</Label>
+            <Select value={damageWaiver ? "yes" : "no"} onValueChange={(v) => setDamageWaiver(v === "yes")}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="yes">Yes - Recommended (10%)</SelectItem>
+                <SelectItem value="no">No - Decline waiver</SelectItem>
+              </SelectContent>
+            </Select>
           </section>
 
           <section className="space-y-3">

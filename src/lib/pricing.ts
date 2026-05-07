@@ -32,3 +32,24 @@ export function endDateFor(start: Date, duration: DurationType): Date {
 export function isSaturday(d: Date) {
   return d.getDay() === 6;
 }
+
+export const TAX_RATE = 0.07;
+export const DAMAGE_WAIVER_RATE = 0.10;
+
+export interface PriceBreakdown {
+  subtotal: number;
+  damageWaiver: number;
+  taxableBase: number;
+  tax: number;
+  total: number;
+}
+
+/** Compute the full price breakdown given a pre-tax subtotal and waiver choice. */
+export function computeBreakdown(subtotal: number, waiverSelected: boolean): PriceBreakdown {
+  const sub = Math.round(subtotal * 100) / 100;
+  const damageWaiver = waiverSelected ? Math.round(sub * DAMAGE_WAIVER_RATE * 100) / 100 : 0;
+  const taxableBase = Math.round((sub + damageWaiver) * 100) / 100;
+  const tax = Math.round(taxableBase * TAX_RATE * 100) / 100;
+  const total = Math.round((sub + damageWaiver + tax) * 100) / 100;
+  return { subtotal: sub, damageWaiver, taxableBase, tax, total };
+}

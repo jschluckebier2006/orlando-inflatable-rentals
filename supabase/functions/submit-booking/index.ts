@@ -30,6 +30,7 @@ const BookingSchema = z.object({
   event_zip: z.string().trim().min(3).max(20),
   notes: z.string().max(2000).optional().nullable(),
   items: z.array(ItemSchema).min(1).max(20),
+  damage_waiver: z.boolean().optional().default(true),
 });
 
 Deno.serve(async (req) => {
@@ -50,6 +51,8 @@ Deno.serve(async (req) => {
     // Server-side enforcement of tier rules
     const SERVER_MULT: Record<string, number> = { "7hour": 1.0, overnight: 1.25, weekend: 1.6 };
     const multiplier = SERVER_MULT[d.duration_type];
+    const TAX_RATE = 0.07;
+    const WAIVER_RATE = 0.10;
 
     // Compute end date
     const startDate = new Date(d.event_date + "T00:00:00Z");
@@ -88,13 +91,28 @@ Deno.serve(async (req) => {
     );
 
     const { items, ...rest } = d;
+    // Server-side recompute of money values (never trust the client)
+    const subtotal = Math.round(items.reduce((s, i) => s + i.product_price, 0) * multiplier * 100) / 100;
+    const damage_waiver_amount = d.damage_waiver ? Math.round(subtotal * WAIVER_RATE * 100) / 100 : 0;
+    const tax_amount = Math.round((subtotal + damage_waiver_amount) * TAX_RATE * 100) / 100;
+    const total_amount = Math.round((subtotal + damage_waiver_amount + tax_amount) * 100) / 100;
+
     const header = {
       ...rest,
       event_start_time,
       event_end_time,
       event_end_date: endDateStr,
       price_multiplier: multiplier,
+      subtotal,
+      damage_waiver_selected: d.damage_waiver,
+      damage_waiver_amount,
+      tax_rate: TAX_RATE,
+      tax_amount,
+      total_amount,
+      balance_due: total_amount,
     };
+    // damage_waiver isn't a column on bookings — strip it
+    delete (header as any).damage_waiver;
 
     const { data: booking, error: bookingErr } = await supabase
       .from("bookings")

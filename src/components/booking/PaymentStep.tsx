@@ -8,18 +8,23 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { getStripe, getStripeEnvironment } from "@/lib/stripe";
 import { cn } from "@/lib/utils";
+import { computeBreakdown } from "@/lib/pricing";
 
 const DEPOSIT = 50;
 
 interface PaymentStepProps {
-  total: number;
+  /** Pre-tax, pre-waiver subtotal (items × duration multiplier). */
+  subtotal: number;
+  damageWaiver: boolean;
   payload: any; // booking payload posted to create-booking-checkout
   onBack: () => void;
 }
 
-export function PaymentStep({ total, payload, onBack }: PaymentStepProps) {
+export function PaymentStep({ subtotal, damageWaiver, payload, onBack }: PaymentStepProps) {
   const { toast } = useToast();
   const [choice, setChoice] = useState<"deposit" | "full" | "custom">("deposit");
+  const bd = useMemo(() => computeBreakdown(subtotal, damageWaiver), [subtotal, damageWaiver]);
+  const total = bd.total;
   const [customAmount, setCustomAmount] = useState<string>(String(Math.min(total, Math.max(DEPOSIT, Math.round(total / 2)))));
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -95,7 +100,14 @@ export function PaymentStep({ total, payload, onBack }: PaymentStepProps) {
   return (
     <div className="space-y-4">
       <div className="rounded-md bg-muted/40 p-3 text-sm">
-        <p className="font-semibold">Order total: ${total.toFixed(2)}</p>
+        <div className="space-y-0.5">
+          <div className="flex justify-between"><span>Subtotal</span><span>${bd.subtotal.toFixed(2)}</span></div>
+          {damageWaiver && (
+            <div className="flex justify-between"><span>Damage Waiver (10%)</span><span>${bd.damageWaiver.toFixed(2)}</span></div>
+          )}
+          <div className="flex justify-between"><span>Sales Tax (7%)</span><span>${bd.tax.toFixed(2)}</span></div>
+          <div className="flex justify-between font-semibold pt-1"><span>Order total</span><span>${total.toFixed(2)}</span></div>
+        </div>
         <p className="text-xs text-muted-foreground">Pay any remaining balance in cash or card on delivery day.</p>
       </div>
 

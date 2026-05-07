@@ -18,6 +18,7 @@ import { useCart } from "@/contexts/CartContext";
 import { cn } from "@/lib/utils";
 import {
   DURATION_LABELS, DURATION_MULTIPLIERS, DURATION_DESCRIPTIONS, type DurationType,
+  TAX_RATE, DAMAGE_WAIVER_RATE, computeBreakdown,
 } from "@/lib/pricing";
 import { PaymentStep } from "./PaymentStep";
 
@@ -63,6 +64,7 @@ export function CheckoutModal() {
     event_start_time: "", event_end_time: "",
     event_type: "", notes: "",
   });
+  const [damageWaiver, setDamageWaiver] = useState<boolean>(true);
 
   // Apply duration-based time defaults
   useEffect(() => {
@@ -169,6 +171,7 @@ export function CheckoutModal() {
           event_city: form.event_city.trim(),
           event_zip: form.event_zip.trim(),
           notes: form.notes.trim() || null,
+                  damage_waiver: damageWaiver,
           items: items.map((i) => ({
             product_id: i.id,
             product_name: i.name,
@@ -465,27 +468,65 @@ export function CheckoutModal() {
               </div>
             </div>
 
-            <div className="rounded-md bg-muted/50 p-3 text-sm space-y-1">
-              <p className="font-semibold">{DURATION_LABELS[duration]}</p>
-              <p className="text-muted-foreground">
-                {date && format(date, "EEEE, MMMM d, yyyy")}
-                {duration !== "7hour" && endDate && (
-                  <> → {format(endDate, "EEEE, MMMM d, yyyy")}</>
-                )}
-              </p>
-              <p className="text-muted-foreground">
-                Delivery {labelFor(form.event_start_time)}
-                {" · "}Pickup {labelFor(form.event_end_time)}
-                {duration === "overnight" && " (next day)"}
-              </p>
-              <ul className="text-muted-foreground">
-                {items.map((i) => {
-                  const charged = Math.round(i.price * DURATION_MULTIPLIERS[duration] * 100) / 100;
-                  return <li key={i.id}>• {i.name} — ${charged.toFixed(2)}</li>;
-                })}
-              </ul>
-              <p className="font-semibold pt-1">Total: ${total.toFixed(2)}</p>
+            {/* Damage Waiver card (default ON) */}
+            <div className="rounded-md border border-border overflow-hidden">
+              <div className="bg-primary text-primary-foreground px-4 py-3">
+                <h3 className="font-display text-lg font-semibold">Damage Waiver</h3>
+              </div>
+              <div className="bg-card p-4 space-y-2 text-sm text-foreground">
+                <p>
+                  Accidents happen. Drinks spill, kids go wild, and unexpected things occur.
+                  The Damage Waiver (10%) covers accidental damage to our equipment so you avoid
+                  costly repair charges.
+                </p>
+                <p className="font-semibold">HIGHLY RECOMMEND for peace of mind.</p>
+              </div>
             </div>
+            <div className="space-y-1">
+              <Select value={damageWaiver ? "yes" : "no"} onValueChange={(v) => setDamageWaiver(v === "yes")}>
+                <SelectTrigger className={cn(damageWaiver && "ring-1 ring-primary border-primary")}>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="yes">Yes - Recommended (10%)</SelectItem>
+                  <SelectItem value="no">No - Decline waiver</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {(() => {
+              const bd = computeBreakdown(total, damageWaiver);
+              return (
+                <div className="rounded-md bg-muted/50 p-3 text-sm space-y-1">
+                  <p className="font-semibold">{DURATION_LABELS[duration]}</p>
+                  <p className="text-muted-foreground">
+                    {date && format(date, "EEEE, MMMM d, yyyy")}
+                    {duration !== "7hour" && endDate && (
+                      <> → {format(endDate, "EEEE, MMMM d, yyyy")}</>
+                    )}
+                  </p>
+                  <p className="text-muted-foreground">
+                    Delivery {labelFor(form.event_start_time)}
+                    {" · "}Pickup {labelFor(form.event_end_time)}
+                    {duration === "overnight" && " (next day)"}
+                  </p>
+                  <ul className="text-muted-foreground pb-1">
+                    {items.map((i) => {
+                      const charged = Math.round(i.price * DURATION_MULTIPLIERS[duration] * 100) / 100;
+                      return <li key={i.id}>• {i.name} — ${charged.toFixed(2)}</li>;
+                    })}
+                  </ul>
+                  <div className="border-t border-border pt-2 space-y-0.5">
+                    <div className="flex justify-between"><span>Subtotal</span><span>${bd.subtotal.toFixed(2)}</span></div>
+                    {damageWaiver && (
+                      <div className="flex justify-between"><span>Damage Waiver (10%)</span><span>${bd.damageWaiver.toFixed(2)}</span></div>
+                    )}
+                    <div className="flex justify-between"><span>Sales Tax (7%)</span><span>${bd.tax.toFixed(2)}</span></div>
+                    <div className="flex justify-between font-semibold text-base pt-1"><span>Total</span><span>${bd.total.toFixed(2)}</span></div>
+                  </div>
+                </div>
+              );
+            })()}
 
             <div className="flex justify-between gap-2 pt-2">
               <Button variant="outline" onClick={() => setStep(2)}>Back</Button>
@@ -500,7 +541,8 @@ export function CheckoutModal() {
           </div>
         ) : (
           <PaymentStep
-            total={total}
+            subtotal={total}
+            damageWaiver={damageWaiver}
             onBack={() => setStep(3)}
             payload={{
               duration_type: duration,
@@ -515,6 +557,7 @@ export function CheckoutModal() {
               event_city: form.event_city.trim(),
               event_zip: form.event_zip.trim(),
               notes: form.notes.trim() || null,
+              damage_waiver: damageWaiver,
               items: items.map((i) => ({
                 product_id: i.id, product_name: i.name, product_price: i.price,
               })),

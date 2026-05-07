@@ -152,6 +152,10 @@ export interface BookingForEmail {
   balance_due: number | null;
   notes?: string | null;
   stripe_session_id?: string | null;
+  subtotal?: number | null;
+  damage_waiver_selected?: boolean | null;
+  damage_waiver_amount?: number | null;
+  tax_amount?: number | null;
 }
 export interface BookingItemForEmail {
   product_name: string;
@@ -191,6 +195,12 @@ export function customerConfirmationEmail(b: BookingForEmail, items: BookingItem
   const balanceLine = balance > 0
     ? `<tr><td style="color:#54657a;">Balance due on delivery</td><td style="text-align:right;"><strong>${fmtMoney(balance)}</strong></td></tr>`
     : `<tr><td colspan="2" style="text-align:right;color:#1a8a4a;font-weight:bold;">Paid in full ✓</td></tr>`;
+  const subtotalLine = b.subtotal != null
+    ? `<tr><td style="color:#54657a;">Subtotal</td><td style="text-align:right;">${fmtMoney(b.subtotal)}</td></tr>` : "";
+  const waiverLine = b.damage_waiver_selected && Number(b.damage_waiver_amount ?? 0) > 0
+    ? `<tr><td style="color:#54657a;">Damage Waiver (10%)</td><td style="text-align:right;">${fmtMoney(b.damage_waiver_amount)}</td></tr>` : "";
+  const taxLine = Number(b.tax_amount ?? 0) > 0
+    ? `<tr><td style="color:#54657a;">Sales Tax (7%)</td><td style="text-align:right;">${fmtMoney(b.tax_amount)}</td></tr>` : "";
   const body = `
     <h1 style="margin:0 0 8px;font-size:22px;">Booking confirmed!</h1>
     <p style="margin:0 0 16px;color:#54657a;">Hi ${escapeHtml(b.customer_name.split(" ")[0])}, thanks for booking with Orlando Inflatables. Your reservation is locked in.</p>
@@ -200,7 +210,10 @@ export function customerConfirmationEmail(b: BookingForEmail, items: BookingItem
     <h2 style="font-size:16px;margin:24px 0 4px;">Your rentals</h2>
     ${itemsTable(items)}
     <table width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;margin-top:8px;">
-      <tr><td style="color:#54657a;">Total</td><td style="text-align:right;">${fmtMoney(b.total_amount)}</td></tr>
+      ${subtotalLine}
+      ${waiverLine}
+      ${taxLine}
+      <tr><td style="color:#54657a;"><strong>Total</strong></td><td style="text-align:right;"><strong>${fmtMoney(b.total_amount)}</strong></td></tr>
       <tr><td style="color:#54657a;">Amount paid</td><td style="text-align:right;">${fmtMoney(b.amount_paid)}</td></tr>
       ${balanceLine}
     </table>

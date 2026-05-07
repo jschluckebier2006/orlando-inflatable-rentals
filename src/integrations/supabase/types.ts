@@ -60,6 +60,8 @@ export type Database = {
           customer_email: string
           customer_name: string
           customer_phone: string
+          damage_waiver_amount: number
+          damage_waiver_selected: boolean
           deposit_amount: number
           duration_type: string
           event_address_line: string
@@ -80,6 +82,9 @@ export type Database = {
           status: Database["public"]["Enums"]["booking_status"]
           stripe_payment_intent_id: string | null
           stripe_session_id: string | null
+          subtotal: number | null
+          tax_amount: number
+          tax_rate: number
           total_amount: number | null
           updated_at: string
         }
@@ -90,6 +95,8 @@ export type Database = {
           customer_email: string
           customer_name: string
           customer_phone: string
+          damage_waiver_amount?: number
+          damage_waiver_selected?: boolean
           deposit_amount?: number
           duration_type?: string
           event_address_line: string
@@ -110,6 +117,9 @@ export type Database = {
           status?: Database["public"]["Enums"]["booking_status"]
           stripe_payment_intent_id?: string | null
           stripe_session_id?: string | null
+          subtotal?: number | null
+          tax_amount?: number
+          tax_rate?: number
           total_amount?: number | null
           updated_at?: string
         }
@@ -120,6 +130,8 @@ export type Database = {
           customer_email?: string
           customer_name?: string
           customer_phone?: string
+          damage_waiver_amount?: number
+          damage_waiver_selected?: boolean
           deposit_amount?: number
           duration_type?: string
           event_address_line?: string
@@ -140,6 +152,9 @@ export type Database = {
           status?: Database["public"]["Enums"]["booking_status"]
           stripe_payment_intent_id?: string | null
           stripe_session_id?: string | null
+          subtotal?: number | null
+          tax_amount?: number
+          tax_rate?: number
           total_amount?: number | null
           updated_at?: string
         }
