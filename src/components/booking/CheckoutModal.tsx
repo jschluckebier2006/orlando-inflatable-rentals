@@ -18,6 +18,7 @@ import { useCart } from "@/contexts/CartContext";
 import { cn } from "@/lib/utils";
 import {
   DURATION_LABELS, DURATION_MULTIPLIERS, DURATION_DESCRIPTIONS, type DurationType,
+  TAX_RATE, DAMAGE_WAIVER_RATE, computeBreakdown,
 } from "@/lib/pricing";
 import { PaymentStep } from "./PaymentStep";
 
@@ -63,6 +64,7 @@ export function CheckoutModal() {
     event_start_time: "", event_end_time: "",
     event_type: "", notes: "",
   });
+  const [damageWaiver, setDamageWaiver] = useState<boolean>(true);
 
   // Apply duration-based time defaults
   useEffect(() => {
@@ -169,6 +171,7 @@ export function CheckoutModal() {
           event_city: form.event_city.trim(),
           event_zip: form.event_zip.trim(),
           notes: form.notes.trim() || null,
+                  damage_waiver: damageWaiver,
           items: items.map((i) => ({
             product_id: i.id,
             product_name: i.name,
