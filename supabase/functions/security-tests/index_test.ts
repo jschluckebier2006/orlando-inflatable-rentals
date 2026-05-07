@@ -96,14 +96,14 @@ Deno.test("service_role CAN execute has_role", async () => {
 
 // ---------- bookings INSERT RLS ----------
 
-Deno.test("anon CANNOT directly insert into bookings via REST (must go through edge function)", async () => {
+Deno.test("anon CAN insert into bookings (guest checkout — RLS WITH CHECK true)", async () => {
   const r = await rest("bookings", ANON_KEY, {
     method: "POST",
     headers: { Prefer: "return=representation" },
     body: JSON.stringify(bookingPayload()),
   });
-  // Either RLS denial (403/42501) or grant denial (401/permission denied).
-  assert(r.status >= 400, `expected anon REST insert to be denied, got ${r.status}: ${r.body}`);
+  assertEquals(r.status, 201, r.body);
+  cleanupBookingIds.push(JSON.parse(r.body)[0].id);
 });
 
 Deno.test("anon CANNOT select from bookings", async () => {
