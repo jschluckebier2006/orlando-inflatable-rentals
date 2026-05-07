@@ -242,4 +242,6 @@ Deno.test("zz cleanup test rows", async () => {
     await rest(`booking_items?booking_id=eq.${id}`, SERVICE_KEY, { method: "DELETE" });
     await rest(`bookings?id=eq.${id}`, SERVICE_KEY, { method: "DELETE" });
   }
+  // Sweep any anon-created test rows by marker.
+  await rest(`bookings?notes=eq.security-test-row`, SERVICE_KEY, { method: "DELETE" });
 });
