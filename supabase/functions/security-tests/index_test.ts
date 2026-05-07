@@ -96,15 +96,14 @@ Deno.test("service_role CAN execute has_role", async () => {
 
 // ---------- bookings INSERT RLS ----------
 
-Deno.test("anon CAN insert into bookings (guest checkout)", async () => {
+Deno.test("anon CANNOT directly insert into bookings via REST (must go through edge function)", async () => {
   const r = await rest("bookings", ANON_KEY, {
     method: "POST",
     headers: { Prefer: "return=representation" },
     body: JSON.stringify(bookingPayload()),
   });
-  assertEquals(r.status, 201, r.body);
-  const rows = JSON.parse(r.body);
-  cleanupBookingIds.push(rows[0].id);
+  // Either RLS denial (403/42501) or grant denial (401/permission denied).
+  assert(r.status >= 400, `expected anon REST insert to be denied, got ${r.status}: ${r.body}`);
 });
 
 Deno.test("anon CANNOT select from bookings", async () => {
@@ -132,9 +131,9 @@ Deno.test("service_role CAN insert and select bookings", async () => {
 
 // ---------- booking_items INSERT RLS ----------
 
-Deno.test("anon CAN insert into booking_items for own booking", async () => {
-  // Create a parent booking as anon first.
-  const b = await rest("bookings", ANON_KEY, {
+Deno.test("anon CANNOT directly insert into booking_items via REST", async () => {
+  // Create a parent booking as service role.
+  const b = await rest("bookings", SERVICE_KEY, {
     method: "POST",
     headers: { Prefer: "return=representation" },
     body: JSON.stringify(bookingPayload({ product_id: "test-item-parent" })),
@@ -145,6 +144,30 @@ Deno.test("anon CAN insert into booking_items for own booking", async () => {
 
   const r = await rest("booking_items", ANON_KEY, {
     method: "POST",
+    body: JSON.stringify({
+      booking_id: bookingId,
+      product_id: `sectest-${crypto.randomUUID()}`,
+      product_name: "Security Test Item",
+      product_price: 1,
+      unit_price: 1,
+    }),
+  });
+  assert(r.status >= 400, `expected anon REST insert to be denied, got ${r.status}: ${r.body}`);
+});
+
+Deno.test("service_role CAN insert booking_items (edge function path)", async () => {
+  const b = await rest("bookings", SERVICE_KEY, {
+    method: "POST",
+    headers: { Prefer: "return=representation" },
+    body: JSON.stringify(bookingPayload()),
+  });
+  assertEquals(b.status, 201, b.body);
+  const bookingId = JSON.parse(b.body)[0].id;
+  cleanupBookingIds.push(bookingId);
+
+  const r = await rest("booking_items", SERVICE_KEY, {
+    method: "POST",
+    headers: { Prefer: "return=representation" },
     body: JSON.stringify({
       booking_id: bookingId,
       product_id: `sectest-${crypto.randomUUID()}`,
