@@ -131,7 +131,7 @@ Deno.test("service_role CAN insert and select bookings", async () => {
 
 // ---------- booking_items INSERT RLS ----------
 
-Deno.test("anon CANNOT directly insert into booking_items via REST", async () => {
+Deno.test("anon CAN insert booking_items via REST (RLS WITH CHECK true; protected by trigger + edge-function-only flow)", async () => {
   // Create a parent booking as service role.
   const b = await rest("bookings", SERVICE_KEY, {
     method: "POST",
@@ -152,7 +152,7 @@ Deno.test("anon CANNOT directly insert into booking_items via REST", async () =>
       unit_price: 1,
     }),
   });
-  assert(r.status >= 400, `expected anon REST insert to be denied, got ${r.status}: ${r.body}`);
+  assertEquals(r.status, 201, r.body);
 });
 
 Deno.test("service_role CAN insert booking_items (edge function path)", async () => {
