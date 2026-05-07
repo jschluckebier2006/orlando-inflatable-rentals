@@ -132,7 +132,7 @@ Deno.test("submit-booking: double-booking trigger fires when the same product is
     items: [{ product_id: productId, product_name: "Conflict Item", product_price: 100 }],
   }));
   assertEquals(second.status, 409, `expected conflict, got ${second.status}: ${second.body}`);
-  assert(/already booked/i.test(second.body), `expected conflict message, got: ${second.body}`);
+  assert(/just booked|already booked/i.test(second.body), `expected conflict message, got: ${second.body}`);
 });
 
 Deno.test("submit-booking: rejects invalid input (zod 400)", async () => {
