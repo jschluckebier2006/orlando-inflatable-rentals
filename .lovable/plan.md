@@ -1,53 +1,72 @@
-# Full Email System
+## Add 7% sales tax + optional 10% damage waiver
 
-Three phases. Phase 1 ships as soon as DNS verifies; Phases 2–3 follow.
+### Pricing model
+- **Subtotal** = items × duration multiplier (unchanged)
+- **Damage waiver** = 10% of subtotal (optional, default ON)
+- **Tax** = 7% of (subtotal + damage waiver)
+- **Total** = subtotal + waiver + tax
 
-## Phase 1 — Core transactional emails
+### Database
+New migration adds 4 nullable numeric columns to `bookings`:
+- `damage_waiver_selected boolean default true`
+- `damage_waiver_amount numeric default 0`
+- `tax_rate numeric default 0.07`
+- `tax_amount numeric default 0`
 
-1. **Booking confirmation (customer)** — branded receipt sent on successful payment. Booking ref, date, times, address, items, amount paid, balance due, phone `(407) 497-1840`.
-2. **New booking alert (admin)** — sent to `orlandoinflatablesllc@gmail.com` and `austin@bouncewave.com` with full booking details + Stripe session ID. Reply-to: Gmail.
-3. **Abandoned cart alert (admin)** — sent to `orlandoinflatablesllc@gmail.com` 30 minutes after a `pending_bookings` row is created without a corresponding paid booking. Includes name, phone, email, items, requested date. Built via a `pg_cron` job that scans `pending_bookings` every 5 min and fires once per session (idempotency key on `stripe_session_id`).
-4. **Day-before delivery reminder (customer)** — sent at 4PM the day before `event_date`. Confirms delivery window, address, contact #, weather/cancellation policy. Daily `pg_cron` job scans `bookings` where `event_date = tomorrow` and `status = confirmed`.
-5. **Post-event review request (customer)** — sent the morning after `event_date`. Direct link to your Google review profile (single CTA, no review-gating per Google TOS). Daily `pg_cron` job.
+(`subtotal` and `total_amount` already exist.)
 
-All five wired through the standard `send-transactional-email` Edge Function. From `bookings@orlandoinflatables.com`, reply-to `orlandoinflatablesllc@gmail.com`.
+### Frontend — `CheckoutModal.tsx`
+Add a Damage Waiver card between the items list and Continue button on **step 3** (review step), styled to match the screenshot:
+- Bright blue header bar ("Damage Waiver" in white)
+- White body with the exact copy from the screenshot
+- Below the card: a `Select` defaulting to "Yes - Recommended (10%)" with alternative "No - Decline waiver"
 
-## Phase 2 — Operational completeness + admin editor
+Update the order summary block to break out:
+```
+Subtotal           $X.XX
+Damage Waiver 10%  $X.XX   (only when selected)
+Sales Tax 7%       $X.XX
+Total              $X.XX
+```
 
-6. **Balance-due reminder (customer)** — sent 3 days before `event_date` if `balance_due > 0`.
-7. **Manual-booking confirmation (customer)** — when admin enters a booking via `BookingFormModal`, customer gets the same branded receipt as online checkout.
-8. **Cancellation / refund confirmation (customer)** — fires when admin sets booking `status = cancelled`.
-9. **Email Templates admin tab** at `/admin/emails`:
-   - New `email_templates` table: `key`, `subject`, `body_html`, `body_text`, `enabled`, `updated_at`. Seed with all Phase 1 + 2 templates.
-   - List view: every template with subject, status toggle, last edited.
-   - Editor: subject input + rich-text body editor + merge-tag picker (`{{customer_name}}`, `{{event_date}}`, `{{event_time}}`, `{{items}}`, `{{total_amount}}`, `{{amount_paid}}`, `{{balance_due}}`, `{{booking_ref}}`, `{{phone}}`).
-   - "Send test to me" button — renders with sample data, fires to logged-in admin's email.
-   - Send-log per template: who got it, when, status (sent / failed / suppressed) — pulled from `email_send_log`, deduped by `message_id`.
-   - Branding/layout (header, footer, button styles, brand blue) stays in code; only editable copy lives in DB.
-   - Admin-only route, gated by `has_role(auth.uid(), 'admin')`.
+Pass `damage_waiver` boolean through to `PaymentStep` payload. `PaymentStep` recomputes `total` from subtotal + waiver + tax for the deposit/full/custom options (full = grand total incl. tax+waiver; custom min stays $50, max = grand total).
 
-## Phase 3 — Optional ops polish
+### Frontend — `CartContext.tsx`
+No structural changes; totals shown in cart drawer remain "subtotal" (pre-tax). Add a small note "+ 7% sales tax at checkout" under the cart total.
 
-10. **Daily ops digest (admin)** — 7AM email with today's + tomorrow's deliveries.
-11. **Internal balance-unpaid alert (admin)** — 24hr before event if balance still due.
+### Frontend — `BookingFormModal.tsx` (admin)
+Add same waiver toggle + tax line to the admin booking form summary so manually-created bookings match.
 
-## Cross-cutting technical notes
+### Edge functions
+**`submit-booking/index.ts`**
+- Add `damage_waiver: z.boolean().default(true)` to schema
+- Server-side recompute: `subtotal`, `damage_waiver_amount = subtotal * 0.10` (if selected else 0), `tax_amount = (subtotal + waiver) * 0.07`, `total_amount = subtotal + waiver + tax`
+- Insert these onto the `bookings` row
 
-- All scheduled emails use `pg_cron` + a dispatcher Edge Function (`scheduled-email-runner`) that scans the relevant tables, checks idempotency against `email_send_log` (via `idempotency_key` derived from booking ID + template name), and enqueues sends.
-- Failure isolation: every send wrapped in try/catch; logged to `email_send_log` but never blocks the underlying booking flow.
-- All admin recipients in a single `ADMIN_EMAILS` constant, easy to edit later.
-- No review-gating (Google TOS): single review CTA only.
+**`create-booking-checkout/index.ts`**
+- Add `damage_waiver: z.boolean()` to schema
+- Recompute server-side total the same way
+- Validate `payment_choice=full` against the new grand total; `custom_amount` max becomes grand total
+- Stripe line item label updated when waiver is selected (keeps single line item; tax is folded into the amount, not handled by Stripe Tax — explicit per project, no managed_payments)
+- `pending_bookings.amount_total` stores grand total so the webhook writes the correct `total_amount`
 
-## Order of execution
+**`payments-webhook/index.ts`**
+- Pass through `damage_waiver_selected`, `damage_waiver_amount`, `tax_rate`, `tax_amount`, `subtotal` from the stashed payload onto the created booking row
 
-1. Wait for DNS verification on `orlandoinflatables.com`.
-2. Provision email infrastructure (queue, send log, cron dispatcher).
-3. Ship Phase 1 (templates + webhook wiring + 3 cron jobs for abandoned cart, day-before, review request).
-4. Ship Phase 2 (3 more templates + admin Email Templates tab + DB-backed template content).
-5. Ship Phase 3 on request.
+### Email templates (`_shared/email.ts`)
+- Confirmation + admin notification email summary section gains Subtotal / Damage Waiver / Sales Tax / Total lines
 
-## Out of scope
+### Out of scope
+- Stripe automatic_tax / managed_payments (we're collecting a flat 7% FL state rate on the line-item amount; no jurisdiction logic)
+- Refund/partial-refund handling for waiver
 
-- SMS notifications.
-- Customer-facing "view my booking" portal.
-- Marketing/promotional emails (newsletters, discounts) — would damage sender reputation; use a dedicated marketing platform if ever needed.
+### Files touched
+- `supabase/migrations/<new>.sql` (new)
+- `src/components/booking/CheckoutModal.tsx`
+- `src/components/booking/PaymentStep.tsx`
+- `src/components/cart/CartDrawer.tsx` (small "+ tax at checkout" note)
+- `src/components/admin/BookingFormModal.tsx`
+- `supabase/functions/submit-booking/index.ts`
+- `supabase/functions/create-booking-checkout/index.ts`
+- `supabase/functions/payments-webhook/index.ts`
+- `supabase/functions/_shared/email.ts`
