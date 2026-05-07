@@ -88,9 +88,10 @@ export function CartDrawer() {
         {items.length > 0 && (
           <div className="border-t border-border pt-4 space-y-3">
             <div className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">Total ({DURATION_LABELS[duration]})</span>
+              <span className="text-muted-foreground">Subtotal ({DURATION_LABELS[duration]})</span>
               <span className="font-semibold text-foreground">${total.toFixed(2)}</span>
             </div>
+            <p className="text-xs text-muted-foreground">+ 7% sales tax and optional 10% damage waiver added at checkout.</p>
             <Button onClick={openCheckout} className="w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground" size="lg">
               Check Availability & Reserve
             </Button>
