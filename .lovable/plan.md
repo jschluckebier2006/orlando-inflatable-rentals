@@ -1,77 +1,53 @@
-# Booking Confirmation Emails
+# Full Email System
 
-Build two branded transactional emails that fire when a Stripe payment succeeds:
+Three phases. Phase 1 ships as soon as DNS verifies; Phases 2–3 follow.
 
-1. **Customer receipt** — branded confirmation sent to the customer.
-2. **Admin alert** — internal notification sent to `orlandoinflatablesllc@gmail.com` and `austin@bouncewave.com`.
+## Phase 1 — Core transactional emails
 
-## Step 1 — Provision email infrastructure
+1. **Booking confirmation (customer)** — branded receipt sent on successful payment. Booking ref, date, times, address, items, amount paid, balance due, phone `(407) 497-1840`.
+2. **New booking alert (admin)** — sent to `orlandoinflatablesllc@gmail.com` and `austin@bouncewave.com` with full booking details + Stripe session ID. Reply-to: Gmail.
+3. **Abandoned cart alert (admin)** — sent to `orlandoinflatablesllc@gmail.com` 30 minutes after a `pending_bookings` row is created without a corresponding paid booking. Includes name, phone, email, items, requested date. Built via a `pg_cron` job that scans `pending_bookings` every 5 min and fires once per session (idempotency key on `stripe_session_id`).
+4. **Day-before delivery reminder (customer)** — sent at 4PM the day before `event_date`. Confirms delivery window, address, contact #, weather/cancellation policy. Daily `pg_cron` job scans `bookings` where `event_date = tomorrow` and `status = confirmed`.
+5. **Post-event review request (customer)** — sent the morning after `event_date`. Direct link to your Google review profile (single CTA, no review-gating per Google TOS). Daily `pg_cron` job.
 
-Run `email_domain--setup_email_infra` to create the email queue tables, RPC wrappers, send log, and deploy the `process-email-queue` cron-driven sender. One-time setup, no schema changes for you to review.
+All five wired through the standard `send-transactional-email` Edge Function. From `bookings@orlandoinflatables.com`, reply-to `orlandoinflatablesllc@gmail.com`.
 
-## Step 2 — Scaffold transactional email function
+## Phase 2 — Operational completeness + admin editor
 
-Run `email_domain--scaffold_transactional_email` to create the standard `send-transactional-email` Edge Function and template directory.
+6. **Balance-due reminder (customer)** — sent 3 days before `event_date` if `balance_due > 0`.
+7. **Manual-booking confirmation (customer)** — when admin enters a booking via `BookingFormModal`, customer gets the same branded receipt as online checkout.
+8. **Cancellation / refund confirmation (customer)** — fires when admin sets booking `status = cancelled`.
+9. **Email Templates admin tab** at `/admin/emails`:
+   - New `email_templates` table: `key`, `subject`, `body_html`, `body_text`, `enabled`, `updated_at`. Seed with all Phase 1 + 2 templates.
+   - List view: every template with subject, status toggle, last edited.
+   - Editor: subject input + rich-text body editor + merge-tag picker (`{{customer_name}}`, `{{event_date}}`, `{{event_time}}`, `{{items}}`, `{{total_amount}}`, `{{amount_paid}}`, `{{balance_due}}`, `{{booking_ref}}`, `{{phone}}`).
+   - "Send test to me" button — renders with sample data, fires to logged-in admin's email.
+   - Send-log per template: who got it, when, status (sent / failed / suppressed) — pulled from `email_send_log`, deduped by `message_id`.
+   - Branding/layout (header, footer, button styles, brand blue) stays in code; only editable copy lives in DB.
+   - Admin-only route, gated by `has_role(auth.uid(), 'admin')`.
 
-## Step 3 — Create the two branded templates
+## Phase 3 — Optional ops polish
 
-New files in `supabase/functions/_shared/email-templates/`:
+10. **Daily ops digest (admin)** — 7AM email with today's + tomorrow's deliveries.
+11. **Internal balance-unpaid alert (admin)** — 24hr before event if balance still due.
 
-### `booking-customer.tsx`
-React Email template, bright-blue (#2563EB / brand) themed, includes:
-- Header: "Orlando Inflatables" + tagline, phone `(407) 497-1840` prominent.
-- Greeting with customer first name.
-- Booking reference (short ID), event date, start/pickup times, event address.
-- Itemized list of rented products with per-item price.
-- Subtotal, amount paid, balance due (if any), payment status.
-- "What happens next" block: delivery window, setup notes, contact info.
-- Footer: phone, reply-to note, unsubscribe link (auto-injected by infra).
+## Cross-cutting technical notes
 
-### `booking-admin.tsx`
-Plain, operational layout, no marketing chrome:
-- Subject-line equivalent header: "New Booking — {customer_name} — {event_date}".
-- Customer block: name, email, phone.
-- Event block: date range, times, full address, event type, notes.
-- Items table: product name, base price, multiplier-adjusted unit price.
-- Money block: total, deposit, amount paid, balance due, Stripe session ID.
-- Link back to `/admin/bookings` for quick access.
+- All scheduled emails use `pg_cron` + a dispatcher Edge Function (`scheduled-email-runner`) that scans the relevant tables, checks idempotency against `email_send_log` (via `idempotency_key` derived from booking ID + template name), and enqueues sends.
+- Failure isolation: every send wrapped in try/catch; logged to `email_send_log` but never blocks the underlying booking flow.
+- All admin recipients in a single `ADMIN_EMAILS` constant, easy to edit later.
+- No review-gating (Google TOS): single review CTA only.
 
-Both templates:
-- From: `bookings@orlandoinflatables.com`
-- Reply-to: `orlandoinflatablesllc@gmail.com`
-- Use shared `<EmailLayout>` wrapper for consistent header/footer.
+## Order of execution
 
-## Step 4 — Wire into the payments webhook
-
-Edit `supabase/functions/payments-webhook/index.ts`. After the successful `booking_items` insert and `pending_bookings` cleanup, render both templates and call the email enqueue RPC twice:
-
-```text
-try {
-  enqueue customer email -> p.customer_email
-  enqueue admin email   -> ADMIN_EMAILS (BCC-style fan-out, one row each)
-} catch (e) {
-  console.error("email enqueue failed", e)
-  // do NOT fail the webhook — booking is already saved
-}
-```
-
-`ADMIN_EMAILS` declared at top of file as a constant array so it's easy to edit later.
-
-## Step 5 — Deploy
-
-Deploy `payments-webhook` and `send-transactional-email` (auto-handled).
-
-## Technical details
-
-- **Files created:** `supabase/functions/_shared/email-templates/booking-customer.tsx`, `booking-admin.tsx`, plus a small `_layout.tsx` shared wrapper.
-- **Files edited:** `supabase/functions/payments-webhook/index.ts` only.
-- **No DB schema changes** beyond what `setup_email_infra` provisions automatically.
-- **No new secrets.** Domain `orlandoinflatables.com` is already configured.
-- **Idempotency preserved:** existing "already processed" check prevents duplicate sends on Stripe webhook retries.
-- **Failure isolation:** email errors are caught and logged; the booking + calendar block remain authoritative.
+1. Wait for DNS verification on `orlandoinflatables.com`.
+2. Provision email infrastructure (queue, send log, cron dispatcher).
+3. Ship Phase 1 (templates + webhook wiring + 3 cron jobs for abandoned cart, day-before, review request).
+4. Ship Phase 2 (3 more templates + admin Email Templates tab + DB-backed template content).
+5. Ship Phase 3 on request.
 
 ## Out of scope
 
-- Reminder emails (day-before, post-event thank-you) — can be added later.
-- SMS notifications — not requested.
-- Customer-facing "view my booking" page — not requested.
+- SMS notifications.
+- Customer-facing "view my booking" portal.
+- Marketing/promotional emails (newsletters, discounts) — would damage sender reputation; use a dedicated marketing platform if ever needed.
