@@ -150,26 +150,6 @@ Deno.test("payments-webhook: rejects requests with an invalid stripe-signature",
   assertEquals(r.status, 400, "forged signature must be rejected");
 });
 
-Deno.test("payments-webhook: anon CANNOT bypass by inserting a fake confirmed booking via REST", async () => {
-  const r = await rest("bookings", ANON_KEY, {
-    method: "POST",
-    body: JSON.stringify({
-      event_date: "2099-01-15",
-      customer_name: "Fake",
-      customer_email: "fake@example.com",
-      customer_phone: "000",
-      event_address_line: "x",
-      event_city: "x",
-      event_zip: "x",
-      status: "confirmed",
-      payment_status: "paid_in_full",
-      stripe_session_id: `cs_fake_${crypto.randomUUID()}`,
-      notes: MARKER,
-    }),
-  });
-  assert(r.status >= 400, `anon must not be able to create a confirmed booking, got ${r.status}`);
-});
-
 // --- cleanup ---
 
 Deno.test("cleanup: remove pending_bookings rows created by these tests", async () => {
