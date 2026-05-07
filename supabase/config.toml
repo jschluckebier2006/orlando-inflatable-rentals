@@ -11,3 +11,9 @@ verify_jwt = false
 
 [functions.check-booking-status]
 verify_jwt = false
+
+[functions.send-booking-emails]
+verify_jwt = false
+
+[functions.scheduled-email-runner]
+verify_jwt = false
