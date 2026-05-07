@@ -29,6 +29,7 @@ const PayloadSchema = z.object({
   event_zip: z.string().trim().min(3).max(20),
   notes: z.string().max(2000).optional().nullable(),
   items: z.array(ItemSchema).min(1).max(20),
+  damage_waiver: z.boolean().optional().default(true),
   payment_choice: z.enum(["deposit", "full", "custom"]),
   custom_amount: z.number().positive().optional(),
   return_url: z.string().url(),
@@ -37,6 +38,8 @@ const PayloadSchema = z.object({
 
 const SERVER_MULT: Record<string, number> = { "7hour": 1.0, overnight: 1.25, weekend: 1.6 };
 const DEPOSIT = 50;
+const TAX_RATE = 0.07;
+const WAIVER_RATE = 0.10;
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
@@ -53,12 +56,15 @@ Deno.serve(async (req) => {
     const multiplier = SERVER_MULT[d.duration_type];
 
     // Compute totals server-side (never trust the client)
-    const total = Math.round(d.items.reduce((s, i) => s + i.product_price, 0) * multiplier * 100) / 100;
-    if (total <= 0) {
+    const subtotal = Math.round(d.items.reduce((s, i) => s + i.product_price, 0) * multiplier * 100) / 100;
+    if (subtotal <= 0) {
       return new Response(JSON.stringify({ error: "Invalid total" }), {
         status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+    const damage_waiver_amount = d.damage_waiver ? Math.round(subtotal * WAIVER_RATE * 100) / 100 : 0;
+    const tax_amount = Math.round((subtotal + damage_waiver_amount) * TAX_RATE * 100) / 100;
+    const total = Math.round((subtotal + damage_waiver_amount + tax_amount) * 100) / 100;
 
     let amountToCharge: number;
     let lineLabel: string;
