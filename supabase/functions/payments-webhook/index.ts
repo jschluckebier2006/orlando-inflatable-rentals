@@ -127,5 +127,13 @@ Deno.serve(async (req) => {
 
   // Cleanup
   await supabase.from("pending_bookings").delete().eq("stripe_session_id", session.id);
+
+  // Fire confirmation + admin alert emails (best-effort, never blocks).
+  try {
+    await supabase.functions.invoke("send-booking-emails", { body: { booking_id: booking.id } });
+  } catch (e) {
+    console.error("send-booking-emails invoke failed", e);
+  }
+
   return new Response("ok", { status: 200 });
 });
