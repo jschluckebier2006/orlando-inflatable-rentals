@@ -145,6 +145,45 @@ export type Database = {
         }
         Relationships: []
       }
+      email_send_log: {
+        Row: {
+          created_at: string
+          error_message: string | null
+          id: string
+          idempotency_key: string
+          recipient_email: string
+          related_booking_id: string | null
+          related_session_id: string | null
+          resend_message_id: string | null
+          status: string
+          template_name: string
+        }
+        Insert: {
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          idempotency_key: string
+          recipient_email: string
+          related_booking_id?: string | null
+          related_session_id?: string | null
+          resend_message_id?: string | null
+          status?: string
+          template_name: string
+        }
+        Update: {
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          idempotency_key?: string
+          recipient_email?: string
+          related_booking_id?: string | null
+          related_session_id?: string | null
+          resend_message_id?: string | null
+          status?: string
+          template_name?: string
+        }
+        Relationships: []
+      }
       pending_bookings: {
         Row: {
           amount_charged: number
