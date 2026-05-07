@@ -96,14 +96,13 @@ Deno.test("service_role CAN execute has_role", async () => {
 
 // ---------- bookings INSERT RLS ----------
 
-Deno.test("anon CAN insert into bookings (guest checkout — RLS WITH CHECK true)", async () => {
+Deno.test("anon CAN insert into bookings (guest checkout — RLS WITH CHECK true; no return)", async () => {
+  // Note: cannot use Prefer: return=representation as anon (no SELECT policy on bookings).
   const r = await rest("bookings", ANON_KEY, {
     method: "POST",
-    headers: { Prefer: "return=representation" },
     body: JSON.stringify(bookingPayload()),
   });
   assertEquals(r.status, 201, r.body);
-  cleanupBookingIds.push(JSON.parse(r.body)[0].id);
 });
 
 Deno.test("anon CANNOT select from bookings", async () => {
