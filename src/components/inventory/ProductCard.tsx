@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Check, Plus } from "lucide-react";
+import { Check, Plus, Phone } from "lucide-react";
 import type { Product } from "@/data/inventory";
 import { useCart } from "@/contexts/CartContext";
 
@@ -16,19 +16,14 @@ export function ProductCard({ product, onClick }: ProductCardProps) {
 
   const handleAdd = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (inCart) {
-      openCart();
-    } else {
-      addItem(product);
-      openCart();
-    }
-    onClick?.();
+    // Temporarily disabled — call to book
+    e.preventDefault();
   };
 
   return (
     <Card 
       className="overflow-hidden card-hover cursor-pointer group transition-all duration-300 hover:shadow-xl"
-      onClick={handleAdd}
+      onClick={onClick}
     >
       <div className="aspect-square overflow-hidden relative bg-muted/30">
         <img 
@@ -55,14 +50,21 @@ export function ProductCard({ product, onClick }: ProductCardProps) {
           <p className="text-sm text-muted-foreground">Ages: {product.ageRange}</p>
         )}
         <Button
-          onClick={handleAdd}
+          asChild
           className="w-full mt-3 min-h-[44px] bg-secondary hover:bg-secondary/90 text-secondary-foreground font-semibold"
+          onClick={(e) => e.stopPropagation()}
         >
-          {inCart ? (
-            <><Check className="h-4 w-4 mr-1.5" />In Cart — View</>
-          ) : (
-            <><Plus className="h-4 w-4 mr-1.5" />Add to Cart</>
-          )}
+          <a href="tel:4074971840">
+            <Phone className="h-4 w-4 mr-1.5" />Call Us to Book Now
+          </a>
+        </Button>
+        <Button
+          disabled
+          aria-disabled="true"
+          onClick={(e) => e.stopPropagation()}
+          className="w-full mt-2 min-h-[44px] font-semibold"
+        >
+          <Plus className="h-4 w-4 mr-1.5" />Add to Cart
         </Button>
       </CardContent>
     </Card>
