@@ -29,6 +29,7 @@ export function PaymentStep({ subtotal, damageWaiver, payload, onBack }: Payment
   const [customAmount, setCustomAmount] = useState<string>(String(Math.min(total, Math.max(DEPOSIT, Math.round(total / 2)))));
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [agreed, setAgreed] = useState(false);
 
   const customNum = Number(customAmount);
   const customValid = customNum >= DEPOSIT && customNum <= total;
