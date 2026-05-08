@@ -30,7 +30,7 @@ const PayloadSchema = z.object({
   notes: z.string().max(2000).optional().nullable(),
   items: z.array(ItemSchema).min(1).max(20),
   damage_waiver: z.boolean().optional().default(true),
-  payment_choice: z.enum(["deposit", "full", "custom"]),
+  payment_choice: z.enum(["deposit", "full", "custom", "deposit_cash"]),
   custom_amount: z.number().positive().optional(),
   return_url: z.string().url(),
   environment: z.enum(["sandbox", "live"]),
@@ -71,6 +71,9 @@ Deno.serve(async (req) => {
     if (d.payment_choice === "deposit") {
       amountToCharge = DEPOSIT;
       lineLabel = "Non-refundable rental deposit";
+    } else if (d.payment_choice === "deposit_cash") {
+      amountToCharge = DEPOSIT;
+      lineLabel = "Non-refundable rental deposit (cash balance on delivery)";
     } else if (d.payment_choice === "full") {
       amountToCharge = total;
       lineLabel = "Rental — paid in full";
