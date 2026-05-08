@@ -138,9 +138,10 @@ export function PaymentStep({ subtotal, damageWaiver, payload, onBack }: Payment
 
       <div className="space-y-2">
         <p className="text-sm font-semibold">Payment option</p>
-        <Option value="deposit" label="$5 non-refundable deposit" amount="$5.00" sub="Reserves your date. Applied to your total. Forfeited if cancelled." />
-        <Option value="full" label="Pay in full now" amount={`$${total.toFixed(2)}`} sub="Nothing owed on delivery day." />
-        <Option value="custom" label="Custom amount" amount={customValid ? `$${customNum.toFixed(2)}` : "—"} sub={`Any amount from $${DEPOSIT} up to $${total.toFixed(2)}.`} />
+        <Option value="deposit" label="$5 non-refundable deposit" amount="$5.00" sub="$5 charged to your card today. Remaining balance charged to your card the week of your event." />
+        <Option value="full" label="Pay in full now" amount={`$${total.toFixed(2)}`} sub="Full amount charged to your card today. Nothing owed on delivery." />
+        <Option value="deposit_cash" label="$5 deposit + remaining balance cash on delivery" amount="$5.00" sub="$5 charged to your card today. Remaining balance due in cash on the day of your event." />
+        <Option value="custom" label="Custom amount" amount={customValid ? `$${customNum.toFixed(2)}` : "—"} sub="Choose any amount from $5 up to the full total. Remaining balance charged to your card the week of your event." />
         {choice === "custom" && (
           <div className="pl-2 pt-1 space-y-1">
             <Label htmlFor="custom-amt" className="text-xs">Amount in USD</Label>
@@ -151,12 +152,6 @@ export function PaymentStep({ subtotal, damageWaiver, payload, onBack }: Payment
             {!customValid && <p className="text-xs text-destructive">Must be between ${DEPOSIT} and ${total.toFixed(2)}.</p>}
           </div>
         )}
-        <Option value="deposit_cash" label="$5 deposit + remaining balance cash on delivery" amount="$5.00" sub="Pay $5 now by card. Remaining balance is due in cash on the day of your event." />
-        <p className="text-xs text-muted-foreground pt-1">
-          {choice === "deposit_cash"
-            ? `Your remaining balance of $${balance.toFixed(2)} is due in cash on the day of your event.`
-            : "Your remaining balance will be charged the week of your event, typically 2–5 days before your scheduled date. No action is needed from you — we will process your saved card at that time."}
-        </p>
       </div>
 
       <div className="flex justify-between gap-2 pt-2">
