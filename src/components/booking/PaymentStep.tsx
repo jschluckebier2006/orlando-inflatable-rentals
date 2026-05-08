@@ -11,7 +11,7 @@ import { getStripe, getStripeEnvironment } from "@/lib/stripe";
 import { cn } from "@/lib/utils";
 import { computeBreakdown } from "@/lib/pricing";
 
-const DEPOSIT = 50;
+const DEPOSIT = 5;
 
 interface PaymentStepProps {
   /** Pre-tax, pre-waiver subtotal (items × duration multiplier). */
