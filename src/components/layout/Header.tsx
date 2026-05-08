@@ -19,6 +19,7 @@ import {
 import { cn } from "@/lib/utils";
 import { JotformModal } from "@/components/JotformModal";
 import { CartButton } from "@/components/cart/CartButton";
+import { BOOKING_ENABLED } from "@/config/featureFlags";
 import logo from "@/assets/logo.png";
 
 const rentalCategories = [
@@ -243,13 +244,15 @@ export function Header() {
             {/* CTA + Cart */}
             <div className="hidden md:flex items-center gap-2">
               <CartButton />
-              <Button
-                onClick={() => setShowJotform(true)}
-                className="btn-bounce"
-                size="lg"
-              >
-                Check Availability
-              </Button>
+              {BOOKING_ENABLED && (
+                <Button
+                  onClick={() => setShowJotform(true)}
+                  className="btn-bounce"
+                  size="lg"
+                >
+                  Check Availability
+                </Button>
+              )}
             </div>
 
             {/* Mobile menu button */}
@@ -343,16 +346,18 @@ export function Header() {
                 Privacy Policy
               </Link>
 
-              <Button 
-                onClick={() => {
-                  setShowJotform(true);
-                  setMobileMenuOpen(false);
-                }}
-                className="w-full btn-bounce"
-                size="lg"
-              >
-                Check Availability
-              </Button>
+              {BOOKING_ENABLED && (
+                <Button
+                  onClick={() => {
+                    setShowJotform(true);
+                    setMobileMenuOpen(false);
+                  }}
+                  className="w-full btn-bounce"
+                  size="lg"
+                >
+                  Check Availability
+                </Button>
+              )}
             </div>
           </div>
         )}
