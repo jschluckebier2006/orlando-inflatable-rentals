@@ -113,6 +113,24 @@ export function PaymentStep({ subtotal, damageWaiver, payload, onBack }: Payment
         <p className="text-xs text-muted-foreground">Pay any remaining balance in cash or card on delivery day.</p>
       </div>
 
+      <div className="rounded-md border border-border p-3 space-y-2">
+        <p className="text-sm font-semibold">Cancellation Policy</p>
+        <p className="text-xs text-muted-foreground">
+          All reservations are considered final upon booking. Cancellations are not permitted once a reservation is confirmed. In the event of severe weather, a declared weather emergency, or other acts of nature affecting your event area, cancellations or reschedules will be accommodated at no charge — please contact us directly in those situations. By confirming this reservation, you authorize Orlando Inflatables LLC to charge your card a $50 cancellation fee in the event of a cancellation outside of weather-related circumstances.
+        </p>
+        <div className="flex items-start gap-2 pt-1">
+          <Checkbox
+            id="cancel-policy"
+            checked={agreed}
+            onCheckedChange={(checked) => setAgreed(checked === true)}
+            className="mt-0.5"
+          />
+          <Label htmlFor="cancel-policy" className="text-xs font-normal leading-relaxed cursor-pointer">
+            I have read and agree to the Orlando Inflatables cancellation policy. I understand my reservation is non-refundable and authorize a $50 cancellation fee if applicable.
+          </Label>
+        </div>
+      </div>
+
       <div className="space-y-2">
         <p className="text-sm font-semibold">Payment option</p>
         <Option value="deposit" label="$50 non-refundable deposit" amount="$50.00" sub="Reserves your date. Applied to your total. Forfeited if cancelled." />
@@ -129,7 +147,7 @@ export function PaymentStep({ subtotal, damageWaiver, payload, onBack }: Payment
           </div>
         )}
         <p className="text-xs text-muted-foreground pt-1">
-          Balance due on delivery day: <span className="font-semibold">${balance.toFixed(2)}</span>
+          Your remaining balance will be charged the week of your event, typically 2–5 days before your scheduled date. No action is needed from you — we will process your saved card at that time.
         </p>
       </div>
 
@@ -137,10 +155,10 @@ export function PaymentStep({ subtotal, damageWaiver, payload, onBack }: Payment
         <Button variant="outline" onClick={onBack} disabled={loading}>Back</Button>
         <Button
           onClick={startPayment}
-          disabled={loading || (choice === "custom" && !customValid)}
+          disabled={loading || (choice === "custom" && !customValid) || !agreed}
           className="bg-secondary hover:bg-secondary/90 text-secondary-foreground"
         >
-          {loading ? (<><Loader2 className="mr-2 h-4 w-4 animate-spin" />Loading...</>) : "Continue to payment"}
+          {loading ? (<><Loader2 className="mr-2 h-4 w-4 animate-spin" />Loading...</>) : "Confirm Reservation"}
         </Button>
       </div>
     </div>
