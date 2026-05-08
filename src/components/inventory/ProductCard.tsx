@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Check, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import type { Product } from "@/data/inventory";
 
 interface ProductCardProps {
