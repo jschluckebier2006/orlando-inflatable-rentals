@@ -1,9 +1,8 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Check, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import type { Product } from "@/data/inventory";
-import { useCart } from "@/contexts/CartContext";
 
 interface ProductCardProps {
   product: Product;
@@ -11,24 +10,10 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product, onClick }: ProductCardProps) {
-  const { addItem, has, openCart } = useCart();
-  const inCart = has(product.id);
-
-  const handleAdd = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (inCart) {
-      openCart();
-    } else {
-      addItem(product);
-      openCart();
-    }
-    onClick?.();
-  };
-
   return (
     <Card 
-      className="overflow-hidden card-hover cursor-pointer group transition-all duration-300 hover:shadow-xl"
-      onClick={handleAdd}
+      className="overflow-hidden card-hover group transition-all duration-300 hover:shadow-xl"
+      onClick={onClick}
     >
       <div className="aspect-square overflow-hidden relative bg-muted/30">
         <img 
@@ -54,15 +39,18 @@ export function ProductCard({ product, onClick }: ProductCardProps) {
         {product.ageRange && (
           <p className="text-sm text-muted-foreground">Ages: {product.ageRange}</p>
         )}
+        <a href="tel:4074971840" className="block">
+          <Button
+            className="w-full mt-3 min-h-[44px] bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
+          >
+            Call Us to Book Now
+          </Button>
+        </a>
         <Button
-          onClick={handleAdd}
-          className="w-full mt-3 min-h-[44px] bg-secondary hover:bg-secondary/90 text-secondary-foreground font-semibold"
+          disabled
+          className="w-full mt-2 min-h-[44px] bg-muted text-muted-foreground font-semibold cursor-not-allowed opacity-60"
         >
-          {inCart ? (
-            <><Check className="h-4 w-4 mr-1.5" />In Cart — View</>
-          ) : (
-            <><Plus className="h-4 w-4 mr-1.5" />Add to Cart</>
-          )}
+          <Plus className="h-4 w-4 mr-1.5" />Add to Cart — Temporarily Disabled
         </Button>
       </CardContent>
     </Card>
