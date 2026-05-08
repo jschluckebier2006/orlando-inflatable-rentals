@@ -6,6 +6,8 @@ import heroBackground from "@/assets/orlando-inflatables-hero.webp";
 
 export function HeroSection() {
   const [showJotform, setShowJotform] = useState(false);
+  // TEMP: hide hero "Check Availability for Your Date" CTA. Set to false to re-enable.
+  const HIDE_AVAILABILITY_CTA = true;
 
   return (
     <>
@@ -63,14 +65,16 @@ export function HeroSection() {
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in" style={{ animationDelay: "0.4s" }}>
-              <Button
-                onClick={() => setShowJotform(true)}
-                size="lg"
-                className="bg-accent hover:bg-accent/90 text-accent-foreground btn-bounce text-lg md:text-xl px-10 py-7 font-bold shadow-2xl w-full sm:w-auto"
-              >
-                Check Availability for Your Date
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
+              {!HIDE_AVAILABILITY_CTA && (
+                <Button
+                  onClick={() => setShowJotform(true)}
+                  size="lg"
+                  className="bg-accent hover:bg-accent/90 text-accent-foreground btn-bounce text-lg md:text-xl px-10 py-7 font-bold shadow-2xl w-full sm:w-auto"
+                >
+                  Check Availability for Your Date
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              )}
               <a href="tel:4074971840">
                 <Button
                   size="lg"
