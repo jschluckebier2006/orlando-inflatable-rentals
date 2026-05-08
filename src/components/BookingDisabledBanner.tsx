@@ -3,6 +3,8 @@ import { BOOKING_ENABLED } from "@/config/featureFlags";
 
 export function BookingDisabledBanner() {
   if (BOOKING_ENABLED) return null;
+  // Only show the reminder in dev/preview — never on the published production site.
+  if (!import.meta.env.DEV) return null;
   return (
     <div className="w-full bg-yellow-400 text-yellow-950 border-b border-yellow-500">
       <div className="container-page py-2 flex items-center justify-center gap-2 text-xs sm:text-sm font-semibold text-center">
