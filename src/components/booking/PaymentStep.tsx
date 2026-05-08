@@ -11,7 +11,7 @@ import { getStripe, getStripeEnvironment } from "@/lib/stripe";
 import { cn } from "@/lib/utils";
 import { computeBreakdown } from "@/lib/pricing";
 
-const DEPOSIT = 50;
+const DEPOSIT = 5;
 
 interface PaymentStepProps {
   /** Pre-tax, pre-waiver subtotal (items × duration multiplier). */
@@ -115,7 +115,7 @@ export function PaymentStep({ subtotal, damageWaiver, payload, onBack }: Payment
           <div className="flex justify-between"><span>Sales Tax (7%)</span><span>${bd.tax.toFixed(2)}</span></div>
           <div className="flex justify-between font-semibold pt-1"><span>Order total</span><span>${total.toFixed(2)}</span></div>
         </div>
-        <p className="text-xs text-muted-foreground">A $50 non-refundable deposit is due today to secure your date. Your remaining balance will be charged to your card the week of your event, typically 2–5 days before your scheduled date — unless you select the cash on delivery option below.</p>
+        <p className="text-xs text-muted-foreground">A $5 non-refundable deposit is due today to secure your date. Your remaining balance will be charged to your card the week of your event, typically 2–5 days before your scheduled date — unless you select the cash on delivery option below.</p>
       </div>
 
       <div className="rounded-md border border-border p-3 space-y-2">
@@ -138,7 +138,7 @@ export function PaymentStep({ subtotal, damageWaiver, payload, onBack }: Payment
 
       <div className="space-y-2">
         <p className="text-sm font-semibold">Payment option</p>
-        <Option value="deposit" label="$50 non-refundable deposit" amount="$50.00" sub="Reserves your date. Applied to your total. Forfeited if cancelled." />
+        <Option value="deposit" label="$5 non-refundable deposit" amount="$5.00" sub="Reserves your date. Applied to your total. Forfeited if cancelled." />
         <Option value="full" label="Pay in full now" amount={`$${total.toFixed(2)}`} sub="Nothing owed on delivery day." />
         <Option value="custom" label="Custom amount" amount={customValid ? `$${customNum.toFixed(2)}` : "—"} sub={`Any amount from $${DEPOSIT} up to $${total.toFixed(2)}.`} />
         {choice === "custom" && (
@@ -151,7 +151,7 @@ export function PaymentStep({ subtotal, damageWaiver, payload, onBack }: Payment
             {!customValid && <p className="text-xs text-destructive">Must be between ${DEPOSIT} and ${total.toFixed(2)}.</p>}
           </div>
         )}
-        <Option value="deposit_cash" label="$50 deposit + remaining balance cash on delivery" amount="$50.00" sub="Pay $50 now by card. Remaining balance is due in cash on the day of your event." />
+        <Option value="deposit_cash" label="$5 deposit + remaining balance cash on delivery" amount="$5.00" sub="Pay $5 now by card. Remaining balance is due in cash on the day of your event." />
         <p className="text-xs text-muted-foreground pt-1">
           {choice === "deposit_cash"
             ? `Your remaining balance of $${balance.toFixed(2)} is due in cash on the day of your event.`

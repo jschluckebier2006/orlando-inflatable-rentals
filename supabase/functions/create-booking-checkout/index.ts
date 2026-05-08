@@ -37,7 +37,7 @@ const PayloadSchema = z.object({
 });
 
 const SERVER_MULT: Record<string, number> = { "7hour": 1.0, overnight: 1.25, weekend: 1.6 };
-const DEPOSIT = 50;
+const DEPOSIT = 5;
 const TAX_RATE = 0.07;
 const WAIVER_RATE = 0.10;
 
