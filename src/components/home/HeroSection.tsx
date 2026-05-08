@@ -2,12 +2,11 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Phone, ArrowRight, Star } from "lucide-react";
 import { JotformModal } from "@/components/JotformModal";
+import { BOOKING_ENABLED } from "@/config/featureFlags";
 import heroBackground from "@/assets/orlando-inflatables-hero.webp";
 
 export function HeroSection() {
   const [showJotform, setShowJotform] = useState(false);
-  // TEMP: hide hero "Check Availability for Your Date" CTA. Set to false to re-enable.
-  const HIDE_AVAILABILITY_CTA = true;
 
   return (
     <>
@@ -65,7 +64,7 @@ export function HeroSection() {
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in" style={{ animationDelay: "0.4s" }}>
-              {!HIDE_AVAILABILITY_CTA && (
+              {BOOKING_ENABLED && (
                 <Button
                   onClick={() => setShowJotform(true)}
                   size="lg"
