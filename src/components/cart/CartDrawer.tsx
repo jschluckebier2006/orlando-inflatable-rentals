@@ -95,7 +95,7 @@ export function CartDrawer() {
             <Button onClick={openCheckout} className="w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground" size="lg">
               Check Availability & Reserve
             </Button>
-            <p className="text-xs text-muted-foreground text-center">No payment now — we'll confirm by phone.</p>
+            <p className="text-xs text-muted-foreground text-center">Secure your date with just a $5 deposit — no full payment required now.</p>
           </div>
         )}
       </SheetContent>
