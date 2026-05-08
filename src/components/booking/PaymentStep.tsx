@@ -85,24 +85,47 @@ export function PaymentStep({ subtotal, damageWaiver, payload, onBack }: Payment
     );
   }
 
-  const Option = ({ value, label, amount, sub }: { value: "deposit" | "full" | "custom" | "deposit_cash"; label: string; amount: string; sub: string }) => (
-    <button
-      type="button"
-      onClick={() => setChoice(value)}
-      className={cn(
-        "w-full text-left rounded-lg border p-3 transition-colors",
-        choice === value ? "border-primary bg-primary/5 ring-1 ring-primary" : "border-border hover:border-primary/40"
-      )}
-    >
-      <div className="flex items-center justify-between gap-2">
-        <div>
-          <p className="text-sm font-semibold">{label}</p>
-          <p className="text-xs text-muted-foreground">{sub}</p>
+  const Option = ({ value, label, amount, badge, sub, popular }: { value: "deposit" | "full" | "custom" | "deposit_cash"; label: string; amount: string; badge: string; sub: string; popular?: boolean }) => {
+    const selected = choice === value;
+    return (
+      <button
+        type="button"
+        onClick={() => setChoice(value)}
+        role="radio"
+        aria-checked={selected}
+        className={cn(
+          "relative w-full text-left rounded-lg border p-4 sm:p-5 transition-colors",
+          selected ? "border-primary bg-primary/5 ring-1 ring-primary" : "border-border hover:border-primary/40"
+        )}
+      >
+        {popular && (
+          <span className="absolute -top-2 right-3 rounded-full bg-secondary text-secondary-foreground text-[10px] font-semibold px-2 py-0.5 shadow-sm">
+            Most Popular
+          </span>
+        )}
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-start gap-3 min-w-0">
+            <span
+              className={cn(
+                "mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border-2",
+                selected ? "border-primary" : "border-muted-foreground/40"
+              )}
+            >
+              {selected && <span className="h-2 w-2 rounded-full bg-primary" />}
+            </span>
+            <div className="min-w-0 space-y-1.5">
+              <p className="text-sm font-semibold">{label}</p>
+              <span className="inline-flex items-center rounded-full bg-primary/10 text-primary px-2 py-0.5 text-xs font-semibold">
+                {badge}
+              </span>
+              <p className="text-xs text-muted-foreground">{sub}</p>
+            </div>
+          </div>
+          <span className="text-sm font-semibold shrink-0">{amount}</span>
         </div>
-        <span className="text-sm font-semibold">{amount}</span>
-      </div>
-    </button>
-  );
+      </button>
+    );
+  };
 
   return (
     <div className="space-y-4">
@@ -136,12 +159,15 @@ export function PaymentStep({ subtotal, damageWaiver, payload, onBack }: Payment
         </div>
       </div>
 
-      <div className="space-y-2">
-        <p className="text-sm font-semibold">Payment option</p>
-        <Option value="deposit" label="$5 non-refundable deposit" amount="$5.00" sub="$5 charged to your card today. Remaining balance charged to your card the week of your event." />
-        <Option value="full" label="Pay in full now" amount={`$${total.toFixed(2)}`} sub="Full amount charged to your card today. Nothing owed on delivery." />
-        <Option value="deposit_cash" label="$5 deposit + remaining balance cash on delivery" amount="$5.00" sub="$5 charged to your card today. Remaining balance due in cash on the day of your event." />
-        <Option value="custom" label="Custom amount" amount={customValid ? `$${customNum.toFixed(2)}` : "—"} sub="Choose any amount from $5 up to the full total. Remaining balance charged to your card the week of your event." />
+      <div className="space-y-2" role="radiogroup" aria-label="Payment plan">
+        <div className="space-y-0.5">
+          <p className="text-sm font-semibold">Choose your payment plan</p>
+          <p className="text-xs text-muted-foreground">Select one of the options below to continue.</p>
+        </div>
+        <Option value="deposit" label="$5 non-refundable deposit" amount="$5.00" badge="Charged today: $5.00" sub="Remaining balance charged to your card the week of your event" popular />
+        <Option value="deposit_cash" label="$5 deposit + remaining balance cash on delivery" amount="$5.00" badge="Charged today: $5.00" sub="Remaining balance due in cash on the day of your event" />
+        <Option value="full" label="Pay in full now" amount={`$${total.toFixed(2)}`} badge="Charged today: full amount" sub="Nothing owed on delivery — you're all set" />
+        <Option value="custom" label="Custom amount" amount={customValid ? `$${customNum.toFixed(2)}` : "—"} badge="Charged today: your chosen amount" sub="Remaining balance charged to your card the week of your event" />
         {choice === "custom" && (
           <div className="pl-2 pt-1 space-y-1">
             <Label htmlFor="custom-amt" className="text-xs">Amount in USD</Label>
