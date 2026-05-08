@@ -23,7 +23,7 @@ interface PaymentStepProps {
 
 export function PaymentStep({ subtotal, damageWaiver, payload, onBack }: PaymentStepProps) {
   const { toast } = useToast();
-  const [choice, setChoice] = useState<"deposit" | "full" | "custom">("deposit");
+  const [choice, setChoice] = useState<"deposit" | "full" | "custom" | "deposit_cash">("deposit");
   const bd = useMemo(() => computeBreakdown(subtotal, damageWaiver), [subtotal, damageWaiver]);
   const total = bd.total;
   const [customAmount, setCustomAmount] = useState<string>(String(Math.min(total, Math.max(DEPOSIT, Math.round(total / 2)))));
@@ -35,7 +35,12 @@ export function PaymentStep({ subtotal, damageWaiver, payload, onBack }: Payment
   const customValid = customNum >= DEPOSIT && customNum <= total;
 
   const balance = useMemo(() => {
-    const charged = choice === "deposit" ? DEPOSIT : choice === "full" ? total : (customValid ? customNum : 0);
+    const charged =
+      choice === "deposit" || choice === "deposit_cash"
+        ? DEPOSIT
+        : choice === "full"
+        ? total
+        : (customValid ? customNum : 0);
     return Math.max(0, Math.round((total - charged) * 100) / 100);
   }, [choice, total, customValid, customNum]);
 
@@ -80,7 +85,7 @@ export function PaymentStep({ subtotal, damageWaiver, payload, onBack }: Payment
     );
   }
 
-  const Option = ({ value, label, amount, sub }: { value: "deposit" | "full" | "custom"; label: string; amount: string; sub: string }) => (
+  const Option = ({ value, label, amount, sub }: { value: "deposit" | "full" | "custom" | "deposit_cash"; label: string; amount: string; sub: string }) => (
     <button
       type="button"
       onClick={() => setChoice(value)}
@@ -110,7 +115,7 @@ export function PaymentStep({ subtotal, damageWaiver, payload, onBack }: Payment
           <div className="flex justify-between"><span>Sales Tax (7%)</span><span>${bd.tax.toFixed(2)}</span></div>
           <div className="flex justify-between font-semibold pt-1"><span>Order total</span><span>${total.toFixed(2)}</span></div>
         </div>
-        <p className="text-xs text-muted-foreground">Pay any remaining balance in cash or card on delivery day.</p>
+        <p className="text-xs text-muted-foreground">A $50 non-refundable deposit is due today to secure your date. Your remaining balance will be charged to your card the week of your event, typically 2–5 days before your scheduled date — unless you select the cash on delivery option below.</p>
       </div>
 
       <div className="rounded-md border border-border p-3 space-y-2">
@@ -146,8 +151,11 @@ export function PaymentStep({ subtotal, damageWaiver, payload, onBack }: Payment
             {!customValid && <p className="text-xs text-destructive">Must be between ${DEPOSIT} and ${total.toFixed(2)}.</p>}
           </div>
         )}
+        <Option value="deposit_cash" label="$50 deposit + remaining balance cash on delivery" amount="$50.00" sub="Pay $50 now by card. Remaining balance is due in cash on the day of your event." />
         <p className="text-xs text-muted-foreground pt-1">
-          Your remaining balance will be charged the week of your event, typically 2–5 days before your scheduled date. No action is needed from you — we will process your saved card at that time.
+          {choice === "deposit_cash"
+            ? `Your remaining balance of $${balance.toFixed(2)} is due in cash on the day of your event.`
+            : "Your remaining balance will be charged the week of your event, typically 2–5 days before your scheduled date. No action is needed from you — we will process your saved card at that time."}
         </p>
       </div>
 
