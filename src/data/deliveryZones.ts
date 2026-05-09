@@ -72,21 +72,15 @@ export const DELIVERY_ZONES: Record<string, DeliveryZone> = {
   "32820": { zip: "32820", city: "Bithlo", fee: 0, status: "call" },
 };
 
+import { getRuntimeZones } from "@/lib/appSettings";
+
 /** Look up a zone by raw user input (handles ZIP+4, whitespace, etc.). */
 export function lookupZone(input: string | null | undefined): DeliveryZone | null {
   if (!input) return null;
   const zip = String(input).trim().slice(0, 5);
   if (!/^\d{5}$/.test(zip)) return null;
-  // Runtime DB overlay wins over static seeds (admin-editable).
-  // Lazy import avoids a circular import at module init time.
-  try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const { getRuntimeZones } = require("@/lib/appSettings") as typeof import("@/lib/appSettings");
-    const zones = getRuntimeZones();
-    return zones[zip] ?? null;
-  } catch {
-    return DELIVERY_ZONES[zip] ?? null;
-  }
+  // Runtime DB overlay wins over static seeds; falls back to static while hydrating.
+  return getRuntimeZones()[zip] ?? null;
 }
 
 /** True if the given zip can be booked online (i.e. not call-only and not unknown). */
