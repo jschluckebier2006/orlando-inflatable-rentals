@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { RefreshCw, ExternalLink, ImageOff, AlertTriangle } from "lucide-react";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { legacyAssetFilenames } from "@/lib/inventory";
 
 type Status = "healthy" | "no_gallery" | "stale_primary" | "legacy_fallback" | "broken";
@@ -151,6 +152,55 @@ export default function InventoryImageHealth() {
     reload();
   }
 
+  // Bulk action candidates respect current category + active filters but ignore the status filter
+  // so admins always know what they're touching regardless of which view they're on.
+  const scope = useMemo(() => rows.filter((r) => {
+    if (!showInactive && !r.active) return false;
+    if (catFilter !== "all" && r.category !== catFilter) return false;
+    return true;
+  }), [rows, catFilter, showInactive]);
+
+  const promoteCandidates = useMemo(
+    () => scope.filter((r) => r.first_gallery_url && (r.status === "no_gallery" || r.status === "stale_primary") && r.first_gallery_url !== r.primary_image_url),
+    [scope],
+  );
+  const staleCandidates = useMemo(() => scope.filter((r) => r.status === "stale_primary"), [scope]);
+
+  const [bulkRunning, setBulkRunning] = useState(false);
+
+  async function bulkPromote() {
+    if (promoteCandidates.length === 0) return;
+    setBulkRunning(true);
+    const results = await Promise.all(
+      promoteCandidates.map((r) =>
+        (supabase.from("inventory_items") as any)
+          .update({ primary_image_url: r.first_gallery_url })
+          .eq("id", r.id)
+          .then((res: any) => ({ ok: !res.error, id: r.id })),
+      ),
+    );
+    setBulkRunning(false);
+    const ok = results.filter((r) => r.ok).length;
+    const failed = results.length - ok;
+    toast({
+      title: `Promoted ${ok} item${ok === 1 ? "" : "s"}`,
+      description: failed ? `${failed} failed — check permissions and retry.` : undefined,
+      variant: failed ? "destructive" : "default",
+    });
+    reload();
+  }
+
+  async function bulkClearStale() {
+    if (staleCandidates.length === 0) return;
+    setBulkRunning(true);
+    const ids = staleCandidates.map((r) => r.id);
+    const { error } = await (supabase.from("inventory_items") as any).update({ primary_image_url: null }).in("id", ids);
+    setBulkRunning(false);
+    if (error) return toast({ title: "Bulk clear failed", description: error.message, variant: "destructive" });
+    toast({ title: `Cleared ${ids.length} stale primar${ids.length === 1 ? "y" : "ies"}` });
+    reload();
+  }
+
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
@@ -187,6 +237,56 @@ export default function InventoryImageHealth() {
           </Button>
         </div>
       </Card>
+
+      {(promoteCandidates.length > 0 || staleCandidates.length > 0) && (
+        <Card className="p-3 flex flex-wrap gap-2 items-center bg-muted/40">
+          <div className="text-sm font-medium">Bulk fixes</div>
+          <div className="text-xs text-muted-foreground">
+            Applies to {catFilter === "all" ? "all categories" : catFilter}
+            {showInactive ? "" : ", active items only"}.
+          </div>
+          <div className="ml-auto flex gap-2">
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button size="sm" variant="default" disabled={bulkRunning || promoteCandidates.length === 0}>
+                  Promote first gallery → primary ({promoteCandidates.length})
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Promote {promoteCandidates.length} item{promoteCandidates.length === 1 ? "" : "s"}?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    For every flagged item with at least one gallery photo, the first gallery image will be set as the primary image. This is reversible per-item from the detail page.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={bulkPromote}>Promote all</AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button size="sm" variant="outline" disabled={bulkRunning || staleCandidates.length === 0}>
+                  Clear stale primaries ({staleCandidates.length})
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Clear {staleCandidates.length} stale primar{staleCandidates.length === 1 ? "y" : "ies"}?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Removes the saved primary image URL on every item whose primary no longer exists in the gallery. The resolver will then fall back to a gallery photo or the bundled webp.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={bulkClearStale}>Clear all</AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
+        </Card>
+      )}
 
       <Card className="overflow-hidden">
         {loading ? (
