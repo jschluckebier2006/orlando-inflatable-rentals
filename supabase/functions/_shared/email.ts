@@ -250,6 +250,65 @@ export function adminNewBookingEmail(b: BookingForEmail, items: BookingItemForEm
   };
 }
 
+export function customerRescheduleEmail(
+  b: BookingForEmail,
+  prev: { start: string; end?: string | null },
+) {
+  const ref = b.id.slice(0, 8).toUpperCase();
+  const oldLine = prev.end && prev.end !== prev.start
+    ? `${fmtDate(prev.start)} → ${fmtDate(prev.end)}`
+    : fmtDate(prev.start);
+  const newLine = b.event_end_date && b.event_end_date !== b.event_date
+    ? `${fmtDate(b.event_date)} → ${fmtDate(b.event_end_date)}`
+    : fmtDate(b.event_date);
+  const body = `
+    <h1 style="margin:0 0 8px;font-size:22px;">Your booking date has changed</h1>
+    <p style="margin:0 0 16px;color:#54657a;">Hi ${escapeHtml(b.customer_name.split(" ")[0])}, your Orlando Inflatables reservation has been rescheduled. Here are the new details — please save them.</p>
+    <p style="margin:0 0 16px;font-size:13px;color:#54657a;">Booking ref: <strong>#${ref}</strong></p>
+    <table width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;line-height:1.6;border:1px solid #eef0f4;border-radius:8px;padding:12px;margin:8px 0 16px;">
+      <tr><td style="color:#54657a;width:130px;">Previous date</td><td style="text-decoration:line-through;color:#8a97a8;">${oldLine}</td></tr>
+      <tr><td style="color:#54657a;">New date</td><td><strong style="color:${BRAND_BLUE};">${newLine}</strong></td></tr>
+      <tr><td style="color:#54657a;">Delivery</td><td>${escapeHtml(b.event_start_time ?? "")}</td></tr>
+      <tr><td style="color:#54657a;">Pickup</td><td>${escapeHtml(b.event_end_time ?? "")}</td></tr>
+      <tr><td style="color:#54657a;">Address</td><td>${escapeHtml(b.event_address_line)}, ${escapeHtml(b.event_city)} ${escapeHtml(b.event_zip)}</td></tr>
+    </table>
+    <p style="margin:24px 0 0;font-size:13px;color:#54657a;">If this date doesn't work, please reply to this email or call <strong>${PHONE}</strong> right away so we can sort it out.</p>`;
+  return {
+    subject: `Booking rescheduled · ${fmtDate(b.event_date)} · #${ref}`,
+    html: layout({ preheader: `Your booking #${ref} has been rescheduled to ${newLine}.`, body }),
+  };
+}
+
+export function adminRescheduleEmail(
+  b: BookingForEmail,
+  prev: { start: string; end?: string | null },
+  override: boolean,
+  actorEmail?: string | null,
+) {
+  const ref = b.id.slice(0, 8).toUpperCase();
+  const oldLine = prev.end && prev.end !== prev.start
+    ? `${fmtDate(prev.start)} → ${fmtDate(prev.end)}`
+    : fmtDate(prev.start);
+  const newLine = b.event_end_date && b.event_end_date !== b.event_date
+    ? `${fmtDate(b.event_date)} → ${fmtDate(b.event_end_date)}`
+    : fmtDate(b.event_date);
+  const overrideBlock = override
+    ? `<p style="margin:12px 0;padding:10px 12px;background:#fff4e5;border:1px solid #ffb84d;border-radius:6px;color:#8a4b00;font-size:13px;">
+         <strong>⚠️ Conflict override:</strong> the new date had a booking conflict that was overridden by ${escapeHtml(actorEmail ?? "an admin")}. The same item may now be double-booked.
+       </p>` : "";
+  const body = `
+    <h1 style="margin:0 0 8px;font-size:20px;">Booking rescheduled · #${ref}</h1>
+    <p style="margin:0 0 8px;"><strong>${escapeHtml(b.customer_name)}</strong> · ${escapeHtml(b.customer_email)} · ${escapeHtml(b.customer_phone)}</p>
+    ${overrideBlock}
+    <p style="font-size:14px;margin:8px 0;"><span style="color:#54657a;">From:</span> <s>${oldLine}</s><br>
+    <span style="color:#54657a;">To:</span> <strong>${newLine}</strong></p>
+    <p style="font-size:13px;color:#54657a;">Changed by ${escapeHtml(actorEmail ?? "admin")}.</p>`;
+  return {
+    subject: `${override ? "⚠️ " : ""}Rescheduled · ${b.customer_name} · ${fmtDate(b.event_date)}`,
+    html: layout({ preheader: `Booking #${ref} rescheduled to ${newLine}`, body }),
+  };
+}
+
 export interface AbandonedCartInfo {
   customer_name: string;
   customer_email: string;
