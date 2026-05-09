@@ -14,6 +14,54 @@ export type Database = {
   }
   public: {
     Tables: {
+      booking_activity: {
+        Row: {
+          actor_email: string | null
+          booking_id: string | null
+          created_at: string
+          customer_id: string | null
+          id: string
+          kind: string
+          message: string
+          metadata: Json
+        }
+        Insert: {
+          actor_email?: string | null
+          booking_id?: string | null
+          created_at?: string
+          customer_id?: string | null
+          id?: string
+          kind: string
+          message: string
+          metadata?: Json
+        }
+        Update: {
+          actor_email?: string | null
+          booking_id?: string | null
+          created_at?: string
+          customer_id?: string | null
+          id?: string
+          kind?: string
+          message?: string
+          metadata?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "booking_activity_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "booking_activity_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       booking_items: {
         Row: {
           booking_id: string
@@ -52,12 +100,54 @@ export type Database = {
           },
         ]
       }
+      booking_payments: {
+        Row: {
+          amount: number
+          booking_id: string
+          created_at: string
+          id: string
+          method: string
+          notes: string | null
+          recorded_by: string | null
+          reference: string | null
+        }
+        Insert: {
+          amount: number
+          booking_id: string
+          created_at?: string
+          id?: string
+          method: string
+          notes?: string | null
+          recorded_by?: string | null
+          reference?: string | null
+        }
+        Update: {
+          amount?: number
+          booking_id?: string
+          created_at?: string
+          id?: string
+          method?: string
+          notes?: string | null
+          recorded_by?: string | null
+          reference?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "booking_payments_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       bookings: {
         Row: {
           amount_paid: number
           balance_due: number | null
           created_at: string
           customer_email: string
+          customer_id: string | null
           customer_name: string
           customer_phone: string
           damage_waiver_amount: number
@@ -95,6 +185,7 @@ export type Database = {
           balance_due?: number | null
           created_at?: string
           customer_email: string
+          customer_id?: string | null
           customer_name: string
           customer_phone: string
           damage_waiver_amount?: number
@@ -132,6 +223,7 @@ export type Database = {
           balance_due?: number | null
           created_at?: string
           customer_email?: string
+          customer_id?: string | null
           customer_name?: string
           customer_phone?: string
           damage_waiver_amount?: number
@@ -163,6 +255,53 @@ export type Database = {
           tax_rate?: number
           total_amount?: number | null
           updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bookings_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      customers: {
+        Row: {
+          address_line: string | null
+          city: string | null
+          created_at: string
+          email: string
+          id: string
+          name: string
+          notes: string | null
+          phone: string | null
+          updated_at: string
+          zip: string | null
+        }
+        Insert: {
+          address_line?: string | null
+          city?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          name: string
+          notes?: string | null
+          phone?: string | null
+          updated_at?: string
+          zip?: string | null
+        }
+        Update: {
+          address_line?: string | null
+          city?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          name?: string
+          notes?: string | null
+          phone?: string | null
+          updated_at?: string
+          zip?: string | null
         }
         Relationships: []
       }

@@ -73,6 +73,13 @@ const WebVitals = lazy(() => import("./pages/WebVitals"));
 const CheckoutReturn = lazy(() => import("./pages/CheckoutReturn"));
 const AdminLogin = lazy(() => import("./pages/admin/Login"));
 const AdminBookings = lazy(() => import("./pages/admin/Bookings"));
+const AdminLayout = lazy(() => import("./components/admin/AdminLayout"));
+const AdminCalendar = lazy(() => import("./pages/admin/Calendar"));
+const AdminCustomers = lazy(() => import("./pages/admin/Customers"));
+const AdminCustomerDetail = lazy(() => import("./pages/admin/CustomerDetail"));
+const AdminNewReservation = lazy(() => import("./pages/admin/NewReservation"));
+const AdminActivity = lazy(() => import("./pages/admin/Activity"));
+const AdminSettings = lazy(() => import("./pages/admin/Settings"));
 
 const queryClient = new QueryClient();
 
@@ -151,7 +158,15 @@ const App = () => (
               <Route path="/web-vitals" element={<WebVitals />} />
               <Route path="/checkout/return" element={<CheckoutReturn />} />
               <Route path="/admin/login" element={<AdminLogin />} />
-              <Route path="/admin/bookings" element={<AdminBookings />} />
+              <Route path="/admin" element={<AdminLayout />}>
+                <Route index element={<AdminCalendar />} />
+                <Route path="bookings" element={<AdminBookings />} />
+                <Route path="customers" element={<AdminCustomers />} />
+                <Route path="customers/:id" element={<AdminCustomerDetail />} />
+                <Route path="new" element={<AdminNewReservation />} />
+                <Route path="activity" element={<AdminActivity />} />
+                <Route path="settings" element={<AdminSettings />} />
+              </Route>
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Suspense>
