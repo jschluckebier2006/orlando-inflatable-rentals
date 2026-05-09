@@ -1,42 +1,54 @@
-# Storefront → Database Inventory
-
-## Current state
-- DB `inventory_items` is fully seeded (37 rows across 7 categories) but `inventory_images` is empty and `primary_image_url` is null on every row.
-- Each row has `legacy_image` set to the bundled webp filename (e.g. `15ft-tropic-shock-water-slide.webp`) so we can keep the existing visuals working until admins upload new photos.
-- The whole storefront still imports from `src/data/inventory.ts` (a hand-curated array of `Product` with bundled image imports). 16 files consume it: category pages, `ProductGrid`, `ProductCard`, `CartContext`, all `CategoryCarousel`s, `PopularRentalsSection`, plus admin `BookingFormModal` and `RescheduleDialog`.
+# Inventory Image Health Check
 
 ## Goal
-Every public-facing list and detail (and the admin booking dialogs) reads live data from `inventory_items` + `inventory_images`. The in-memory product array is removed. Images resolve in this priority order: `primary_image_url` → first row in `inventory_images` (by `sort_order`) → bundled webp matched from `legacy_image`.
+Give admins a single screen that audits every inventory item's images and surfaces actionable problems before customers see broken cards.
 
-## Approach
+## Where it lives
+New tab inside the existing `/admin/inventory` page (above the items table) plus a top-of-page summary banner that shows when issues exist. Also surfaced as a small badge in the sidebar "Inventory" link when `issues > 0`.
 
-### 1. New runtime inventory module (`src/lib/inventory.ts`)
-- Re-export the `Product` / `ProductCategory` types so existing imports keep compiling (with a deprecation comment on `src/data/inventory.ts` re-export shim).
-- `loadInventory()` — single Supabase query joining items with their images, returns a normalized `Product[]` shaped exactly like today's array. Cached in-module after first call (with a `refreshInventory()` escape hatch for the admin tabs).
-- Resolve images via a Vite `import.meta.glob('/src/assets/inventory/*.webp', { eager: true, as: 'url' })` lookup keyed on the `legacy_image` filename. Items with neither a DB image nor a known legacy file fall back to a generic placeholder so the grid never breaks.
-- Helpers: `useInventory()` React hook (returns `{ products, loading, error }` via `useState`/`useEffect`), plus category helpers `useWaterSlides()`, `useBounceHouses()`, etc., that filter the cached list and stay reactive when realtime updates fire.
-- Optional realtime: subscribe to `postgres_changes` on `inventory_items` so admin edits propagate live to open browser tabs.
+```
+Inventory page
+ ├─ Banner: "3 items missing images" (only when issues > 0)
+ └─ Tabs: [Items] [Image Health (3)]
+       └─ Image Health tab → table of flagged items
+```
 
-### 2. Refactor consumers
-- Category pages (`WaterSlideRentals`, `BounceHouseRentals`, `BounceSlideComboRentals`, `ObstacleCourseRentals`, `InteractiveGameRentals`, `ConcessionRentals`, `TableChairRentals`): swap `getX()` for the matching hook; render `<ProductGrid loading=... />` skeletons while loading.
-- Home: `AllCategoryCarousels` and `PopularRentalsSection` use `useInventory()` once and slice client-side.
-- `CategoryCarousel` / `CategoryCard` / `ProductGrid` / `ProductCard`: keep `Product` shape, no behavior change.
-- `CartContext`: switch the type import to `@/lib/inventory`. No logic change (cart already snapshots `id/name/price/image`).
-- Admin `BookingFormModal` and `RescheduleDialog`: replace the static `products` import with `useInventory()` so newly added items show up immediately.
+No new route; same admin auth/RLS as today.
 
-### 3. Hide inactive items
-Filter `active = true` (already a column) from the public list; admin tools see all rows.
+## What it checks
+For every active `inventory_items` row, classify into one of these states (worst first):
 
-### 4. Cleanup
-- Delete the hard-coded array body from `src/data/inventory.ts`; keep the file as a thin re-export of `Product` and `ProductCategory` types from `src/lib/inventory` to avoid touching every import path in this pass. (Future cleanup task can move all imports to `@/lib/inventory` and delete the shim.)
-- Remove the dozens of `import x from "@/assets/inventory/..."` lines — the glob handles resolution.
+1. **Broken** — `primary_image_url` is null, no rows in `inventory_images`, AND `legacy_image` is null OR the file isn't bundled in `src/assets/inventory/`. Customer sees the generic placeholder.
+2. **Legacy fallback** — `primary_image_url` is null and no `inventory_images` rows, but `legacy_image` matches a bundled webp. Working today, but tied to bundled assets and won't survive an `id`/filename change.
+3. **Stale primary** — `primary_image_url` is set but it doesn't match any row in `inventory_images` (e.g. the original was deleted from the gallery).
+4. **No gallery** — has a primary image but `inventory_images` is empty (no extra photos for galleries/SEO).
+5. **Healthy** — has primary + at least one `inventory_images` row.
+
+Inactive items are listed in a separate collapsed section so they don't clutter the main count.
+
+## UI
+- **Summary cards** at top of the tab: Healthy / Legacy fallback / Stale primary / No gallery / Broken with counts.
+- **Table** with columns: Thumbnail (current resolved image), Name, Category, Status badge, Source ("DB primary" / "Gallery" / "Bundled webp" / "Placeholder"), Quick actions (Open detail, Promote first gallery image to primary, Clear stale primary).
+- Filters: status (multi-select) and category. Default view = everything except Healthy.
+- "Re-run check" button to refetch.
+
+## Quick-fix actions (one click each)
+- **Promote gallery → primary**: when a `Stale primary` or `No gallery` item has at least one `inventory_images` row, set `primary_image_url` to the first image (`is_primary` first, then `sort_order`).
+- **Clear stale primary**: null out `primary_image_url` so the resolver falls back to gallery/legacy.
+- **Open detail**: links to existing `/admin/inventory/:id` for full upload UI.
+
+No bulk uploader — that already exists on the detail page.
+
+## Technical notes
+- Bundled-asset list is exposed by reusing the `legacyAssetMap` already built in `src/lib/inventory.ts`. Export `legacyAssetFilenames: Set<string>` from that module so the audit can membership-check without re-globbing.
+- Single Supabase fetch joins `inventory_items` with grouped counts from `inventory_images` (two queries client-side — items + all image rows — same pattern as `loadInventory`).
+- Pure client-side classification; no DB schema change.
+- Sidebar badge: small `useEffect` in `AdminSidebar` that calls a lightweight `count_image_issues()` helper (or just reuses the audit query) and shows a dot when > 0. Only loads inside the admin layout, so no public cost.
 
 ## Out of scope
-- Admin uploading new product images (already works in `InventoryDetail`).
-- Backfilling `primary_image_url` from `legacy_image`. The fallback chain handles it; admins can upload real photos when ready and the storefront will switch over automatically.
-- Pricing logic, cart UI, checkout flow.
+- HTTP HEAD-checking remote `primary_image_url` URLs to verify they 200. Storage uploads come from our own bucket; trust them. (Can be added later as an opt-in "deep check".)
+- Rewriting the resolver fallback chain.
+- Auto-uploading replacements.
 
-## Risks / verifications
-- Verify the glob filenames match every `legacy_image` value (one quick SQL check after the change: `select id, legacy_image from inventory_items where legacy_image not in (...)`). I'll run this during implementation.
-- Confirm SSR-style usage isn't broken (project is SPA — no SSR — so safe).
-- Build must stay green; Vite eager glob keeps images bundled exactly like today.
+## Verification
+After build: open `/admin/inventory`, switch to Image Health tab. With current DB (37 items, 0 gallery rows, all `primary_image_url` null), expect ~all rows in **Legacy fallback** plus any row whose `legacy_image` filename isn't in the bundled webp list (e.g. `marble-bounce-house.webp`, `snow-cone-machine.webp`) flagged as **Broken**.
