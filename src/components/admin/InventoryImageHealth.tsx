@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { RefreshCw, ExternalLink, ImageOff, AlertTriangle } from "lucide-react";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { legacyAssetFilenames } from "@/lib/inventory";
+import { logAudit, newBatchId } from "@/lib/adminAuditLog";
 
 type Status = "healthy" | "no_gallery" | "stale_primary" | "legacy_fallback" | "broken";
 
@@ -142,12 +143,30 @@ export default function InventoryImageHealth() {
     if (!r.first_gallery_url) return;
     const { error } = await (supabase.from("inventory_items") as any).update({ primary_image_url: r.first_gallery_url }).eq("id", r.id);
     if (error) return toast({ title: "Update failed", description: error.message, variant: "destructive" });
+    await logAudit({
+      entity_type: "inventory_item",
+      entity_id: r.id,
+      action: "image.promote_primary",
+      summary: `Promoted gallery image to primary for ${r.name}`,
+      before: { primary_image_url: r.primary_image_url },
+      after: { primary_image_url: r.first_gallery_url },
+      metadata: { source: "single", item_name: r.name, category: r.category, gallery_count: r.gallery_count },
+    });
     toast({ title: "Primary image updated" });
     reload();
   }
   async function clearPrimary(r: Row) {
     const { error } = await (supabase.from("inventory_items") as any).update({ primary_image_url: null }).eq("id", r.id);
     if (error) return toast({ title: "Update failed", description: error.message, variant: "destructive" });
+    await logAudit({
+      entity_type: "inventory_item",
+      entity_id: r.id,
+      action: "image.clear_primary",
+      summary: `Cleared stale primary image for ${r.name}`,
+      before: { primary_image_url: r.primary_image_url },
+      after: { primary_image_url: null },
+      metadata: { source: "single", item_name: r.name, category: r.category, gallery_count: r.gallery_count },
+    });
     toast({ title: "Primary image cleared" });
     reload();
   }
@@ -171,17 +190,33 @@ export default function InventoryImageHealth() {
   async function bulkPromote() {
     if (promoteCandidates.length === 0) return;
     setBulkRunning(true);
+    const batch_id = newBatchId();
     const results = await Promise.all(
       promoteCandidates.map((r) =>
         (supabase.from("inventory_items") as any)
           .update({ primary_image_url: r.first_gallery_url })
           .eq("id", r.id)
-          .then((res: any) => ({ ok: !res.error, id: r.id })),
+          .then((res: any) => ({ ok: !res.error, row: r })),
       ),
     );
     setBulkRunning(false);
     const ok = results.filter((r) => r.ok).length;
     const failed = results.length - ok;
+    await Promise.all(
+      results
+        .filter((r) => r.ok)
+        .map((r) =>
+          logAudit({
+            entity_type: "inventory_item",
+            entity_id: r.row.id,
+            action: "image.promote_primary",
+            summary: `Bulk: promoted gallery image to primary for ${r.row.name}`,
+            before: { primary_image_url: r.row.primary_image_url },
+            after: { primary_image_url: r.row.first_gallery_url },
+            metadata: { source: "bulk", batch_id, batch_size: promoteCandidates.length, item_name: r.row.name, category: r.row.category, gallery_count: r.row.gallery_count },
+          }),
+        ),
+    );
     toast({
       title: `Promoted ${ok} item${ok === 1 ? "" : "s"}`,
       description: failed ? `${failed} failed — check permissions and retry.` : undefined,
@@ -197,6 +232,20 @@ export default function InventoryImageHealth() {
     const { error } = await (supabase.from("inventory_items") as any).update({ primary_image_url: null }).in("id", ids);
     setBulkRunning(false);
     if (error) return toast({ title: "Bulk clear failed", description: error.message, variant: "destructive" });
+    const batch_id = newBatchId();
+    await Promise.all(
+      staleCandidates.map((r) =>
+        logAudit({
+          entity_type: "inventory_item",
+          entity_id: r.id,
+          action: "image.clear_primary",
+          summary: `Bulk: cleared stale primary image for ${r.name}`,
+          before: { primary_image_url: r.primary_image_url },
+          after: { primary_image_url: null },
+          metadata: { source: "bulk", batch_id, batch_size: ids.length, item_name: r.name, category: r.category, gallery_count: r.gallery_count },
+        }),
+      ),
+    );
     toast({ title: `Cleared ${ids.length} stale primar${ids.length === 1 ? "y" : "ies"}` });
     reload();
   }
