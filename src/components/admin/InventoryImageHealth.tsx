@@ -29,7 +29,7 @@ interface Row {
 }
 
 const STATUS_META: Record<Status, { label: string; tone: "default" | "secondary" | "destructive" | "outline"; help: string }> = {
-  broken: { label: "Broken", tone: "destructive", help: "No usable image — customer sees placeholder." },
+  broken: { label: "Broken", tone: "destructive", help: "No usable image — visitors see the generic placeholder. Upload a photo from the item's detail page to fix." },
   legacy_fallback: { label: "Legacy fallback", tone: "outline", help: "Working from a bundled file. Upload a real photo to make it permanent." },
   stale_primary: { label: "Stale primary", tone: "destructive", help: "Primary image URL no longer matches any gallery row." },
   no_gallery: { label: "No gallery", tone: "secondary", help: "Primary image set but no extra gallery photos." },
