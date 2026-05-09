@@ -17,6 +17,59 @@ function admin() {
   );
 }
 
+// ---------- Template loader ----------
+interface TemplateRow {
+  key: string;
+  subject: string;
+  body_html: string;
+  enabled: boolean;
+}
+let _tplCache: { value: Map<string, TemplateRow>; expires: number } | null = null;
+const TPL_TTL_MS = 30_000;
+
+export async function loadTemplate(key: string): Promise<TemplateRow | null> {
+  try {
+    if (!_tplCache || _tplCache.expires < Date.now()) {
+      const sb = admin();
+      const { data } = await sb.from("email_templates").select("key,subject,body_html,enabled");
+      const m = new Map<string, TemplateRow>();
+      (data ?? []).forEach((r: any) => m.set(r.key, r as TemplateRow));
+      _tplCache = { value: m, expires: Date.now() + TPL_TTL_MS };
+    }
+    return _tplCache.value.get(key) ?? null;
+  } catch {
+    return null;
+  }
+}
+
+export function applyMergeTags(template: string, data: Record<string, string>): string {
+  return String(template ?? "").replace(/\{\{\s*(\w+)\s*\}\}/g, (_, k) => data[k] ?? "");
+}
+
+export interface RenderedEmail {
+  subject: string;
+  html: string;
+  enabled: boolean;
+}
+
+export async function renderTemplate(
+  key: string,
+  data: Record<string, string>,
+  preheader: string,
+): Promise<RenderedEmail> {
+  const tpl = await loadTemplate(key);
+  if (!tpl) {
+    return { subject: "", html: "", enabled: false };
+  }
+  const subject = applyMergeTags(tpl.subject, data);
+  const innerHtml = applyMergeTags(tpl.body_html, data);
+  return {
+    subject,
+    html: layout({ preheader, body: innerHtml }),
+    enabled: tpl.enabled,
+  };
+}
+
 export interface SendArgs {
   to: string | string[];
   subject: string;
@@ -191,8 +244,7 @@ function bookingDetailsBlock(b: BookingForEmail) {
     </table>`;
 }
 
-export function customerConfirmationEmail(b: BookingForEmail, items: BookingItemForEmail[]) {
-  const ref = b.id.slice(0, 8).toUpperCase();
+function totalsBlock(b: BookingForEmail) {
   const balance = Number(b.balance_due ?? 0);
   const balanceLine = balance > 0
     ? `<tr><td style="color:#54657a;">Balance due on delivery</td><td style="text-align:right;"><strong>${fmtMoney(balance)}</strong></td></tr>`
@@ -208,52 +260,56 @@ export function customerConfirmationEmail(b: BookingForEmail, items: BookingItem
       : "";
   const taxLine = Number(b.tax_amount ?? 0) > 0
     ? `<tr><td style="color:#54657a;">Sales Tax (7%)</td><td style="text-align:right;">${fmtMoney(b.tax_amount)}</td></tr>` : "";
-  const body = `
-    <h1 style="margin:0 0 8px;font-size:22px;">Booking confirmed!</h1>
-    <p style="margin:0 0 16px;color:#54657a;">Hi ${escapeHtml(b.customer_name.split(" ")[0])}, thanks for booking with Orlando Inflatables. Your reservation is locked in.</p>
-    <p style="margin:0 0 16px;font-size:13px;color:#54657a;">Booking ref: <strong>#${ref}</strong></p>
-    <h2 style="font-size:16px;margin:20px 0 8px;">Event details</h2>
-    ${bookingDetailsBlock(b)}
-    <h2 style="font-size:16px;margin:24px 0 4px;">Your rentals</h2>
-    ${itemsTable(items)}
-    <table width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;margin-top:8px;">
-      ${subtotalLine}
-      ${waiverLine}
-      ${deliveryLine}
-      ${taxLine}
+  return `<table width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;margin-top:8px;">
+      ${subtotalLine}${waiverLine}${deliveryLine}${taxLine}
       <tr><td style="color:#54657a;"><strong>Total</strong></td><td style="text-align:right;"><strong>${fmtMoney(b.total_amount)}</strong></td></tr>
       <tr><td style="color:#54657a;">Amount paid</td><td style="text-align:right;">${fmtMoney(b.amount_paid)}</td></tr>
       ${balanceLine}
-    </table>
-    <p style="margin:24px 0 0;font-size:13px;color:#54657a;">Need to make a change? Reply to this email or call <strong>${PHONE}</strong>. Cancellations 7+ days before your event are fully refundable; weather-related cancellations on event day receive a full credit.</p>`;
-  return {
-    subject: `Booking confirmed for ${fmtDate(b.event_date)} · #${ref}`,
-    html: layout({ preheader: `Your Orlando Inflatables booking #${ref} is confirmed.`, body }),
-  };
+    </table>`;
 }
 
-export function adminNewBookingEmail(b: BookingForEmail, items: BookingItemForEmail[]) {
+function itemsList(items: BookingItemForEmail[]) {
+  return `<ul style="margin:0 0 12px;padding-left:18px;font-size:14px;">${
+    items.map((i) => `<li>${escapeHtml(i.product_name)} — ${fmtMoney(i.unit_price ?? i.product_price)}</li>`).join("")
+  }</ul>`;
+}
+
+export async function customerConfirmationEmail(b: BookingForEmail, items: BookingItemForEmail[]): Promise<RenderedEmail> {
   const ref = b.id.slice(0, 8).toUpperCase();
-  const itemList = items.map((i) => `<li>${escapeHtml(i.product_name)} — ${fmtMoney(i.unit_price ?? i.product_price)}</li>`).join("");
-  const body = `
-    <h1 style="margin:0 0 8px;font-size:20px;">New booking #${ref}</h1>
-    <p style="margin:0 0 12px;"><strong>${escapeHtml(b.customer_name)}</strong> · ${escapeHtml(b.customer_email)} · ${escapeHtml(b.customer_phone)}</p>
-    ${bookingDetailsBlock(b)}
-    <h2 style="font-size:15px;margin:20px 0 4px;">Items</h2>
-    <ul style="margin:0 0 12px;padding-left:18px;font-size:14px;">${itemList}</ul>
-    <p style="font-size:14px;"><strong>Total:</strong> ${fmtMoney(b.total_amount)} · <strong>Paid:</strong> ${fmtMoney(b.amount_paid)} · <strong>Balance:</strong> ${fmtMoney(b.balance_due)}</p>
-    ${b.notes ? `<p style="font-size:13px;color:#54657a;"><strong>Notes:</strong> ${escapeHtml(b.notes)}</p>` : ""}
-    ${b.stripe_session_id ? `<p style="font-size:12px;color:#8a97a8;">Stripe session: ${escapeHtml(b.stripe_session_id)}</p>` : ""}`;
-  return {
-    subject: `🎉 New booking · ${b.customer_name} · ${fmtDate(b.event_date)}`,
-    html: layout({ preheader: `New booking from ${b.customer_name}`, body }),
-  };
+  return await renderTemplate("booking_confirmation_customer", {
+    first_name: escapeHtml(b.customer_name.split(" ")[0]),
+    customer_name: escapeHtml(b.customer_name),
+    ref,
+    event_date: fmtDate(b.event_date),
+    phone: PHONE,
+    details_block: bookingDetailsBlock(b),
+    items_block: itemsTable(items),
+    totals_block: totalsBlock(b),
+  }, `Your Orlando Inflatables booking #${ref} is confirmed.`);
 }
 
-export function customerRescheduleEmail(
+export async function adminNewBookingEmail(b: BookingForEmail, items: BookingItemForEmail[]): Promise<RenderedEmail> {
+  const ref = b.id.slice(0, 8).toUpperCase();
+  return await renderTemplate("booking_new_admin", {
+    ref,
+    customer_name: escapeHtml(b.customer_name),
+    customer_email: escapeHtml(b.customer_email),
+    customer_phone: escapeHtml(b.customer_phone),
+    event_date: fmtDate(b.event_date),
+    details_block: bookingDetailsBlock(b),
+    items_list: itemsList(items),
+    total: fmtMoney(b.total_amount),
+    paid: fmtMoney(b.amount_paid),
+    balance: fmtMoney(b.balance_due),
+    notes_block: b.notes ? `<p style="font-size:13px;color:#54657a;"><strong>Notes:</strong> ${escapeHtml(b.notes)}</p>` : "",
+    stripe_block: b.stripe_session_id ? `<p style="font-size:12px;color:#8a97a8;">Stripe session: ${escapeHtml(b.stripe_session_id)}</p>` : "",
+  }, `New booking from ${b.customer_name}`);
+}
+
+export async function customerRescheduleEmail(
   b: BookingForEmail,
   prev: { start: string; end?: string | null },
-) {
+): Promise<RenderedEmail> {
   const ref = b.id.slice(0, 8).toUpperCase();
   const oldLine = prev.end && prev.end !== prev.start
     ? `${fmtDate(prev.start)} → ${fmtDate(prev.end)}`
@@ -261,30 +317,28 @@ export function customerRescheduleEmail(
   const newLine = b.event_end_date && b.event_end_date !== b.event_date
     ? `${fmtDate(b.event_date)} → ${fmtDate(b.event_end_date)}`
     : fmtDate(b.event_date);
-  const body = `
-    <h1 style="margin:0 0 8px;font-size:22px;">Your booking date has changed</h1>
-    <p style="margin:0 0 16px;color:#54657a;">Hi ${escapeHtml(b.customer_name.split(" ")[0])}, your Orlando Inflatables reservation has been rescheduled. Here are the new details — please save them.</p>
-    <p style="margin:0 0 16px;font-size:13px;color:#54657a;">Booking ref: <strong>#${ref}</strong></p>
-    <table width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;line-height:1.6;border:1px solid #eef0f4;border-radius:8px;padding:12px;margin:8px 0 16px;">
+  const rescheduleBlock = `<table width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;line-height:1.6;border:1px solid #eef0f4;border-radius:8px;padding:12px;margin:8px 0 16px;">
       <tr><td style="color:#54657a;width:130px;">Previous date</td><td style="text-decoration:line-through;color:#8a97a8;">${oldLine}</td></tr>
       <tr><td style="color:#54657a;">New date</td><td><strong style="color:${BRAND_BLUE};">${newLine}</strong></td></tr>
       <tr><td style="color:#54657a;">Delivery</td><td>${escapeHtml(b.event_start_time ?? "")}</td></tr>
       <tr><td style="color:#54657a;">Pickup</td><td>${escapeHtml(b.event_end_time ?? "")}</td></tr>
       <tr><td style="color:#54657a;">Address</td><td>${escapeHtml(b.event_address_line)}, ${escapeHtml(b.event_city)} ${escapeHtml(b.event_zip)}</td></tr>
-    </table>
-    <p style="margin:24px 0 0;font-size:13px;color:#54657a;">If this date doesn't work, please reply to this email or call <strong>${PHONE}</strong> right away so we can sort it out.</p>`;
-  return {
-    subject: `Booking rescheduled · ${fmtDate(b.event_date)} · #${ref}`,
-    html: layout({ preheader: `Your booking #${ref} has been rescheduled to ${newLine}.`, body }),
-  };
+    </table>`;
+  return await renderTemplate("booking_reschedule_customer", {
+    first_name: escapeHtml(b.customer_name.split(" ")[0]),
+    ref,
+    event_date: fmtDate(b.event_date),
+    phone: PHONE,
+    reschedule_block: rescheduleBlock,
+  }, `Your booking #${ref} has been rescheduled to ${newLine}.`);
 }
 
-export function adminRescheduleEmail(
+export async function adminRescheduleEmail(
   b: BookingForEmail,
   prev: { start: string; end?: string | null },
   override: boolean,
   actorEmail?: string | null,
-) {
+): Promise<RenderedEmail> {
   const ref = b.id.slice(0, 8).toUpperCase();
   const oldLine = prev.end && prev.end !== prev.start
     ? `${fmtDate(prev.start)} → ${fmtDate(prev.end)}`
@@ -296,17 +350,18 @@ export function adminRescheduleEmail(
     ? `<p style="margin:12px 0;padding:10px 12px;background:#fff4e5;border:1px solid #ffb84d;border-radius:6px;color:#8a4b00;font-size:13px;">
          <strong>⚠️ Conflict override:</strong> the new date had a booking conflict that was overridden by ${escapeHtml(actorEmail ?? "an admin")}. The same item may now be double-booked.
        </p>` : "";
-  const body = `
-    <h1 style="margin:0 0 8px;font-size:20px;">Booking rescheduled · #${ref}</h1>
-    <p style="margin:0 0 8px;"><strong>${escapeHtml(b.customer_name)}</strong> · ${escapeHtml(b.customer_email)} · ${escapeHtml(b.customer_phone)}</p>
-    ${overrideBlock}
-    <p style="font-size:14px;margin:8px 0;"><span style="color:#54657a;">From:</span> <s>${oldLine}</s><br>
-    <span style="color:#54657a;">To:</span> <strong>${newLine}</strong></p>
-    <p style="font-size:13px;color:#54657a;">Changed by ${escapeHtml(actorEmail ?? "admin")}.</p>`;
-  return {
-    subject: `${override ? "⚠️ " : ""}Rescheduled · ${b.customer_name} · ${fmtDate(b.event_date)}`,
-    html: layout({ preheader: `Booking #${ref} rescheduled to ${newLine}`, body }),
-  };
+  return await renderTemplate("booking_reschedule_admin", {
+    ref,
+    customer_name: escapeHtml(b.customer_name),
+    customer_email: escapeHtml(b.customer_email),
+    customer_phone: escapeHtml(b.customer_phone),
+    event_date: fmtDate(b.event_date),
+    old_dates: oldLine,
+    new_dates: newLine,
+    actor_email: escapeHtml(actorEmail ?? "admin"),
+    override_block: overrideBlock,
+    override_emoji: override ? "⚠️ " : "",
+  }, `Booking #${ref} rescheduled to ${newLine}`);
 }
 
 export interface AbandonedCartInfo {
@@ -318,46 +373,32 @@ export interface AbandonedCartInfo {
   stripe_session_id: string;
   amount_total: number;
 }
-export function adminAbandonedCartEmail(c: AbandonedCartInfo) {
-  const itemList = c.items.map((i) => `<li>${escapeHtml(i.product_name)} — ${fmtMoney(i.product_price)}</li>`).join("");
-  const body = `
-    <h1 style="margin:0 0 8px;font-size:20px;">Abandoned checkout</h1>
-    <p style="margin:0 0 12px;color:#54657a;">A customer reached checkout but didn't complete payment ~30 min ago. Worth a quick call.</p>
-    <p><strong>${escapeHtml(c.customer_name)}</strong><br>
-    📧 ${escapeHtml(c.customer_email)}<br>
-    📞 <a href="tel:${escapeHtml(c.customer_phone)}">${escapeHtml(c.customer_phone)}</a></p>
-    <p><strong>Requested date:</strong> ${fmtDate(c.event_date)}</p>
-    <h2 style="font-size:15px;margin:16px 0 4px;">Cart</h2>
-    <ul style="margin:0 0 12px;padding-left:18px;">${itemList}</ul>
-    <p style="font-size:14px;"><strong>Cart total:</strong> ${fmtMoney(c.amount_total)}</p>`;
-  return {
-    subject: `🛒 Abandoned cart · ${c.customer_name} · ${fmtDate(c.event_date)}`,
-    html: layout({ preheader: `${c.customer_name} didn't complete checkout`, body }),
-  };
+export async function adminAbandonedCartEmail(c: AbandonedCartInfo): Promise<RenderedEmail> {
+  const list = `<ul style="margin:0 0 12px;padding-left:18px;">${
+    c.items.map((i) => `<li>${escapeHtml(i.product_name)} — ${fmtMoney(i.product_price)}</li>`).join("")
+  }</ul>`;
+  return await renderTemplate("abandoned_cart_admin", {
+    customer_name: escapeHtml(c.customer_name),
+    customer_email: escapeHtml(c.customer_email),
+    customer_phone: escapeHtml(c.customer_phone),
+    event_date: fmtDate(c.event_date),
+    items_list: list,
+    cart_total: fmtMoney(c.amount_total),
+  }, `${c.customer_name} didn't complete checkout`);
 }
 
-export function dayBeforeReminderEmail(b: BookingForEmail) {
-  const body = `
-    <h1 style="margin:0 0 8px;font-size:22px;">See you tomorrow!</h1>
-    <p style="margin:0 0 16px;color:#54657a;">Hi ${escapeHtml(b.customer_name.split(" ")[0])}, just a friendly reminder that your Orlando Inflatables rental is tomorrow.</p>
-    ${bookingDetailsBlock(b)}
-    <p style="margin:20px 0 0;font-size:14px;">Please make sure the delivery area is clear, accessible, and within ~75 ft of a working outlet. If weather looks rough, give us a call at <strong>${PHONE}</strong> — same-day weather cancellations get full credit toward a future booking.</p>`;
-  return {
-    subject: `Reminder: your rental is tomorrow · ${fmtDate(b.event_date)}`,
-    html: layout({ preheader: "Quick reminder for your event tomorrow.", body }),
-  };
+export async function dayBeforeReminderEmail(b: BookingForEmail): Promise<RenderedEmail> {
+  return await renderTemplate("day_before_reminder", {
+    first_name: escapeHtml(b.customer_name.split(" ")[0]),
+    event_date: fmtDate(b.event_date),
+    phone: PHONE,
+    details_block: bookingDetailsBlock(b),
+  }, "Quick reminder for your event tomorrow.");
 }
 
-export function reviewRequestEmail(b: BookingForEmail) {
-  const body = `
-    <h1 style="margin:0 0 8px;font-size:22px;">Thanks for renting with us!</h1>
-    <p style="margin:0 0 16px;color:#54657a;">Hi ${escapeHtml(b.customer_name.split(" ")[0])}, we hope yesterday's event was a blast. If you have a minute, a Google review means the world to our small family business.</p>
-    <p style="text-align:center;margin:28px 0;">
-      <a href="${REVIEW_URL}" style="background:${BRAND_BLUE};color:#ffffff;text-decoration:none;padding:14px 28px;border-radius:8px;font-weight:bold;display:inline-block;">Leave a Google Review</a>
-    </p>
-    <p style="margin:0;font-size:13px;color:#54657a;">Thank you again — we can't wait to bounce with you next time!</p>`;
-  return {
-    subject: "How was your Orlando Inflatables rental?",
-    html: layout({ preheader: "A quick review would mean a lot.", body }),
-  };
+export async function reviewRequestEmail(b: BookingForEmail): Promise<RenderedEmail> {
+  return await renderTemplate("post_event_review", {
+    first_name: escapeHtml(b.customer_name.split(" ")[0]),
+    review_url: REVIEW_URL,
+  }, "A quick review would mean a lot.");
 }
