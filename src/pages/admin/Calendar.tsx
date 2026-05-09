@@ -67,9 +67,6 @@ export default function AdminCalendar() {
   const dayMap = useMemo(() => {
     const m = new Map<string, Booking[]>();
     for (const b of bookings) {
-      if (b.status === "cancelled") {
-        // still show but lighter
-      }
       const start = parseISO(b.event_date);
       const end = b.event_end_date ? parseISO(b.event_end_date) : start;
       for (const d of eachDayOfInterval({ start, end })) {
@@ -105,6 +102,8 @@ export default function AdminCalendar() {
   }
 
   const selected = selectedDate ? dayMap.get(selectedDate) ?? [] : [];
+  // Hide cancelled bookings from the grid; they only appear inside the day sheet.
+  function visibleOnGrid(list: Booking[]) { return list.filter((b) => b.status !== "cancelled"); }
   const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
   return (
@@ -162,14 +161,14 @@ export default function AdminCalendar() {
                   {view === "day" ? format(d, "EEEE, MMM d") : format(d, "d")}
                 </div>
                 <div className="flex-1 mt-1 space-y-0.5 overflow-hidden">
-                  {list.slice(0, view === "month" ? 3 : 8).map((b) => (
+                  {visibleOnGrid(list).slice(0, view === "month" ? 3 : 8).map((b) => (
                     <div key={b.id} className="flex items-center gap-1 text-xs truncate">
                       <span className={`inline-block w-2 h-2 rounded-full ${STATUS_COLORS[b.status]}`} />
                       <span className="truncate">{b.customer_name}</span>
                     </div>
                   ))}
-                  {list.length > (view === "month" ? 3 : 8) && (
-                    <div className="text-[10px] text-muted-foreground">+{list.length - (view === "month" ? 3 : 8)} more</div>
+                  {visibleOnGrid(list).length > (view === "month" ? 3 : 8) && (
+                    <div className="text-[10px] text-muted-foreground">+{visibleOnGrid(list).length - (view === "month" ? 3 : 8)} more</div>
                   )}
                 </div>
               </button>
@@ -208,7 +207,7 @@ export default function AdminCalendar() {
                 {selected.map((b) => (
                   <li
                     key={b.id}
-                    className="p-3 cursor-pointer hover:bg-accent"
+                    className={`p-3 cursor-pointer hover:bg-accent ${b.status === "cancelled" ? "opacity-50 line-through decoration-1" : ""}`}
                     onClick={() => navigate(`/admin/bookings?open=${b.id}`)}
                   >
                     <div className="flex items-center justify-between gap-2">
