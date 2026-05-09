@@ -395,6 +395,69 @@ export type Database = {
         }
         Relationships: []
       }
+      email_template_versions: {
+        Row: {
+          body_html: string
+          created_at: string
+          id: string
+          saved_by: string | null
+          subject: string
+          template_key: string
+        }
+        Insert: {
+          body_html: string
+          created_at?: string
+          id?: string
+          saved_by?: string | null
+          subject: string
+          template_key: string
+        }
+        Update: {
+          body_html?: string
+          created_at?: string
+          id?: string
+          saved_by?: string | null
+          subject?: string
+          template_key?: string
+        }
+        Relationships: []
+      }
+      email_templates: {
+        Row: {
+          body_html: string
+          description: string | null
+          enabled: boolean
+          key: string
+          label: string
+          subject: string
+          updated_at: string
+          updated_by: string | null
+          use_custom: boolean
+        }
+        Insert: {
+          body_html: string
+          description?: string | null
+          enabled?: boolean
+          key: string
+          label: string
+          subject: string
+          updated_at?: string
+          updated_by?: string | null
+          use_custom?: boolean
+        }
+        Update: {
+          body_html?: string
+          description?: string | null
+          enabled?: boolean
+          key?: string
+          label?: string
+          subject?: string
+          updated_at?: string
+          updated_by?: string | null
+          use_custom?: boolean
+        }
+        Relationships: []
+      }
       inventory_blackouts: {
         Row: {
           created_at: string
