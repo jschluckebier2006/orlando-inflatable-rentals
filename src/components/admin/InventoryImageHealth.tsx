@@ -88,6 +88,7 @@ async function fetchAllIds(table: "inventory_items" | "inventory_images"): Promi
 }
 
 export function useImageHealthRows() {
+  // (helper hoisted below component)
   const [rows, setRows] = useState<Row[]>([]);
   const [loading, setLoading] = useState(true);
   const [lastScannedAt, setLastScannedAt] = useState<string | null>(null);
