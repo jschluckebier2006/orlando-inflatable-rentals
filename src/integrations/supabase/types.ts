@@ -62,6 +62,8 @@ export type Database = {
           customer_phone: string
           damage_waiver_amount: number
           damage_waiver_selected: boolean
+          delivery_fee: number
+          delivery_zone_city: string | null
           deposit_amount: number
           duration_type: string
           event_address_line: string
@@ -97,6 +99,8 @@ export type Database = {
           customer_phone: string
           damage_waiver_amount?: number
           damage_waiver_selected?: boolean
+          delivery_fee?: number
+          delivery_zone_city?: string | null
           deposit_amount?: number
           duration_type?: string
           event_address_line: string
@@ -132,6 +136,8 @@ export type Database = {
           customer_phone?: string
           damage_waiver_amount?: number
           damage_waiver_selected?: boolean
+          delivery_fee?: number
+          delivery_zone_city?: string | null
           deposit_amount?: number
           duration_type?: string
           event_address_line?: string
