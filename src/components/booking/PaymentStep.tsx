@@ -17,14 +17,21 @@ interface PaymentStepProps {
   /** Pre-tax, pre-waiver subtotal (items × duration multiplier). */
   subtotal: number;
   damageWaiver: boolean;
+  /** Auto-applied delivery fee from the zip-code zone lookup. */
+  deliveryFee?: number;
+  /** Friendly zone label (e.g. "Avalon Park"). */
+  zoneCity?: string | null;
   payload: any; // booking payload posted to create-booking-checkout
   onBack: () => void;
 }
 
-export function PaymentStep({ subtotal, damageWaiver, payload, onBack }: PaymentStepProps) {
+export function PaymentStep({ subtotal, damageWaiver, deliveryFee = 0, zoneCity = null, payload, onBack }: PaymentStepProps) {
   const { toast } = useToast();
   const [choice, setChoice] = useState<"deposit" | "full" | "custom" | "deposit_cash">("deposit");
-  const bd = useMemo(() => computeBreakdown(subtotal, damageWaiver), [subtotal, damageWaiver]);
+  const bd = useMemo(
+    () => computeBreakdown(subtotal, damageWaiver, deliveryFee),
+    [subtotal, damageWaiver, deliveryFee],
+  );
   const total = bd.total;
   const [customAmount, setCustomAmount] = useState<string>(String(Math.min(total, Math.max(DEPOSIT, Math.round(total / 2)))));
   const [clientSecret, setClientSecret] = useState<string | null>(null);
@@ -52,6 +59,8 @@ export function PaymentStep({ subtotal, damageWaiver, payload, onBack }: Payment
           ...payload,
           payment_choice: choice,
           custom_amount: choice === "custom" ? customNum : undefined,
+          delivery_fee: deliveryFee,
+          delivery_zone_city: zoneCity,
           return_url: `${window.location.origin}/checkout/return?session_id={CHECKOUT_SESSION_ID}`,
           environment: getStripeEnvironment(),
         },
@@ -135,6 +144,17 @@ export function PaymentStep({ subtotal, damageWaiver, payload, onBack }: Payment
           {damageWaiver && (
             <div className="flex justify-between"><span>Damage Waiver (10%)</span><span>${bd.damageWaiver.toFixed(2)}</span></div>
           )}
+          {bd.deliveryFee > 0 ? (
+            <div className="flex justify-between">
+              <span>Delivery {zoneCity ? `— ${zoneCity}` : ""}</span>
+              <span>${bd.deliveryFee.toFixed(2)}</span>
+            </div>
+          ) : zoneCity ? (
+            <div className="flex justify-between text-green-700 dark:text-green-400">
+              <span>Delivery — {zoneCity}</span>
+              <span>FREE</span>
+            </div>
+          ) : null}
           <div className="flex justify-between"><span>Sales Tax (7%)</span><span>${bd.tax.toFixed(2)}</span></div>
           <div className="flex justify-between font-semibold pt-1"><span>Order total</span><span>${total.toFixed(2)}</span></div>
         </div>
