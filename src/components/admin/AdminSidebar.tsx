@@ -20,7 +20,7 @@ const items = [
   { title: "Customers", url: "/admin/customers", icon: Users },
   { title: "New Reservation", url: "/admin/new", icon: Plus },
   { title: "Activity", url: "/admin/activity", icon: Activity },
-  { title: "Notifications", url: "/admin/notifications", icon: Mail },
+  { title: "Emails", url: "/admin/emails", icon: Mail },
   { title: "Settings", url: "/admin/settings", icon: SettingsIcon },
 ];
 

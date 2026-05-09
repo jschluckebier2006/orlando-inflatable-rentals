@@ -83,6 +83,7 @@ const AdminNewReservation = lazy(() => import("./pages/admin/NewReservation"));
 const AdminActivity = lazy(() => import("./pages/admin/Activity"));
 const AdminSettings = lazy(() => import("./pages/admin/Settings"));
 const AdminNotifications = lazy(() => import("./pages/admin/Notifications"));
+const AdminEmails = lazy(() => import("./pages/admin/Emails"));
 const AdminInventory = lazy(() => import("./pages/admin/Inventory"));
 const AdminInventoryDetail = lazy(() => import("./pages/admin/InventoryDetail"));
 
@@ -175,6 +176,7 @@ const App = () => {
                 <Route path="inventory/:id" element={<AdminInventoryDetail />} />
                 <Route path="activity" element={<AdminActivity />} />
                 <Route path="notifications" element={<AdminNotifications />} />
+                <Route path="emails" element={<AdminEmails />} />
                 <Route path="settings" element={<AdminSettings />} />
               </Route>
               <Route path="*" element={<NotFound />} />
