@@ -1,7 +1,8 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { z } from "https://esm.sh/zod@3.23.8";
 import { type StripeEnv, createStripeClient } from "../_shared/stripe.ts";
-import { lookupZone } from "../_shared/deliveryZones.ts";
+import { loadSettings, lookupZoneIn } from "../_shared/settings.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -41,9 +42,6 @@ const PayloadSchema = z.object({
 });
 
 const SERVER_MULT: Record<string, number> = { "7hour": 1.0, overnight: 1.25, weekend: 1.6 };
-const DEPOSIT = 5;
-const TAX_RATE = 0.07;
-const WAIVER_RATE = 0.10;
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
