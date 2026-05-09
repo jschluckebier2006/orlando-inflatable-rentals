@@ -8,7 +8,7 @@ import { CTASection } from "@/components/home/CTASection";
 import { DeliveryAreaLinks } from "@/components/home/DeliveryAreaLinks";
 import { ReviewsSection } from "@/components/home/ReviewsSection";
 import { ProductGrid } from "@/components/inventory/ProductGrid";
-import { getConcessions } from "@/data/inventory";
+import { useCategory } from "@/lib/inventory";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -33,6 +33,7 @@ const faqs = [
 ];
 
 export default function ConcessionRentals() {
+  const { products: catProducts, loading: catLoading } = useCategory("concessions");
   const [showJotform, setShowJotform] = useState(false);
 
   const faqItems = faqs.map(faq => ({ question: faq.q, answer: faq.a }));
@@ -90,7 +91,7 @@ export default function ConcessionRentals() {
       <section className="section-padding">
         <div className="container-page">
           <h2 className="font-display text-3xl font-bold text-foreground mb-8 text-center">Our Concession Inventory</h2>
-          <ProductGrid products={getConcessions()} />
+          <ProductGrid products={catProducts} loading={catLoading} />
         </div>
       </section>
 

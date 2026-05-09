@@ -8,7 +8,7 @@ import { CTASection } from "@/components/home/CTASection";
 import { DeliveryAreaLinks } from "@/components/home/DeliveryAreaLinks";
 import { ReviewsSection } from "@/components/home/ReviewsSection";
 import { ProductGrid } from "@/components/inventory/ProductGrid";
-import { getTablesChairs } from "@/data/inventory";
+import { useCategory } from "@/lib/inventory";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -33,6 +33,7 @@ const faqs = [
 ];
 
 export default function TableChairRentals() {
+  const { products: catProducts, loading: catLoading } = useCategory("tables-chairs");
   const [showJotform, setShowJotform] = useState(false);
 
   const faqItems = faqs.map(faq => ({ question: faq.q, answer: faq.a }));
@@ -90,7 +91,7 @@ export default function TableChairRentals() {
       <section className="section-padding">
         <div className="container-page">
           <h2 className="font-display text-3xl font-bold text-foreground mb-8 text-center">Our Table & Chair Inventory</h2>
-          <ProductGrid products={getTablesChairs()} />
+          <ProductGrid products={catProducts} loading={catLoading} />
         </div>
       </section>
 

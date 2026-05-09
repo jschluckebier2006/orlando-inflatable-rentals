@@ -10,7 +10,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { type Product } from "@/data/inventory";
+import { type Product } from "@/lib/inventory";
 
 interface CategoryCarouselProps {
   title: string;

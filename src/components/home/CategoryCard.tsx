@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight } from "lucide-react";
-import { type Product } from "@/data/inventory";
+import { type Product } from "@/lib/inventory";
 
 interface CategoryCardProps {
   title: string;

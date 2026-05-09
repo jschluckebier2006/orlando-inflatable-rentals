@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { products } from "@/data/inventory";
+import { useInventory } from "@/lib/inventory";
 import { DURATION_MULTIPLIERS, DURATION_LABELS, type DurationType, endDateFor } from "@/lib/pricing";
 import { TAX_RATE, DAMAGE_WAIVER_RATE } from "@/lib/pricing";
 import { format } from "date-fns";
@@ -76,6 +76,7 @@ export default function BookingFormModal({ open, onOpenChange, booking, onSaved 
   const { toast } = useToast();
   const isEdit = !!booking;
   const [saving, setSaving] = useState(false);
+  const { products } = useInventory({ includeInactive: true });
 
   const [duration, setDuration] = useState<DurationType>("7hour");
   const [eventDate, setEventDate] = useState("");
