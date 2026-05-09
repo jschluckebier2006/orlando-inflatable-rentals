@@ -247,7 +247,7 @@ const STATUSES: Status[] = ["broken", "stale_primary", "legacy_fallback", "no_ga
 
 export default function InventoryImageHealth() {
   const { toast } = useToast();
-  const { rows, loading, reload } = useImageHealthRows();
+  const { rows, loading, reload, lastScannedAt, fullRescan } = useImageHealthRows();
   const [statusFilter, setStatusFilter] = useState<Status | "issues">("issues");
   const [catFilter, setCatFilter] = useState<string>("all");
   const [showInactive, setShowInactive] = useState(false);
@@ -408,9 +408,17 @@ export default function InventoryImageHealth() {
           <input type="checkbox" checked={showInactive} onChange={(e) => setShowInactive(e.target.checked)} />
           Include hidden items
         </label>
-        <div className="ml-auto">
-          <Button variant="outline" size="sm" onClick={reload} disabled={loading}>
+        <div className="ml-auto flex items-center gap-2">
+          {lastScannedAt && (
+            <span className="text-xs text-muted-foreground hidden sm:inline">
+              Scanned {formatScannedAgo(lastScannedAt)} · {rows.length} items
+            </span>
+          )}
+          <Button variant="outline" size="sm" onClick={() => reload()} disabled={loading}>
             <RefreshCw className={`h-4 w-4 mr-1 ${loading ? "animate-spin" : ""}`}/> Re-run check
+          </Button>
+          <Button variant="ghost" size="sm" onClick={() => fullRescan()} disabled={loading} title="Clear cache and reconcile deletes">
+            Full rescan
           </Button>
         </div>
       </Card>
