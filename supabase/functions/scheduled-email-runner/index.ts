@@ -52,7 +52,8 @@ Deno.serve(async (req) => {
           stripe_session_id: p.stripe_session_id,
           amount_total: Number(p.amount_total),
         };
-        const eml = adminAbandonedCartEmail(info);
+        const eml = await adminAbandonedCartEmail(info);
+        if (!eml.enabled) continue;
         const r = await sendEmail({
           to: ADMIN_EMAILS, subject: eml.subject, html: eml.html, from: "alerts",
           templateName: "abandoned_cart_admin",
@@ -71,7 +72,8 @@ Deno.serve(async (req) => {
         .eq("event_date", dateStr).eq("status", "confirmed").limit(200);
       let sent = 0;
       for (const b of (bookings ?? []) as unknown as BookingForEmail[]) {
-        const eml = dayBeforeReminderEmail(b);
+        const eml = await dayBeforeReminderEmail(b);
+        if (!eml.enabled) continue;
         const r = await sendEmail({
           to: b.customer_email, subject: eml.subject, html: eml.html, from: "bookings",
           templateName: "day_before_reminder",
@@ -90,7 +92,8 @@ Deno.serve(async (req) => {
         .eq("event_date", dateStr).eq("status", "confirmed").limit(200);
       let sent = 0;
       for (const b of (bookings ?? []) as unknown as BookingForEmail[]) {
-        const eml = reviewRequestEmail(b);
+        const eml = await reviewRequestEmail(b);
+        if (!eml.enabled) continue;
         const r = await sendEmail({
           to: b.customer_email, subject: eml.subject, html: eml.html, from: "bookings",
           templateName: "post_event_review",

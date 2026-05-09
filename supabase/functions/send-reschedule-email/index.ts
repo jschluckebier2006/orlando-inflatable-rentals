@@ -37,29 +37,32 @@ Deno.serve(async (req) => {
 
     // Customer notification
     if (b.customer_email) {
-      const cust = customerRescheduleEmail(b, prev);
+      const cust = await customerRescheduleEmail(b, prev);
+      if (cust.enabled) {
+        await sendEmail({
+          to: b.customer_email,
+          subject: cust.subject,
+          html: cust.html,
+          from: "bookings",
+          templateName: "booking_reschedule_customer",
+          idempotencyKey: `booking_reschedule_customer:${b.id}:${prev.start}->${b.event_date}`,
+          relatedBookingId: b.id,
+        });
+      }
+    }
+
+    const adm = await adminRescheduleEmail(b, prev, isOverride, actor_email ?? null);
+    if (adm.enabled) {
       await sendEmail({
-        to: b.customer_email,
-        subject: cust.subject,
-        html: cust.html,
-        from: "bookings",
-        templateName: "booking_reschedule_customer",
-        idempotencyKey: `booking_reschedule_customer:${b.id}:${prev.start}->${b.event_date}`,
+        to: ADMIN_EMAILS,
+        subject: adm.subject,
+        html: adm.html,
+        from: "alerts",
+        templateName: "booking_reschedule_admin",
+        idempotencyKey: `booking_reschedule_admin:${b.id}:${prev.start}->${b.event_date}:${isOverride ? "ovr" : "ok"}`,
         relatedBookingId: b.id,
       });
     }
-
-    // Admin alert (always; flagged louder when override was used)
-    const adm = adminRescheduleEmail(b, prev, isOverride, actor_email ?? null);
-    await sendEmail({
-      to: ADMIN_EMAILS,
-      subject: adm.subject,
-      html: adm.html,
-      from: "alerts",
-      templateName: "booking_reschedule_admin",
-      idempotencyKey: `booking_reschedule_admin:${b.id}:${prev.start}->${b.event_date}:${isOverride ? "ovr" : "ok"}`,
-      relatedBookingId: b.id,
-    });
 
     return new Response(JSON.stringify({ ok: true }), {
       status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },

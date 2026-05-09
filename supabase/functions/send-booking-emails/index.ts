@@ -34,21 +34,25 @@ Deno.serve(async (req) => {
     const b = booking as unknown as BookingForEmail;
     const its = (items ?? []) as BookingItemForEmail[];
 
-    const cust = customerConfirmationEmail(b, its);
-    await sendEmail({
-      to: b.customer_email, subject: cust.subject, html: cust.html,
-      from: "bookings", templateName: "booking_confirmation_customer",
-      idempotencyKey: `booking_confirm_customer:${b.id}`,
-      relatedBookingId: b.id, relatedSessionId: b.stripe_session_id ?? null,
-    });
+    const cust = await customerConfirmationEmail(b, its);
+    if (cust.enabled) {
+      await sendEmail({
+        to: b.customer_email, subject: cust.subject, html: cust.html,
+        from: "bookings", templateName: "booking_confirmation_customer",
+        idempotencyKey: `booking_confirm_customer:${b.id}`,
+        relatedBookingId: b.id, relatedSessionId: b.stripe_session_id ?? null,
+      });
+    }
 
-    const adm = adminNewBookingEmail(b, its);
-    await sendEmail({
-      to: ADMIN_EMAILS, subject: adm.subject, html: adm.html,
-      from: "alerts", templateName: "booking_new_admin",
-      idempotencyKey: `booking_new_admin:${b.id}`,
-      relatedBookingId: b.id, relatedSessionId: b.stripe_session_id ?? null,
-    });
+    const adm = await adminNewBookingEmail(b, its);
+    if (adm.enabled) {
+      await sendEmail({
+        to: ADMIN_EMAILS, subject: adm.subject, html: adm.html,
+        from: "alerts", templateName: "booking_new_admin",
+        idempotencyKey: `booking_new_admin:${b.id}`,
+        relatedBookingId: b.id, relatedSessionId: b.stripe_session_id ?? null,
+      });
+    }
 
     return new Response(JSON.stringify({ ok: true }), {
       status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
