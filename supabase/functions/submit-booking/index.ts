@@ -134,12 +134,6 @@ Deno.serve(async (req) => {
     };
     // damage_waiver isn't a column on bookings — strip it
     delete (header as any).damage_waiver;
-    // delivery_fee/delivery_zone_city are written above; remove the raw client copy
-    delete (header as any).delivery_fee;
-    delete (header as any).delivery_zone_city;
-    // (We re-add the trusted server-side values below.)
-    (header as any).delivery_fee = deliveryFee;
-    (header as any).delivery_zone_city = deliveryZoneCity;
 
     const { data: booking, error: bookingErr } = await supabase
       .from("bookings")
