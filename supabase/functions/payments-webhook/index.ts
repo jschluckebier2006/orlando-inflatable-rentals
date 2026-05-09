@@ -70,8 +70,10 @@ Deno.serve(async (req) => {
 
   const SERVER_MULT: Record<string, number> = { "7hour": 1.0, overnight: 1.25, weekend: 1.6 };
   const multiplier = SERVER_MULT[p.duration_type];
-  const TAX_RATE = 0.07;
-  const WAIVER_RATE = 0.10;
+  const { loadSettings } = await import("../_shared/settings.ts");
+  const settings = await loadSettings(supabase);
+  const TAX_RATE = settings.taxRate;
+  const WAIVER_RATE = settings.damageWaiverRate;
   const subtotal = Math.round(p.items.reduce((s: number, i: any) => s + Number(i.product_price), 0) * multiplier * 100) / 100;
   const waiverSelected = p.damage_waiver !== false;
   const damage_waiver_amount = waiverSelected ? Math.round(subtotal * WAIVER_RATE * 100) / 100 : 0;
