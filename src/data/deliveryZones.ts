@@ -77,7 +77,16 @@ export function lookupZone(input: string | null | undefined): DeliveryZone | nul
   if (!input) return null;
   const zip = String(input).trim().slice(0, 5);
   if (!/^\d{5}$/.test(zip)) return null;
-  return DELIVERY_ZONES[zip] ?? null;
+  // Runtime DB overlay wins over static seeds (admin-editable).
+  // Lazy import avoids a circular import at module init time.
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { getRuntimeZones } = require("@/lib/appSettings") as typeof import("@/lib/appSettings");
+    const zones = getRuntimeZones();
+    return zones[zip] ?? null;
+  } catch {
+    return DELIVERY_ZONES[zip] ?? null;
+  }
 }
 
 /** True if the given zip can be booked online (i.e. not call-only and not unknown). */

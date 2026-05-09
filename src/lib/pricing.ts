@@ -33,8 +33,16 @@ export function isSaturday(d: Date) {
   return d.getDay() === 6;
 }
 
+import { getSettings } from "./appSettings";
+
+/** @deprecated Use getTaxRate() — kept for backwards compatibility. Reflects DEFAULT, not live value. */
 export const TAX_RATE = 0.07;
+/** @deprecated Use getDamageWaiverRate() — kept for backwards compatibility. Reflects DEFAULT, not live value. */
 export const DAMAGE_WAIVER_RATE = 0.10;
+
+export const getTaxRate = () => getSettings().taxRate;
+export const getDamageWaiverRate = () => getSettings().damageWaiverRate;
+export const getDefaultDeposit = () => getSettings().defaultDeposit;
 
 export interface PriceBreakdown {
   subtotal: number;
@@ -55,11 +63,13 @@ export function computeBreakdown(
   waiverSelected: boolean,
   deliveryFee: number = 0,
 ): PriceBreakdown {
+  const taxRate = getTaxRate();
+  const waiverRate = getDamageWaiverRate();
   const sub = Math.round(subtotal * 100) / 100;
-  const damageWaiver = waiverSelected ? Math.round(sub * DAMAGE_WAIVER_RATE * 100) / 100 : 0;
+  const damageWaiver = waiverSelected ? Math.round(sub * waiverRate * 100) / 100 : 0;
   const delivery = Math.round(Math.max(0, deliveryFee) * 100) / 100;
   const taxableBase = Math.round((sub + damageWaiver + delivery) * 100) / 100;
-  const tax = Math.round(taxableBase * TAX_RATE * 100) / 100;
+  const tax = Math.round(taxableBase * taxRate * 100) / 100;
   const total = Math.round((sub + damageWaiver + delivery + tax) * 100) / 100;
   return { subtotal: sub, damageWaiver, deliveryFee: delivery, taxableBase, tax, total };
 }
