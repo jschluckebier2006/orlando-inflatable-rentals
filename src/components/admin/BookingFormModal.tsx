@@ -12,6 +12,8 @@ import { products } from "@/data/inventory";
 import { DURATION_MULTIPLIERS, DURATION_LABELS, type DurationType, endDateFor } from "@/lib/pricing";
 import { TAX_RATE, DAMAGE_WAIVER_RATE } from "@/lib/pricing";
 import { format } from "date-fns";
+import { CalendarClock } from "lucide-react";
+import { RescheduleDialog } from "@/components/admin/RescheduleDialog";
 
 type BookingStatus = "pending" | "confirmed" | "cancelled" | "completed";
 type PaymentStatus = "unpaid" | "deposit_paid" | "paid_in_full" | "refunded";
@@ -95,6 +97,7 @@ export default function BookingFormModal({ open, onOpenChange, booking, onSaved 
   const [discountValue, setDiscountValue] = useState<string>("0");
   const [discountReason, setDiscountReason] = useState("");
   const [damageWaiver, setDamageWaiver] = useState<boolean>(true);
+  const [rescheduleOpen, setRescheduleOpen] = useState(false);
 
   useEffect(() => {
     if (!open) return;
@@ -281,7 +284,17 @@ export default function BookingFormModal({ open, onOpenChange, booking, onSaved 
                   </SelectContent>
                 </Select>
               </div>
-              <div><Label>Event date *</Label><Input type="date" value={eventDate} onChange={(e) => setEventDate(e.target.value)} /></div>
+              <div>
+                <Label>Event date *</Label>
+                <div className="flex gap-2">
+                  <Input type="date" value={eventDate} onChange={(e) => setEventDate(e.target.value)} />
+                  {isEdit && booking?.id && (
+                    <Button type="button" variant="outline" size="sm" onClick={() => setRescheduleOpen(true)}>
+                      <CalendarClock className="h-4 w-4 mr-1" /> Edit date
+                    </Button>
+                  )}
+                </div>
+              </div>
               <div>
                 <Label>Start time</Label>
                 <Select value={startTime} onValueChange={setStartTime}>
@@ -429,6 +442,20 @@ export default function BookingFormModal({ open, onOpenChange, booking, onSaved 
           <Button onClick={save} disabled={saving}>{saving ? "Saving…" : isEdit ? "Save changes" : "Create booking"}</Button>
         </DialogFooter>
       </DialogContent>
+      {isEdit && booking?.id && (
+        <RescheduleDialog
+          open={rescheduleOpen}
+          onOpenChange={setRescheduleOpen}
+          bookingId={booking.id}
+          currentStart={eventDate}
+          currentEnd={booking.event_end_date || eventDate}
+          productIds={items.map((i) => i.product_id).filter(Boolean)}
+          onRescheduled={() => {
+            onSaved();
+            onOpenChange(false);
+          }}
+        />
+      )}
     </Dialog>
   );
 }
