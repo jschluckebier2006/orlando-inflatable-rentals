@@ -35,6 +35,9 @@ const legacyAssetMap: Record<string, string> = Object.fromEntries(
   Object.entries(assetModules).map(([path, url]) => [path.split("/").pop()!, url]),
 );
 
+/** Set of bundled webp filenames available under src/assets/inventory. */
+export const legacyAssetFilenames: Set<string> = new Set(Object.keys(legacyAssetMap));
+
 function resolveImage(item: any, images: any[]): string {
   if (item.primary_image_url) return item.primary_image_url;
   const sorted = images
