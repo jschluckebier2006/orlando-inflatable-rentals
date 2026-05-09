@@ -104,8 +104,23 @@ export function RescheduleDialog({ open, onOpenChange, bookingId, currentStart, 
       message: `Rescheduled from ${currentStart}${currentEnd && currentEnd !== currentStart ? `→${currentEnd}` : ""} to ${start}${end && end !== start ? `→${end}` : ""}${force ? " (override: conflicts ignored)" : ""}.`,
       metadata: { from_start: currentStart, from_end: currentEnd, to_start: start, to_end: end, override: force },
     });
+    // Fire customer + admin notification email (non-blocking)
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      await supabase.functions.invoke("send-reschedule-email", {
+        body: {
+          booking_id: bookingId,
+          previous_start: currentStart,
+          previous_end: currentEnd || currentStart,
+          override: force,
+          actor_email: user?.email ?? null,
+        },
+      });
+    } catch (e) {
+      console.warn("send-reschedule-email failed", e);
+    }
     setSaving(false);
-    toast({ title: "Booking rescheduled" });
+    toast({ title: "Booking rescheduled", description: "Customer has been emailed the new date." });
     onOpenChange(false);
     onRescheduled?.();
   }
