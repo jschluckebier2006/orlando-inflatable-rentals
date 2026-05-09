@@ -11,6 +11,8 @@ import NotFound from "./pages/NotFound";
 import { CartProvider } from "./contexts/CartContext";
 import { CartDrawer } from "./components/cart/CartDrawer";
 import { CheckoutModal } from "./components/booking/CheckoutModal";
+import { useEffect } from "react";
+import { loadAppSettings } from "./lib/appSettings";
 
 // Lazy-load every other route so each page only ships its own JS
 const Rentals = lazy(() => import("./pages/Rentals"));
@@ -89,8 +91,10 @@ const queryClient = new QueryClient();
 // Minimal fallback — height matches typical hero so layout stays stable
 const RouteFallback = () => <div className="min-h-screen" aria-hidden="true" />;
 
-const App = () => (
-  <HelmetProvider>
+const App = () => {
+  useEffect(() => { loadAppSettings(); }, []);
+  return (
+    <HelmetProvider>
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <TooltipProvider>
@@ -182,7 +186,8 @@ const App = () => (
         </TooltipProvider>
       </BrowserRouter>
     </QueryClientProvider>
-  </HelmetProvider>
-);
+    </HelmetProvider>
+  );
+};
 
 export default App;
