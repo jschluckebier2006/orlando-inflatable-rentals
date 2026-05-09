@@ -442,6 +442,20 @@ export default function BookingFormModal({ open, onOpenChange, booking, onSaved 
           <Button onClick={save} disabled={saving}>{saving ? "Saving…" : isEdit ? "Save changes" : "Create booking"}</Button>
         </DialogFooter>
       </DialogContent>
+      {isEdit && booking?.id && (
+        <RescheduleDialog
+          open={rescheduleOpen}
+          onOpenChange={setRescheduleOpen}
+          bookingId={booking.id}
+          currentStart={eventDate}
+          currentEnd={booking.event_end_date || eventDate}
+          productIds={items.map((i) => i.product_id).filter(Boolean)}
+          onRescheduled={() => {
+            onSaved();
+            onOpenChange(false);
+          }}
+        />
+      )}
     </Dialog>
   );
 }
