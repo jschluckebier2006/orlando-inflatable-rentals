@@ -344,6 +344,174 @@ export type Database = {
         }
         Relationships: []
       }
+      inventory_blackouts: {
+        Row: {
+          created_at: string
+          end_date: string
+          id: string
+          item_id: string
+          reason: string | null
+          start_date: string
+        }
+        Insert: {
+          created_at?: string
+          end_date: string
+          id?: string
+          item_id: string
+          reason?: string | null
+          start_date: string
+        }
+        Update: {
+          created_at?: string
+          end_date?: string
+          id?: string
+          item_id?: string
+          reason?: string | null
+          start_date?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inventory_blackouts_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "inventory_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      inventory_images: {
+        Row: {
+          created_at: string
+          id: string
+          is_primary: boolean
+          item_id: string
+          sort_order: number
+          storage_path: string | null
+          url: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_primary?: boolean
+          item_id: string
+          sort_order?: number
+          storage_path?: string | null
+          url: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_primary?: boolean
+          item_id?: string
+          sort_order?: number
+          storage_path?: string | null
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inventory_images_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "inventory_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      inventory_items: {
+        Row: {
+          active: boolean
+          age_range: string | null
+          base_price: number
+          capacity: string | null
+          category: string
+          created_at: string
+          description: string | null
+          dimensions: string | null
+          features: string[] | null
+          id: string
+          legacy_image: string | null
+          name: string
+          primary_image_url: string | null
+          slug: string
+          sort_order: number
+          stock_count: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          age_range?: string | null
+          base_price?: number
+          capacity?: string | null
+          category: string
+          created_at?: string
+          description?: string | null
+          dimensions?: string | null
+          features?: string[] | null
+          id: string
+          legacy_image?: string | null
+          name: string
+          primary_image_url?: string | null
+          slug: string
+          sort_order?: number
+          stock_count?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          age_range?: string | null
+          base_price?: number
+          capacity?: string | null
+          category?: string
+          created_at?: string
+          description?: string | null
+          dimensions?: string | null
+          features?: string[] | null
+          id?: string
+          legacy_image?: string | null
+          name?: string
+          primary_image_url?: string | null
+          slug?: string
+          sort_order?: number
+          stock_count?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      inventory_maintenance: {
+        Row: {
+          created_at: string
+          id: string
+          item_id: string
+          kind: string
+          notes: string | null
+          performed_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          item_id: string
+          kind?: string
+          notes?: string | null
+          performed_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          item_id?: string
+          kind?: string
+          notes?: string | null
+          performed_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inventory_maintenance_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "inventory_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       pending_bookings: {
         Row: {
           amount_charged: number
