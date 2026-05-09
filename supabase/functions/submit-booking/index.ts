@@ -1,5 +1,6 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { z } from "https://esm.sh/zod@3.23.8";
+import { lookupZone } from "../_shared/deliveryZones.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -31,6 +32,8 @@ const BookingSchema = z.object({
   notes: z.string().max(2000).optional().nullable(),
   items: z.array(ItemSchema).min(1).max(20),
   damage_waiver: z.boolean().optional().default(true),
+  delivery_fee: z.number().nonnegative().max(500).optional(),
+  delivery_zone_city: z.string().max(120).optional().nullable(),
 });
 
 Deno.serve(async (req) => {
@@ -91,11 +94,27 @@ Deno.serve(async (req) => {
     );
 
     const { items, ...rest } = d;
+
+    // Server-side zone validation
+    const zone = lookupZone(d.event_zip);
+    if (!zone) {
+      return new Response(JSON.stringify({
+        error: "We don't service this ZIP for online booking. Please call (407) 497-1840.",
+      }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+    if (zone.status === "call") {
+      return new Response(JSON.stringify({
+        error: `${zone.city} requires a phone quote. Please call (407) 497-1840.`,
+      }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+    const deliveryFee = zone.status === "paid" ? Math.round(zone.fee * 100) / 100 : 0;
+    const deliveryZoneCity = zone.city;
+
     // Server-side recompute of money values (never trust the client)
     const subtotal = Math.round(items.reduce((s, i) => s + i.product_price, 0) * multiplier * 100) / 100;
     const damage_waiver_amount = d.damage_waiver ? Math.round(subtotal * WAIVER_RATE * 100) / 100 : 0;
-    const tax_amount = Math.round((subtotal + damage_waiver_amount) * TAX_RATE * 100) / 100;
-    const total_amount = Math.round((subtotal + damage_waiver_amount + tax_amount) * 100) / 100;
+    const tax_amount = Math.round((subtotal + damage_waiver_amount + deliveryFee) * TAX_RATE * 100) / 100;
+    const total_amount = Math.round((subtotal + damage_waiver_amount + deliveryFee + tax_amount) * 100) / 100;
 
     const header = {
       ...rest,
@@ -108,6 +127,8 @@ Deno.serve(async (req) => {
       damage_waiver_amount,
       tax_rate: TAX_RATE,
       tax_amount,
+      delivery_fee: deliveryFee,
+      delivery_zone_city: deliveryZoneCity,
       total_amount,
       balance_due: total_amount,
     };

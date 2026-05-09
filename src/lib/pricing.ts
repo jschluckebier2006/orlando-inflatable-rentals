@@ -39,17 +39,27 @@ export const DAMAGE_WAIVER_RATE = 0.10;
 export interface PriceBreakdown {
   subtotal: number;
   damageWaiver: number;
+  deliveryFee: number;
   taxableBase: number;
   tax: number;
   total: number;
 }
 
-/** Compute the full price breakdown given a pre-tax subtotal and waiver choice. */
-export function computeBreakdown(subtotal: number, waiverSelected: boolean): PriceBreakdown {
+/**
+ * Compute the full price breakdown.
+ * Tax applies to (subtotal + waiver + delivery) per FL sales tax law for required
+ * delivery on taxable rentals.
+ */
+export function computeBreakdown(
+  subtotal: number,
+  waiverSelected: boolean,
+  deliveryFee: number = 0,
+): PriceBreakdown {
   const sub = Math.round(subtotal * 100) / 100;
   const damageWaiver = waiverSelected ? Math.round(sub * DAMAGE_WAIVER_RATE * 100) / 100 : 0;
-  const taxableBase = Math.round((sub + damageWaiver) * 100) / 100;
+  const delivery = Math.round(Math.max(0, deliveryFee) * 100) / 100;
+  const taxableBase = Math.round((sub + damageWaiver + delivery) * 100) / 100;
   const tax = Math.round(taxableBase * TAX_RATE * 100) / 100;
-  const total = Math.round((sub + damageWaiver + tax) * 100) / 100;
-  return { subtotal: sub, damageWaiver, taxableBase, tax, total };
+  const total = Math.round((sub + damageWaiver + delivery + tax) * 100) / 100;
+  return { subtotal: sub, damageWaiver, deliveryFee: delivery, taxableBase, tax, total };
 }

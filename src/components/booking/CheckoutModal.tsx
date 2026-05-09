@@ -21,6 +21,8 @@ import {
   TAX_RATE, DAMAGE_WAIVER_RATE, computeBreakdown,
 } from "@/lib/pricing";
 import { PaymentStep } from "./PaymentStep";
+import { ZipFeeBadge } from "./ZipFeeBadge";
+import { lookupZone } from "@/data/deliveryZones";
 
 const EVENT_TYPES = [
   "Birthday Party", "School Event", "Church Event",
@@ -65,6 +67,12 @@ export function CheckoutModal() {
     event_type: "", notes: "",
   });
   const [damageWaiver, setDamageWaiver] = useState<boolean>(true);
+
+  // Auto-applied delivery zone, derived from the entered ZIP.
+  const zone = useMemo(() => lookupZone(form.event_zip), [form.event_zip]);
+  const deliveryFee = zone && zone.status === "paid" ? zone.fee : 0;
+  const zoneCity = zone?.city ?? null;
+  const zipBookable = !!zone && zone.status !== "call";
 
   // Apply duration-based time defaults
   useEffect(() => {
@@ -149,7 +157,8 @@ export function CheckoutModal() {
     (duration !== "7hour" || form.event_end_time > form.event_start_time);
   const canSubmit =
     form.customer_name.trim() && form.customer_email.trim() && form.customer_phone.trim() &&
-    form.event_address_line.trim() && form.event_city.trim() && form.event_zip.trim();
+    form.event_address_line.trim() && form.event_city.trim() && form.event_zip.trim() &&
+    zipBookable;
 
   async function handleSubmit() {
     if (!date || items.length === 0) return;
@@ -459,6 +468,7 @@ export function CheckoutModal() {
                 <Label htmlFor="zip">ZIP *</Label>
                 <Input id="zip" value={form.event_zip}
                   onChange={(e) => setForm({ ...form, event_zip: e.target.value })} />
+                <ZipFeeBadge zip={form.event_zip} />
               </div>
               <div className="space-y-1 md:col-span-2">
                 <Label htmlFor="notes">Notes</Label>
@@ -495,7 +505,7 @@ export function CheckoutModal() {
             </div>
 
             {(() => {
-              const bd = computeBreakdown(total, damageWaiver);
+              const bd = computeBreakdown(total, damageWaiver, deliveryFee);
               return (
                 <div className="rounded-md bg-muted/50 p-3 text-sm space-y-1">
                   <p className="font-semibold">{DURATION_LABELS[duration]}</p>
@@ -521,6 +531,17 @@ export function CheckoutModal() {
                     {damageWaiver && (
                       <div className="flex justify-between"><span>Damage Waiver (10%)</span><span>${bd.damageWaiver.toFixed(2)}</span></div>
                     )}
+                    {bd.deliveryFee > 0 ? (
+                      <div className="flex justify-between">
+                        <span>Delivery {zoneCity ? `— ${zoneCity}` : ""}</span>
+                        <span>${bd.deliveryFee.toFixed(2)}</span>
+                      </div>
+                    ) : zoneCity ? (
+                      <div className="flex justify-between text-green-700 dark:text-green-400">
+                        <span>Delivery — {zoneCity}</span>
+                        <span>FREE</span>
+                      </div>
+                    ) : null}
                     <div className="flex justify-between"><span>Sales Tax (7%)</span><span>${bd.tax.toFixed(2)}</span></div>
                     <div className="flex justify-between font-semibold text-base pt-1"><span>Total</span><span>${bd.total.toFixed(2)}</span></div>
                   </div>
@@ -543,6 +564,8 @@ export function CheckoutModal() {
           <PaymentStep
             subtotal={total}
             damageWaiver={damageWaiver}
+            deliveryFee={deliveryFee}
+            zoneCity={zoneCity}
             onBack={() => setStep(3)}
             payload={{
               duration_type: duration,
@@ -558,6 +581,8 @@ export function CheckoutModal() {
               event_zip: form.event_zip.trim(),
               notes: form.notes.trim() || null,
               damage_waiver: damageWaiver,
+              delivery_fee: deliveryFee,
+              delivery_zone_city: zoneCity,
               items: items.map((i) => ({
                 product_id: i.id, product_name: i.name, product_price: i.price,
               })),

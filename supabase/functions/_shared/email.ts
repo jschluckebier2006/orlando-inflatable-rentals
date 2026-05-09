@@ -156,6 +156,8 @@ export interface BookingForEmail {
   damage_waiver_selected?: boolean | null;
   damage_waiver_amount?: number | null;
   tax_amount?: number | null;
+  delivery_fee?: number | null;
+  delivery_zone_city?: string | null;
 }
 export interface BookingItemForEmail {
   product_name: string;
@@ -199,6 +201,11 @@ export function customerConfirmationEmail(b: BookingForEmail, items: BookingItem
     ? `<tr><td style="color:#54657a;">Subtotal</td><td style="text-align:right;">${fmtMoney(b.subtotal)}</td></tr>` : "";
   const waiverLine = b.damage_waiver_selected && Number(b.damage_waiver_amount ?? 0) > 0
     ? `<tr><td style="color:#54657a;">Damage Waiver (10%)</td><td style="text-align:right;">${fmtMoney(b.damage_waiver_amount)}</td></tr>` : "";
+  const deliveryLine = Number(b.delivery_fee ?? 0) > 0
+    ? `<tr><td style="color:#54657a;">Delivery${b.delivery_zone_city ? ` — ${escapeHtml(b.delivery_zone_city)}` : ""}</td><td style="text-align:right;">${fmtMoney(b.delivery_fee)}</td></tr>`
+    : b.delivery_zone_city
+      ? `<tr><td style="color:#54657a;">Delivery — ${escapeHtml(b.delivery_zone_city)}</td><td style="text-align:right;color:#1a8a4a;">FREE</td></tr>`
+      : "";
   const taxLine = Number(b.tax_amount ?? 0) > 0
     ? `<tr><td style="color:#54657a;">Sales Tax (7%)</td><td style="text-align:right;">${fmtMoney(b.tax_amount)}</td></tr>` : "";
   const body = `
@@ -212,6 +219,7 @@ export function customerConfirmationEmail(b: BookingForEmail, items: BookingItem
     <table width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;margin-top:8px;">
       ${subtotalLine}
       ${waiverLine}
+      ${deliveryLine}
       ${taxLine}
       <tr><td style="color:#54657a;"><strong>Total</strong></td><td style="text-align:right;"><strong>${fmtMoney(b.total_amount)}</strong></td></tr>
       <tr><td style="color:#54657a;">Amount paid</td><td style="text-align:right;">${fmtMoney(b.amount_paid)}</td></tr>

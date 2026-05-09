@@ -1,6 +1,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { z } from "https://esm.sh/zod@3.23.8";
 import { type StripeEnv, createStripeClient } from "../_shared/stripe.ts";
+import { lookupZone } from "../_shared/deliveryZones.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -32,6 +33,9 @@ const PayloadSchema = z.object({
   damage_waiver: z.boolean().optional().default(true),
   payment_choice: z.enum(["deposit", "full", "custom", "deposit_cash"]),
   custom_amount: z.number().positive().optional(),
+  // Optional client-supplied delivery fee — server re-validates from the zip.
+  delivery_fee: z.number().nonnegative().max(500).optional(),
+  delivery_zone_city: z.string().max(120).optional().nullable(),
   return_url: z.string().url(),
   environment: z.enum(["sandbox", "live"]),
 });
@@ -55,6 +59,21 @@ Deno.serve(async (req) => {
     const d = parsed.data;
     const multiplier = SERVER_MULT[d.duration_type];
 
+    // ---- Server-side delivery-zone validation (defense in depth) ----
+    const zone = lookupZone(d.event_zip);
+    if (!zone) {
+      return new Response(JSON.stringify({
+        error: "We don't service this ZIP for online booking. Please call (407) 497-1840.",
+      }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+    if (zone.status === "call") {
+      return new Response(JSON.stringify({
+        error: `${zone.city} requires a phone quote. Please call (407) 497-1840 to book this area.`,
+      }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+    const deliveryFee = zone.status === "paid" ? Math.round(zone.fee * 100) / 100 : 0;
+    const deliveryZoneCity = zone.city;
+
     // Compute totals server-side (never trust the client)
     const subtotal = Math.round(d.items.reduce((s, i) => s + i.product_price, 0) * multiplier * 100) / 100;
     if (subtotal <= 0) {
@@ -63,8 +82,8 @@ Deno.serve(async (req) => {
       });
     }
     const damage_waiver_amount = d.damage_waiver ? Math.round(subtotal * WAIVER_RATE * 100) / 100 : 0;
-    const tax_amount = Math.round((subtotal + damage_waiver_amount) * TAX_RATE * 100) / 100;
-    const total = Math.round((subtotal + damage_waiver_amount + tax_amount) * 100) / 100;
+    const tax_amount = Math.round((subtotal + damage_waiver_amount + deliveryFee) * TAX_RATE * 100) / 100;
+    const total = Math.round((subtotal + damage_waiver_amount + deliveryFee + tax_amount) * 100) / 100;
 
     let amountToCharge: number;
     let lineLabel: string;
@@ -133,7 +152,9 @@ Deno.serve(async (req) => {
     );
     const { error: stashErr } = await supabase.from("pending_bookings").insert({
       stripe_session_id: session.id,
-      payload: d,
+      // Persist the server-trusted delivery fee/city back into the payload so the
+      // webhook records what we actually charged for, not what the client claimed.
+      payload: { ...d, delivery_fee: deliveryFee, delivery_zone_city: deliveryZoneCity },
       amount_total: total,
       deposit_amount: DEPOSIT,
       amount_charged: amountToCharge,

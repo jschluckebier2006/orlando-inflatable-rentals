@@ -75,7 +75,9 @@ Deno.serve(async (req) => {
   const subtotal = Math.round(p.items.reduce((s: number, i: any) => s + Number(i.product_price), 0) * multiplier * 100) / 100;
   const waiverSelected = p.damage_waiver !== false;
   const damage_waiver_amount = waiverSelected ? Math.round(subtotal * WAIVER_RATE * 100) / 100 : 0;
-  const tax_amount = Math.round((subtotal + damage_waiver_amount) * TAX_RATE * 100) / 100;
+  const deliveryFee = Math.max(0, Math.round(Number(p.delivery_fee ?? 0) * 100) / 100);
+  const deliveryZoneCity = p.delivery_zone_city ?? null;
+  const tax_amount = Math.round((subtotal + damage_waiver_amount + deliveryFee) * TAX_RATE * 100) / 100;
 
   const amountCharged = Number(pending.amount_charged);
   const total = Number(pending.amount_total);
@@ -112,6 +114,8 @@ Deno.serve(async (req) => {
       damage_waiver_amount,
       tax_rate: TAX_RATE,
       tax_amount,
+      delivery_fee: deliveryFee,
+      delivery_zone_city: deliveryZoneCity,
     })
     .select("id")
     .single();
