@@ -17,6 +17,59 @@ function admin() {
   );
 }
 
+// ---------- Template loader ----------
+interface TemplateRow {
+  key: string;
+  subject: string;
+  body_html: string;
+  enabled: boolean;
+}
+let _tplCache: { value: Map<string, TemplateRow>; expires: number } | null = null;
+const TPL_TTL_MS = 30_000;
+
+export async function loadTemplate(key: string): Promise<TemplateRow | null> {
+  try {
+    if (!_tplCache || _tplCache.expires < Date.now()) {
+      const sb = admin();
+      const { data } = await sb.from("email_templates").select("key,subject,body_html,enabled");
+      const m = new Map<string, TemplateRow>();
+      (data ?? []).forEach((r: any) => m.set(r.key, r as TemplateRow));
+      _tplCache = { value: m, expires: Date.now() + TPL_TTL_MS };
+    }
+    return _tplCache.value.get(key) ?? null;
+  } catch {
+    return null;
+  }
+}
+
+export function applyMergeTags(template: string, data: Record<string, string>): string {
+  return String(template ?? "").replace(/\{\{\s*(\w+)\s*\}\}/g, (_, k) => data[k] ?? "");
+}
+
+export interface RenderedEmail {
+  subject: string;
+  html: string;
+  enabled: boolean;
+}
+
+export async function renderTemplate(
+  key: string,
+  data: Record<string, string>,
+  preheader: string,
+): Promise<RenderedEmail> {
+  const tpl = await loadTemplate(key);
+  if (!tpl) {
+    return { subject: "", html: "", enabled: false };
+  }
+  const subject = applyMergeTags(tpl.subject, data);
+  const innerHtml = applyMergeTags(tpl.body_html, data);
+  return {
+    subject,
+    html: layout({ preheader, body: innerHtml }),
+    enabled: tpl.enabled,
+  };
+}
+
 export interface SendArgs {
   to: string | string[];
   subject: string;
