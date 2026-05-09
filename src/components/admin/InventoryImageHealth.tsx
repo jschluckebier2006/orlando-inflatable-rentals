@@ -72,6 +72,16 @@ function clearSnapshot() {
   try { if (typeof window !== "undefined") window.sessionStorage.removeItem(SNAPSHOT_KEY); } catch { /* ignore */ }
 }
 
+function formatScannedAgo(iso: string): string {
+  const ms = Date.now() - new Date(iso).getTime();
+  if (ms < 60_000) return "just now";
+  const m = Math.floor(ms / 60_000);
+  if (m < 60) return `${m}m ago`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h}h ago`;
+  return `${Math.floor(h / 24)}d ago`;
+}
+
 async function fetchAllIds(table: "inventory_items" | "inventory_images"): Promise<string[]> {
   const ids: string[] = [];
   for (let from = 0; ; from += IMG_PAGE) {
