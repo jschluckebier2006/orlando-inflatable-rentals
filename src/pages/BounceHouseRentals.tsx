@@ -8,7 +8,7 @@ import { CTASection } from "@/components/home/CTASection";
 import { DeliveryAreaLinks } from "@/components/home/DeliveryAreaLinks";
 import { ReviewsSection } from "@/components/home/ReviewsSection";
 import { ProductGrid } from "@/components/inventory/ProductGrid";
-import { getBounceHouses } from "@/data/inventory";
+import { useCategory } from "@/lib/inventory";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -32,6 +32,7 @@ const faqs = [
 ];
 
 export default function BounceHouseRentals() {
+  const { products: catProducts, loading: catLoading } = useCategory("bounce-houses");
   const [showJotform, setShowJotform] = useState(false);
 
   return (
@@ -86,7 +87,7 @@ export default function BounceHouseRentals() {
       <section className="section-padding">
         <div className="container-page">
           <h2 className="font-display text-3xl font-bold text-foreground mb-8 text-center">Our Bounce House Inventory</h2>
-          <ProductGrid products={getBounceHouses()} />
+          <ProductGrid products={catProducts} loading={catLoading} />
         </div>
       </section>
 

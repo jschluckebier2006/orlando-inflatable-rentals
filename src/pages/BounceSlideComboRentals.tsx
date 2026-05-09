@@ -14,7 +14,7 @@ import { useState } from "react";
 import { JotformModal } from "@/components/JotformModal";
 import { siteImages } from "@/components/home/ContentImages";
 import { ProductGrid } from "@/components/inventory/ProductGrid";
-import { getBounceSlidesCombos } from "@/data/inventory";
+import { useCategory } from "@/lib/inventory";
 
 const features = [
   { icon: Shield, title: "Licensed & Insured", description: "Full liability coverage for your peace of mind" },
@@ -32,6 +32,7 @@ const faqs = [
 ];
 
 export default function BounceSlideComboRentals() {
+  const { products: catProducts, loading: catLoading } = useCategory("bounce-slide-combos");
   const [showJotform, setShowJotform] = useState(false);
 
   const faqItems = faqs.map(faq => ({ question: faq.q, answer: faq.a }));
@@ -89,7 +90,7 @@ export default function BounceSlideComboRentals() {
       <section className="section-padding">
         <div className="container-page">
           <h2 className="font-display text-3xl font-bold text-foreground mb-8 text-center">Our Combo Unit Inventory</h2>
-          <ProductGrid products={getBounceSlidesCombos()} columns={4} />
+          <ProductGrid products={catProducts} loading={catLoading} columns={4} />
         </div>
       </section>
 

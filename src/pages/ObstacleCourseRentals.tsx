@@ -15,7 +15,7 @@ import { useState } from "react";
 import { JotformModal } from "@/components/JotformModal";
 import { siteImages } from "@/components/home/ContentImages";
 import { ProductGrid } from "@/components/inventory/ProductGrid";
-import { getObstacleCourses } from "@/data/inventory";
+import { useCategory } from "@/lib/inventory";
 
 const features = [
   { icon: Shield, title: "Licensed & Insured", description: "Full liability coverage included" },
@@ -33,6 +33,7 @@ const faqs = [
 ];
 
 export default function ObstacleCourseRentals() {
+  const { products: catProducts, loading: catLoading } = useCategory("obstacle-courses");
   const [showJotform, setShowJotform] = useState(false);
 
   const faqItems = faqs.map(faq => ({ question: faq.q, answer: faq.a }));
@@ -90,7 +91,7 @@ export default function ObstacleCourseRentals() {
       <section className="section-padding">
         <div className="container-page">
           <h2 className="font-display text-3xl font-bold text-foreground mb-8 text-center">Our Obstacle Course Inventory</h2>
-          <ProductGrid products={getObstacleCourses()} columns={3} />
+          <ProductGrid products={catProducts} loading={catLoading} columns={3} />
         </div>
       </section>
 
