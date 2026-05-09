@@ -8,7 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { logActivity } from "@/lib/adminActivity";
 import { AlertTriangle, CheckCircle2 } from "lucide-react";
 import { eachDayOfInterval, parseISO, format } from "date-fns";
-import { products as INVENTORY } from "@/data/inventory";
+import { useInventory } from "@/lib/inventory";
 
 interface Props {
   open: boolean;
@@ -27,6 +27,7 @@ interface ConflictRow {
 
 export function RescheduleDialog({ open, onOpenChange, bookingId, currentStart, currentEnd, productIds, onRescheduled }: Props) {
   const { toast } = useToast();
+  const { products: INVENTORY } = useInventory({ includeInactive: true });
   const [start, setStart] = useState(currentStart);
   const [end, setEnd] = useState(currentEnd);
   const [conflicts, setConflicts] = useState<ConflictRow[]>([]);

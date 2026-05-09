@@ -76,6 +76,7 @@ export default function BookingFormModal({ open, onOpenChange, booking, onSaved 
   const { toast } = useToast();
   const isEdit = !!booking;
   const [saving, setSaving] = useState(false);
+  const { products } = useInventory({ includeInactive: true });
 
   const [duration, setDuration] = useState<DurationType>("7hour");
   const [eventDate, setEventDate] = useState("");
