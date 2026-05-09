@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState, ReactNode } from "react";
-import type { Product } from "@/data/inventory";
+import type { Product } from "@/lib/inventory";
 import { DURATION_MULTIPLIERS, type DurationType } from "@/lib/pricing";
 
 export interface CartItem {

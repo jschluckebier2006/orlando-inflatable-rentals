@@ -2,7 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Check, Plus, Phone } from "lucide-react";
-import type { Product } from "@/data/inventory";
+import type { Product } from "@/lib/inventory";
 import { useCart } from "@/contexts/CartContext";
 
 interface ProductCardProps {
