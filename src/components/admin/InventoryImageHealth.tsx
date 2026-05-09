@@ -36,26 +36,79 @@ const STATUS_META: Record<Status, { label: string; tone: "default" | "secondary"
   healthy: { label: "Healthy", tone: "default", help: "Primary image plus at least one gallery photo." },
 };
 
+// ----- Snapshot cache (sessionStorage) -----
+const SNAPSHOT_KEY = "imageHealth.snapshot.v1";
+const ITEM_PAGE = 500;
+const IMG_PAGE = 1000;
+const EPOCH = "1970-01-01T00:00:00Z";
+
+type ItemRow = { id: string; name: string; category: string; active: boolean; primary_image_url: string | null; legacy_image: string | null; updated_at: string | null };
+type ImageRow = { id: string; item_id: string; url: string; is_primary: boolean; sort_order: number; created_at: string | null };
+
+interface Snapshot {
+  itemsById: Record<string, ItemRow>;
+  imagesByItem: Record<string, ImageRow[]>;
+  itemsHighWater: string;
+  imagesHighWater: string;
+  knownItemIds: string[];
+  knownImageIds: string[];
+  scannedAt: string;
+}
+
+function readSnapshot(): Snapshot | null {
+  try {
+    if (typeof window === "undefined") return null;
+    const raw = window.sessionStorage.getItem(SNAPSHOT_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as Snapshot;
+    if (!parsed.itemsById || !parsed.imagesByItem) return null;
+    return parsed;
+  } catch { return null; }
+}
+function writeSnapshot(snap: Snapshot) {
+  try { if (typeof window !== "undefined") window.sessionStorage.setItem(SNAPSHOT_KEY, JSON.stringify(snap)); } catch { /* quota — ignore */ }
+}
+function clearSnapshot() {
+  try { if (typeof window !== "undefined") window.sessionStorage.removeItem(SNAPSHOT_KEY); } catch { /* ignore */ }
+}
+
+function formatScannedAgo(iso: string): string {
+  const ms = Date.now() - new Date(iso).getTime();
+  if (ms < 60_000) return "just now";
+  const m = Math.floor(ms / 60_000);
+  if (m < 60) return `${m}m ago`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h}h ago`;
+  return `${Math.floor(h / 24)}d ago`;
+}
+
+async function fetchAllIds(table: "inventory_items" | "inventory_images"): Promise<string[]> {
+  const ids: string[] = [];
+  for (let from = 0; ; from += IMG_PAGE) {
+    const { data, error } = await (supabase.from(table) as any)
+      .select("id")
+      .order("id", { ascending: true })
+      .range(from, from + IMG_PAGE - 1);
+    if (error) throw error;
+    const page = (data ?? []) as { id: string }[];
+    ids.push(...page.map((r) => r.id));
+    if (page.length < IMG_PAGE) break;
+  }
+  return ids;
+}
+
 export function useImageHealthRows() {
+  // (helper hoisted below component)
   const [rows, setRows] = useState<Row[]>([]);
   const [loading, setLoading] = useState(true);
+  const [lastScannedAt, setLastScannedAt] = useState<string | null>(null);
 
-  const load = useCallback(async () => {
-    setLoading(true);
-    const [itemsRes, imgsRes] = await Promise.all([
-      (supabase.from("inventory_items") as any).select("id,name,category,active,primary_image_url,legacy_image").order("category").order("name"),
-      (supabase.from("inventory_images") as any).select("item_id,url,is_primary,sort_order"),
-    ]);
-    const items = (itemsRes.data ?? []) as any[];
-    const imgs = (imgsRes.data ?? []) as any[];
-    const byItem = new Map<string, any[]>();
-    for (const im of imgs) {
-      const arr = byItem.get(im.item_id) ?? [];
-      arr.push(im);
-      byItem.set(im.item_id, arr);
-    }
-    const next: Row[] = items.map((it) => {
-      const gallery = (byItem.get(it.id) ?? []).slice().sort((a, b) =>
+  const buildRows = useCallback((itemsById: Record<string, ItemRow>, imagesByItem: Record<string, ImageRow[]>): Row[] => {
+    const items = Object.values(itemsById).sort((a, b) =>
+      a.category === b.category ? a.name.localeCompare(b.name) : a.category.localeCompare(b.category),
+    );
+    return items.map((it) => {
+      const gallery = (imagesByItem[it.id] ?? []).slice().sort((a, b) =>
         a.is_primary === b.is_primary ? (a.sort_order ?? 0) - (b.sort_order ?? 0) : a.is_primary ? -1 : 1,
       );
       const galleryCount = gallery.length;
@@ -102,13 +155,99 @@ export function useImageHealthRows() {
         thumb,
       };
     });
-    setRows(next);
-    setLoading(false);
   }, []);
+
+  const load = useCallback(async (opts?: { full?: boolean }) => {
+    setLoading(true);
+    try {
+      const cached = opts?.full ? null : readSnapshot();
+      const snap: Snapshot = cached ?? {
+        itemsById: {}, imagesByItem: {}, itemsHighWater: EPOCH, imagesHighWater: EPOCH,
+        knownItemIds: [], knownImageIds: [], scannedAt: new Date().toISOString(),
+      };
+
+      // Items: paginated, gated by updated_at high-water
+      let itemsHi = snap.itemsHighWater;
+      for (let from = 0; ; from += ITEM_PAGE) {
+        let q: any = (supabase.from("inventory_items") as any)
+          .select("id,name,category,active,primary_image_url,legacy_image,updated_at")
+          .order("updated_at", { ascending: true })
+          .order("id", { ascending: true })
+          .range(from, from + ITEM_PAGE - 1);
+        if (snap.itemsHighWater !== EPOCH) q = q.gt("updated_at", snap.itemsHighWater);
+        const { data, error } = await q;
+        if (error) throw error;
+        const page = (data ?? []) as any[];
+        for (const it of page) {
+          snap.itemsById[it.id] = {
+            id: it.id, name: it.name, category: it.category, active: it.active !== false,
+            primary_image_url: it.primary_image_url ?? null, legacy_image: it.legacy_image ?? null,
+            updated_at: it.updated_at,
+          };
+          if (it.updated_at && it.updated_at > itemsHi) itemsHi = it.updated_at;
+        }
+        if (page.length < ITEM_PAGE) break;
+      }
+      snap.itemsHighWater = itemsHi;
+
+      // Images: paginated, gated by created_at high-water (rows are insert/delete only)
+      let imgsHi = snap.imagesHighWater;
+      for (let from = 0; ; from += IMG_PAGE) {
+        let q: any = (supabase.from("inventory_images") as any)
+          .select("id,item_id,url,is_primary,sort_order,created_at")
+          .order("created_at", { ascending: true })
+          .order("id", { ascending: true })
+          .range(from, from + IMG_PAGE - 1);
+        if (snap.imagesHighWater !== EPOCH) q = q.gt("created_at", snap.imagesHighWater);
+        const { data, error } = await q;
+        if (error) throw error;
+        const page = (data ?? []) as any[];
+        for (const im of page) {
+          const arr = snap.imagesByItem[im.item_id] ?? [];
+          const idx = arr.findIndex((x) => x.id === im.id);
+          const row: ImageRow = { id: im.id, item_id: im.item_id, url: im.url, is_primary: !!im.is_primary, sort_order: im.sort_order ?? 0, created_at: im.created_at };
+          if (idx >= 0) arr[idx] = row; else arr.push(row);
+          snap.imagesByItem[im.item_id] = arr;
+          if (im.created_at && im.created_at > imgsHi) imgsHi = im.created_at;
+        }
+        if (page.length < IMG_PAGE) break;
+      }
+      snap.imagesHighWater = imgsHi;
+
+      // Reconcile deletes only on full rescan (cheap id-only scan)
+      if (opts?.full || !cached) {
+        const [liveItemIds, liveImageIds] = await Promise.all([
+          fetchAllIds("inventory_items"),
+          fetchAllIds("inventory_images"),
+        ]);
+        const liveItemSet = new Set(liveItemIds);
+        const liveImageSet = new Set(liveImageIds);
+        for (const id of Object.keys(snap.itemsById)) {
+          if (!liveItemSet.has(id)) { delete snap.itemsById[id]; delete snap.imagesByItem[id]; }
+        }
+        for (const itemId of Object.keys(snap.imagesByItem)) {
+          snap.imagesByItem[itemId] = snap.imagesByItem[itemId].filter((im) => liveImageSet.has(im.id));
+        }
+        snap.knownItemIds = liveItemIds;
+        snap.knownImageIds = liveImageIds;
+      }
+
+      snap.scannedAt = new Date().toISOString();
+      writeSnapshot(snap);
+      setLastScannedAt(snap.scannedAt);
+      setRows(buildRows(snap.itemsById, snap.imagesByItem));
+    } catch (e) {
+      console.warn("[ImageHealth] scan failed", e);
+    } finally {
+      setLoading(false);
+    }
+  }, [buildRows]);
 
   useEffect(() => { load(); }, [load]);
 
-  return { rows, loading, reload: load };
+  const fullRescan = useCallback(() => { clearSnapshot(); return load({ full: true }); }, [load]);
+
+  return { rows, loading, reload: load, lastScannedAt, fullRescan };
 }
 
 export function imageIssueCount(rows: Row[]): number {
@@ -119,7 +258,7 @@ const STATUSES: Status[] = ["broken", "stale_primary", "legacy_fallback", "no_ga
 
 export default function InventoryImageHealth() {
   const { toast } = useToast();
-  const { rows, loading, reload } = useImageHealthRows();
+  const { rows, loading, reload, lastScannedAt, fullRescan } = useImageHealthRows();
   const [statusFilter, setStatusFilter] = useState<Status | "issues">("issues");
   const [catFilter, setCatFilter] = useState<string>("all");
   const [showInactive, setShowInactive] = useState(false);
@@ -280,9 +419,17 @@ export default function InventoryImageHealth() {
           <input type="checkbox" checked={showInactive} onChange={(e) => setShowInactive(e.target.checked)} />
           Include hidden items
         </label>
-        <div className="ml-auto">
-          <Button variant="outline" size="sm" onClick={reload} disabled={loading}>
+        <div className="ml-auto flex items-center gap-2">
+          {lastScannedAt && (
+            <span className="text-xs text-muted-foreground hidden sm:inline">
+              Scanned {formatScannedAgo(lastScannedAt)} · {rows.length} items
+            </span>
+          )}
+          <Button variant="outline" size="sm" onClick={() => reload()} disabled={loading}>
             <RefreshCw className={`h-4 w-4 mr-1 ${loading ? "animate-spin" : ""}`}/> Re-run check
+          </Button>
+          <Button variant="ghost" size="sm" onClick={() => fullRescan()} disabled={loading} title="Clear cache and reconcile deletes">
+            Full rescan
           </Button>
         </div>
       </Card>
