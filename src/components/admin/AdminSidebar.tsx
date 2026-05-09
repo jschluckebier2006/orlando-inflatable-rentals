@@ -1,5 +1,6 @@
 import { NavLink, useLocation } from "react-router-dom";
 import { Calendar, ListChecks, Users, Plus, Activity, Settings as SettingsIcon, Boxes, Mail } from "lucide-react";
+import { useImageHealthRows, imageIssueCount } from "@/components/admin/InventoryImageHealth";
 import {
   Sidebar,
   SidebarContent,
@@ -28,6 +29,8 @@ export function AdminSidebar() {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const { pathname } = useLocation();
+  const { rows } = useImageHealthRows();
+  const inventoryIssues = imageIssueCount(rows);
 
   const isActive = (url: string, end?: boolean) =>
     end ? pathname === url : pathname === url || pathname.startsWith(url + "/");
@@ -55,6 +58,11 @@ export function AdminSidebar() {
                     <NavLink to={item.url} end={item.end} className="flex items-center gap-2">
                       <item.icon className="h-4 w-4" />
                       {!collapsed && <span>{item.title}</span>}
+                      {item.url === "/admin/inventory" && inventoryIssues > 0 && (
+                        <span className={`ml-auto inline-flex items-center justify-center rounded-full bg-destructive text-destructive-foreground text-[10px] font-semibold ${collapsed ? "w-2 h-2" : "min-w-[18px] h-[18px] px-1"}`}>
+                          {!collapsed && inventoryIssues}
+                        </span>
+                      )}
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
