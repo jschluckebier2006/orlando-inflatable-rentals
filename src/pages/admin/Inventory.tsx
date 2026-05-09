@@ -10,6 +10,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Boxes, Copy, Plus, Search, ArrowUp, ArrowDown, Eye, EyeOff } from "lucide-react";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import InventoryImageHealth, { useImageHealthRows, imageIssueCount } from "@/components/admin/InventoryImageHealth";
+import { AlertTriangle } from "lucide-react";
 
 interface Item {
   id: string;
@@ -35,6 +38,9 @@ export default function Inventory() {
   const [cat, setCat] = useState<string>("all");
   const [bulkOpen, setBulkOpen] = useState(false);
   const [bulkPct, setBulkPct] = useState("10");
+  const [tab, setTab] = useState<"items" | "health">("items");
+  const { rows: healthRows } = useImageHealthRows();
+  const issues = imageIssueCount(healthRows);
 
   async function load() {
     setLoading(true);
@@ -110,6 +116,22 @@ export default function Inventory() {
         </div>
       </div>
 
+      {issues > 0 && tab === "items" && (
+        <Card className="p-3 flex items-center gap-2 border-destructive/40 bg-destructive/5">
+          <AlertTriangle className="h-4 w-4 text-destructive"/>
+          <div className="text-sm flex-1">
+            <strong>{issues}</strong> active item{issues === 1 ? "" : "s"} need image attention.
+          </div>
+          <Button size="sm" variant="outline" onClick={() => setTab("health")}>Review</Button>
+        </Card>
+      )}
+
+      <Tabs value={tab} onValueChange={(v) => setTab(v as any)}>
+        <TabsList>
+          <TabsTrigger value="items">Items</TabsTrigger>
+          <TabsTrigger value="health">Image health{issues > 0 ? ` (${issues})` : ""}</TabsTrigger>
+        </TabsList>
+        <TabsContent value="items" className="space-y-4 mt-4">
       <Card className="p-3 flex flex-wrap gap-2 items-center">
         <div className="relative flex-1 min-w-[200px]">
           <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground"/>
@@ -163,6 +185,11 @@ export default function Inventory() {
           </div>
         )}
       </Card>
+        </TabsContent>
+        <TabsContent value="health" className="mt-4">
+          <InventoryImageHealth />
+        </TabsContent>
+      </Tabs>
 
       <Dialog open={bulkOpen} onOpenChange={setBulkOpen}>
         <DialogContent className="max-w-sm">
