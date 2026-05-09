@@ -47,7 +47,7 @@ export function AllCategoryCarousels() {
           {/* Row 4 */}
           <CategoryCard
             title="Table & Chair Rentals"
-            products={getTablesChairs()}
+            products={by("tables-chairs")}
             categoryLink="/table-chair-rentals"
           />
         </div>
