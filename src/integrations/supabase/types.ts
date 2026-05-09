@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      app_settings: {
+        Row: {
+          damage_waiver_rate: number
+          default_deposit: number
+          id: number
+          tax_rate: number
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          damage_waiver_rate?: number
+          default_deposit?: number
+          id?: number
+          tax_rate?: number
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          damage_waiver_rate?: number
+          default_deposit?: number
+          id?: number
+          tax_rate?: number
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       booking_activity: {
         Row: {
           actor_email: string | null
@@ -302,6 +329,30 @@ export type Database = {
           phone?: string | null
           updated_at?: string
           zip?: string | null
+        }
+        Relationships: []
+      }
+      delivery_zones: {
+        Row: {
+          city: string
+          fee: number
+          status: string
+          updated_at: string
+          zip: string
+        }
+        Insert: {
+          city: string
+          fee?: number
+          status?: string
+          updated_at?: string
+          zip: string
+        }
+        Update: {
+          city?: string
+          fee?: number
+          status?: string
+          updated_at?: string
+          zip?: string
         }
         Relationships: []
       }

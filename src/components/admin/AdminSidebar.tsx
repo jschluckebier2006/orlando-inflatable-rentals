@@ -1,5 +1,5 @@
 import { NavLink, useLocation } from "react-router-dom";
-import { Calendar, ListChecks, Users, Plus, Activity, Settings as SettingsIcon } from "lucide-react";
+import { Calendar, ListChecks, Users, Plus, Activity, Settings as SettingsIcon, Boxes, Mail } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -16,9 +16,11 @@ import {
 const items = [
   { title: "Calendar", url: "/admin", icon: Calendar, end: true },
   { title: "Bookings", url: "/admin/bookings", icon: ListChecks },
+  { title: "Inventory", url: "/admin/inventory", icon: Boxes },
   { title: "Customers", url: "/admin/customers", icon: Users },
   { title: "New Reservation", url: "/admin/new", icon: Plus },
   { title: "Activity", url: "/admin/activity", icon: Activity },
+  { title: "Notifications", url: "/admin/notifications", icon: Mail },
   { title: "Settings", url: "/admin/settings", icon: SettingsIcon },
 ];
 

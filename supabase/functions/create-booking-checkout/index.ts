@@ -1,7 +1,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { z } from "https://esm.sh/zod@3.23.8";
 import { type StripeEnv, createStripeClient } from "../_shared/stripe.ts";
-import { lookupZone } from "../_shared/deliveryZones.ts";
+import { loadSettings, lookupZoneIn } from "../_shared/settings.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -41,9 +41,6 @@ const PayloadSchema = z.object({
 });
 
 const SERVER_MULT: Record<string, number> = { "7hour": 1.0, overnight: 1.25, weekend: 1.6 };
-const DEPOSIT = 5;
-const TAX_RATE = 0.07;
-const WAIVER_RATE = 0.10;
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
@@ -59,8 +56,17 @@ Deno.serve(async (req) => {
     const d = parsed.data;
     const multiplier = SERVER_MULT[d.duration_type];
 
+    const supabaseAdmin = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+    );
+    const settings = await loadSettings(supabaseAdmin);
+    const TAX_RATE = settings.taxRate;
+    const WAIVER_RATE = settings.damageWaiverRate;
+    const DEPOSIT = settings.defaultDeposit;
+
     // ---- Server-side delivery-zone validation (defense in depth) ----
-    const zone = lookupZone(d.event_zip);
+    const zone = lookupZoneIn(settings.zones, d.event_zip);
     if (!zone) {
       return new Response(JSON.stringify({
         error: "We don't service this ZIP for online booking. Please call (407) 497-1840.",

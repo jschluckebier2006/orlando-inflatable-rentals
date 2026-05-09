@@ -11,6 +11,8 @@ import NotFound from "./pages/NotFound";
 import { CartProvider } from "./contexts/CartContext";
 import { CartDrawer } from "./components/cart/CartDrawer";
 import { CheckoutModal } from "./components/booking/CheckoutModal";
+import { useEffect } from "react";
+import { loadAppSettings } from "./lib/appSettings";
 
 // Lazy-load every other route so each page only ships its own JS
 const Rentals = lazy(() => import("./pages/Rentals"));
@@ -81,14 +83,18 @@ const AdminNewReservation = lazy(() => import("./pages/admin/NewReservation"));
 const AdminActivity = lazy(() => import("./pages/admin/Activity"));
 const AdminSettings = lazy(() => import("./pages/admin/Settings"));
 const AdminNotifications = lazy(() => import("./pages/admin/Notifications"));
+const AdminInventory = lazy(() => import("./pages/admin/Inventory"));
+const AdminInventoryDetail = lazy(() => import("./pages/admin/InventoryDetail"));
 
 const queryClient = new QueryClient();
 
 // Minimal fallback — height matches typical hero so layout stays stable
 const RouteFallback = () => <div className="min-h-screen" aria-hidden="true" />;
 
-const App = () => (
-  <HelmetProvider>
+const App = () => {
+  useEffect(() => { loadAppSettings(); }, []);
+  return (
+    <HelmetProvider>
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <TooltipProvider>
@@ -165,6 +171,8 @@ const App = () => (
                 <Route path="customers" element={<AdminCustomers />} />
                 <Route path="customers/:id" element={<AdminCustomerDetail />} />
                 <Route path="new" element={<AdminNewReservation />} />
+                <Route path="inventory" element={<AdminInventory />} />
+                <Route path="inventory/:id" element={<AdminInventoryDetail />} />
                 <Route path="activity" element={<AdminActivity />} />
                 <Route path="notifications" element={<AdminNotifications />} />
                 <Route path="settings" element={<AdminSettings />} />
@@ -178,7 +186,8 @@ const App = () => (
         </TooltipProvider>
       </BrowserRouter>
     </QueryClientProvider>
-  </HelmetProvider>
-);
+    </HelmetProvider>
+  );
+};
 
 export default App;
