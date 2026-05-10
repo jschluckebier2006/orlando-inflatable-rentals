@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { getStripe, getStripeEnvironment } from "@/lib/stripe";
+import { getStripe, resolveStripeEnvironment } from "@/lib/stripe";
 import { cn } from "@/lib/utils";
 import { computeBreakdown } from "@/lib/pricing";
 
@@ -54,6 +54,7 @@ export function PaymentStep({ subtotal, damageWaiver, deliveryFee = 0, zoneCity 
   async function startPayment() {
     setLoading(true);
     try {
+      const environment = await resolveStripeEnvironment();
       const { data, error } = await supabase.functions.invoke("create-booking-checkout", {
         body: {
           ...payload,
@@ -62,7 +63,7 @@ export function PaymentStep({ subtotal, damageWaiver, deliveryFee = 0, zoneCity 
           delivery_fee: deliveryFee,
           delivery_zone_city: zoneCity,
           return_url: `${window.location.origin}/checkout/return?session_id={CHECKOUT_SESSION_ID}`,
-          environment: getStripeEnvironment(),
+          environment,
         },
       });
       if (error || !data?.clientSecret) {
