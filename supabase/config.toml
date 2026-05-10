@@ -17,3 +17,6 @@ verify_jwt = false
 
 [functions.scheduled-email-runner]
 verify_jwt = false
+
+[functions.get-payments-config]
+verify_jwt = false
