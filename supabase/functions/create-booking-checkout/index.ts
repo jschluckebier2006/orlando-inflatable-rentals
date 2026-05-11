@@ -155,8 +155,8 @@ Deno.serve(async (req) => {
     }
 
     if (!session.client_secret || !session.id) {
-      console.error("session missing client_secret/id", JSON.stringify({ id: session?.id, hasSecret: !!session?.client_secret, keys: session ? Object.keys(session) : null }));
-      return new Response(JSON.stringify({ error: `Stripe session missing client_secret (id=${session?.id ?? "none"})` }), {
+      console.error("session missing client_secret/id", JSON.stringify(session).slice(0, 2000));
+      return new Response(JSON.stringify({ error: `Stripe session missing client_secret`, session: JSON.parse(JSON.stringify(session)) }), {
         status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
