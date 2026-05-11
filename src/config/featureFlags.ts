@@ -11,4 +11,4 @@
 //  - Yellow reminder banner appears at top of every page
 //
 // Note: Product card "Add to Cart" disabled state is handled separately.
-export const BOOKING_ENABLED = false;
+export const BOOKING_ENABLED = true;
