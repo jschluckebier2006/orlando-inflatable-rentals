@@ -167,7 +167,10 @@ export function PaymentStep({ subtotal, damageWaiver, deliveryFee = 0, zoneCity 
         <p className="text-xs text-muted-foreground">
           All reservations are considered final upon booking. Cancellations are not permitted once a reservation is confirmed. In the event of severe weather, a declared weather emergency, or other acts of nature affecting your event area, cancellations or reschedules will be accommodated at no charge — please contact us directly in those situations. By confirming this reservation, you authorize Orlando Inflatables LLC to charge your card a $50 cancellation fee in the event of a cancellation outside of weather-related circumstances.
         </p>
-        <div className="flex items-start gap-2 pt-1">
+        <div className={cn(
+          "flex items-start gap-2 pt-1 -mx-1 px-1 rounded-md transition-colors",
+          !agreed && "animate-pulse ring-2 ring-primary/60 bg-primary/5"
+        )}>
           <Checkbox
             id="cancel-policy"
             checked={agreed}

@@ -1,20 +1,13 @@
 ## Goal
-
-Activate the cart on inventory items: every product card shows a single, working **Add to Cart** button. Remove the "Call Us to Book Now" button now that the live booking system is ready.
+Draw attention to the "I have read and agree…" cancellation policy checkbox on the Payment step so customers notice it before clicking Confirm Reservation.
 
 ## Change
+**File:** `src/components/booking/PaymentStep.tsx`
 
-`src/components/inventory/ProductCard.tsx`:
-
-- Remove the `Call Us to Book Now` `<a href="tel:…">` button.
-- Remove the `Phone` import (no longer used).
-- Remove the `e.preventDefault()` placeholder in `handleAdd` and wire it to actually call `addItem(product)` and `openCart()` so the cart drawer slides open after adding.
-- Drop the `disabled` / `aria-disabled` props from the Add to Cart button.
-- When the item is already in the cart, swap the label/icon to `Added — View Cart` (Check icon) and clicking opens the cart drawer instead of re-adding.
-- Keep the existing styling, sizing, and `min-h-[44px]` tap target.
+- While `agreed === false`, apply a pulsing animation to the checkbox (and a soft ring) so it visibly draws the eye.
+- Once the user checks the box, the pulse stops immediately (no distraction after agreement).
+- Use Tailwind's built-in `animate-pulse` plus a `ring-2 ring-primary/60` halo on the Checkbox; keep all colors on semantic tokens (no hard-coded colors).
+- No changes to logic, validation, copy, or layout — purely a presentational nudge.
 
 ## Out of scope
-
-- No changes to the product detail modal/page logic, pricing, or category pages.
-- No changes to the phone number's other appearances (sticky phone button, header, footer, hero) — only the per-item "Call Us to Book Now" button is removed.
-- No changes to the `featureFlags.ts` file (booking is already enabled).
+- No changes to the cancellation policy text, the Confirm button gating, payment options, or any backend logic.
