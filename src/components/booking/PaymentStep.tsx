@@ -83,9 +83,6 @@ export function PaymentStep({ subtotal, damageWaiver, deliveryFee = 0, zoneCity 
   if (clientSecret) {
     return (
       <div className="space-y-3">
-        <p className="text-xs text-muted-foreground">
-          Test card: 4242 4242 4242 4242 · any future expiry · any CVC
-        </p>
         <div className="border border-border rounded-md overflow-hidden">
           <EmbeddedCheckoutProvider stripe={getStripe()} options={{ fetchClientSecret: async () => clientSecret }}>
             <EmbeddedCheckout />
