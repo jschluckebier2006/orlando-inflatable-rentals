@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Check, Plus, Phone } from "lucide-react";
+import { Check, Plus } from "lucide-react";
 import type { Product } from "@/lib/inventory";
 import { useCart } from "@/contexts/CartContext";
 
@@ -16,8 +16,12 @@ export function ProductCard({ product, onClick }: ProductCardProps) {
 
   const handleAdd = (e: React.MouseEvent) => {
     e.stopPropagation();
-    // Temporarily disabled — call to book
-    e.preventDefault();
+    if (inCart) {
+      openCart();
+    } else {
+      addItem(product);
+      openCart();
+    }
   };
 
   return (
@@ -50,21 +54,14 @@ export function ProductCard({ product, onClick }: ProductCardProps) {
           <p className="text-sm text-muted-foreground">Ages: {product.ageRange}</p>
         )}
         <Button
-          asChild
+          onClick={handleAdd}
           className="w-full mt-3 min-h-[44px] bg-secondary hover:bg-secondary/90 text-secondary-foreground font-semibold"
-          onClick={(e) => e.stopPropagation()}
         >
-          <a href="tel:4074971840">
-            <Phone className="h-4 w-4 mr-1.5" />Call Us to Book Now
-          </a>
-        </Button>
-        <Button
-          disabled
-          aria-disabled="true"
-          onClick={(e) => e.stopPropagation()}
-          className="w-full mt-2 min-h-[44px] font-semibold"
-        >
-          <Plus className="h-4 w-4 mr-1.5" />Add to Cart
+          {inCart ? (
+            <><Check className="h-4 w-4 mr-1.5" />Added — View Cart</>
+          ) : (
+            <><Plus className="h-4 w-4 mr-1.5" />Add to Cart</>
+          )}
         </Button>
       </CardContent>
     </Card>
