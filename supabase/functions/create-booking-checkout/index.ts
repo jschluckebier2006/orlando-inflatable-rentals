@@ -128,7 +128,7 @@ Deno.serve(async (req) => {
         quantity: 1,
       }],
       mode: "payment",
-      ui_mode: "embedded",
+      ui_mode: "embedded_page",
       return_url: d.return_url,
       customer_email: d.customer_email,
       payment_intent_data: {
@@ -149,14 +149,14 @@ Deno.serve(async (req) => {
     } catch (stripeErr) {
       console.error("stripe.checkout.sessions.create failed", stripeErr);
       const msg = stripeErr instanceof Error ? stripeErr.message : String(stripeErr);
-      return new Response(JSON.stringify({ error: `Stripe error: ${msg}` }), {
+      return new Response(JSON.stringify({ error: `Payment provider error: ${msg}` }), {
         status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
     if (!session.client_secret || !session.id) {
-      console.error("session missing client_secret/id", JSON.stringify(session).slice(0, 2000));
-      return new Response(JSON.stringify({ error: `Stripe session missing client_secret`, session: JSON.parse(JSON.stringify(session)) }), {
+      console.error("session missing client_secret/id", JSON.stringify(session).slice(0, 1000));
+      return new Response(JSON.stringify({ error: "Could not create checkout session" }), {
         status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
