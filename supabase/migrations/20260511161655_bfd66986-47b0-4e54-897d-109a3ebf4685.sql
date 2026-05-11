@@ -1,0 +1,1 @@
+UPDATE public.app_settings SET default_deposit = 5, updated_at = now() WHERE id = 1;
