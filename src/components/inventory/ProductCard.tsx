@@ -1,9 +1,8 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Check, Plus } from "lucide-react";
+import { Phone } from "lucide-react";
 import type { Product } from "@/lib/inventory";
-import { useCart } from "@/contexts/CartContext";
 
 interface ProductCardProps {
   product: Product;
@@ -11,19 +10,6 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product, onClick }: ProductCardProps) {
-  const { addItem, has, openCart } = useCart();
-  const inCart = has(product.id);
-
-  const handleAdd = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (inCart) {
-      openCart();
-    } else {
-      addItem(product);
-      openCart();
-    }
-  };
-
   return (
     <Card 
       className="overflow-hidden card-hover cursor-pointer group transition-all duration-300 hover:shadow-xl"
@@ -53,16 +39,19 @@ export function ProductCard({ product, onClick }: ProductCardProps) {
         {product.ageRange && (
           <p className="text-sm text-muted-foreground">Ages: {product.ageRange}</p>
         )}
-        <Button
-          onClick={handleAdd}
-          className="w-full mt-3 min-h-[44px] bg-secondary hover:bg-secondary/90 text-secondary-foreground font-semibold"
+        <a
+          href="tel:4074971840"
+          onClick={(e) => e.stopPropagation()}
+          className="block mt-3"
         >
-          {inCart ? (
-            <><Check className="h-4 w-4 mr-1.5" />Added — View Cart</>
-          ) : (
-            <><Plus className="h-4 w-4 mr-1.5" />Add to Cart</>
-          )}
-        </Button>
+          <Button
+            type="button"
+            className="w-full min-h-[44px] bg-secondary hover:bg-secondary/90 text-secondary-foreground font-semibold"
+          >
+            <Phone className="h-4 w-4 mr-1.5" />
+            Ready to Book? Call Us
+          </Button>
+        </a>
       </CardContent>
     </Card>
   );
