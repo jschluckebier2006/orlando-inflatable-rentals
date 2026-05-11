@@ -126,7 +126,7 @@ Deno.serve(async (req) => {
         quantity: 1,
       }],
       mode: "payment",
-      ui_mode: "embedded_page",
+      ui_mode: "embedded",
       return_url: d.return_url,
       customer_email: d.customer_email,
       payment_intent_data: {
