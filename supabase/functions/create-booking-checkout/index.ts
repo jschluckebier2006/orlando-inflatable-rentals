@@ -113,7 +113,9 @@ Deno.serve(async (req) => {
     }
 
     const stripe = createStripeClient(d.environment as StripeEnv);
-    const session = await stripe.checkout.sessions.create({
+    let session;
+    try {
+      session = await stripe.checkout.sessions.create({
       line_items: [{
         price_data: {
           currency: "usd",
@@ -144,8 +146,16 @@ Deno.serve(async (req) => {
         payment_choice: d.payment_choice,
       },
     });
+    } catch (stripeErr) {
+      console.error("stripe.checkout.sessions.create failed", stripeErr);
+      const msg = stripeErr instanceof Error ? stripeErr.message : String(stripeErr);
+      return new Response(JSON.stringify({ error: `Stripe error: ${msg}` }), {
+        status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
     if (!session.client_secret || !session.id) {
+      console.error("session missing client_secret/id", { id: session?.id, hasSecret: !!session?.client_secret });
       return new Response(JSON.stringify({ error: "Could not create checkout session" }), {
         status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
