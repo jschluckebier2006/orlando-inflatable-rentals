@@ -125,9 +125,13 @@ export async function finalizeBookingFromSession(
     delivery_zone_city: deliveryZoneCity,
   };
 
+  // Plain insert. The partial unique index
+  // bookings_stripe_session_id_uniq (stripe_session_id) WHERE stripe_session_id IS NOT NULL
+  // can't be referenced by ON CONFLICT (Postgres requires a non-partial constraint),
+  // so we rely on catching 23505 below.
   const insertRes = await supabase
     .from("bookings")
-    .upsert(insertPayload, { onConflict: "stripe_session_id", ignoreDuplicates: true })
+    .insert(insertPayload)
     .select("id");
 
   if (insertRes.error) {
