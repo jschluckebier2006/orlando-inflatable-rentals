@@ -3,15 +3,13 @@ import { EmbeddedCheckoutProvider, EmbeddedCheckout } from "@stripe/react-stripe
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { getStripe, resolveStripeEnvironment } from "@/lib/stripe";
 import { cn } from "@/lib/utils";
-import { computeBreakdown } from "@/lib/pricing";
+import { computeBreakdown, DEPOSIT_CHARGE, type PaymentMethodChoice } from "@/lib/pricing";
 
-const DEPOSIT = 5;
 const ORDER_MINIMUM = 100;
 
 interface PaymentStepProps {
@@ -24,35 +22,38 @@ interface PaymentStepProps {
   zoneCity?: string | null;
   payload: any; // booking payload posted to create-booking-checkout
   onBack: () => void;
+  /** Lifted state so the Step-3 review summary can mirror the choice. */
+  paymentChoice?: PaymentMethodChoice;
+  onPaymentChoiceChange?: (c: PaymentMethodChoice) => void;
 }
 
-export function PaymentStep({ subtotal, damageWaiver, deliveryFee = 0, zoneCity = null, payload, onBack }: PaymentStepProps) {
+export function PaymentStep({
+  subtotal, damageWaiver, deliveryFee = 0, zoneCity = null, payload, onBack,
+  paymentChoice, onPaymentChoiceChange,
+}: PaymentStepProps) {
   const { toast } = useToast();
-  const [choice, setChoice] = useState<"deposit" | "full" | "custom" | "deposit_cash">("deposit");
+  const [internalChoice, setInternalChoice] = useState<PaymentMethodChoice>("card_on_file");
+  const choice = paymentChoice ?? internalChoice;
+  const setChoice = (c: PaymentMethodChoice) => {
+    setInternalChoice(c);
+    onPaymentChoiceChange?.(c);
+  };
   const bd = useMemo(
-    () => computeBreakdown(subtotal, damageWaiver, deliveryFee),
-    [subtotal, damageWaiver, deliveryFee],
+    () => computeBreakdown(subtotal, damageWaiver, deliveryFee, choice),
+    [subtotal, damageWaiver, deliveryFee, choice],
   );
   const total = bd.total;
-  const [customAmount, setCustomAmount] = useState<string>(String(Math.min(total, Math.max(DEPOSIT, Math.round(total / 2)))));
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [agreed, setAgreed] = useState(false);
 
-  const customNum = Number(customAmount);
-  const customValid = customNum >= DEPOSIT && customNum <= total;
   const belowMinimum = bd.subtotal < ORDER_MINIMUM;
   const minimumShortfall = Math.max(0, ORDER_MINIMUM - bd.subtotal);
 
-  const balance = useMemo(() => {
-    const charged =
-      choice === "deposit" || choice === "deposit_cash"
-        ? DEPOSIT
-        : choice === "full"
-        ? total
-        : (customValid ? customNum : 0);
-    return Math.max(0, Math.round((total - charged) * 100) / 100);
-  }, [choice, total, customValid, customNum]);
+  const balance = useMemo(
+    () => Math.max(0, Math.round((total - DEPOSIT_CHARGE) * 100) / 100),
+    [total],
+  );
 
   async function startPayment() {
     setLoading(true);
@@ -62,7 +63,6 @@ export function PaymentStep({ subtotal, damageWaiver, deliveryFee = 0, zoneCity 
         body: {
           ...payload,
           payment_choice: choice,
-          custom_amount: choice === "custom" ? customNum : undefined,
           delivery_fee: deliveryFee,
           delivery_zone_city: zoneCity,
           return_url: `${window.location.origin}/checkout/return?session_id={CHECKOUT_SESSION_ID}`,
@@ -95,7 +95,7 @@ export function PaymentStep({ subtotal, damageWaiver, deliveryFee = 0, zoneCity 
     );
   }
 
-  const Option = ({ value, label, amount, badge, sub, popular }: { value: "deposit" | "full" | "custom" | "deposit_cash"; label: string; amount: string; badge: string; sub: string; popular?: boolean }) => {
+  const Option = ({ value, label, amount, badge, sub, popular }: { value: PaymentMethodChoice; label: string; amount: string; badge: string; sub: string; popular?: boolean }) => {
     const selected = choice === value;
     return (
       <button
@@ -156,10 +156,21 @@ export function PaymentStep({ subtotal, damageWaiver, deliveryFee = 0, zoneCity 
               <span>FREE</span>
             </div>
           ) : null}
+          {choice === "card_on_file" && (
+            <div className="flex justify-between">
+              <span>Online Payment Convenience Fee (4%)</span>
+              <span>${bd.checkoutFee.toFixed(2)}</span>
+            </div>
+          )}
           <div className="flex justify-between"><span>Sales Tax (7%)</span><span>${bd.tax.toFixed(2)}</span></div>
           <div className="flex justify-between font-semibold pt-1"><span>Order total</span><span>${total.toFixed(2)}</span></div>
+          <div className="flex justify-between text-muted-foreground pt-1"><span>Charged today</span><span>${DEPOSIT_CHARGE.toFixed(2)}</span></div>
+          <div className="flex justify-between text-muted-foreground">
+            <span>{choice === "cash_on_delivery" ? "Remaining balance (cash on delivery)" : "Remaining balance (charged the week of your event)"}</span>
+            <span>${balance.toFixed(2)}</span>
+          </div>
         </div>
-        <p className="text-xs text-muted-foreground">A $5 non-refundable deposit is due today to secure your date. Your remaining balance will be charged to your card the week of your event, typically 2–5 days before your scheduled date — unless you select the cash on delivery option below.</p>
+        <p className="text-xs text-muted-foreground mt-1">A $5.45 non-refundable deposit is due today to secure your date. Choose how you'd like to handle the remaining balance below.</p>
       </div>
 
       <div className="rounded-md border border-border p-3 space-y-2">
@@ -188,19 +199,26 @@ export function PaymentStep({ subtotal, damageWaiver, deliveryFee = 0, zoneCity 
           <p className="text-sm font-semibold">Choose your payment plan</p>
           <p className="text-xs text-muted-foreground">Select one of the options below to continue.</p>
         </div>
-        <Option value="deposit" label="$5 non-refundable deposit" amount="$5.00" badge="Charged today: $5.00" sub="Remaining balance charged to your card the week of your event" popular />
-        <Option value="deposit_cash" label="$5 deposit + remaining balance cash on delivery" amount="$5.00" badge="Charged today: $5.00" sub="Remaining balance due in cash on the day of your event" />
-        <Option value="full" label="Pay in full now" amount={`$${total.toFixed(2)}`} badge="Charged today: full amount" sub="Nothing owed on delivery — you're all set" />
-        <Option value="custom" label="Custom amount" amount={customValid ? `$${customNum.toFixed(2)}` : "—"} badge="Charged today: your chosen amount" sub="Remaining balance charged to your card the week of your event" />
-        {choice === "custom" && (
-          <div className="pl-2 pt-1 space-y-1">
-            <Label htmlFor="custom-amt" className="text-xs">Amount in USD</Label>
-            <Input
-              id="custom-amt" type="number" min={DEPOSIT} max={total} step="0.01"
-              value={customAmount} onChange={(e) => setCustomAmount(e.target.value)}
-            />
-            {!customValid && <p className="text-xs text-destructive">Must be between ${DEPOSIT} and ${total.toFixed(2)}.</p>}
-          </div>
+        <Option
+          value="card_on_file"
+          label="Reserve with $5.45, remaining balance charged the week of your event"
+          amount="$5.45"
+          badge="Charged today: $5.45"
+          sub="We'll charge your card the week of your event for the remaining balance"
+          popular
+        />
+        <Option
+          value="cash_on_delivery"
+          label="Reserve with $5.45, pay balance in cash on delivery"
+          amount="$5.45"
+          badge="Charged today: $5.45"
+          sub="Bring exact cash for the remaining balance on event day"
+        />
+        {choice === "card_on_file" && (
+          <p className="text-xs text-muted-foreground mt-2">
+            By providing your card, you authorize Orlando Inflatables to charge
+            your card for the remaining balance of your booking the week of your event.
+          </p>
         )}
       </div>
 
@@ -214,7 +232,7 @@ export function PaymentStep({ subtotal, damageWaiver, deliveryFee = 0, zoneCity 
           )}
           <Button
             onClick={startPayment}
-            disabled={loading || (choice === "custom" && !customValid) || !agreed || belowMinimum}
+            disabled={loading || !agreed || belowMinimum}
             className="bg-secondary hover:bg-secondary/90 text-secondary-foreground"
           >
             {loading ? (<><Loader2 className="mr-2 h-4 w-4 animate-spin" />Loading...</>) : "Confirm Reservation"}
