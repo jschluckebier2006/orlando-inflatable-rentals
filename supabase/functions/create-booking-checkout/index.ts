@@ -2,6 +2,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { z } from "https://esm.sh/zod@3.23.8";
 import { type StripeEnv, createStripeClient } from "../_shared/stripe.ts";
 import { loadSettings, lookupZoneIn } from "../_shared/settings.ts";
+import { computeBreakdown, DEPOSIT_NET, DEPOSIT_CHARGE } from "../_shared/pricing.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -31,8 +32,7 @@ const PayloadSchema = z.object({
   notes: z.string().max(2000).optional().nullable(),
   items: z.array(ItemSchema).min(1).max(20),
   damage_waiver: z.boolean().optional().default(true),
-  payment_choice: z.enum(["deposit", "full", "custom", "deposit_cash"]),
-  custom_amount: z.number().positive().optional(),
+  payment_choice: z.enum(["card_on_file", "cash_on_delivery"]),
   // Optional client-supplied delivery fee — server re-validates from the zip.
   delivery_fee: z.number().nonnegative().max(500).optional(),
   delivery_zone_city: z.string().max(120).optional().nullable(),
@@ -61,9 +61,6 @@ Deno.serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
     );
     const settings = await loadSettings(supabaseAdmin);
-    const TAX_RATE = settings.taxRate;
-    const WAIVER_RATE = settings.damageWaiverRate;
-    const DEPOSIT = settings.defaultDeposit;
 
     // ---- Server-side delivery-zone validation (defense in depth) ----
     const zone = lookupZoneIn(settings.zones, d.event_zip);
@@ -92,32 +89,41 @@ Deno.serve(async (req) => {
         error: `Order minimum is $100. Please add $${(100 - subtotal).toFixed(2)} more to continue.`,
       }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
-    const damage_waiver_amount = d.damage_waiver ? Math.round(subtotal * WAIVER_RATE * 100) / 100 : 0;
-    const tax_amount = Math.round((subtotal + damage_waiver_amount + deliveryFee) * TAX_RATE * 100) / 100;
-    const total = Math.round((subtotal + damage_waiver_amount + deliveryFee + tax_amount) * 100) / 100;
-
-    let amountToCharge: number;
-    let lineLabel: string;
-    if (d.payment_choice === "deposit") {
-      amountToCharge = DEPOSIT;
-      lineLabel = "Non-refundable rental deposit";
-    } else if (d.payment_choice === "deposit_cash") {
-      amountToCharge = DEPOSIT;
-      lineLabel = "Non-refundable rental deposit (cash balance on delivery)";
-    } else if (d.payment_choice === "full") {
-      amountToCharge = total;
-      lineLabel = "Rental — paid in full";
-    } else {
-      if (!d.custom_amount || d.custom_amount < DEPOSIT || d.custom_amount > total) {
-        return new Response(JSON.stringify({ error: `Custom amount must be between $${DEPOSIT} and $${total.toFixed(2)}` }), {
-          status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
-      amountToCharge = Math.round(d.custom_amount * 100) / 100;
-      lineLabel = "Rental partial payment";
-    }
+    const bd = computeBreakdown(
+      subtotal,
+      d.damage_waiver !== false,
+      deliveryFee,
+      {
+        taxRate: settings.taxRate,
+        waiverRate: settings.damageWaiverRate,
+        checkoutFeeRate: settings.onlineCheckoutFeeRate,
+      },
+      d.payment_choice,
+    );
+    const total = bd.total;
+    const amountToCharge = DEPOSIT_CHARGE;
+    const lineLabel = "Reservation deposit";
 
     const stripe = createStripeClient(d.environment as StripeEnv);
+
+    // For card_on_file we must save the payment method on a Stripe Customer
+    // so the admin can capture the remaining balance later. COD never saves the card.
+    let customerId: string | undefined;
+    if (d.payment_choice === "card_on_file") {
+      try {
+        const found = await stripe.customers.list({ email: d.customer_email, limit: 1 });
+        customerId = found.data[0]?.id
+          ?? (await stripe.customers.create({
+            email: d.customer_email,
+            name: d.customer_name,
+            phone: d.customer_phone,
+            metadata: { source: "orlandoinflatables.com", event_date: d.event_date },
+          })).id;
+      } catch (e) {
+        console.error("stripe customer find/create failed", e);
+      }
+    }
+
     let session;
     try {
       session = await stripe.checkout.sessions.create({
@@ -135,9 +141,14 @@ Deno.serve(async (req) => {
       mode: "payment",
       ui_mode: "embedded_page",
       return_url: d.return_url,
-      customer_email: d.customer_email,
+      ...(customerId
+        ? { customer: customerId }
+        : { customer_email: d.customer_email }),
       payment_intent_data: {
         description: `Booking ${d.event_date} — ${d.customer_name}`,
+        ...(d.payment_choice === "card_on_file"
+          ? { setup_future_usage: "off_session" as const }
+          : {}),
         metadata: {
           customer_name: d.customer_name,
           event_date: d.event_date,
@@ -173,11 +184,17 @@ Deno.serve(async (req) => {
     );
     const { error: stashErr } = await supabase.from("pending_bookings").insert({
       stripe_session_id: session.id,
-      // Persist the server-trusted delivery fee/city back into the payload so the
-      // webhook records what we actually charged for, not what the client claimed.
-      payload: { ...d, delivery_fee: deliveryFee, delivery_zone_city: deliveryZoneCity },
+      // Persist the server-trusted delivery fee/city + computed fee back into the payload
+      // so the webhook records what we actually charged for, not what the client claimed.
+      payload: {
+        ...d,
+        delivery_fee: deliveryFee,
+        delivery_zone_city: deliveryZoneCity,
+        checkout_fee_amount: bd.checkoutFee,
+        stripe_customer_id: customerId ?? null,
+      },
       amount_total: total,
-      deposit_amount: DEPOSIT,
+      deposit_amount: DEPOSIT_NET,
       amount_charged: amountToCharge,
     });
     if (stashErr) {
