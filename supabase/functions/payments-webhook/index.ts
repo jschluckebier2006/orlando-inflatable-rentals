@@ -34,12 +34,23 @@ Deno.serve(async (req) => {
   }
 
   const session = event.data.object;
+  // Re-fetch the session with payment_intent expanded so finalizeBookingFromSession
+  // can read the saved payment_method (off_session card-on-file) and customer.
+  let fullSession: any = session;
+  try {
+    const stripe = createStripeClient(env);
+    fullSession = await stripe.checkout.sessions.retrieve(session.id, {
+      expand: ["payment_intent"],
+    });
+  } catch (e) {
+    console.error("[payments-webhook] expand session failed", e);
+  }
   const supabase = createClient(
     Deno.env.get("SUPABASE_URL")!,
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
   );
 
-  const result = await finalizeBookingFromSession(supabase, session);
+  const result = await finalizeBookingFromSession(supabase, fullSession);
   if (result.status === "error") {
     return new Response(result.message ?? "finalize error", { status: 500 });
   }
