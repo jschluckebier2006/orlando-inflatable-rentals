@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 import { computeBreakdown } from "@/lib/pricing";
 
 const DEPOSIT = 5;
+const ORDER_MINIMUM = 100;
 
 interface PaymentStepProps {
   /** Pre-tax, pre-waiver subtotal (items × duration multiplier). */
@@ -40,6 +41,8 @@ export function PaymentStep({ subtotal, damageWaiver, deliveryFee = 0, zoneCity 
 
   const customNum = Number(customAmount);
   const customValid = customNum >= DEPOSIT && customNum <= total;
+  const belowMinimum = bd.subtotal < ORDER_MINIMUM;
+  const minimumShortfall = Math.max(0, ORDER_MINIMUM - bd.subtotal);
 
   const balance = useMemo(() => {
     const charged =
@@ -203,13 +206,20 @@ export function PaymentStep({ subtotal, damageWaiver, deliveryFee = 0, zoneCity 
 
       <div className="flex justify-between gap-2 pt-2">
         <Button variant="outline" onClick={onBack} disabled={loading}>Back</Button>
-        <Button
-          onClick={startPayment}
-          disabled={loading || (choice === "custom" && !customValid) || !agreed}
-          className="bg-secondary hover:bg-secondary/90 text-secondary-foreground"
-        >
-          {loading ? (<><Loader2 className="mr-2 h-4 w-4 animate-spin" />Loading...</>) : "Confirm Reservation"}
-        </Button>
+        <div className="flex flex-col items-end gap-2">
+          {belowMinimum && (
+            <p className="text-sm font-medium text-destructive text-right">
+              Order minimum is ${ORDER_MINIMUM}. Please add ${minimumShortfall.toFixed(2)} more to continue.
+            </p>
+          )}
+          <Button
+            onClick={startPayment}
+            disabled={loading || (choice === "custom" && !customValid) || !agreed || belowMinimum}
+            className="bg-secondary hover:bg-secondary/90 text-secondary-foreground"
+          >
+            {loading ? (<><Loader2 className="mr-2 h-4 w-4 animate-spin" />Loading...</>) : "Confirm Reservation"}
+          </Button>
+        </div>
       </div>
     </div>
   );

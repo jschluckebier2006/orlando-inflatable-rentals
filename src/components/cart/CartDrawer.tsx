@@ -6,6 +6,7 @@ import { DURATION_LABELS, DURATION_MULTIPLIERS, DURATION_DESCRIPTIONS, type Dura
 import { cn } from "@/lib/utils";
 
 const ORDER: DurationType[] = ["7hour", "overnight", "weekend"];
+const ORDER_MINIMUM = 100;
 
 export function CartDrawer() {
   const { items, baseTotal, total, duration, setDuration, removeItem, isCartOpen, setCartOpen, openCheckout } = useCart();
@@ -92,7 +93,17 @@ export function CartDrawer() {
               <span className="font-semibold text-foreground">${total.toFixed(2)}</span>
             </div>
             <p className="text-xs text-muted-foreground">+ 7% sales tax and optional 10% damage waiver added at checkout.</p>
-            <Button onClick={openCheckout} className="w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground" size="lg">
+            {total < ORDER_MINIMUM && (
+              <p className="text-sm font-medium text-destructive text-center">
+                Order minimum is ${ORDER_MINIMUM}. Please add ${(ORDER_MINIMUM - total).toFixed(2)} more to continue.
+              </p>
+            )}
+            <Button
+              onClick={openCheckout}
+              disabled={total < ORDER_MINIMUM}
+              className="w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground"
+              size="lg"
+            >
               Check Availability & Reserve
             </Button>
             <p className="text-xs text-muted-foreground text-center">Secure your date with just a $5 deposit — no full payment required now.</p>
