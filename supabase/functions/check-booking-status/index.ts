@@ -51,13 +51,14 @@ Deno.serve(async (req) => {
     try {
       const stripe = createStripeClient(env);
       const session = await stripe.checkout.sessions.retrieve(session_id, {
-        expand: ["payment_intent"],
+        expand: ["payment_intent", "customer"],
       });
       // Map Stripe SDK Session to the minimal shape the helper needs.
       const result = await finalizeBookingFromSession(supabase, {
         id: session.id,
         payment_status: session.payment_status,
         payment_intent: session.payment_intent as any,
+        customer: session.customer as any,
         metadata: session.metadata as any,
       });
       const confirmed = result.status === "created" || result.status === "already_exists";

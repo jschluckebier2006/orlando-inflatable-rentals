@@ -58,6 +58,7 @@ export type Database = {
           damage_waiver_rate: number
           default_deposit: number
           id: number
+          online_checkout_fee_rate: number
           tax_rate: number
           updated_at: string
           updated_by: string | null
@@ -66,6 +67,7 @@ export type Database = {
           damage_waiver_rate?: number
           default_deposit?: number
           id?: number
+          online_checkout_fee_rate?: number
           tax_rate?: number
           updated_at?: string
           updated_by?: string | null
@@ -74,6 +76,7 @@ export type Database = {
           damage_waiver_rate?: number
           default_deposit?: number
           id?: number
+          online_checkout_fee_rate?: number
           tax_rate?: number
           updated_at?: string
           updated_by?: string | null
@@ -211,6 +214,7 @@ export type Database = {
         Row: {
           amount_paid: number
           balance_due: number | null
+          checkout_fee_amount: number
           created_at: string
           customer_email: string
           customer_id: string | null
@@ -232,13 +236,16 @@ export type Database = {
           event_zip: string
           id: string
           notes: string | null
+          payment_method_choice: string | null
           payment_status: string
           price_multiplier: number
           product_id: string | null
           product_name: string | null
           product_price: number | null
           status: Database["public"]["Enums"]["booking_status"]
+          stripe_customer_id: string | null
           stripe_payment_intent_id: string | null
+          stripe_payment_method_id: string | null
           stripe_session_id: string | null
           subtotal: number | null
           tax_amount: number
@@ -249,6 +256,7 @@ export type Database = {
         Insert: {
           amount_paid?: number
           balance_due?: number | null
+          checkout_fee_amount?: number
           created_at?: string
           customer_email: string
           customer_id?: string | null
@@ -270,13 +278,16 @@ export type Database = {
           event_zip: string
           id?: string
           notes?: string | null
+          payment_method_choice?: string | null
           payment_status?: string
           price_multiplier?: number
           product_id?: string | null
           product_name?: string | null
           product_price?: number | null
           status?: Database["public"]["Enums"]["booking_status"]
+          stripe_customer_id?: string | null
           stripe_payment_intent_id?: string | null
+          stripe_payment_method_id?: string | null
           stripe_session_id?: string | null
           subtotal?: number | null
           tax_amount?: number
@@ -287,6 +298,7 @@ export type Database = {
         Update: {
           amount_paid?: number
           balance_due?: number | null
+          checkout_fee_amount?: number
           created_at?: string
           customer_email?: string
           customer_id?: string | null
@@ -308,13 +320,16 @@ export type Database = {
           event_zip?: string
           id?: string
           notes?: string | null
+          payment_method_choice?: string | null
           payment_status?: string
           price_multiplier?: number
           product_id?: string | null
           product_name?: string | null
           product_price?: number | null
           status?: Database["public"]["Enums"]["booking_status"]
+          stripe_customer_id?: string | null
           stripe_payment_intent_id?: string | null
+          stripe_payment_method_id?: string | null
           stripe_session_id?: string | null
           subtotal?: number | null
           tax_amount?: number

@@ -18,7 +18,7 @@ import { useCart } from "@/contexts/CartContext";
 import { cn } from "@/lib/utils";
 import {
   DURATION_LABELS, DURATION_MULTIPLIERS, DURATION_DESCRIPTIONS, type DurationType,
-  TAX_RATE, DAMAGE_WAIVER_RATE, computeBreakdown,
+  TAX_RATE, DAMAGE_WAIVER_RATE, computeBreakdown, type PaymentMethodChoice,
 } from "@/lib/pricing";
 import { PaymentStep } from "./PaymentStep";
 import { ZipFeeBadge } from "./ZipFeeBadge";
@@ -57,8 +57,8 @@ export function CheckoutModal() {
   const [step, setStep] = useState(1);
   const [date, setDate] = useState<Date | undefined>();
   const [bookedMap, setBookedMap] = useState<Record<string, Set<string>>>({});
-  const [submitting, setSubmitting] = useState(false);
   const [confirmedId, setConfirmedId] = useState<string | null>(null);
+  const [paymentChoice, setPaymentChoice] = useState<PaymentMethodChoice>("card_on_file");
 
   const [form, setForm] = useState({
     customer_name: "", customer_email: "", customer_phone: "",
@@ -159,52 +159,6 @@ export function CheckoutModal() {
     form.customer_name.trim() && form.customer_email.trim() && form.customer_phone.trim() &&
     form.event_address_line.trim() && form.event_city.trim() && form.event_zip.trim() &&
     zipBookable;
-
-  async function handleSubmit() {
-    if (!date || items.length === 0) return;
-    setSubmitting(true);
-    try {
-      const { data, error } = await supabase.functions.invoke("submit-booking", {
-        body: {
-          duration_type: duration,
-          event_date: toDateString(date),
-          event_end_date: toDateString(endDate!),
-          price_multiplier: DURATION_MULTIPLIERS[duration],
-          event_start_time: form.event_start_time,
-          event_end_time: form.event_end_time,
-          event_type: form.event_type || null,
-          customer_name: form.customer_name.trim(),
-          customer_email: form.customer_email.trim(),
-          customer_phone: form.customer_phone.trim(),
-          event_address_line: form.event_address_line.trim(),
-          event_city: form.event_city.trim(),
-          event_zip: form.event_zip.trim(),
-          notes: form.notes.trim() || null,
-                  damage_waiver: damageWaiver,
-          items: items.map((i) => ({
-            product_id: i.id,
-            product_name: i.name,
-            product_price: i.price,
-            unit_price: Math.round(i.price * DURATION_MULTIPLIERS[duration] * 100) / 100,
-          })),
-        },
-      });
-      if (error) {
-        const ctx: any = (error as any).context;
-        let msg = "Could not submit your booking. Please try again.";
-        if (ctx?.json?.error) msg = ctx.json.error;
-        else if (typeof ctx?.body === "string") {
-          try { msg = JSON.parse(ctx.body).error ?? msg; } catch {}
-        }
-        toast({ title: "Booking failed", description: msg, variant: "destructive" });
-        return;
-      }
-      setConfirmedId(data.id);
-      clear();
-    } finally {
-      setSubmitting(false);
-    }
-  }
 
   return (
     <Dialog open={isCheckoutOpen} onOpenChange={setCheckoutOpen}>
@@ -505,7 +459,7 @@ export function CheckoutModal() {
             </div>
 
             {(() => {
-              const bd = computeBreakdown(total, damageWaiver, deliveryFee);
+              const bd = computeBreakdown(total, damageWaiver, deliveryFee, paymentChoice);
               return (
                 <div className="rounded-md bg-muted/50 p-3 text-sm space-y-1">
                   <p className="font-semibold">{DURATION_LABELS[duration]}</p>
@@ -542,6 +496,9 @@ export function CheckoutModal() {
                         <span>FREE</span>
                       </div>
                     ) : null}
+                    {paymentChoice === "card_on_file" && (
+                      <div className="flex justify-between"><span>Online Payment Convenience Fee (4%)</span><span>${bd.checkoutFee.toFixed(2)}</span></div>
+                    )}
                     <div className="flex justify-between"><span>Sales Tax (7%)</span><span>${bd.tax.toFixed(2)}</span></div>
                     <div className="flex justify-between font-semibold text-base pt-1"><span>Total</span><span>${bd.total.toFixed(2)}</span></div>
                   </div>
@@ -567,6 +524,8 @@ export function CheckoutModal() {
             deliveryFee={deliveryFee}
             zoneCity={zoneCity}
             onBack={() => setStep(3)}
+            paymentChoice={paymentChoice}
+            onPaymentChoiceChange={setPaymentChoice}
             payload={{
               duration_type: duration,
               event_date: date ? format(date, "yyyy-MM-dd") : "",

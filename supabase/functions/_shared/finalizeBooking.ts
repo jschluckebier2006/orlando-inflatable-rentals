@@ -8,6 +8,7 @@
 // Pure: does NO Stripe I/O. Caller passes an already-retrieved Session.
 import type { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { loadSettings } from "./settings.ts";
+import { computeBreakdown, DEPOSIT_NET, DEPOSIT_CHARGE } from "./pricing.ts";
 
 export type FinalizeStatus =
   | "created"
@@ -26,7 +27,8 @@ export interface FinalizeResult {
 interface MinimalSession {
   id: string;
   payment_status?: string;
-  payment_intent?: string | { id?: string } | null;
+  payment_intent?: string | { id?: string; payment_method?: string | { id?: string } | null } | null;
+  customer?: string | { id?: string } | null;
   metadata?: Record<string, string> | null;
 }
 
@@ -73,17 +75,28 @@ export async function finalizeBookingFromSession(
 
   const multiplier = SERVER_MULT[p.duration_type];
   const settings = await loadSettings(supabase);
-  const TAX_RATE = settings.taxRate;
-  const WAIVER_RATE = settings.damageWaiverRate;
   const subtotal = Math.round(p.items.reduce((s: number, i: any) => s + Number(i.product_price), 0) * multiplier * 100) / 100;
   const waiverSelected = p.damage_waiver !== false;
-  const damage_waiver_amount = waiverSelected ? Math.round(subtotal * WAIVER_RATE * 100) / 100 : 0;
   const deliveryFee = Math.max(0, Math.round(Number(p.delivery_fee ?? 0) * 100) / 100);
   const deliveryZoneCity = p.delivery_zone_city ?? null;
-  const tax_amount = Math.round((subtotal + damage_waiver_amount + deliveryFee) * TAX_RATE * 100) / 100;
-
-  const amountCharged = Number(pending.amount_charged);
-  const total = Number(pending.amount_total);
+  const paymentChoice: "card_on_file" | "cash_on_delivery" =
+    p.payment_choice === "cash_on_delivery" ? "cash_on_delivery" : "card_on_file";
+  const bd = computeBreakdown(
+    subtotal,
+    waiverSelected,
+    deliveryFee,
+    {
+      taxRate: settings.taxRate,
+      waiverRate: settings.damageWaiverRate,
+      checkoutFeeRate: settings.onlineCheckoutFeeRate,
+    },
+    paymentChoice,
+  );
+  const damage_waiver_amount = bd.damageWaiver;
+  const tax_amount = bd.tax;
+  const checkout_fee_amount = bd.checkoutFee;
+  const total = bd.total;
+  const amountCharged = DEPOSIT_CHARGE;
   const balance = Math.max(0, Math.round((total - amountCharged) * 100) / 100);
   const paymentStatus = balance === 0 ? "paid_in_full" : "deposit_paid";
 
@@ -111,15 +124,27 @@ export async function finalizeBookingFromSession(
       typeof session.payment_intent === "string"
         ? session.payment_intent
         : session.payment_intent?.id ?? null,
+    stripe_customer_id:
+      typeof session.customer === "string"
+        ? session.customer
+        : session.customer?.id ?? p.stripe_customer_id ?? null,
+    stripe_payment_method_id:
+      typeof session.payment_intent === "object" && session.payment_intent
+        ? (typeof session.payment_intent.payment_method === "string"
+            ? session.payment_intent.payment_method
+            : session.payment_intent.payment_method?.id ?? null)
+        : null,
+    payment_method_choice: paymentChoice,
+    checkout_fee_amount,
     total_amount: total,
-    deposit_amount: Number(pending.deposit_amount),
+    deposit_amount: DEPOSIT_NET,
     amount_paid: amountCharged,
     balance_due: balance,
     payment_status: paymentStatus,
     subtotal,
     damage_waiver_selected: waiverSelected,
     damage_waiver_amount,
-    tax_rate: TAX_RATE,
+    tax_rate: settings.taxRate,
     tax_amount,
     delivery_fee: deliveryFee,
     delivery_zone_city: deliveryZoneCity,
