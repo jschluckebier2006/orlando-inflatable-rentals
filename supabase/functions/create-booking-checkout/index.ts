@@ -87,6 +87,11 @@ Deno.serve(async (req) => {
         status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+    if (subtotal < 100) {
+      return new Response(JSON.stringify({
+        error: `Order minimum is $100. Please add $${(100 - subtotal).toFixed(2)} more to continue.`,
+      }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
     const damage_waiver_amount = d.damage_waiver ? Math.round(subtotal * WAIVER_RATE * 100) / 100 : 0;
     const tax_amount = Math.round((subtotal + damage_waiver_amount + deliveryFee) * TAX_RATE * 100) / 100;
     const total = Math.round((subtotal + damage_waiver_amount + deliveryFee + tax_amount) * 100) / 100;
