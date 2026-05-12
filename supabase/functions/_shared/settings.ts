@@ -10,13 +10,15 @@ export interface AppSettings {
   taxRate: number;
   damageWaiverRate: number;
   defaultDeposit: number;
+  onlineCheckoutFeeRate: number;
   zones: Record<string, DeliveryZone>;
 }
 
 const DEFAULTS: AppSettings = {
   taxRate: 0.07,
   damageWaiverRate: 0.10,
-  defaultDeposit: 50,
+  defaultDeposit: 5,
+  onlineCheckoutFeeRate: 0.04,
   zones: STATIC_ZONES,
 };
 
@@ -28,13 +30,14 @@ export async function loadSettings(supabase: any): Promise<AppSettings> {
   if (cache && cache.expires > Date.now()) return cache.value;
   try {
     const [{ data: s }, { data: z }] = await Promise.all([
-      supabase.from("app_settings").select("tax_rate,damage_waiver_rate,default_deposit").eq("id", 1).maybeSingle(),
+      supabase.from("app_settings").select("tax_rate,damage_waiver_rate,default_deposit,online_checkout_fee_rate").eq("id", 1).maybeSingle(),
       supabase.from("delivery_zones").select("zip,city,fee,status"),
     ]);
     const value: AppSettings = {
       taxRate: s?.tax_rate != null ? Number(s.tax_rate) : DEFAULTS.taxRate,
       damageWaiverRate: s?.damage_waiver_rate != null ? Number(s.damage_waiver_rate) : DEFAULTS.damageWaiverRate,
       defaultDeposit: s?.default_deposit != null ? Number(s.default_deposit) : DEFAULTS.defaultDeposit,
+      onlineCheckoutFeeRate: s?.online_checkout_fee_rate != null ? Number(s.online_checkout_fee_rate) : DEFAULTS.onlineCheckoutFeeRate,
       zones: { ...STATIC_ZONES },
     };
     if (Array.isArray(z)) {

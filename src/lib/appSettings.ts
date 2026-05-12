@@ -11,12 +11,14 @@ interface RuntimeSettings {
   taxRate: number;
   damageWaiverRate: number;
   defaultDeposit: number;
+  onlineCheckoutFeeRate: number;
 }
 
 const DEFAULTS: RuntimeSettings = {
   taxRate: 0.07,
   damageWaiverRate: 0.10,
-  defaultDeposit: 50,
+  defaultDeposit: 5,
+  onlineCheckoutFeeRate: 0.04,
 };
 
 let current: RuntimeSettings = { ...DEFAULTS };
@@ -45,7 +47,7 @@ function emit() {
 export async function loadAppSettings(): Promise<void> {
   try {
     const [{ data: s }, { data: z }] = await Promise.all([
-      (supabase.from("app_settings") as any).select("tax_rate,damage_waiver_rate,default_deposit").eq("id", 1).maybeSingle(),
+      (supabase.from("app_settings") as any).select("tax_rate,damage_waiver_rate,default_deposit,online_checkout_fee_rate").eq("id", 1).maybeSingle(),
       (supabase.from("delivery_zones") as any).select("zip,city,fee,status"),
     ]);
     if (s) {
@@ -53,6 +55,7 @@ export async function loadAppSettings(): Promise<void> {
         taxRate: Number(s.tax_rate) || DEFAULTS.taxRate,
         damageWaiverRate: Number(s.damage_waiver_rate) || DEFAULTS.damageWaiverRate,
         defaultDeposit: Number(s.default_deposit) || DEFAULTS.defaultDeposit,
+        onlineCheckoutFeeRate: Number(s.online_checkout_fee_rate) || DEFAULTS.onlineCheckoutFeeRate,
       };
     }
     if (Array.isArray(z)) {

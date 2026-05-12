@@ -43,11 +43,18 @@ export const DAMAGE_WAIVER_RATE = 0.10;
 export const getTaxRate = () => getSettings().taxRate;
 export const getDamageWaiverRate = () => getSettings().damageWaiverRate;
 export const getDefaultDeposit = () => getSettings().defaultDeposit;
+export const getOnlineCheckoutFeeRate = () => getSettings().onlineCheckoutFeeRate;
+
+export const DEPOSIT_NET = 5.00;
+export const DEPOSIT_CHARGE = 5.45;
+
+export type PaymentMethodChoice = "card_on_file" | "cash_on_delivery";
 
 export interface PriceBreakdown {
   subtotal: number;
   damageWaiver: number;
   deliveryFee: number;
+  checkoutFee: number;
   taxableBase: number;
   tax: number;
   total: number;
@@ -55,21 +62,28 @@ export interface PriceBreakdown {
 
 /**
  * Compute the full price breakdown.
- * Tax applies to (subtotal + waiver + delivery) per FL sales tax law for required
- * delivery on taxable rentals.
+ * - 4% Online Payment Convenience Fee applies ONLY when paymentChoice === 'card_on_file'.
+ * - The fee is taxable when applied.
+ * - Tax applies to (subtotal + waiver + delivery + fee) per FL sales tax law.
  */
 export function computeBreakdown(
   subtotal: number,
   waiverSelected: boolean,
   deliveryFee: number = 0,
+  paymentChoice: PaymentMethodChoice = "card_on_file",
 ): PriceBreakdown {
   const taxRate = getTaxRate();
   const waiverRate = getDamageWaiverRate();
+  const feeRate = getOnlineCheckoutFeeRate();
   const sub = Math.round(subtotal * 100) / 100;
   const damageWaiver = waiverSelected ? Math.round(sub * waiverRate * 100) / 100 : 0;
   const delivery = Math.round(Math.max(0, deliveryFee) * 100) / 100;
-  const taxableBase = Math.round((sub + damageWaiver + delivery) * 100) / 100;
+  const preFee = Math.round((sub + damageWaiver + delivery) * 100) / 100;
+  const checkoutFee = paymentChoice === "card_on_file"
+    ? Math.round(preFee * feeRate * 100) / 100
+    : 0;
+  const taxableBase = Math.round((preFee + checkoutFee) * 100) / 100;
   const tax = Math.round(taxableBase * taxRate * 100) / 100;
-  const total = Math.round((sub + damageWaiver + delivery + tax) * 100) / 100;
-  return { subtotal: sub, damageWaiver, deliveryFee: delivery, taxableBase, tax, total };
+  const total = Math.round((taxableBase + tax) * 100) / 100;
+  return { subtotal: sub, damageWaiver, deliveryFee: delivery, checkoutFee, taxableBase, tax, total };
 }
