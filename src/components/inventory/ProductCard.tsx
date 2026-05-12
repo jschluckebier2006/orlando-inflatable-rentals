@@ -1,5 +1,4 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart, Check } from "lucide-react";
 import type { Product } from "@/lib/inventory";
@@ -44,9 +43,6 @@ export function ProductCard({ product, onClick }: ProductCardProps) {
           decoding="async"
           className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105" 
         />
-        <Badge className="absolute top-3 right-3 bg-secondary text-secondary-foreground font-bold text-base md:text-sm px-4 py-2 md:px-3 md:py-1 shadow-md">
-          ${product.price} / day
-        </Badge>
       </div>
       <CardContent className="p-4">
         <h3 className="font-display font-semibold text-foreground text-lg leading-tight group-hover:text-primary transition-colors">
@@ -58,6 +54,9 @@ export function ProductCard({ product, onClick }: ProductCardProps) {
         {product.ageRange && (
           <p className="text-sm text-muted-foreground">Ages: {product.ageRange}</p>
         )}
+        <p className="mt-2 text-[22px] font-bold leading-none text-foreground">
+          ${product.price} / day
+        </p>
         <Button
           type="button"
           onClick={handleAdd}
