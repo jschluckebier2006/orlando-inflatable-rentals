@@ -1,8 +1,10 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Phone } from "lucide-react";
+import { ShoppingCart, Check } from "lucide-react";
 import type { Product } from "@/lib/inventory";
+import { useCart } from "@/contexts/CartContext";
+import { toast } from "@/hooks/use-toast";
 
 interface ProductCardProps {
   product: Product;
@@ -10,6 +12,23 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product, onClick }: ProductCardProps) {
+  const { addItem, has, openCart } = useCart();
+  const inCart = has(product.id);
+
+  const handleAdd = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (inCart) {
+      openCart();
+      return;
+    }
+    addItem(product);
+    toast({
+      title: "Added to cart",
+      description: `${product.name} was added to your cart.`,
+    });
+    openCart();
+  };
+
   return (
     <Card 
       className="overflow-hidden card-hover cursor-pointer group transition-all duration-300 hover:shadow-xl"
@@ -39,19 +58,23 @@ export function ProductCard({ product, onClick }: ProductCardProps) {
         {product.ageRange && (
           <p className="text-sm text-muted-foreground">Ages: {product.ageRange}</p>
         )}
-        <a
-          href="tel:4074971840"
-          onClick={(e) => e.stopPropagation()}
-          className="block mt-3"
+        <Button
+          type="button"
+          onClick={handleAdd}
+          className="w-full min-h-[44px] mt-3 bg-secondary hover:bg-secondary/90 text-secondary-foreground font-semibold"
         >
-          <Button
-            type="button"
-            className="w-full min-h-[44px] bg-secondary hover:bg-secondary/90 text-secondary-foreground font-semibold"
-          >
-            <Phone className="h-4 w-4 mr-1.5" />
-            Ready to Book? Call Us
-          </Button>
-        </a>
+          {inCart ? (
+            <>
+              <Check className="h-4 w-4 mr-1.5" />
+              In Cart — View
+            </>
+          ) : (
+            <>
+              <ShoppingCart className="h-4 w-4 mr-1.5" />
+              Add to Cart
+            </>
+          )}
+        </Button>
       </CardContent>
     </Card>
   );
