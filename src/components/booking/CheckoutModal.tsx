@@ -459,7 +459,9 @@ export function CheckoutModal() {
             </div>
 
             {(() => {
-              const bd = computeBreakdown(total, damageWaiver, deliveryFee, paymentChoice);
+              // Step-3 always shows the COD-equivalent total so the customer
+              // sees the lower price before choosing a payment method.
+              const bd = computeBreakdown(total, damageWaiver, deliveryFee, "cash_on_delivery");
               return (
                 <div className="rounded-md bg-muted/50 p-3 text-sm space-y-1">
                   <p className="font-semibold">{DURATION_LABELS[duration]}</p>
@@ -496,11 +498,12 @@ export function CheckoutModal() {
                         <span>FREE</span>
                       </div>
                     ) : null}
-                    {paymentChoice === "card_on_file" && (
-                      <div className="flex justify-between"><span>Online Payment Convenience Fee (4%)</span><span>${bd.checkoutFee.toFixed(2)}</span></div>
-                    )}
                     <div className="flex justify-between"><span>Sales Tax (7%)</span><span>${bd.tax.toFixed(2)}</span></div>
                     <div className="flex justify-between font-semibold text-base pt-1"><span>Total</span><span>${bd.total.toFixed(2)}</span></div>
+                    <p className="text-xs text-muted-foreground mt-2">
+                      Paying online by card adds a 4% Online Payment Convenience Fee.
+                      Choose cash on delivery on the next step to skip this fee.
+                    </p>
                   </div>
                 </div>
               );

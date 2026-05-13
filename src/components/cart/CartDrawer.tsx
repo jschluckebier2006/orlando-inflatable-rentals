@@ -92,7 +92,7 @@ export function CartDrawer() {
               <span className="text-muted-foreground">Subtotal ({DURATION_LABELS[duration]})</span>
               <span className="font-semibold text-foreground">${total.toFixed(2)}</span>
             </div>
-            <p className="text-xs text-muted-foreground">+ 7% sales tax and optional 10% damage waiver added at checkout.</p>
+            <p className="text-xs text-muted-foreground">+7% sales tax. Optional 4% convenience fee if paid online by card — choose cash on delivery to skip it.</p>
             {total < ORDER_MINIMUM && (
               <p className="text-sm font-medium text-destructive text-center">
                 Order minimum is ${ORDER_MINIMUM}. Please add ${(ORDER_MINIMUM - total).toFixed(2)} more to continue.
