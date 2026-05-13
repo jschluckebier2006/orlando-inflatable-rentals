@@ -230,6 +230,10 @@ export type Database = {
           delivery_fee: number
           delivery_zone_city: string | null
           deposit_amount: number
+          discount_amount: number
+          discount_reason: string | null
+          discount_type: string | null
+          discount_value: number | null
           duration_type: string
           event_address_line: string
           event_city: string
@@ -274,6 +278,10 @@ export type Database = {
           delivery_fee?: number
           delivery_zone_city?: string | null
           deposit_amount?: number
+          discount_amount?: number
+          discount_reason?: string | null
+          discount_type?: string | null
+          discount_value?: number | null
           duration_type?: string
           event_address_line: string
           event_city: string
@@ -318,6 +326,10 @@ export type Database = {
           delivery_fee?: number
           delivery_zone_city?: string | null
           deposit_amount?: number
+          discount_amount?: number
+          discount_reason?: string | null
+          discount_type?: string | null
+          discount_value?: number | null
           duration_type?: string
           event_address_line?: string
           event_city?: string
