@@ -349,13 +349,13 @@ export function Header() {
               {BOOKING_ENABLED && (
                 <Button
                   onClick={() => {
-                    setShowJotform(true);
+                    navigate("/rentals");
                     setMobileMenuOpen(false);
                   }}
                   className="w-full btn-bounce"
                   size="lg"
                 >
-                  Check Availability
+                  Browse rentals →
                 </Button>
               )}
             </div>
