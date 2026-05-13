@@ -60,7 +60,6 @@ export interface BookingFormBooking {
   payment_method_choice?: "card_on_file" | "cash_on_delivery" | null;
   stripe_customer_id?: string | null;
   stripe_payment_method_id?: string | null;
-  customer_email?: string;
   booking_items?: { id: string; product_id?: string; product_name: string; product_price: number; unit_price?: number | null }[];
 }
 
