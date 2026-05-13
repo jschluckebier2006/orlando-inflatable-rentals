@@ -86,6 +86,7 @@ export type Database = {
       booking_activity: {
         Row: {
           actor_email: string | null
+          actor_user_id: string | null
           booking_id: string | null
           created_at: string
           customer_id: string | null
@@ -96,6 +97,7 @@ export type Database = {
         }
         Insert: {
           actor_email?: string | null
+          actor_user_id?: string | null
           booking_id?: string | null
           created_at?: string
           customer_id?: string | null
@@ -106,6 +108,7 @@ export type Database = {
         }
         Update: {
           actor_email?: string | null
+          actor_user_id?: string | null
           booking_id?: string | null
           created_at?: string
           customer_id?: string | null
@@ -214,6 +217,8 @@ export type Database = {
         Row: {
           amount_paid: number
           balance_due: number | null
+          cancel_reason: string | null
+          cancelled_at: string | null
           checkout_fee_amount: number
           created_at: string
           customer_email: string
@@ -256,6 +261,8 @@ export type Database = {
         Insert: {
           amount_paid?: number
           balance_due?: number | null
+          cancel_reason?: string | null
+          cancelled_at?: string | null
           checkout_fee_amount?: number
           created_at?: string
           customer_email: string
@@ -298,6 +305,8 @@ export type Database = {
         Update: {
           amount_paid?: number
           balance_due?: number | null
+          cancel_reason?: string | null
+          cancelled_at?: string | null
           checkout_fee_amount?: number
           created_at?: string
           customer_email?: string
@@ -750,6 +759,15 @@ export type Database = {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
+        }
+        Returns: boolean
+      }
+      is_date_range_available: {
+        Args: {
+          p_end: string
+          p_exclude_booking_id: string
+          p_product_ids: string[]
+          p_start: string
         }
         Returns: boolean
       }

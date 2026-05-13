@@ -7,7 +7,9 @@ export type ActivityKind =
   | "date_change"
   | "email_sent"
   | "created"
-  | "edited";
+  | "edited"
+  | "cancelled"
+  | "restored";
 
 export async function logActivity(params: {
   bookingId?: string | null;
@@ -17,11 +19,11 @@ export async function logActivity(params: {
   metadata?: Record<string, any>;
 }) {
   const { data: { session } } = await supabase.auth.getSession();
-  const actor = session?.user?.email ?? null;
   await (supabase.from("booking_activity") as any).insert({
     booking_id: params.bookingId ?? null,
     customer_id: params.customerId ?? null,
-    actor_email: actor,
+    actor_email: session?.user?.email ?? null,
+    actor_user_id: session?.user?.id ?? null,
     kind: params.kind,
     message: params.message,
     metadata: params.metadata ?? {},
