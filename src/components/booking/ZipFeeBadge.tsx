@@ -23,9 +23,9 @@ export function ZipFeeBadge({ zip }: { zip: string }) {
       >
         <PhoneCall className="h-3.5 w-3.5 shrink-0 mt-0.5" />
         <span>
-          We don't service this ZIP for online booking. Please call{" "}
-          <a href="tel:4074971840" className="font-semibold underline">(407) 497-1840</a>{" "}
-          for a custom quote.
+          Please call{" "}
+          <a href="tel:+14074971840" className="font-semibold underline">(407) 497-1840</a>{" "}
+          to book — online booking is not available for this ZIP.
         </span>
       </div>
     );
