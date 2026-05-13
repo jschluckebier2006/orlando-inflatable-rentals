@@ -17,6 +17,7 @@ export default function Settings() {
   const [taxPct, setTaxPct] = useState("7");
   const [waiverPct, setWaiverPct] = useState("10");
   const [deposit, setDeposit] = useState("50");
+  const [feePct, setFeePct] = useState("4");
   const [savingPricing, setSavingPricing] = useState(false);
 
   const [zones, setZones] = useState<Zone[]>([]);
@@ -33,6 +34,7 @@ export default function Settings() {
       setTaxPct(String(Number(s.tax_rate) * 100));
       setWaiverPct(String(Number(s.damage_waiver_rate) * 100));
       setDeposit(String(Number(s.default_deposit)));
+      setFeePct(String(Number(s.online_checkout_fee_rate ?? 0.04) * 100));
     }
     setZones((z ?? []) as Zone[]);
   }
@@ -42,12 +44,14 @@ export default function Settings() {
     const tax = Number(taxPct);
     const waiver = Number(waiverPct);
     const dep = Number(deposit);
+    const fee = Number(feePct);
     if (!isFinite(tax) || tax < 0 || tax > 50) return toast({ title: "Tax % must be 0–50", variant: "destructive" });
     if (!isFinite(waiver) || waiver < 0 || waiver > 50) return toast({ title: "Waiver % must be 0–50", variant: "destructive" });
     if (!isFinite(dep) || dep < 0) return toast({ title: "Deposit must be ≥ 0", variant: "destructive" });
+    if (!isFinite(fee) || fee < 0 || fee > 20) return toast({ title: "Fee % must be 0–20", variant: "destructive" });
     setSavingPricing(true);
     const { error } = await (supabase.from("app_settings") as any).update({
-      tax_rate: tax / 100, damage_waiver_rate: waiver / 100, default_deposit: dep,
+      tax_rate: tax / 100, damage_waiver_rate: waiver / 100, default_deposit: dep, online_checkout_fee_rate: fee / 100,
     }).eq("id", 1);
     setSavingPricing(false);
     if (error) return toast({ title: "Save failed", description: error.message, variant: "destructive" });
@@ -95,7 +99,7 @@ export default function Settings() {
           <h2 className="font-semibold">Pricing & deposits</h2>
           <p className="text-xs text-muted-foreground">Changes apply immediately to new bookings on the storefront.</p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
           <div>
             <Label>Sales tax %</Label>
             <div className="flex items-center gap-1">
@@ -109,6 +113,14 @@ export default function Settings() {
               <Input type="number" step="0.01" value={waiverPct} onChange={(e) => setWaiverPct(e.target.value)} />
               <span className="text-sm">%</span>
             </div>
+          </div>
+          <div>
+            <Label>Online payment fee %</Label>
+            <div className="flex items-center gap-1">
+              <Input type="number" step="0.01" value={feePct} onChange={(e) => setFeePct(e.target.value)} />
+              <span className="text-sm">%</span>
+            </div>
+            <p className="text-[11px] text-muted-foreground mt-1">Card-on-file only; skipped for cash on delivery.</p>
           </div>
           <div>
             <Label>Default deposit ($)</Label>
