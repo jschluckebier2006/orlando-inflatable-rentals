@@ -246,11 +246,11 @@ export function Header() {
               <CartButton />
               {BOOKING_ENABLED && (
                 <Button
-                  onClick={() => setShowJotform(true)}
+                  onClick={() => navigate("/rentals")}
                   className="btn-bounce"
                   size="lg"
                 >
-                  Check Availability
+                  Browse rentals →
                 </Button>
               )}
             </div>
