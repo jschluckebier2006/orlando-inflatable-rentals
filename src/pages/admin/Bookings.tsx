@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   format,
   startOfMonth,
@@ -30,6 +30,16 @@ import { ChevronLeft, ChevronRight, Phone, MapPin } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import BookingFormModal, { type BookingFormBooking } from "@/components/admin/BookingFormModal";
 import { Plus, Pencil } from "lucide-react";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Textarea } from "@/components/ui/textarea";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { buttonVariants } from "@/components/ui/button";
+import { logActivity } from "@/lib/adminActivity";
+import CancelledBookingsTable from "@/components/admin/CancelledBookingsTable";
 
 type BookingStatus = "pending" | "confirmed" | "cancelled" | "completed";
 type PaymentStatus = "unpaid" | "deposit_paid" | "paid_in_full" | "refunded";
@@ -68,6 +78,8 @@ interface Booking {
   deposit_amount?: number | null;
   total_amount?: number | null;
   stripe_session_id?: string | null;
+  cancelled_at?: string | null;
+  cancel_reason?: string | null;
   booking_items?: BookingItem[];
 }
 
@@ -101,6 +113,25 @@ export default function AdminBookings() {
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [editing, setEditing] = useState<BookingFormBooking | null>(null);
   const [formOpen, setFormOpen] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const tab: "active" | "cancelled" =
+    searchParams.get("tab") === "cancelled" ? "cancelled" : "active";
+  const setTab = (t: "active" | "cancelled") =>
+    setSearchParams((p) => {
+      const np = new URLSearchParams(p);
+      np.set("tab", t);
+      return np;
+    });
+
+  // Cancel dialog state
+  const [cancelTarget, setCancelTarget] = useState<Booking | null>(null);
+  const [cancelReason, setCancelReason] = useState("");
+  const [refundConfirmed, setRefundConfirmed] = useState(false);
+  const [cancelSubmitting, setCancelSubmitting] = useState(false);
+
+  // Restore dialog state
+  const [restoreTarget, setRestoreTarget] = useState<Booking | null>(null);
+  const [restoreSubmitting, setRestoreSubmitting] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -148,6 +179,95 @@ export default function AdminBookings() {
     toast({ title: `Marked ${status}` });
   }
 
+  async function confirmCancel() {
+    if (!cancelTarget || !refundConfirmed) return;
+    setCancelSubmitting(true);
+    const prev = cancelTarget.status;
+    const cancelledAt = new Date().toISOString();
+    const reason = cancelReason.trim() || null;
+    const { error } = await supabase.from("bookings")
+      .update({ status: "cancelled", cancelled_at: cancelledAt, cancel_reason: reason })
+      .eq("id", cancelTarget.id);
+    if (error) {
+      toast({ title: "Cancel failed", description: error.message, variant: "destructive" });
+      setCancelSubmitting(false);
+      return;
+    }
+    await logActivity({
+      bookingId: cancelTarget.id,
+      kind: "cancelled",
+      message: reason ? `Booking cancelled — ${reason}` : "Booking cancelled",
+      metadata: { reason, previous_status: prev },
+    });
+    setBookings((bs) => bs.map((x) => x.id === cancelTarget.id
+      ? { ...x, status: "cancelled", cancelled_at: cancelledAt, cancel_reason: reason }
+      : x));
+    toast({ title: "Booking cancelled" });
+    setCancelTarget(null);
+    setCancelSubmitting(false);
+  }
+
+  async function confirmRestore() {
+    if (!restoreTarget) return;
+    setRestoreSubmitting(true);
+    const b = restoreTarget;
+
+    const { data: items, error: itemsErr } = await supabase
+      .from("booking_items").select("product_id").eq("booking_id", b.id);
+    if (itemsErr) {
+      toast({ title: "Restore failed", description: itemsErr.message, variant: "destructive" });
+      setRestoreSubmitting(false);
+      return;
+    }
+    const productIds = (items ?? [])
+      .map((x: any) => x.product_id)
+      .filter(Boolean) as string[];
+
+    if (productIds.length) {
+      const { data: ok, error: rpcErr } = await supabase.rpc("is_date_range_available" as any, {
+        p_product_ids: productIds,
+        p_start: b.event_date,
+        p_end: b.event_end_date ?? b.event_date,
+        p_exclude_booking_id: b.id,
+      });
+      if (rpcErr) {
+        toast({ title: "Restore failed", description: rpcErr.message, variant: "destructive" });
+        setRestoreSubmitting(false);
+        return;
+      }
+      if (!ok) {
+        toast({
+          title: "Cannot restore — the date is no longer available.",
+          variant: "destructive",
+        });
+        setRestoreSubmitting(false);
+        setRestoreTarget(null);
+        return;
+      }
+    }
+
+    const { error } = await supabase.from("bookings")
+      .update({ status: "confirmed", cancelled_at: null })
+      .eq("id", b.id);
+    if (error) {
+      toast({ title: "Restore failed", description: error.message, variant: "destructive" });
+      setRestoreSubmitting(false);
+      return;
+    }
+    await logActivity({
+      bookingId: b.id,
+      kind: "restored",
+      message: "Booking restored from cancellation",
+      metadata: { previous_status: "cancelled" },
+    });
+    setBookings((prev) => prev.map((x) => x.id === b.id
+      ? { ...x, status: "confirmed", cancelled_at: null } : x));
+    toast({ title: "Booking restored" });
+    setTab("active");
+    setRestoreSubmitting(false);
+    setRestoreTarget(null);
+  }
+
   async function signOut() {
     await supabase.auth.signOut();
     navigate("/admin/login", { replace: true });
@@ -165,7 +285,11 @@ export default function AdminBookings() {
     );
   }
 
-  const filtered = filter === "all" ? bookings : bookings.filter((b) => b.status === filter);
+  const activeAll = bookings.filter((b) => b.status !== "cancelled");
+  const activeFiltered = filter === "all"
+    ? activeAll
+    : activeAll.filter((b) => b.status === filter);
+  const cancelledList = bookings.filter((b) => b.status === "cancelled");
 
   return (
     <div className="min-h-screen bg-muted/20 p-4 md:p-8">
@@ -173,26 +297,35 @@ export default function AdminBookings() {
         <div className="flex flex-wrap items-center justify-between gap-4">
           <h1 className="font-display text-3xl font-bold">Bookings</h1>
           <div className="flex items-center gap-2">
-            <Select value={filter} onValueChange={(v) => setFilter(v as any)}>
-              <SelectTrigger className="w-44"><SelectValue /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All</SelectItem>
-                <SelectItem value="pending">Pending</SelectItem>
-                <SelectItem value="confirmed">Confirmed</SelectItem>
-                <SelectItem value="cancelled">Cancelled</SelectItem>
-                <SelectItem value="completed">Completed</SelectItem>
-              </SelectContent>
-            </Select>
             <Button onClick={() => { setEditing(null); setFormOpen(true); }}><Plus className="h-4 w-4 mr-1" />New booking</Button>
             <Button variant="outline" onClick={load} disabled={loading}>Refresh</Button>
             <Button variant="outline" onClick={signOut}>Sign out</Button>
           </div>
         </div>
 
-        <BookingsCalendar bookings={bookings} />
-        <UpcomingWeekList bookings={bookings} />
+        <Tabs value={tab} onValueChange={(v) => setTab(v as any)}>
+          <TabsList>
+            <TabsTrigger value="active">Active ({activeAll.length})</TabsTrigger>
+            <TabsTrigger value="cancelled">Cancelled ({cancelledList.length})</TabsTrigger>
+          </TabsList>
 
-        <div className="bg-card rounded-lg border border-border overflow-x-auto">
+          <TabsContent value="active" className="space-y-4">
+            <div className="flex justify-end">
+              <Select value={filter} onValueChange={(v) => setFilter(v as any)}>
+                <SelectTrigger className="w-44"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All active</SelectItem>
+                  <SelectItem value="pending">Pending</SelectItem>
+                  <SelectItem value="confirmed">Confirmed</SelectItem>
+                  <SelectItem value="completed">Completed</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <BookingsCalendar bookings={bookings} />
+            <UpcomingWeekList bookings={bookings} />
+
+            <div className="bg-card rounded-lg border border-border overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
@@ -208,9 +341,9 @@ export default function AdminBookings() {
             <TableBody>
               {loading ? (
                 <TableRow><TableCell colSpan={7} className="text-center py-8">Loading...</TableCell></TableRow>
-              ) : filtered.length === 0 ? (
+              ) : activeFiltered.length === 0 ? (
                 <TableRow><TableCell colSpan={7} className="text-center py-8 text-muted-foreground">No bookings</TableCell></TableRow>
-              ) : filtered.map((b) => (
+              ) : activeFiltered.map((b) => (
                 <TableRow key={b.id}>
                   <TableCell className="whitespace-nowrap">
                     <div className="font-medium">{format(new Date(b.event_date + "T12:00:00"), "MMM d, yyyy")}</div>
@@ -301,16 +434,96 @@ export default function AdminBookings() {
                       <Button size="sm" variant="outline" onClick={() => updateStatus(b.id, "completed")}>Complete</Button>
                     )}
                     {b.status !== "cancelled" && b.status !== "completed" && (
-                      <Button size="sm" variant="destructive" onClick={() => updateStatus(b.id, "cancelled")}>Cancel</Button>
+                      <Button size="sm" variant="destructive" onClick={() => {
+                        setCancelTarget(b);
+                        setCancelReason("");
+                        setRefundConfirmed(false);
+                      }}>Cancel</Button>
                     )}
                   </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
-        </div>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="cancelled">
+            <CancelledBookingsTable
+              rows={cancelledList as any}
+              onRestore={(b) => setRestoreTarget(b as any)}
+              onView={(b) => { setEditing(b as any); setFormOpen(true); }}
+            />
+          </TabsContent>
+        </Tabs>
       </div>
       <BookingFormModal open={formOpen} onOpenChange={setFormOpen} booking={editing} onSaved={load} />
+
+      <AlertDialog open={!!cancelTarget} onOpenChange={(o) => !o && setCancelTarget(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Cancel this booking?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will release the date on the calendar and move the booking to the
+              Cancelled tab. This app does NOT issue a Stripe refund automatically —
+              you must have already refunded the deposit (and any balance charged) in
+              the Stripe Dashboard before continuing.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+
+          <label className="flex items-start gap-2 text-sm">
+            <Checkbox
+              checked={refundConfirmed}
+              onCheckedChange={(v) => setRefundConfirmed(!!v)}
+            />
+            <span>I have refunded this booking in the Stripe Dashboard.</span>
+          </label>
+
+          <Textarea
+            placeholder="Reason for cancellation (optional)"
+            value={cancelReason}
+            onChange={(e) => setCancelReason(e.target.value)}
+            rows={3}
+          />
+
+          <AlertDialogFooter>
+            <AlertDialogCancel>Keep booking</AlertDialogCancel>
+            <AlertDialogAction
+              disabled={!refundConfirmed || cancelSubmitting}
+              onClick={(e) => { e.preventDefault(); confirmCancel(); }}
+              className={buttonVariants({ variant: "destructive" })}
+            >
+              Cancel booking
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={!!restoreTarget} onOpenChange={(o) => !o && setRestoreTarget(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Restore this booking?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will return the booking to <strong>confirmed</strong> and re-block
+              the event date on the calendar. If the same item has already been booked
+              by someone else for this date, the restore will fail and the booking
+              will stay cancelled.
+              <br /><br />
+              The original cancellation reason will be kept on the booking for history.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+
+          <AlertDialogFooter>
+            <AlertDialogCancel>Keep cancelled</AlertDialogCancel>
+            <AlertDialogAction
+              disabled={restoreSubmitting}
+              onClick={(e) => { e.preventDefault(); confirmRestore(); }}
+            >
+              Restore booking
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
