@@ -211,6 +211,8 @@ export interface BookingForEmail {
   tax_amount?: number | null;
   delivery_fee?: number | null;
   delivery_zone_city?: string | null;
+  checkout_fee_amount?: number | null;
+  payment_method_choice?: "card_on_file" | "cash_on_delivery" | null;
 }
 export interface BookingItemForEmail {
   product_name: string;
@@ -258,10 +260,12 @@ function totalsBlock(b: BookingForEmail) {
     : b.delivery_zone_city
       ? `<tr><td style="color:#54657a;">Delivery — ${escapeHtml(b.delivery_zone_city)}</td><td style="text-align:right;color:#1a8a4a;">FREE</td></tr>`
       : "";
+  const feeLine = Number(b.checkout_fee_amount ?? 0) > 0
+    ? `<tr><td style="color:#54657a;">Online Payment Convenience Fee (4%)</td><td style="text-align:right;">${fmtMoney(b.checkout_fee_amount)}</td></tr>` : "";
   const taxLine = Number(b.tax_amount ?? 0) > 0
     ? `<tr><td style="color:#54657a;">Sales Tax (7%)</td><td style="text-align:right;">${fmtMoney(b.tax_amount)}</td></tr>` : "";
   return `<table width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;margin-top:8px;">
-      ${subtotalLine}${waiverLine}${deliveryLine}${taxLine}
+      ${subtotalLine}${waiverLine}${deliveryLine}${feeLine}${taxLine}
       <tr><td style="color:#54657a;"><strong>Total</strong></td><td style="text-align:right;"><strong>${fmtMoney(b.total_amount)}</strong></td></tr>
       <tr><td style="color:#54657a;">Amount paid</td><td style="text-align:right;">${fmtMoney(b.amount_paid)}</td></tr>
       ${balanceLine}
@@ -401,4 +405,19 @@ export async function reviewRequestEmail(b: BookingForEmail): Promise<RenderedEm
     first_name: escapeHtml(b.customer_name.split(" ")[0]),
     review_url: REVIEW_URL,
   }, "A quick review would mean a lot.");
+}
+
+export async function balancePaidCustomerEmail(
+  b: BookingForEmail,
+  amountCharged: number,
+): Promise<RenderedEmail> {
+  const ref = b.id.slice(0, 8).toUpperCase();
+  return await renderTemplate("balance_paid_customer", {
+    first_name: escapeHtml(b.customer_name.split(" ")[0]),
+    ref,
+    event_date: fmtDate(b.event_date),
+    phone: PHONE,
+    balance_paid: fmtMoney(amountCharged),
+    totals_block: totalsBlock(b),
+  }, `Payment received for your Orlando Inflatables booking #${ref}.`);
 }

@@ -12,8 +12,9 @@ import { useInventory } from "@/lib/inventory";
 import { DURATION_MULTIPLIERS, DURATION_LABELS, type DurationType, endDateFor } from "@/lib/pricing";
 import { TAX_RATE, DAMAGE_WAIVER_RATE } from "@/lib/pricing";
 import { format } from "date-fns";
-import { CalendarClock } from "lucide-react";
+import { CalendarClock, CreditCard, Loader2 } from "lucide-react";
 import { RescheduleDialog } from "@/components/admin/RescheduleDialog";
+import { RecordPaymentDialog } from "@/components/admin/RecordPaymentDialog";
 
 type BookingStatus = "pending" | "confirmed" | "cancelled" | "completed";
 type PaymentStatus = "unpaid" | "deposit_paid" | "paid_in_full" | "refunded";
@@ -55,6 +56,10 @@ export interface BookingFormBooking {
   damage_waiver_amount?: number | null;
   tax_rate?: number | null;
   tax_amount?: number | null;
+  balance_due?: number | null;
+  payment_method_choice?: "card_on_file" | "cash_on_delivery" | null;
+  stripe_customer_id?: string | null;
+  stripe_payment_method_id?: string | null;
   booking_items?: { id: string; product_id?: string; product_name: string; product_price: number; unit_price?: number | null }[];
 }
 
@@ -99,6 +104,42 @@ export default function BookingFormModal({ open, onOpenChange, booking, onSaved 
   const [discountReason, setDiscountReason] = useState("");
   const [damageWaiver, setDamageWaiver] = useState<boolean>(true);
   const [rescheduleOpen, setRescheduleOpen] = useState(false);
+  const [chargingBalance, setChargingBalance] = useState(false);
+  const [recordPaymentOpen, setRecordPaymentOpen] = useState(false);
+
+  const paymentChoice = booking?.payment_method_choice ?? null;
+  const hasSavedCard = !!(booking?.stripe_customer_id && booking?.stripe_payment_method_id);
+  const persistedBalance = Number(booking?.balance_due ?? 0);
+  const fullyPaid = booking?.payment_status === "paid_in_full";
+
+  async function chargeBalanceNow() {
+    if (!booking?.id) return;
+    if (!confirm(`Charge the saved card on file for $${persistedBalance.toFixed(2)}?`)) return;
+    setChargingBalance(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("admin-charge-balance", {
+        body: { booking_id: booking.id },
+      });
+      if (error) {
+        const ctx: any = (error as any)?.context;
+        let msg = error.message ?? "Charge failed";
+        if (ctx?.json?.error) msg = ctx.json.message ?? ctx.json.error;
+        else if (typeof ctx?.body === "string") {
+          try { const j = JSON.parse(ctx.body); msg = j.message ?? j.error ?? msg; } catch {}
+        }
+        toast({ title: "Charge failed", description: msg, variant: "destructive" });
+        return;
+      }
+      toast({
+        title: "Balance charged",
+        description: `$${Number((data as any)?.amount_charged ?? persistedBalance).toFixed(2)} captured. Customer emailed.`,
+      });
+      onSaved();
+      onOpenChange(false);
+    } finally {
+      setChargingBalance(false);
+    }
+  }
 
   useEffect(() => {
     if (!open) return;
@@ -401,6 +442,34 @@ export default function BookingFormModal({ open, onOpenChange, booking, onSaved 
 
           <section className="space-y-3">
             <h3 className="font-semibold">Status & Payment</h3>
+            {isEdit && booking && persistedBalance > 0 && !fullyPaid && (
+              <div className="rounded-md border border-border p-3 bg-muted/30 space-y-2">
+                {paymentChoice === "card_on_file" && hasSavedCard ? (
+                  <>
+                    <p className="text-sm">
+                      <span className="font-semibold">Online balance pending</span> — card on file ready to capture.
+                      Outstanding <strong>${persistedBalance.toFixed(2)}</strong>.
+                    </p>
+                    <Button type="button" size="sm" onClick={chargeBalanceNow} disabled={chargingBalance}>
+                      {chargingBalance ? <><Loader2 className="h-4 w-4 mr-1 animate-spin" />Charging…</> : <><CreditCard className="h-4 w-4 mr-1" />Charge balance now</>}
+                    </Button>
+                  </>
+                ) : paymentChoice === "cash_on_delivery" ? (
+                  <>
+                    <p className="text-sm">
+                      <span className="font-semibold">Cash balance pending</span> — collect <strong>${persistedBalance.toFixed(2)}</strong> on delivery.
+                    </p>
+                    <Button type="button" size="sm" variant="outline" onClick={() => setRecordPaymentOpen(true)}>
+                      Mark cash collected
+                    </Button>
+                  </>
+                ) : (
+                  <p className="text-sm text-muted-foreground">
+                    No saved card on file — record this payment manually using the form below.
+                  </p>
+                )}
+              </div>
+            )}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               <div>
                 <Label>Booking status</Label>
@@ -452,6 +521,19 @@ export default function BookingFormModal({ open, onOpenChange, booking, onSaved 
           currentEnd={booking.event_end_date || eventDate}
           productIds={items.map((i) => i.product_id).filter(Boolean)}
           onRescheduled={() => {
+            onSaved();
+            onOpenChange(false);
+          }}
+        />
+      )}
+      {isEdit && booking?.id && (
+        <RecordPaymentDialog
+          open={recordPaymentOpen}
+          onOpenChange={setRecordPaymentOpen}
+          bookingId={booking.id}
+          defaultAmount={persistedBalance}
+          customerEmail={booking.customer_email}
+          onRecorded={() => {
             onSaved();
             onOpenChange(false);
           }}
