@@ -15,8 +15,11 @@ export default function CheckoutReturn() {
   const [retryKey, setRetryKey] = useState(0);
 
   useEffect(() => {
-    if (!sessionId) return;
     clear();
+  }, []);
+
+  useEffect(() => {
+    if (!sessionId) return;
     let cancelled = false;
     let attempts = 0;
     let consecutiveErrors = 0;
@@ -52,7 +55,7 @@ export default function CheckoutReturn() {
 
     tick();
     return () => { cancelled = true; };
-  }, [sessionId, clear, retryKey]);
+  }, [sessionId, retryKey]);
 
   const handleRetry = () => {
     setState("loading");
