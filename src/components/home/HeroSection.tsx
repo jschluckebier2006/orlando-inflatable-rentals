@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Phone, ArrowRight, Star } from "lucide-react";
 import { JotformModal } from "@/components/JotformModal";
@@ -7,6 +8,7 @@ import heroBackground from "@/assets/orlando-inflatables-hero.webp";
 
 export function HeroSection() {
   const [showJotform, setShowJotform] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <>
@@ -63,21 +65,34 @@ export function HeroSection() {
             </p>
 
             {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in" style={{ animationDelay: "0.4s" }}>
-              {BOOKING_ENABLED && (
-                <Button
-                  onClick={() => setShowJotform(true)}
-                  size="lg"
-                  className="bg-accent hover:bg-accent/90 text-accent-foreground btn-bounce text-lg md:text-xl px-10 py-7 font-bold shadow-2xl w-full sm:w-auto"
+            <div className="flex flex-col items-center justify-center gap-3 w-full sm:max-w-sm sm:mx-auto animate-fade-in" style={{ animationDelay: "0.4s" }}>
+              <button
+                onClick={() => navigate("/water-slide-rentals")}
+                className="w-full rounded-full p-1 btn-bounce transition-transform active:scale-95 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-yellow-400/60"
+                style={{ background: "#FFBF00" }}
+              >
+                <div
+                  className="relative overflow-hidden rounded-full flex flex-col items-center justify-center gap-0.5 py-4 px-5 w-full"
+                  style={{ background: "linear-gradient(90deg, #FF6B00 0%, #FFD000 100%)" }}
                 >
-                  Check Availability for Your Date
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-              )}
-              <a href="tel:4074971840">
+                  <span
+                    className="relative z-10 uppercase tracking-widest font-bold text-white/85"
+                    style={{ fontSize: "11px", textShadow: "0 1px 3px rgba(0,0,0,0.35)" }}
+                  >
+                    ☀️ This Summer's #1 Choice
+                  </span>
+                  <span
+                    className="relative z-10 font-black text-white leading-tight text-lg"
+                    style={{ textShadow: "0 2px 5px rgba(0,0,0,0.35)" }}
+                  >
+                    Beat the Heat — Water Slides →
+                  </span>
+                </div>
+              </button>
+              <a href="tel:4074971840" className="w-full">
                 <Button
                   size="lg"
-                  className="bg-white text-primary hover:bg-white/90 btn-bounce text-lg px-8 py-6 font-semibold shadow-xl"
+                  className="w-full rounded-full bg-white text-primary hover:bg-white/90 btn-bounce text-lg px-8 py-6 font-semibold shadow-xl"
                 >
                   <Phone className="mr-2 h-5 w-5" />
                   (407) 497-1840
