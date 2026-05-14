@@ -27,13 +27,7 @@ export function StartHereModal({ open, onOpenChange }: StartHereModalProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
-        className={
-          stage === "welcome"
-            ? "sm:max-w-md"
-            : "sm:max-w-[640px] w-[95vw] h-[85vh] max-h-[760px] p-0 overflow-hidden flex flex-col"
-        }
-      >
+      <DialogContent className="sm:max-w-md">
         {stage === "welcome" ? (
           <>
             <DialogHeader>
@@ -72,29 +66,58 @@ export function StartHereModal({ open, onOpenChange }: StartHereModalProps) {
             </div>
           </>
         ) : (
-          <div className="flex flex-col h-full w-full">
-            <div className="flex items-center gap-2 px-4 py-3 border-b shrink-0">
+          <div className="flex flex-col">
+            <div className="mb-4">
+              <h3 className="text-lg font-semibold text-foreground">Let's plan your event</h3>
+              <p className="text-sm text-muted-foreground mt-1">
+                Tap below to reach us — your message will be pre-filled.
+              </p>
+            </div>
+
+            <div className="grid gap-3">
               <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setStage("welcome")}
-                className="w-fit -ml-2"
+                asChild
+                onClick={() => onOpenChange(false)}
+                className="w-full text-left rounded-xl p-5 h-auto flex flex-col items-start bg-primary hover:bg-primary/90 text-white"
               >
-                <ArrowLeft className="mr-1 h-4 w-4" />
-                Back
+                <a href="sms:+14074971840?&body=Hi%20Orlando%20Inflatables!%20I'd%20like%20a%20custom%20quote.%0A%0AEvent%20date%3A%0AEvent%20location%20(city%2Fzip)%3A%0AWhat%20I'm%20interested%20in%20(bounce%20house%2C%20water%20slide%2C%20combo%2C%20etc.)%3A%0A%0AThanks!">
+                  <span className="font-semibold text-base">Text Us — (407) 497-1840</span>
+                  <span className="text-white/80 text-sm mt-0.5">Fastest reply — pre-filled message</span>
+                </a>
               </Button>
-              <DialogTitle>Custom Quote</DialogTitle>
+
+              <Button
+                asChild
+                onClick={() => onOpenChange(false)}
+                variant="secondary"
+                className="w-full text-left rounded-xl p-5 h-auto flex flex-col items-start"
+              >
+                <a href="tel:+14074971840">
+                  <span className="font-semibold text-base">Call Us — (407) 497-1840</span>
+                  <span className="text-muted-foreground text-sm mt-0.5">Talk to a real person</span>
+                </a>
+              </Button>
+
+              <Button
+                asChild
+                onClick={() => onOpenChange(false)}
+                variant="outline"
+                className="w-full text-left rounded-xl p-5 h-auto flex flex-col items-start"
+              >
+                <a href="mailto:orlandoinflatablesllc@gmail.com?subject=Custom%20Quote%20Request&body=Hi%20Orlando%20Inflatables!%20I'd%20like%20a%20custom%20quote.%0A%0AEvent%20date%3A%0AEvent%20location%20(city%2Fzip)%3A%0AWhat%20I'm%20interested%20in%20(bounce%20house%2C%20water%20slide%2C%20combo%2C%20etc.)%3A%0A%0AThanks!">
+                  <span className="font-semibold text-base">Email Us</span>
+                  <span className="text-muted-foreground text-sm mt-0.5">orlandoinflatablesllc@gmail.com</span>
+                </a>
+              </Button>
             </div>
-            <div className="flex-1 min-h-0 w-full overflow-hidden">
-              <iframe
-                src="https://form.jotform.com/261328979576072"
-                title="Custom Quote Form"
-                className="w-full h-full border-0"
-                style={{ minHeight: "500px" }}
-                allow="geolocation; microphone; camera; payment"
-                sandbox="allow-forms allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
-              />
-            </div>
+
+            <button
+              onClick={() => setStage("welcome")}
+              className="mt-4 text-sm text-muted-foreground hover:text-foreground flex items-center self-start transition-colors"
+            >
+              <ArrowLeft className="mr-1 h-4 w-4" />
+              Back
+            </button>
           </div>
         )}
       </DialogContent>
