@@ -1,174 +1,69 @@
-## Files to edit
+## Goal
 
-1. `src/pages/admin/Inventory.tsx` — overflow menu items + AlertDialog + cascading hard-delete handler (Fix 1)
-2. `src/pages/admin/InventoryDetail.tsx` — horizontally scrollable `TabsList` on mobile/tablet (Fix 2)
+Close the reactivation gap: when a `bookings` row's `status` transitions back into `pending`/`confirmed` from another value (e.g. `cancelled` → `confirmed`), re-validate every associated `booking_items` row against current `inventory_blackouts` and overlapping active bookings. If any conflict exists, raise an exception so the UPDATE is aborted.
 
-No other files. No new dependencies.
-
----
-
-## Fix 1 — Overflow menu: add Delete product (hard delete + best-effort cascade)
-
-**File:** `src/pages/admin/Inventory.tsx`
-
-### New imports
-- `@/components/ui/alert-dialog`: `AlertDialog`, `AlertDialogContent`, `AlertDialogHeader`, `AlertDialogFooter`, `AlertDialogTitle`, `AlertDialogDescription`, `AlertDialogCancel`, `AlertDialogAction`
-- `lucide-react`: extend existing import to add `Trash2`
-- `@/components/ui/dropdown-menu`: extend existing import to add `DropdownMenuSeparator`
-
-### New state
-```ts
-const [deleteTarget, setDeleteTarget] = useState<Item | null>(null);
-const [deleting, setDeleting] = useState(false);
-```
-
-### Storage path convention (verified)
-`InventoryDetail.tsx` uploads to `inventory-images` bucket using path `${id}/${Date.now()}-${safeName}`, where `id` is the inventory item id. So listing prefix `${item.id}/` and removing returned entries is the correct pattern.
-
-### New handler — `deleteProduct`
-
-Best-effort cascade in this exact order; only the final parent delete aborts on failure.
-
-```ts
-async function deleteProduct(item: Item) {
-  setDeleting(true);
-
-  // 1) inventory_images rows — best-effort
-  {
-    const { error } = await (supabase.from("inventory_images") as any).delete().eq("item_id", item.id);
-    if (error) console.warn("[deleteProduct] inventory_images cleanup failed:", error.message);
-  }
-
-  // 2) inventory_blackouts rows — best-effort
-  {
-    const { error } = await (supabase.from("inventory_blackouts") as any).delete().eq("item_id", item.id);
-    if (error) console.warn("[deleteProduct] inventory_blackouts cleanup failed:", error.message);
-  }
-
-  // 3) inventory_maintenance rows — best-effort
-  {
-    const { error } = await (supabase.from("inventory_maintenance") as any).delete().eq("item_id", item.id);
-    if (error) console.warn("[deleteProduct] inventory_maintenance cleanup failed:", error.message);
-  }
-
-  // 4) Storage cleanup under `${item.id}/` — best-effort, never blocks
-  try {
-    const { data: files, error: listErr } = await supabase.storage
-      .from("inventory-images")
-      .list(`${item.id}/`);
-    if (listErr) {
-      console.warn("[deleteProduct] storage list failed:", listErr.message);
-    } else if (files && files.length > 0) {
-      const paths = files.map((f) => `${item.id}/${f.name}`);
-      const { error: rmErr } = await supabase.storage.from("inventory-images").remove(paths);
-      if (rmErr) console.warn("[deleteProduct] storage remove failed:", rmErr.message);
-    }
-  } catch (e: any) {
-    console.warn("[deleteProduct] storage cleanup threw:", e?.message ?? e);
-  }
-
-  // 5) Parent row — only this step aborts on failure
-  const { error: parentErr } = await (supabase.from("inventory_items") as any).delete().eq("id", item.id);
-  if (parentErr) {
-    setDeleting(false);
-    toast({ title: "Delete failed", description: parentErr.message, variant: "destructive" });
-    return;
-  }
-
-  setDeleting(false);
-  toast({ title: "Product deleted" });
-  setDeleteTarget(null);
-  setItems((prev) => prev.filter((x) => x.id !== item.id));
-  load();
-}
-```
-
-Notes:
-- `as any` casts only on `supabase.from(...)` calls (matching the existing file's pattern). Storage calls and `setItems`/toast remain typed.
-- Local-state filter mirrors how `move`/`duplicate` rely on `load()` — we do both for instant UI feedback plus authoritative refresh.
-
-### DropdownMenuContent — final order
-
-1. **Move up** → `move(it, -1)`
-2. **Move down** → `move(it, 1)`
-3. **Show / Hide** → `toggleActive(it)` (label flips on `it.active`)
-4. **Duplicate product** → `duplicate(it)` (label changed from "Duplicate")
-5. `<DropdownMenuSeparator />`
-6. **Delete product** → `setDeleteTarget(it)` — destructive styling:
-   ```tsx
-   <DropdownMenuItem
-     className="text-destructive focus:text-destructive"
-     onClick={() => setDeleteTarget(it)}
-   >
-     <Trash2 className="h-4 w-4 mr-2" />
-     Delete product
-   </DropdownMenuItem>
-   ```
-
-### AlertDialog (rendered once at the bottom, outside the row map)
-
-```tsx
-<AlertDialog open={!!deleteTarget} onOpenChange={(o) => { if (!o && !deleting) setDeleteTarget(null); }}>
-  <AlertDialogContent>
-    <AlertDialogHeader>
-      <AlertDialogTitle>Are you sure you want to delete this product?</AlertDialogTitle>
-      <AlertDialogDescription>
-        This will permanently delete{deleteTarget ? ` "${deleteTarget.name}"` : ""} and all of its
-        images, availability blackouts, and maintenance history. This action cannot be undone.
-      </AlertDialogDescription>
-    </AlertDialogHeader>
-    <AlertDialogFooter>
-      <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
-      <AlertDialogAction
-        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-        disabled={deleting}
-        onClick={(e) => {
-          e.preventDefault(); // prevent auto-close so we control it after the await
-          if (deleteTarget) deleteProduct(deleteTarget);
-        }}
-      >
-        {deleting ? "Deleting…" : "Delete"}
-      </AlertDialogAction>
-    </AlertDialogFooter>
-  </AlertDialogContent>
-</AlertDialog>
-```
-
-Desktop inline icon cluster (lg+) is **not** modified — no Delete icon added there.
+Out of scope (explicit): `get_booked_dates_for_products` stays byte-identical; no React/TS/edge-function changes; no changes to existing `prevent_double_booking` trigger or `is_date_range_available`.
 
 ---
 
-## Fix 2 — Scrollable tabs on mobile/tablet (unchanged)
+## Single SQL migration
 
-**File:** `src/pages/admin/InventoryDetail.tsx`
+### 1. New trigger function `public.prevent_double_booking_on_reactivate()`
 
-Wrap the existing `<TabsList>` in a horizontally-scrollable container and add `whitespace-nowrap` on each `TabsTrigger`. Desktop (lg+) is byte-identical to today.
+- Language: `plpgsql`, `SECURITY DEFINER`, `SET search_path = public`.
+- Fires per row on `bookings` UPDATE.
+- Guard clause: only run when `NEW.status IN ('pending','confirmed')` AND `OLD.status IS DISTINCT FROM NEW.status`. Otherwise `RETURN NEW` immediately. This excludes `confirmed → confirmed` no-ops and any status that isn't a re-activation into an active state.
+- For each row in `public.booking_items WHERE booking_id = NEW.id`, perform the same two checks `prevent_double_booking()` already encodes, against the booking's own date range (`NEW.event_date`..`COALESCE(NEW.event_end_date, NEW.event_date)`):
+  1. **Blackout check** — `EXISTS` in `inventory_blackouts` where `item_id = bi.product_id` and `daterange(start_date, end_date, '[]') && daterange(NEW.event_date, COALESCE(NEW.event_end_date, NEW.event_date), '[]')`. If hit → `RAISE EXCEPTION 'Cannot reactivate booking: % is unavailable on the requested dates (blackout).', bi.product_name USING ERRCODE = 'P0001';`
+  2. **Stock-overlap check** — count overlapping `booking_items` joined to `bookings` where `b.status IN ('pending','confirmed')`, `b.id <> NEW.id`, and date ranges overlap; compare to `inventory_items.stock_count` (default 1). If `count >= stock` → `RAISE EXCEPTION 'Cannot reactivate booking: % is fully booked on the requested dates (% of % units used).', bi.product_name, count, stock USING ERRCODE = 'P0001';`
+- `RETURN NEW` at the end.
+- Mirrors the logic in the existing `prevent_double_booking()` trigger so behavior is consistent across INSERT-on-items and reactivate-on-bookings paths. (Reusing `is_date_range_available` would also work but it lacks the per-product error message, so we inline the same two checks for clearer exception text.)
 
-```tsx
-<div className="overflow-x-auto lg:overflow-visible -mx-6 px-6 lg:mx-0 lg:px-0 [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-thumb]:bg-border">
-  <TabsList className="w-max lg:w-auto">
-    <TabsTrigger value="details" className="whitespace-nowrap">Details & pricing</TabsTrigger>
-    <TabsTrigger value="images" disabled={isNew} className="whitespace-nowrap">Images</TabsTrigger>
-    <TabsTrigger value="blackouts" disabled={isNew} className="whitespace-nowrap">Availability</TabsTrigger>
-    <TabsTrigger value="maintenance" disabled={isNew} className="whitespace-nowrap">Maintenance</TabsTrigger>
-    <TabsTrigger value="history" disabled={isNew} className="whitespace-nowrap">Bookings</TabsTrigger>
-  </TabsList>
-</div>
+### 2. New trigger `prevent_double_booking_on_reactivate`
+
+```sql
+DROP TRIGGER IF EXISTS prevent_double_booking_on_reactivate ON public.bookings;
+
+CREATE TRIGGER prevent_double_booking_on_reactivate
+BEFORE UPDATE OF status ON public.bookings
+FOR EACH ROW
+EXECUTE FUNCTION public.prevent_double_booking_on_reactivate();
 ```
 
-- `overflow-x-auto` at <lg, neutralized at lg+ via `lg:overflow-visible`
-- `-mx-6 px-6` lets the scroll area bleed to the screen edges within the page's `p-6` container; reset at lg+
-- `w-max` on `TabsList` at <lg prevents shrink-to-fit truncation
-- `whitespace-nowrap` on each trigger removes the "Mai…" clip
-- Thin webkit scrollbar styling provides a subtle affordance
+- `BEFORE UPDATE` so the exception aborts the row update cleanly before it commits (AFTER would also abort via transaction rollback, but BEFORE is the standard pattern for validation triggers and avoids any AFTER-trigger side effects firing first).
+- `UPDATE OF status` keeps the trigger off the hot path for unrelated column updates (notes, totals, payment fields, etc.).
+- `DROP ... IF EXISTS` for idempotent re-runs.
 
-No imports change for Fix 2.
+### 3. Permissions
+
+Trigger function is invoked by the trigger itself (table-owner context), so no `EXECUTE` grants to `anon`/`authenticated` are needed. Migration will explicitly `REVOKE EXECUTE ... FROM PUBLIC, anon, authenticated` to stay consistent with the security-linter hardening shipped in migration `20260514180347`.
 
 ---
 
-## Risks / things to confirm
+## Edge cases
 
-1. **`booking_items.product_id` orphans:** `booking_items` keeps a denormalized `product_name` + `product_price` per row, so historical bookings will still display correctly. The InventoryDetail "Bookings" tab for the deleted item is unreachable (the parent row is gone) — expected for a hard delete.
-2. **AlertDialog auto-close:** Confirm button uses `e.preventDefault()` so the dialog stays open during the awaited cascade and is closed explicitly via `setDeleteTarget(null)` on success. On failure, the dialog stays open so the admin sees the destructive toast and can retry.
-3. **Storage list pagination:** `supabase.storage.list()` returns up to 100 entries by default. Per-item upload counts are well under 100 in practice (admin-only tool), so a single `list()` call is sufficient. If a future item has more, leftover blobs become orphans (cosmetic only) — flagging here but not solving in this pass.
-4. **WebKit-only scrollbar styling:** Firefox shows its default thin scrollbar; acceptable for an admin-only page.
+| Case | Covered? | Behavior |
+|---|---|---|
+| `cancelled` → `confirmed` | Yes | Full re-validation; raises if conflict. |
+| `cancelled` → `pending` | Yes | Same path. |
+| `pending` → `confirmed` | Yes (transition into active state from a different value) | Re-validates. Acceptable — cheap and catches blackouts added between pending and confirm. |
+| `confirmed` → `confirmed` (no-op or unrelated re-save) | Skipped via `OLD.status IS DISTINCT FROM NEW.status` guard. |
+| `pending` → `pending` | Skipped via same guard. |
+| `confirmed` → `cancelled` | Skipped — `NEW.status NOT IN ('pending','confirmed')`. |
+| Active booking, `event_date` changed without status change | **Out of scope** for this trigger (status didn't transition). Reschedules already go through `RescheduleDialog` / admin flows that should validate up front; covering date-only edits would require a second trigger on `UPDATE OF event_date, event_end_date`. Flagged as a follow-up, not implemented here. |
+| Booking with no `booking_items` rows (legacy single-product `bookings.product_id`) | Loop simply finds zero rows → no error. Legacy single-product path already covered by other constraints; not regressed. |
+
+---
+
+## Risks
+
+- **False positives during admin "uncancel" flows.** If a booker legitimately re-confirms an old cancelled booking and the slot was rebooked, the UPDATE will fail. This is the desired behavior, but admins need a clear UI error. Error text uses `P0001` so client-side `code === 'P0001'` handlers (already used elsewhere in the app) will surface the message verbatim.
+- **Self-conflict avoidance.** The stock-overlap query uses `b.id <> NEW.id` so the booking being reactivated does not count against itself.
+- **Trigger ordering.** No other BEFORE UPDATE triggers exist on `bookings`, so ordering is not a concern.
+- **No impact on `get_booked_dates_for_products`** — confirmed; that function is not touched.
+
+---
+
+## Deliverable
+
+One migration file containing: `CREATE OR REPLACE FUNCTION public.prevent_double_booking_on_reactivate()`, `REVOKE EXECUTE` grants, `DROP TRIGGER IF EXISTS`, `CREATE TRIGGER`. After apply: re-run `supabase--linter` to confirm no new findings, and verify trigger registration via `pg_trigger`.
