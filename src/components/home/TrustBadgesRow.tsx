@@ -8,7 +8,7 @@ const badges = [
 
 export function TrustBadgesRow() {
   return (
-    <section className="bg-secondary/30 border-y border-border py-4">
+    <section className="bg-primary/15 border-y border-primary/25 py-4">
       <div className="container-page px-4">
         <div className="flex flex-row flex-wrap items-center justify-center gap-x-6 gap-y-2">
           {badges.map(({ icon: Icon, label }) => (
