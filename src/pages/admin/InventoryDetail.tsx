@@ -150,13 +150,15 @@ export default function InventoryDetail() {
       </div>
 
       <Tabs defaultValue="details">
-        <TabsList>
-          <TabsTrigger value="details">Details & pricing</TabsTrigger>
-          <TabsTrigger value="images" disabled={isNew}>Images</TabsTrigger>
-          <TabsTrigger value="blackouts" disabled={isNew}>Availability</TabsTrigger>
-          <TabsTrigger value="maintenance" disabled={isNew}>Maintenance</TabsTrigger>
-          <TabsTrigger value="history" disabled={isNew}>Bookings</TabsTrigger>
-        </TabsList>
+        <div className="overflow-x-auto lg:overflow-visible -mx-6 px-6 lg:mx-0 lg:px-0 [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-thumb]:bg-border">
+          <TabsList className="w-max lg:w-auto">
+            <TabsTrigger value="details" className="whitespace-nowrap">Details & pricing</TabsTrigger>
+            <TabsTrigger value="images" disabled={isNew} className="whitespace-nowrap">Images</TabsTrigger>
+            <TabsTrigger value="blackouts" disabled={isNew} className="whitespace-nowrap">Availability</TabsTrigger>
+            <TabsTrigger value="maintenance" disabled={isNew} className="whitespace-nowrap">Maintenance</TabsTrigger>
+            <TabsTrigger value="history" disabled={isNew} className="whitespace-nowrap">Bookings</TabsTrigger>
+          </TabsList>
+        </div>
 
         <TabsContent value="details">
           <Card className="p-4 space-y-3">

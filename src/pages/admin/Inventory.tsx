@@ -9,11 +9,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Boxes, Copy, Plus, Search, ArrowUp, ArrowDown, Eye, EyeOff, MoreHorizontal } from "lucide-react";
+import { Boxes, Copy, Plus, Search, ArrowUp, ArrowDown, Eye, EyeOff, MoreHorizontal, Trash2 } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import InventoryImageHealth, { useImageHealthRows, imageIssueCount } from "@/components/admin/InventoryImageHealth";
 import { AlertTriangle } from "lucide-react";
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
+import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogTitle, AlertDialogDescription, AlertDialogCancel, AlertDialogAction } from "@/components/ui/alert-dialog";
 
 interface Item {
   id: string;
@@ -40,6 +41,8 @@ export default function Inventory() {
   const [bulkOpen, setBulkOpen] = useState(false);
   const [bulkPct, setBulkPct] = useState("10");
   const [tab, setTab] = useState<"items" | "health">("items");
+  const [deleteTarget, setDeleteTarget] = useState<Item | null>(null);
+  const [deleting, setDeleting] = useState(false);
   const { rows: healthRows } = useImageHealthRows();
   const issues = imageIssueCount(healthRows);
 
@@ -99,6 +102,51 @@ export default function Inventory() {
     }
     setBulkOpen(false);
     toast({ title: `Updated ${targets.length} prices` });
+    load();
+  }
+
+  async function deleteProduct(item: Item) {
+    setDeleting(true);
+
+    {
+      const { error } = await (supabase.from("inventory_images") as any).delete().eq("item_id", item.id);
+      if (error) console.warn("[deleteProduct] inventory_images cleanup failed:", error.message);
+    }
+    {
+      const { error } = await (supabase.from("inventory_blackouts") as any).delete().eq("item_id", item.id);
+      if (error) console.warn("[deleteProduct] inventory_blackouts cleanup failed:", error.message);
+    }
+    {
+      const { error } = await (supabase.from("inventory_maintenance") as any).delete().eq("item_id", item.id);
+      if (error) console.warn("[deleteProduct] inventory_maintenance cleanup failed:", error.message);
+    }
+
+    try {
+      const { data: files, error: listErr } = await supabase.storage
+        .from("inventory-images")
+        .list(`${item.id}/`);
+      if (listErr) {
+        console.warn("[deleteProduct] storage list failed:", listErr.message);
+      } else if (files && files.length > 0) {
+        const paths = files.map((f) => `${item.id}/${f.name}`);
+        const { error: rmErr } = await supabase.storage.from("inventory-images").remove(paths);
+        if (rmErr) console.warn("[deleteProduct] storage remove failed:", rmErr.message);
+      }
+    } catch (e: any) {
+      console.warn("[deleteProduct] storage cleanup threw:", e?.message ?? e);
+    }
+
+    const { error: parentErr } = await (supabase.from("inventory_items") as any).delete().eq("id", item.id);
+    if (parentErr) {
+      setDeleting(false);
+      toast({ title: "Delete failed", description: parentErr.message, variant: "destructive" });
+      return;
+    }
+
+    setDeleting(false);
+    toast({ title: "Product deleted" });
+    setDeleteTarget(null);
+    setItems((prev) => prev.filter((x) => x.id !== item.id));
     load();
   }
 
@@ -195,7 +243,14 @@ export default function Inventory() {
                     <DropdownMenuItem onClick={() => toggleActive(it)}>
                       {it.active ? <><EyeOff className="h-4 w-4 mr-2"/>Hide</> : <><Eye className="h-4 w-4 mr-2"/>Show</>}
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => duplicate(it)}><Copy className="h-4 w-4 mr-2"/>Duplicate</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => duplicate(it)}><Copy className="h-4 w-4 mr-2"/>Duplicate product</DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      className="text-destructive focus:text-destructive"
+                      onClick={() => setDeleteTarget(it)}
+                    >
+                      <Trash2 className="h-4 w-4 mr-2" />Delete product
+                    </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
@@ -229,6 +284,30 @@ export default function Inventory() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <AlertDialog open={!!deleteTarget} onOpenChange={(o) => { if (!o && !deleting) setDeleteTarget(null); }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure you want to delete this product?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will permanently delete{deleteTarget ? ` "${deleteTarget.name}"` : ""} and all of its images, availability blackouts, and maintenance history. This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              disabled={deleting}
+              onClick={(e) => {
+                e.preventDefault();
+                if (deleteTarget) deleteProduct(deleteTarget);
+              }}
+            >
+              {deleting ? "Deleting…" : "Delete"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

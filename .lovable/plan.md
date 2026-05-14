@@ -1,73 +1,174 @@
-# Fix mobile layout of /admin/inventory rows (compact overflow menu at < lg)
-
 ## Files to edit
 
-- `src/pages/admin/Inventory.tsx` — only the row markup inside the `filtered.map((it) => ...)` block. No other file changes; the existing shadcn `DropdownMenu` at `src/components/ui/dropdown-menu.tsx` is reused as-is.
+1. `src/pages/admin/Inventory.tsx` — overflow menu items + AlertDialog + cascading hard-delete handler (Fix 1)
+2. `src/pages/admin/InventoryDetail.tsx` — horizontally scrollable `TabsList` on mobile/tablet (Fix 2)
 
-Customer-facing pages, cart, StartHereModal, hero, and layout components are untouched. The search bar, category Select, Tabs (Items / Image health), and the "items need image attention" banner are left exactly as they are.
+No other files. No new dependencies.
 
-## High-level changes
+---
 
-### New imports in `Inventory.tsx`
-- Add `MoreHorizontal` to the existing `lucide-react` import.
-- Add `DropdownMenu`, `DropdownMenuTrigger`, `DropdownMenuContent`, `DropdownMenuItem` from `@/components/ui/dropdown-menu`.
+## Fix 1 — Overflow menu: add Delete product (hard delete + best-effort cascade)
 
-### Row JSX restructure (mobile/tablet vs desktop via Tailwind only)
+**File:** `src/pages/admin/Inventory.tsx`
 
-Keep one row container; switch internal layout with responsive utilities so desktop (≥1024px) is unchanged.
+### New imports
+- `@/components/ui/alert-dialog`: `AlertDialog`, `AlertDialogContent`, `AlertDialogHeader`, `AlertDialogFooter`, `AlertDialogTitle`, `AlertDialogDescription`, `AlertDialogCancel`, `AlertDialogAction`
+- `lucide-react`: extend existing import to add `Trash2`
+- `@/components/ui/dropdown-menu`: extend existing import to add `DropdownMenuSeparator`
 
-Current (single flex row, everything inline):
-```text
-[thumb] [name + badges]            [price]  [↑][↓][👁][⎘]
+### New state
+```ts
+const [deleteTarget, setDeleteTarget] = useState<Item | null>(null);
+const [deleting, setDeleting] = useState(false);
 ```
 
-New layout at <lg (mobile + portrait tablet):
-```text
-[thumb] [name                        ] [⋯]
-        [price · Stock N · Hidden    ]
+### Storage path convention (verified)
+`InventoryDetail.tsx` uploads to `inventory-images` bucket using path `${id}/${Date.now()}-${safeName}`, where `id` is the inventory item id. So listing prefix `${item.id}/` and removing returned entries is the correct pattern.
+
+### New handler — `deleteProduct`
+
+Best-effort cascade in this exact order; only the final parent delete aborts on failure.
+
+```ts
+async function deleteProduct(item: Item) {
+  setDeleting(true);
+
+  // 1) inventory_images rows — best-effort
+  {
+    const { error } = await (supabase.from("inventory_images") as any).delete().eq("item_id", item.id);
+    if (error) console.warn("[deleteProduct] inventory_images cleanup failed:", error.message);
+  }
+
+  // 2) inventory_blackouts rows — best-effort
+  {
+    const { error } = await (supabase.from("inventory_blackouts") as any).delete().eq("item_id", item.id);
+    if (error) console.warn("[deleteProduct] inventory_blackouts cleanup failed:", error.message);
+  }
+
+  // 3) inventory_maintenance rows — best-effort
+  {
+    const { error } = await (supabase.from("inventory_maintenance") as any).delete().eq("item_id", item.id);
+    if (error) console.warn("[deleteProduct] inventory_maintenance cleanup failed:", error.message);
+  }
+
+  // 4) Storage cleanup under `${item.id}/` — best-effort, never blocks
+  try {
+    const { data: files, error: listErr } = await supabase.storage
+      .from("inventory-images")
+      .list(`${item.id}/`);
+    if (listErr) {
+      console.warn("[deleteProduct] storage list failed:", listErr.message);
+    } else if (files && files.length > 0) {
+      const paths = files.map((f) => `${item.id}/${f.name}`);
+      const { error: rmErr } = await supabase.storage.from("inventory-images").remove(paths);
+      if (rmErr) console.warn("[deleteProduct] storage remove failed:", rmErr.message);
+    }
+  } catch (e: any) {
+    console.warn("[deleteProduct] storage cleanup threw:", e?.message ?? e);
+  }
+
+  // 5) Parent row — only this step aborts on failure
+  const { error: parentErr } = await (supabase.from("inventory_items") as any).delete().eq("id", item.id);
+  if (parentErr) {
+    setDeleting(false);
+    toast({ title: "Delete failed", description: parentErr.message, variant: "destructive" });
+    return;
+  }
+
+  setDeleting(false);
+  toast({ title: "Product deleted" });
+  setDeleteTarget(null);
+  setItems((prev) => prev.filter((x) => x.id !== item.id));
+  load();
+}
 ```
 
-New desktop (lg and up): identical to today.
+Notes:
+- `as any` casts only on `supabase.from(...)` calls (matching the existing file's pattern). Storage calls and `setItems`/toast remain typed.
+- Local-state filter mirrors how `move`/`duplicate` rely on `load()` — we do both for instant UI feedback plus authoritative refresh.
 
-Concretely inside the row:
-1. Thumbnail block (`w-14 h-14 ...`) — unchanged.
-2. Middle block (`flex-1 min-w-0`):
-   - Line 1: item name `Link` (unchanged, already `truncate block`).
-   - Line 2 wrapper becomes a single-row flex with `flex items-center flex-wrap gap-2 mt-1`:
-     - On mobile/tablet, render the price here as a small chip: `<span className="lg:hidden font-semibold text-sm">${base_price}</span>` followed by `<span className="lg:hidden text-xs text-muted-foreground">/ day</span>`.
-     - Existing badges (`category`, `Hidden`, `Stock N`) remain. The `category` badge gets `hidden lg:inline-flex` so mobile/tablet shows only Stock + Hidden (keeps the line short).
-3. Desktop-only price column: wrap the existing `<div class="text-right">…</div>` with `hidden lg:block` so it stays on desktop and disappears on mobile/tablet (price already shown inline there).
-4. Action icons cluster (the four `Button size="icon"` items):
-   - Wrap the existing four buttons in a `<div class="hidden lg:flex items-center gap-1">` so desktop behavior is byte-identical.
-   - Add a sibling mobile/tablet-only overflow trigger:
-     ```tsx
-     <DropdownMenu>
-       <DropdownMenuTrigger asChild>
-         <Button size="icon" variant="ghost" className="lg:hidden" aria-label="Row actions">
-           <MoreHorizontal className="h-4 w-4" />
-         </Button>
-       </DropdownMenuTrigger>
-       <DropdownMenuContent align="end" className="w-44">
-         <DropdownMenuItem onClick={() => move(it, -1)}><ArrowUp className="h-4 w-4 mr-2"/>Move up</DropdownMenuItem>
-         <DropdownMenuItem onClick={() => move(it, 1)}><ArrowDown className="h-4 w-4 mr-2"/>Move down</DropdownMenuItem>
-         <DropdownMenuItem onClick={() => toggleActive(it)}>
-           {it.active ? <><EyeOff className="h-4 w-4 mr-2"/>Hide</> : <><Eye className="h-4 w-4 mr-2"/>Show</>}
-         </DropdownMenuItem>
-         <DropdownMenuItem onClick={() => duplicate(it)}><Copy className="h-4 w-4 mr-2"/>Duplicate</DropdownMenuItem>
-       </DropdownMenuContent>
-     </DropdownMenu>
-     ```
-   - Handlers reuse the exact functions already defined (`move`, `toggleActive`, `duplicate`) — no logic changes.
+### DropdownMenuContent — final order
 
-### Tailwind summary
-- Added: `hidden lg:flex` on existing icon cluster, `hidden lg:block` on existing price column, `lg:hidden` on new mobile/tablet price chip + overflow button, `flex-wrap gap-2` on the badges line, `hidden lg:inline-flex` on the category badge.
-- Removed: nothing structural; existing classes preserved on desktop path.
+1. **Move up** → `move(it, -1)`
+2. **Move down** → `move(it, 1)`
+3. **Show / Hide** → `toggleActive(it)` (label flips on `it.active`)
+4. **Duplicate product** → `duplicate(it)` (label changed from "Duplicate")
+5. `<DropdownMenuSeparator />`
+6. **Delete product** → `setDeleteTarget(it)` — destructive styling:
+   ```tsx
+   <DropdownMenuItem
+     className="text-destructive focus:text-destructive"
+     onClick={() => setDeleteTarget(it)}
+   >
+     <Trash2 className="h-4 w-4 mr-2" />
+     Delete product
+   </DropdownMenuItem>
+   ```
 
-No changes to: state, queries, handlers, sort logic, banner, tabs, search, filter, bulk-price dialog, image health tab.
+### AlertDialog (rendered once at the bottom, outside the row map)
+
+```tsx
+<AlertDialog open={!!deleteTarget} onOpenChange={(o) => { if (!o && !deleting) setDeleteTarget(null); }}>
+  <AlertDialogContent>
+    <AlertDialogHeader>
+      <AlertDialogTitle>Are you sure you want to delete this product?</AlertDialogTitle>
+      <AlertDialogDescription>
+        This will permanently delete{deleteTarget ? ` "${deleteTarget.name}"` : ""} and all of its
+        images, availability blackouts, and maintenance history. This action cannot be undone.
+      </AlertDialogDescription>
+    </AlertDialogHeader>
+    <AlertDialogFooter>
+      <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
+      <AlertDialogAction
+        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+        disabled={deleting}
+        onClick={(e) => {
+          e.preventDefault(); // prevent auto-close so we control it after the await
+          if (deleteTarget) deleteProduct(deleteTarget);
+        }}
+      >
+        {deleting ? "Deleting…" : "Delete"}
+      </AlertDialogAction>
+    </AlertDialogFooter>
+  </AlertDialogContent>
+</AlertDialog>
+```
+
+Desktop inline icon cluster (lg+) is **not** modified — no Delete icon added there.
+
+---
+
+## Fix 2 — Scrollable tabs on mobile/tablet (unchanged)
+
+**File:** `src/pages/admin/InventoryDetail.tsx`
+
+Wrap the existing `<TabsList>` in a horizontally-scrollable container and add `whitespace-nowrap` on each `TabsTrigger`. Desktop (lg+) is byte-identical to today.
+
+```tsx
+<div className="overflow-x-auto lg:overflow-visible -mx-6 px-6 lg:mx-0 lg:px-0 [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-thumb]:bg-border">
+  <TabsList className="w-max lg:w-auto">
+    <TabsTrigger value="details" className="whitespace-nowrap">Details & pricing</TabsTrigger>
+    <TabsTrigger value="images" disabled={isNew} className="whitespace-nowrap">Images</TabsTrigger>
+    <TabsTrigger value="blackouts" disabled={isNew} className="whitespace-nowrap">Availability</TabsTrigger>
+    <TabsTrigger value="maintenance" disabled={isNew} className="whitespace-nowrap">Maintenance</TabsTrigger>
+    <TabsTrigger value="history" disabled={isNew} className="whitespace-nowrap">Bookings</TabsTrigger>
+  </TabsList>
+</div>
+```
+
+- `overflow-x-auto` at <lg, neutralized at lg+ via `lg:overflow-visible`
+- `-mx-6 px-6` lets the scroll area bleed to the screen edges within the page's `p-6` container; reset at lg+
+- `w-max` on `TabsList` at <lg prevents shrink-to-fit truncation
+- `whitespace-nowrap` on each trigger removes the "Mai…" clip
+- Thin webkit scrollbar styling provides a subtle affordance
+
+No imports change for Fix 2.
+
+---
 
 ## Risks / things to confirm
 
-1. **Category badge on mobile/tablet**: plan hides it at <lg to keep line 2 to one row. If you want it visible there too, say so — it just changes one class.
-2. **MoreHorizontal icon**: standard lucide icon, already used elsewhere in the project bundle — no new dependency.
-3. **Dropdown z-index inside `Card overflow-hidden`**: shadcn `DropdownMenuContent` portals to `body`, so the parent `Card`'s `overflow-hidden` will not clip it. Verified by reading `dropdown-menu.tsx` (uses `DropdownMenuPrimitive.Portal`).
-4. **Accessibility**: overflow button gets `aria-label="Row actions"`; menu items have visible text labels.
+1. **`booking_items.product_id` orphans:** `booking_items` keeps a denormalized `product_name` + `product_price` per row, so historical bookings will still display correctly. The InventoryDetail "Bookings" tab for the deleted item is unreachable (the parent row is gone) — expected for a hard delete.
+2. **AlertDialog auto-close:** Confirm button uses `e.preventDefault()` so the dialog stays open during the awaited cascade and is closed explicitly via `setDeleteTarget(null)` on success. On failure, the dialog stays open so the admin sees the destructive toast and can retry.
+3. **Storage list pagination:** `supabase.storage.list()` returns up to 100 entries by default. Per-item upload counts are well under 100 in practice (admin-only tool), so a single `list()` call is sufficient. If a future item has more, leftover blobs become orphans (cosmetic only) — flagging here but not solving in this pass.
+4. **WebKit-only scrollbar styling:** Firefox shows its default thin scrollbar; acceptable for an admin-only page.
