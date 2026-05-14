@@ -27,7 +27,13 @@ export function StartHereModal({ open, onOpenChange }: StartHereModalProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent
+        className={
+          stage === "welcome"
+            ? "sm:max-w-md"
+            : "sm:max-w-[640px] w-[95vw] h-[85vh] max-h-[760px] p-0 overflow-hidden flex flex-col"
+        }
+      >
         {stage === "welcome" ? (
           <>
             <DialogHeader>
@@ -66,19 +72,28 @@ export function StartHereModal({ open, onOpenChange }: StartHereModalProps) {
             </div>
           </>
         ) : (
-          <div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setStage("welcome")}
-              className="w-fit -ml-2 mb-2"
-            >
-              <ArrowLeft className="mr-1 h-4 w-4" />
-              Back
-            </Button>
-            <DialogTitle>Custom Quote</DialogTitle>
-            <div className="mt-4">
-              {/* Custom quote form content */}
+          <div className="flex flex-col h-full w-full">
+            <div className="flex items-center gap-2 px-4 py-3 border-b shrink-0">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setStage("welcome")}
+                className="w-fit -ml-2"
+              >
+                <ArrowLeft className="mr-1 h-4 w-4" />
+                Back
+              </Button>
+              <DialogTitle>Custom Quote</DialogTitle>
+            </div>
+            <div className="flex-1 min-h-0 w-full overflow-hidden">
+              <iframe
+                src="https://form.jotform.com/261328979576072"
+                title="Custom Quote Form"
+                className="w-full h-full border-0"
+                style={{ minHeight: "500px" }}
+                allow="geolocation; microphone; camera; payment"
+                sandbox="allow-forms allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
+              />
             </div>
           </div>
         )}
