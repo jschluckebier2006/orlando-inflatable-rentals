@@ -9,10 +9,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Boxes, Copy, Plus, Search, ArrowUp, ArrowDown, Eye, EyeOff } from "lucide-react";
+import { Boxes, Copy, Plus, Search, ArrowUp, ArrowDown, Eye, EyeOff, MoreHorizontal } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import InventoryImageHealth, { useImageHealthRows, imageIssueCount } from "@/components/admin/InventoryImageHealth";
 import { AlertTriangle } from "lucide-react";
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 
 interface Item {
   id: string;
@@ -162,17 +163,19 @@ export default function Inventory() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <Link to={`/admin/inventory/${it.id}`} className="font-medium hover:underline truncate block">{it.name}</Link>
-                  <div className="flex flex-wrap gap-1 mt-1">
-                    <Badge variant="outline" className="text-xs">{it.category}</Badge>
+                  <div className="flex items-center flex-wrap gap-2 mt-1">
+                    <span className="lg:hidden font-semibold text-sm">${Number(it.base_price).toFixed(0)}</span>
+                    <span className="lg:hidden text-xs text-muted-foreground">/ day</span>
+                    <Badge variant="outline" className="text-xs hidden lg:inline-flex">{it.category}</Badge>
                     {!it.active && <Badge variant="destructive" className="text-xs">Hidden</Badge>}
                     <Badge variant="secondary" className="text-xs">Stock {it.stock_count}</Badge>
                   </div>
                 </div>
-                <div className="text-right">
+                <div className="text-right hidden lg:block">
                   <div className="font-semibold">${Number(it.base_price).toFixed(0)}</div>
                   <div className="text-xs text-muted-foreground">base / day</div>
                 </div>
-                <div className="flex items-center gap-1">
+                <div className="hidden lg:flex items-center gap-1">
                   <Button size="icon" variant="ghost" title="Move up" onClick={() => move(it, -1)}><ArrowUp className="h-4 w-4"/></Button>
                   <Button size="icon" variant="ghost" title="Move down" onClick={() => move(it, 1)}><ArrowDown className="h-4 w-4"/></Button>
                   <Button size="icon" variant="ghost" title={it.active?"Hide":"Show"} onClick={() => toggleActive(it)}>
@@ -180,6 +183,21 @@ export default function Inventory() {
                   </Button>
                   <Button size="icon" variant="ghost" title="Duplicate" onClick={() => duplicate(it)}><Copy className="h-4 w-4"/></Button>
                 </div>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button size="icon" variant="ghost" className="lg:hidden" aria-label="Row actions">
+                      <MoreHorizontal className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-44">
+                    <DropdownMenuItem onClick={() => move(it, -1)}><ArrowUp className="h-4 w-4 mr-2"/>Move up</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => move(it, 1)}><ArrowDown className="h-4 w-4 mr-2"/>Move down</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => toggleActive(it)}>
+                      {it.active ? <><EyeOff className="h-4 w-4 mr-2"/>Hide</> : <><Eye className="h-4 w-4 mr-2"/>Show</>}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => duplicate(it)}><Copy className="h-4 w-4 mr-2"/>Duplicate</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             ))}
           </div>
