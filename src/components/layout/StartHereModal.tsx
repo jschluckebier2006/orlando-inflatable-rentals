@@ -92,6 +92,7 @@ export function StartHereModal({ open, onOpenChange }: StartHereModalProps) {
                 className="w-full h-full border-0"
                 style={{ minHeight: "500px" }}
                 allow="geolocation; microphone; camera; payment"
+                sandbox="allow-forms allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
               />
             </div>
           </div>
