@@ -76,14 +76,14 @@ export function HeroSection() {
                   style={{ background: "linear-gradient(90deg, #FF6B00 0%, #FFD000 100%)" }}
                 >
                   <span
-                    className="relative z-10 uppercase tracking-widest font-bold text-white/85"
-                    style={{ fontSize: "11px", textShadow: "0 1px 3px rgba(0,0,0,0.35)" }}
+                    className="relative z-10 uppercase tracking-widest font-bold text-white"
+                    style={{ fontSize: "11px", textShadow: "0 1px 3px rgba(0,0,0,0.55)" }}
                   >
                     ☀️ This Summer's #1 Choice
                   </span>
                   <span
                     className="relative z-10 font-black text-white leading-tight text-lg"
-                    style={{ textShadow: "0 2px 5px rgba(0,0,0,0.35)" }}
+                    style={{ textShadow: "0 2px 6px rgba(0,0,0,0.55)" }}
                   >
                     Beat the Heat — Water Slides →
                   </span>
@@ -92,9 +92,9 @@ export function HeroSection() {
               <a href="tel:4074971840" className="w-full">
                 <Button
                   size="lg"
-                  className="w-full rounded-full bg-white text-primary hover:bg-white/90 btn-bounce text-lg px-8 py-6 font-semibold shadow-xl"
+                  className="w-full rounded-full bg-white text-slate-900 hover:bg-white/90 btn-bounce text-lg px-8 py-6 font-semibold shadow-xl"
                 >
-                  <Phone className="mr-2 h-5 w-5" />
+                  <Phone className="mr-2 h-5 w-5 text-slate-900" />
                   (407) 497-1840
                 </Button>
               </a>
