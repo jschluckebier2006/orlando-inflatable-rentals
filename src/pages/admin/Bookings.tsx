@@ -354,7 +354,7 @@ export default function AdminBookings() {
                     )}
                     {b.duration_type && (
                       <div className="text-xs font-medium text-primary">
-                        {b.duration_type === "7hour" ? "7-Hour" : b.duration_type === "overnight" ? "Overnight" : "Full Weekend"}
+                        {b.duration_type === "7hour" ? "Day Rental (7-Hours)" : b.duration_type === "overnight" ? "Overnight" : "Full Weekend"}
                       </div>
                     )}
                     {b.event_start_time && (
