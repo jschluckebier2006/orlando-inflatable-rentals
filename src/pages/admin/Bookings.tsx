@@ -345,14 +345,13 @@ export default function AdminBookings() {
                 <TableHead>Customer</TableHead>
                 <TableHead>Address</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead>Payment</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {loading ? (
-                  <TableRow><TableCell colSpan={6} className="text-center py-8">Loading...</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={5} className="text-center py-8">Loading...</TableCell></TableRow>
               ) : activeFiltered.length === 0 ? (
-                  <TableRow><TableCell colSpan={6} className="text-center py-8 text-muted-foreground">No bookings</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={5} className="text-center py-8 text-muted-foreground">No bookings</TableCell></TableRow>
               ) : activeFiltered.map((b) => (
                 <TableRow key={b.id}>
                   <TableCell className="whitespace-nowrap">
@@ -372,6 +371,23 @@ export default function AdminBookings() {
                           {fmtTime(b.event_start_time)}{b.event_end_time ? ` – ${fmtTime(b.event_end_time)}` : ""}
                       </div>
                     )}
+                      {b.payment_status && (
+                        <div className="space-y-1 pt-2 text-xs">
+                          <Badge className={PAYMENT_COLORS[b.payment_status]}>
+                            {PAYMENT_LABELS[b.payment_status]}
+                          </Badge>
+                          {b.total_amount != null && (
+                            <div className="text-muted-foreground">
+                              Paid ${Number(b.amount_paid ?? 0).toFixed(2)} of ${Number(b.total_amount).toFixed(2)}
+                            </div>
+                          )}
+                          {b.balance_due != null && Number(b.balance_due) > 0 && (
+                            <div className="font-semibold text-destructive">
+                              Balance: ${Number(b.balance_due).toFixed(2)}
+                            </div>
+                          )}
+                        </div>
+                      )}
                       <div className="flex flex-wrap gap-1 pt-2">
                         <Button size="sm" variant="outline" onClick={() => { setEditing(b as any); setFormOpen(true); }}><Pencil className="h-3 w-3" /></Button>
                         {b.status === "pending" && (
@@ -429,27 +445,6 @@ export default function AdminBookings() {
                   </TableCell>
                   <TableCell>
                     <Badge className={STATUS_COLORS[b.status]}>{b.status}</Badge>
-                  </TableCell>
-                  <TableCell className="text-xs whitespace-nowrap">
-                    {b.payment_status ? (
-                      <div className="space-y-1">
-                        <Badge className={PAYMENT_COLORS[b.payment_status]}>
-                          {PAYMENT_LABELS[b.payment_status]}
-                        </Badge>
-                        {b.total_amount != null && (
-                          <div className="text-muted-foreground">
-                            Paid ${Number(b.amount_paid ?? 0).toFixed(2)} of ${Number(b.total_amount).toFixed(2)}
-                          </div>
-                        )}
-                        {b.balance_due != null && Number(b.balance_due) > 0 && (
-                          <div className="font-semibold text-destructive">
-                            Balance: ${Number(b.balance_due).toFixed(2)}
-                          </div>
-                        )}
-                      </div>
-                    ) : (
-                      <span className="text-muted-foreground">—</span>
-                    )}
                   </TableCell>
                 </TableRow>
               ))}
