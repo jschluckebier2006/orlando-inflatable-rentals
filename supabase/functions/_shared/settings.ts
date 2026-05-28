@@ -15,7 +15,7 @@ export interface AppSettings {
 }
 
 const DEFAULTS: AppSettings = {
-  taxRate: 0.07,
+  taxRate: 0.065,
   damageWaiverRate: 0.10,
   defaultDeposit: 5,
   onlineCheckoutFeeRate: 0.04,
