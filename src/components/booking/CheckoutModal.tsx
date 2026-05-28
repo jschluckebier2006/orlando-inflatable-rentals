@@ -94,6 +94,18 @@ export function CheckoutModal() {
       }));
     } else if (duration === "weekend") {
       setForm((f) => ({ ...f, event_start_time: "08:00", event_end_time: "20:00" }));
+    } else if (duration === "7hour") {
+      setForm((f) => {
+        // If a stale start time is past the latest allowed (1:00 PM), clear it.
+        const start = f.event_start_time && f.event_start_time <= SEVEN_HOUR_LATEST_START
+          ? f.event_start_time
+          : "";
+        return {
+          ...f,
+          event_start_time: start,
+          event_end_time: start ? addSevenHours(start) : "",
+        };
+      });
     }
     // reset selected date if it no longer fits weekend
     if (duration === "weekend" && date && date.getDay() !== 6) setDate(undefined);
