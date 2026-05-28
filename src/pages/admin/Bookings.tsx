@@ -224,6 +224,33 @@ export default function AdminBookings() {
     setCancelSubmitting(false);
   }
 
+  async function confirmDelete() {
+    if (!deleteTarget || deleteConfirmText !== "DELETE") return;
+    setDeleteSubmitting(true);
+    const id = deleteTarget.id;
+    // Remove child rows first to avoid orphans
+    const child1 = await supabase.from("booking_items").delete().eq("booking_id", id);
+    const child2 = await supabase.from("booking_payments").delete().eq("booking_id", id);
+    const child3 = await supabase.from("booking_activity").delete().eq("booking_id", id);
+    const childErr = child1.error || child2.error || child3.error;
+    if (childErr) {
+      toast({ title: "Delete failed", description: childErr.message, variant: "destructive" });
+      setDeleteSubmitting(false);
+      return;
+    }
+    const { error } = await supabase.from("bookings").delete().eq("id", id);
+    if (error) {
+      toast({ title: "Delete failed", description: error.message, variant: "destructive" });
+      setDeleteSubmitting(false);
+      return;
+    }
+    setBookings((bs) => bs.filter((x) => x.id !== id));
+    toast({ title: "Booking deleted" });
+    setDeleteTarget(null);
+    setDeleteConfirmText("");
+    setDeleteSubmitting(false);
+  }
+
   async function confirmRestore() {
     if (!restoreTarget) return;
     setRestoreSubmitting(true);
