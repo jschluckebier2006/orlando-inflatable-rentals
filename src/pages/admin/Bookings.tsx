@@ -104,6 +104,17 @@ const PAYMENT_LABELS: Record<PaymentStatus, string> = {
   refunded: "Refunded",
 };
 
+function fmtTime(t?: string | null): string {
+  if (!t) return "";
+  const m = /^(\d{1,2}):(\d{2})/.exec(t);
+  if (!m) return t;
+  const h = parseInt(m[1], 10);
+  const mm = m[2];
+  const suffix = h >= 12 ? "pm" : "am";
+  const h12 = h % 12 === 0 ? 12 : h % 12;
+  return `${h12}:${mm}${suffix}`;
+}
+
 export default function AdminBookings() {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -335,14 +346,13 @@ export default function AdminBookings() {
                 <TableHead>Address</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Payment</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {loading ? (
-                <TableRow><TableCell colSpan={7} className="text-center py-8">Loading...</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={6} className="text-center py-8">Loading...</TableCell></TableRow>
               ) : activeFiltered.length === 0 ? (
-                <TableRow><TableCell colSpan={7} className="text-center py-8 text-muted-foreground">No bookings</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={6} className="text-center py-8 text-muted-foreground">No bookings</TableCell></TableRow>
               ) : activeFiltered.map((b) => (
                 <TableRow key={b.id}>
                   <TableCell className="whitespace-nowrap">
@@ -359,9 +369,25 @@ export default function AdminBookings() {
                     )}
                     {b.event_start_time && (
                       <div className="text-xs text-muted-foreground">
-                        {b.event_start_time}{b.event_end_time ? ` – ${b.event_end_time}` : ""}
+                          {fmtTime(b.event_start_time)}{b.event_end_time ? ` – ${fmtTime(b.event_end_time)}` : ""}
                       </div>
                     )}
+                      <div className="flex flex-wrap gap-1 pt-2">
+                        <Button size="sm" variant="outline" onClick={() => { setEditing(b as any); setFormOpen(true); }}><Pencil className="h-3 w-3" /></Button>
+                        {b.status === "pending" && (
+                          <Button size="sm" onClick={() => updateStatus(b.id, "confirmed")}>Confirm</Button>
+                        )}
+                        {b.status === "confirmed" && (
+                          <Button size="sm" variant="outline" onClick={() => updateStatus(b.id, "completed")}>Complete</Button>
+                        )}
+                        {b.status !== "cancelled" && b.status !== "completed" && (
+                          <Button size="sm" variant="destructive" onClick={() => {
+                            setCancelTarget(b);
+                            setCancelReason("");
+                            setRefundConfirmed(false);
+                          }}>Cancel</Button>
+                        )}
+                      </div>
                   </TableCell>
                   <TableCell>
                     {b.booking_items && b.booking_items.length > 0 ? (
@@ -423,22 +449,6 @@ export default function AdminBookings() {
                       </div>
                     ) : (
                       <span className="text-muted-foreground">—</span>
-                    )}
-                  </TableCell>
-                  <TableCell className="text-right space-x-1 whitespace-nowrap">
-                    <Button size="sm" variant="outline" onClick={() => { setEditing(b as any); setFormOpen(true); }}><Pencil className="h-3 w-3" /></Button>
-                    {b.status === "pending" && (
-                      <Button size="sm" onClick={() => updateStatus(b.id, "confirmed")}>Confirm</Button>
-                    )}
-                    {b.status === "confirmed" && (
-                      <Button size="sm" variant="outline" onClick={() => updateStatus(b.id, "completed")}>Complete</Button>
-                    )}
-                    {b.status !== "cancelled" && b.status !== "completed" && (
-                      <Button size="sm" variant="destructive" onClick={() => {
-                        setCancelTarget(b);
-                        setCancelReason("");
-                        setRefundConfirmed(false);
-                      }}>Cancel</Button>
                     )}
                   </TableCell>
                 </TableRow>
@@ -776,7 +786,7 @@ function UpcomingWeekList({ bookings }: { bookings: Booking[] }) {
                     {format(parseISO(b.event_date), "EEE, MMM d")}
                   </div>
                   {b.event_start_time && (
-                    <div className="text-xs text-muted-foreground">{b.event_start_time}</div>
+                    <div className="text-xs text-muted-foreground">{fmtTime(b.event_start_time)}</div>
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
