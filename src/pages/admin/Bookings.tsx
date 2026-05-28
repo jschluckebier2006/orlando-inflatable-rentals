@@ -36,6 +36,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { buttonVariants } from "@/components/ui/button";
 import { logActivity } from "@/lib/adminActivity";
@@ -144,6 +145,11 @@ export default function AdminBookings() {
   const [restoreTarget, setRestoreTarget] = useState<Booking | null>(null);
   const [restoreSubmitting, setRestoreSubmitting] = useState(false);
 
+  // Delete dialog state
+  const [deleteTarget, setDeleteTarget] = useState<Booking | null>(null);
+  const [deleteConfirmText, setDeleteConfirmText] = useState("");
+  const [deleteSubmitting, setDeleteSubmitting] = useState(false);
+
   useEffect(() => {
     (async () => {
       const { data: { session } } = await supabase.auth.getSession();
@@ -216,6 +222,33 @@ export default function AdminBookings() {
     toast({ title: "Booking cancelled" });
     setCancelTarget(null);
     setCancelSubmitting(false);
+  }
+
+  async function confirmDelete() {
+    if (!deleteTarget || deleteConfirmText !== "DELETE") return;
+    setDeleteSubmitting(true);
+    const id = deleteTarget.id;
+    // Remove child rows first to avoid orphans
+    const child1 = await supabase.from("booking_items").delete().eq("booking_id", id);
+    const child2 = await supabase.from("booking_payments").delete().eq("booking_id", id);
+    const child3 = await supabase.from("booking_activity").delete().eq("booking_id", id);
+    const childErr = child1.error || child2.error || child3.error;
+    if (childErr) {
+      toast({ title: "Delete failed", description: childErr.message, variant: "destructive" });
+      setDeleteSubmitting(false);
+      return;
+    }
+    const { error } = await supabase.from("bookings").delete().eq("id", id);
+    if (error) {
+      toast({ title: "Delete failed", description: error.message, variant: "destructive" });
+      setDeleteSubmitting(false);
+      return;
+    }
+    setBookings((bs) => bs.filter((x) => x.id !== id));
+    toast({ title: "Booking deleted" });
+    setDeleteTarget(null);
+    setDeleteConfirmText("");
+    setDeleteSubmitting(false);
   }
 
   async function confirmRestore() {
@@ -403,6 +436,10 @@ export default function AdminBookings() {
                             setRefundConfirmed(false);
                           }}>Cancel</Button>
                         )}
+                        <Button size="sm" variant="destructive" onClick={() => {
+                          setDeleteTarget(b);
+                          setDeleteConfirmText("");
+                        }}>Delete</Button>
                       </div>
                   </TableCell>
                   <TableCell>
@@ -525,6 +562,45 @@ export default function AdminBookings() {
               onClick={(e) => { e.preventDefault(); confirmRestore(); }}
             >
               Restore booking
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={!!deleteTarget} onOpenChange={(o) => { if (!o) { setDeleteTarget(null); setDeleteConfirmText(""); } }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete this booking?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this booking? This action can't be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+
+          {deleteTarget && (
+            <div className="rounded-md border bg-muted/40 p-3 text-sm">
+              <div><span className="text-muted-foreground">Customer:</span> <strong>{deleteTarget.customer_name}</strong></div>
+              <div><span className="text-muted-foreground">Date:</span> <strong>{format(parseISO(deleteTarget.event_date), "EEE, MMM d, yyyy")}</strong></div>
+            </div>
+          )}
+
+          <div className="space-y-2">
+            <label className="text-sm">Type <strong>DELETE</strong> to confirm:</label>
+            <Input
+              value={deleteConfirmText}
+              onChange={(e) => setDeleteConfirmText(e.target.value)}
+              placeholder="DELETE"
+              autoComplete="off"
+            />
+          </div>
+
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              disabled={deleteConfirmText !== "DELETE" || deleteSubmitting}
+              onClick={(e) => { e.preventDefault(); confirmDelete(); }}
+              className={buttonVariants({ variant: "destructive" })}
+            >
+              Delete booking
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
