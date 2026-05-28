@@ -7,7 +7,7 @@ export const DURATION_MULTIPLIERS: Record<DurationType, number> = {
 };
 
 export const DURATION_LABELS: Record<DurationType, string> = {
-  "7hour": "7-Hour Rental",
+  "7hour": "Day Rental (7-Hours)",
   overnight: "Overnight",
   weekend: "Full Weekend",
 };
