@@ -46,6 +46,16 @@ function buildTimeSlots() {
 }
 const TIME_SLOTS = buildTimeSlots();
 const labelFor = (v: string) => TIME_SLOTS.find((t) => t.value === v)?.label ?? v;
+// Latest start time so that start + 7h still ends by 8:00 PM.
+const SEVEN_HOUR_LATEST_START = "13:00";
+const SEVEN_HOUR_SLOTS = TIME_SLOTS.filter((t) => t.value <= SEVEN_HOUR_LATEST_START);
+function addSevenHours(hhmm: string): string {
+  if (!hhmm) return "";
+  const [hStr, mStr] = hhmm.split(":");
+  const h = parseInt(hStr, 10);
+  if (Number.isNaN(h)) return "";
+  return `${String(h + 7).padStart(2, "0")}:${mStr}`;
+}
 const toDateString = (d: Date) => format(d, "yyyy-MM-dd");
 
 export function CheckoutModal() {
@@ -84,6 +94,18 @@ export function CheckoutModal() {
       }));
     } else if (duration === "weekend") {
       setForm((f) => ({ ...f, event_start_time: "08:00", event_end_time: "20:00" }));
+    } else if (duration === "7hour") {
+      setForm((f) => {
+        // If a stale start time is past the latest allowed (1:00 PM), clear it.
+        const start = f.event_start_time && f.event_start_time <= SEVEN_HOUR_LATEST_START
+          ? f.event_start_time
+          : "";
+        return {
+          ...f,
+          event_start_time: start,
+          event_end_time: start ? addSevenHours(start) : "",
+        };
+      });
     }
     // reset selected date if it no longer fits weekend
     if (duration === "weekend" && date && date.getDay() !== 6) setDate(undefined);
@@ -300,28 +322,30 @@ export function CheckoutModal() {
             {duration === "7hour" && (
               <>
                 <p className="text-sm text-muted-foreground">
-                  Choose your delivery (start) time and pickup time. We deliver and pick up between 8:00 AM and 8:00 PM.
+                  7-Hour Rental: choose a start time between 8:00 AM and 1:00 PM. Pickup will be exactly 7 hours after delivery.
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1">
                     <Label>Delivery / start time *</Label>
-                    <Select value={form.event_start_time} onValueChange={(v) => setForm({ ...form, event_start_time: v })}>
+                    <Select
+                      value={form.event_start_time}
+                      onValueChange={(v) =>
+                        setForm({ ...form, event_start_time: v, event_end_time: addSevenHours(v) })
+                      }
+                    >
                       <SelectTrigger><SelectValue placeholder="Select start time" /></SelectTrigger>
                       <SelectContent className="max-h-72">
-                        {TIME_SLOTS.map((t) => (<SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>))}
+                        {SEVEN_HOUR_SLOTS.map((t) => (<SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>))}
                       </SelectContent>
                     </Select>
                   </div>
                   <div className="space-y-1">
                     <Label>Pickup time *</Label>
-                    <Select value={form.event_end_time} onValueChange={(v) => setForm({ ...form, event_end_time: v })}>
-                      <SelectTrigger><SelectValue placeholder="Select pickup time" /></SelectTrigger>
-                      <SelectContent className="max-h-72">
-                        {TIME_SLOTS
-                          .filter((t) => !form.event_start_time || t.value > form.event_start_time)
-                          .map((t) => (<SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>))}
-                      </SelectContent>
-                    </Select>
+                    <Input
+                      value={form.event_end_time ? `${labelFor(form.event_end_time)} (auto)` : "Select a start time first"}
+                      readOnly
+                      disabled
+                    />
                   </div>
                 </div>
               </>
