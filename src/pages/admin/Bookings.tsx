@@ -566,6 +566,45 @@ export default function AdminBookings() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <AlertDialog open={!!deleteTarget} onOpenChange={(o) => { if (!o) { setDeleteTarget(null); setDeleteConfirmText(""); } }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete this booking?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this booking? This action can't be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+
+          {deleteTarget && (
+            <div className="rounded-md border bg-muted/40 p-3 text-sm">
+              <div><span className="text-muted-foreground">Customer:</span> <strong>{deleteTarget.customer_name}</strong></div>
+              <div><span className="text-muted-foreground">Date:</span> <strong>{format(parseISO(deleteTarget.event_date), "EEE, MMM d, yyyy")}</strong></div>
+            </div>
+          )}
+
+          <div className="space-y-2">
+            <label className="text-sm">Type <strong>DELETE</strong> to confirm:</label>
+            <Input
+              value={deleteConfirmText}
+              onChange={(e) => setDeleteConfirmText(e.target.value)}
+              placeholder="DELETE"
+              autoComplete="off"
+            />
+          </div>
+
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              disabled={deleteConfirmText !== "DELETE" || deleteSubmitting}
+              onClick={(e) => { e.preventDefault(); confirmDelete(); }}
+              className={buttonVariants({ variant: "destructive" })}
+            >
+              Delete booking
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
