@@ -74,7 +74,7 @@ export function CheckoutModal() {
     customer_name: "", customer_email: "", customer_phone: "",
     event_address_line: "", event_city: "", event_zip: "",
     event_start_time: "", event_end_time: "",
-    event_type: "", notes: "",
+    event_type: "", setup_surface: "", notes: "",
   });
   const [damageWaiver, setDamageWaiver] = useState<boolean>(true);
 
@@ -176,6 +176,7 @@ export function CheckoutModal() {
   const canContinueStep1 = !!date && items.length > 0 && conflictingItems.length === 0;
   const canContinueStep2 =
     !!form.event_start_time && !!form.event_end_time &&
+    !!form.setup_surface &&
     (duration !== "7hour" || form.event_end_time > form.event_start_time);
   const canSubmit =
     form.customer_name.trim() && form.customer_email.trim() && form.customer_phone.trim() &&
