@@ -251,8 +251,8 @@ function bookingDetailsBlock(b: BookingForEmail) {
   return `
     <table width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;line-height:1.6;">
       <tr><td style="color:#54657a;width:130px;">Event date</td><td><strong>${dateLine}</strong></td></tr>
-      <tr><td style="color:#54657a;">Delivery</td><td>${escapeHtml(b.event_start_time ?? "")}</td></tr>
-      <tr><td style="color:#54657a;">Pickup</td><td>${escapeHtml(b.event_end_time ?? "")}</td></tr>
+      <tr><td style="color:#54657a;">Delivery</td><td>${escapeHtml(fmtTime(b.event_start_time))}</td></tr>
+      <tr><td style="color:#54657a;">Pickup</td><td>${escapeHtml(fmtTime(b.event_end_time))}</td></tr>
       <tr><td style="color:#54657a;">Address</td><td>${escapeHtml(b.event_address_line)}, ${escapeHtml(b.event_city)} ${escapeHtml(b.event_zip)}</td></tr>
       <tr><td style="color:#54657a;">Contact</td><td>${escapeHtml(b.customer_name)} · ${escapeHtml(b.customer_phone)}</td></tr>
     </table>`;
@@ -336,8 +336,8 @@ export async function customerRescheduleEmail(
   const rescheduleBlock = `<table width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;line-height:1.6;border:1px solid #eef0f4;border-radius:8px;padding:12px;margin:8px 0 16px;">
       <tr><td style="color:#54657a;width:130px;">Previous date</td><td style="text-decoration:line-through;color:#8a97a8;">${oldLine}</td></tr>
       <tr><td style="color:#54657a;">New date</td><td><strong style="color:${BRAND_BLUE};">${newLine}</strong></td></tr>
-      <tr><td style="color:#54657a;">Delivery</td><td>${escapeHtml(b.event_start_time ?? "")}</td></tr>
-      <tr><td style="color:#54657a;">Pickup</td><td>${escapeHtml(b.event_end_time ?? "")}</td></tr>
+      <tr><td style="color:#54657a;">Delivery</td><td>${escapeHtml(fmtTime(b.event_start_time))}</td></tr>
+      <tr><td style="color:#54657a;">Pickup</td><td>${escapeHtml(fmtTime(b.event_end_time))}</td></tr>
       <tr><td style="color:#54657a;">Address</td><td>${escapeHtml(b.event_address_line)}, ${escapeHtml(b.event_city)} ${escapeHtml(b.event_zip)}</td></tr>
     </table>`;
   return await renderTemplate("booking_reschedule_customer", {
