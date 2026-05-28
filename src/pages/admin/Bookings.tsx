@@ -36,6 +36,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { buttonVariants } from "@/components/ui/button";
 import { logActivity } from "@/lib/adminActivity";
@@ -143,6 +144,11 @@ export default function AdminBookings() {
   // Restore dialog state
   const [restoreTarget, setRestoreTarget] = useState<Booking | null>(null);
   const [restoreSubmitting, setRestoreSubmitting] = useState(false);
+
+  // Delete dialog state
+  const [deleteTarget, setDeleteTarget] = useState<Booking | null>(null);
+  const [deleteConfirmText, setDeleteConfirmText] = useState("");
+  const [deleteSubmitting, setDeleteSubmitting] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -403,6 +409,10 @@ export default function AdminBookings() {
                             setRefundConfirmed(false);
                           }}>Cancel</Button>
                         )}
+                        <Button size="sm" variant="destructive" onClick={() => {
+                          setDeleteTarget(b);
+                          setDeleteConfirmText("");
+                        }}>Delete</Button>
                       </div>
                   </TableCell>
                   <TableCell>
