@@ -36,7 +36,7 @@ export function isSaturday(d: Date) {
 import { getSettings } from "./appSettings";
 
 /** @deprecated Use getTaxRate() — kept for backwards compatibility. Reflects DEFAULT, not live value. */
-export const TAX_RATE = 0.07;
+export const TAX_RATE = 0.065;
 /** @deprecated Use getDamageWaiverRate() — kept for backwards compatibility. Reflects DEFAULT, not live value. */
 export const DAMAGE_WAIVER_RATE = 0.10;
 
