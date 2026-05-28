@@ -578,7 +578,10 @@ export function CheckoutModal() {
               event_address_line: form.event_address_line.trim(),
               event_city: form.event_city.trim(),
               event_zip: form.event_zip.trim(),
-              notes: form.notes.trim() || null,
+              notes: [
+                form.setup_surface ? `Setup surface: ${form.setup_surface}` : "",
+                form.notes.trim(),
+              ].filter(Boolean).join("\n") || null,
               damage_waiver: damageWaiver,
               delivery_fee: deliveryFee,
               delivery_zone_city: zoneCity,
