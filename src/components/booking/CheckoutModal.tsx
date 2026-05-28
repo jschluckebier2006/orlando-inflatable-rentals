@@ -322,7 +322,8 @@ export function CheckoutModal() {
             {duration === "7hour" && (
               <>
                 <p className="text-sm text-muted-foreground">
-                  7-Hour Rental: choose a start time between 8:00 AM and 1:00 PM. Pickup will be exactly 7 hours after delivery.
+                  Day Rental (7-Hours): choose your event start time between 8:00 AM and 1:00 PM. If you have delivery or pick up time questions or requests, please give our team a call at{" "}
+                  <a href="tel:+14074971840" className="underline font-medium text-foreground">(407) 497-1840</a>.
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1">
