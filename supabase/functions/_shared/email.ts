@@ -224,6 +224,18 @@ const fmtMoney = (n: number | null | undefined) =>
   n == null ? "—" : `$${Number(n).toFixed(2)}`;
 const fmtDate = (d: string) =>
   new Date(d + "T12:00:00").toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" });
+const fmtTime = (t: string | null | undefined) => {
+  if (!t) return "";
+  const m = /^(\d{1,2}):(\d{2})/.exec(String(t));
+  if (!m) return String(t);
+  let h = parseInt(m[1], 10);
+  const mins = m[2];
+  if (isNaN(h)) return String(t);
+  const period = h >= 12 ? "pm" : "am";
+  h = h % 12;
+  if (h === 0) h = 12;
+  return `${h}:${mins}${period}`;
+};
 
 function itemsTable(items: BookingItemForEmail[]) {
   const rows = items.map((i) => `
