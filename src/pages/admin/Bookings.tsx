@@ -786,7 +786,7 @@ function UpcomingWeekList({ bookings }: { bookings: Booking[] }) {
                     {format(parseISO(b.event_date), "EEE, MMM d")}
                   </div>
                   {b.event_start_time && (
-                    <div className="text-xs text-muted-foreground">{b.event_start_time}</div>
+                    <div className="text-xs text-muted-foreground">{fmtTime(b.event_start_time)}</div>
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
