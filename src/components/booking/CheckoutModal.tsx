@@ -46,6 +46,16 @@ function buildTimeSlots() {
 }
 const TIME_SLOTS = buildTimeSlots();
 const labelFor = (v: string) => TIME_SLOTS.find((t) => t.value === v)?.label ?? v;
+// Latest start time so that start + 7h still ends by 8:00 PM.
+const SEVEN_HOUR_LATEST_START = "13:00";
+const SEVEN_HOUR_SLOTS = TIME_SLOTS.filter((t) => t.value <= SEVEN_HOUR_LATEST_START);
+function addSevenHours(hhmm: string): string {
+  if (!hhmm) return "";
+  const [hStr, mStr] = hhmm.split(":");
+  const h = parseInt(hStr, 10);
+  if (Number.isNaN(h)) return "";
+  return `${String(h + 7).padStart(2, "0")}:${mStr}`;
+}
 const toDateString = (d: Date) => format(d, "yyyy-MM-dd");
 
 export function CheckoutModal() {
