@@ -498,7 +498,7 @@ export function CheckoutModal() {
                         <span>FREE</span>
                       </div>
                     ) : null}
-                    <div className="flex justify-between"><span>Sales Tax (7%)</span><span>${bd.tax.toFixed(2)}</span></div>
+                    <div className="flex justify-between"><span>Sales Tax (6.5%)</span><span>${bd.tax.toFixed(2)}</span></div>
                     <div className="flex justify-between font-semibold text-base pt-1"><span>Total</span><span>${bd.total.toFixed(2)}</span></div>
                     <p className="text-xs text-muted-foreground mt-2">
                       Paying online by card adds a 4% Online Payment Convenience Fee.

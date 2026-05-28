@@ -423,7 +423,7 @@ export default function BookingFormModal({ open, onOpenChange, booking, onSaved 
             {damageWaiver && (
               <div className="flex justify-between"><span>Damage Waiver (10%)</span><span>${damageWaiverAmount.toFixed(2)}</span></div>
             )}
-            <div className="flex justify-between"><span>Sales Tax (7%)</span><span>${taxAmount.toFixed(2)}</span></div>
+            <div className="flex justify-between"><span>Sales Tax (6.5%)</span><span>${taxAmount.toFixed(2)}</span></div>
             <div className="flex justify-between font-semibold text-base"><span>Total</span><span>${total.toFixed(2)}</span></div>
             <div className="flex justify-between"><span>Paid</span><span>${(Number(amountPaid) || 0).toFixed(2)}</span></div>
             <div className="flex justify-between font-semibold"><span>Balance due</span><span>${balanceDue.toFixed(2)}</span></div>
