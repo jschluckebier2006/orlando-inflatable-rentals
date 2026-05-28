@@ -74,7 +74,7 @@ export function CheckoutModal() {
     customer_name: "", customer_email: "", customer_phone: "",
     event_address_line: "", event_city: "", event_zip: "",
     event_start_time: "", event_end_time: "",
-    event_type: "", notes: "",
+    event_type: "", setup_surface: "", notes: "",
   });
   const [damageWaiver, setDamageWaiver] = useState<boolean>(true);
 
@@ -176,6 +176,7 @@ export function CheckoutModal() {
   const canContinueStep1 = !!date && items.length > 0 && conflictingItems.length === 0;
   const canContinueStep2 =
     !!form.event_start_time && !!form.event_end_time &&
+    !!form.setup_surface &&
     (duration !== "7hour" || form.event_end_time > form.event_start_time);
   const canSubmit =
     form.customer_name.trim() && form.customer_email.trim() && form.customer_phone.trim() &&
@@ -404,6 +405,17 @@ export function CheckoutModal() {
               </Select>
             </div>
 
+            <div className="space-y-1">
+              <Label>Setup surface *</Label>
+              <Select value={form.setup_surface} onValueChange={(v) => setForm({ ...form, setup_surface: v })}>
+                <SelectTrigger><SelectValue placeholder="Select surface type" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Grass">Grass</SelectItem>
+                  <SelectItem value="Concrete">Concrete</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
             <div className="flex justify-between gap-2 pt-2">
               <Button variant="outline" onClick={() => setStep(1)}>Back</Button>
               <Button
@@ -566,7 +578,10 @@ export function CheckoutModal() {
               event_address_line: form.event_address_line.trim(),
               event_city: form.event_city.trim(),
               event_zip: form.event_zip.trim(),
-              notes: form.notes.trim() || null,
+              notes: [
+                form.setup_surface ? `Setup surface: ${form.setup_surface}` : "",
+                form.notes.trim(),
+              ].filter(Boolean).join("\n") || null,
               damage_waiver: damageWaiver,
               delivery_fee: deliveryFee,
               delivery_zone_city: zoneCity,
