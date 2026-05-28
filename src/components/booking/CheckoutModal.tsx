@@ -405,6 +405,17 @@ export function CheckoutModal() {
               </Select>
             </div>
 
+            <div className="space-y-1">
+              <Label>Setup surface *</Label>
+              <Select value={form.setup_surface} onValueChange={(v) => setForm({ ...form, setup_surface: v })}>
+                <SelectTrigger><SelectValue placeholder="Select surface type" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Grass">Grass</SelectItem>
+                  <SelectItem value="Concrete">Concrete</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
             <div className="flex justify-between gap-2 pt-2">
               <Button variant="outline" onClick={() => setStep(1)}>Back</Button>
               <Button
