@@ -10,7 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useInventory } from "@/lib/inventory";
 import { DURATION_MULTIPLIERS, DURATION_LABELS, type DurationType, endDateFor } from "@/lib/pricing";
-import { TAX_RATE, DAMAGE_WAIVER_RATE } from "@/lib/pricing";
+import { TAX_RATE, computeBreakdown } from "@/lib/pricing";
 import { format } from "date-fns";
 import { CalendarClock, CreditCard, Loader2 } from "lucide-react";
 import { RescheduleDialog } from "@/components/admin/RescheduleDialog";
@@ -108,6 +108,8 @@ export default function BookingFormModal({ open, onOpenChange, booking, onSaved 
   const [recordPaymentOpen, setRecordPaymentOpen] = useState(false);
 
   const paymentChoice = booking?.payment_method_choice ?? null;
+  // Admin-side payment type selector. "other" behaves like cash (no fee).
+  const [paymentMethod, setPaymentMethod] = useState<"card_on_file" | "cash_on_delivery" | "other">("cash_on_delivery");
   const hasSavedCard = !!(booking?.stripe_customer_id && booking?.stripe_payment_method_id);
   const persistedBalance = Number(booking?.balance_due ?? 0);
   const fullyPaid = booking?.payment_status === "paid_in_full";
@@ -164,6 +166,9 @@ export default function BookingFormModal({ open, onOpenChange, booking, onSaved 
       setDiscountValue(String(booking.discount_value ?? 0));
       setDiscountReason(booking.discount_reason || "");
       setDamageWaiver(booking.damage_waiver_selected ?? true);
+      setPaymentMethod(
+        (booking.payment_method_choice as any) ?? "cash_on_delivery"
+      );
       setItems(
         (booking.booking_items || []).map((i) => ({
           id: i.id,
@@ -184,6 +189,7 @@ export default function BookingFormModal({ open, onOpenChange, booking, onSaved 
       setStatus("confirmed"); setPaymentStatus("unpaid"); setAmountPaid("0");
       setDiscountType("none"); setDiscountValue("0"); setDiscountReason("");
       setDamageWaiver(true);
+      setPaymentMethod("cash_on_delivery");
       setItems([]);
     }
   }, [open, booking]);
@@ -200,9 +206,19 @@ export default function BookingFormModal({ open, onOpenChange, booking, onSaved 
     return Math.round(subtotal * (v / 100) * 100) / 100;
   }, [discountType, discountValue, subtotal]);
   const afterDiscount = Math.max(0, Math.round((subtotal - discountAmount) * 100) / 100);
-  const damageWaiverAmount = damageWaiver ? Math.round(afterDiscount * DAMAGE_WAIVER_RATE * 100) / 100 : 0;
-  const taxAmount = Math.round((afterDiscount + damageWaiverAmount) * TAX_RATE * 100) / 100;
-  const total = Math.round((afterDiscount + damageWaiverAmount + taxAmount) * 100) / 100;
+  const bd = useMemo(
+    () => computeBreakdown(
+      afterDiscount,
+      damageWaiver,
+      0,
+      paymentMethod === "card_on_file" ? "card_on_file" : "cash_on_delivery",
+    ),
+    [afterDiscount, damageWaiver, paymentMethod]
+  );
+  const damageWaiverAmount = bd.damageWaiver;
+  const taxAmount = bd.tax;
+  const checkoutFeeAmount = bd.checkoutFee;
+  const total = bd.total;
   const balanceDue = Math.max(0, Math.round((total - (Number(amountPaid) || 0)) * 100) / 100);
 
   function addProduct(productId: string) {
@@ -257,6 +273,8 @@ export default function BookingFormModal({ open, onOpenChange, booking, onSaved 
       damage_waiver_amount: damageWaiverAmount,
       tax_rate: TAX_RATE,
       tax_amount: taxAmount,
+      checkout_fee_amount: checkoutFeeAmount,
+      payment_method_choice: paymentMethod === "other" ? null : paymentMethod,
       total_amount: total,
       balance_due: balanceDue,
       product_id: items[0]?.product_id ?? null,
@@ -424,6 +442,12 @@ export default function BookingFormModal({ open, onOpenChange, booking, onSaved 
               <div className="flex justify-between"><span>Damage Waiver (10%)</span><span>${damageWaiverAmount.toFixed(2)}</span></div>
             )}
             <div className="flex justify-between"><span>Sales Tax (6.5%)</span><span>${taxAmount.toFixed(2)}</span></div>
+            {paymentMethod === "card_on_file" && (
+              <div className="flex justify-between">
+                <span>Online Payment Convenience Fee (4%)</span>
+                <span>${checkoutFeeAmount.toFixed(2)}</span>
+              </div>
+            )}
             <div className="flex justify-between font-semibold text-base"><span>Total</span><span>${total.toFixed(2)}</span></div>
             <div className="flex justify-between"><span>Paid</span><span>${(Number(amountPaid) || 0).toFixed(2)}</span></div>
             <div className="flex justify-between font-semibold"><span>Balance due</span><span>${balanceDue.toFixed(2)}</span></div>
@@ -436,6 +460,18 @@ export default function BookingFormModal({ open, onOpenChange, booking, onSaved 
               <SelectContent>
                 <SelectItem value="yes">Yes - Recommended (10%)</SelectItem>
                 <SelectItem value="no">No - Decline waiver</SelectItem>
+              </SelectContent>
+            </Select>
+          </section>
+
+          <section className="space-y-2">
+            <Label>Payment type</Label>
+            <Select value={paymentMethod} onValueChange={(v) => setPaymentMethod(v as any)}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="card_on_file">Card (adds 4% Online Payment Convenience Fee)</SelectItem>
+                <SelectItem value="cash_on_delivery">Cash on Delivery (no fee)</SelectItem>
+                <SelectItem value="other">Other (no fee)</SelectItem>
               </SelectContent>
             </Select>
           </section>

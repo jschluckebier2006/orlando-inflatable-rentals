@@ -35,12 +35,16 @@ export function computeBreakdown(
   const waiver = waiverSelected ? r(sub * rates.waiverRate) : 0;
   const delivery = r(Math.max(0, deliveryFee));
   const preFee = r(sub + waiver + delivery);
-  const checkoutFee = paymentChoice === "card_on_file"
-    ? r(preFee * rates.checkoutFeeRate)
-    : 0;
-  const taxableBase = r(preFee + checkoutFee);
+  // Tax is computed on (subtotal + waiver + delivery). The convenience fee
+  // is NOT taxed — it's applied as a processing surcharge on the full
+  // pre-fee total (including tax), mirroring how Stripe charges its fee.
+  const taxableBase = preFee;
   const tax = r(taxableBase * rates.taxRate);
-  const total = r(taxableBase + tax);
+  const preFeeTotal = r(preFee + tax);
+  const checkoutFee = paymentChoice === "card_on_file"
+    ? r(preFeeTotal * rates.checkoutFeeRate)
+    : 0;
+  const total = r(preFeeTotal + checkoutFee);
   return {
     subtotal: sub,
     damageWaiver: waiver,

@@ -277,7 +277,7 @@ function totalsBlock(b: BookingForEmail) {
   const taxLine = Number(b.tax_amount ?? 0) > 0
     ? `<tr><td style="color:#54657a;">Sales Tax (7%)</td><td style="text-align:right;">${fmtMoney(b.tax_amount)}</td></tr>` : "";
   return `<table width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;margin-top:8px;">
-      ${subtotalLine}${waiverLine}${deliveryLine}${feeLine}${taxLine}
+      ${subtotalLine}${waiverLine}${deliveryLine}${taxLine}${feeLine}
       <tr><td style="color:#54657a;"><strong>Total</strong></td><td style="text-align:right;"><strong>${fmtMoney(b.total_amount)}</strong></td></tr>
       <tr><td style="color:#54657a;">Amount paid</td><td style="text-align:right;">${fmtMoney(b.amount_paid)}</td></tr>
       ${balanceLine}
