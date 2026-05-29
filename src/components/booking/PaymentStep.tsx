@@ -156,13 +156,13 @@ export function PaymentStep({
               <span>FREE</span>
             </div>
           ) : null}
+          <div className="flex justify-between"><span>Sales Tax (6.5%)</span><span>${bd.tax.toFixed(2)}</span></div>
           {choice === "card_on_file" && (
             <div className="flex justify-between">
               <span>Online Payment Convenience Fee (4%)</span>
               <span>${bd.checkoutFee.toFixed(2)}</span>
             </div>
           )}
-          <div className="flex justify-between"><span>Sales Tax (6.5%)</span><span>${bd.tax.toFixed(2)}</span></div>
           <div className="flex justify-between font-semibold pt-1"><span>Order total</span><span>${total.toFixed(2)}</span></div>
           <div className="flex justify-between text-muted-foreground pt-1"><span>Charged today</span><span>${DEPOSIT_CHARGE.toFixed(2)}</span></div>
           <div className="flex justify-between text-muted-foreground">
