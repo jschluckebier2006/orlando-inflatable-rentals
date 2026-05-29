@@ -25,7 +25,7 @@ export function CartDrawer() {
             <div className="text-center py-12 text-muted-foreground">
               <ShoppingCart className="h-10 w-10 mx-auto mb-3 opacity-40" />
               <p>Your cart is empty.</p>
-              <p className="text-sm mt-1">Browse our rentals and tap "Add to Cart".</p>
+              <p className="text-sm mt-1">Browse our rentals and tap "Book Now".</p>
             </div>
           ) : (
             <>
