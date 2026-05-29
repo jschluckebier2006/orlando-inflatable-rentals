@@ -53,10 +53,10 @@ const Index = () => {
       
       <HeroSection />
       <TrustBadgesRow />
+      <AllCategoryCarousels />
       <CategoriesSection />
       <SEOContentSection />
       <PopularRentalsSection />
-      <AllCategoryCarousels />
       <DeliveryAreasSection />
       <EventTypesSection />
       <ReviewsSection />
