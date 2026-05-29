@@ -1,8 +1,10 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight } from "lucide-react";
 import { type Product } from "@/lib/inventory";
+import { ProductDetailModal } from "@/components/product/ProductDetailModal";
 
 interface CategoryCardProps {
   title: string;
@@ -13,7 +15,8 @@ interface CategoryCardProps {
 export function CategoryCard({ title, products, categoryLink }: CategoryCardProps) {
   // Limit to 3 products
   const displayProducts = products.slice(0, 3);
-  
+  const [selected, setSelected] = useState<Product | null>(null);
+
   if (displayProducts.length === 0) return null;
 
   return (
@@ -38,7 +41,13 @@ export function CategoryCard({ title, products, categoryLink }: CategoryCardProp
       <div className="p-4 overflow-x-auto">
         <div className="flex gap-3" style={{ minWidth: 'max-content' }}>
           {displayProducts.map((item) => (
-            <Link key={item.id} to={categoryLink} className="group flex-shrink-0 w-28">
+            <button
+              key={item.id}
+              type="button"
+              onClick={() => setSelected(item)}
+              className="group flex-shrink-0 w-28 text-left"
+              aria-label={`View ${item.name}`}
+            >
               <Card className="h-full overflow-hidden border-0 shadow-none hover:shadow-md transition-shadow">
                 <div className="aspect-square overflow-hidden bg-muted/30 rounded-md">
                   <img
@@ -58,7 +67,7 @@ export function CategoryCard({ title, products, categoryLink }: CategoryCardProp
                   <p className="text-sm font-bold text-foreground">${item.price}</p>
                 </CardContent>
               </Card>
-            </Link>
+            </button>
           ))}
           
           {/* View More Button */}
@@ -71,6 +80,11 @@ export function CategoryCard({ title, products, categoryLink }: CategoryCardProp
           </Link>
         </div>
       </div>
+      <ProductDetailModal
+        product={selected}
+        open={selected !== null}
+        onOpenChange={(o) => { if (!o) setSelected(null); }}
+      />
     </div>
   );
 }
