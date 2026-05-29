@@ -49,7 +49,7 @@ export function HeroSection() {
               <span className="font-bold text-white text-sm md:text-base">5.0</span>
               <span className="text-white/80 text-sm md:text-base">—</span>
               <a
-                href="https://www.google.com/maps/place/Orlando+Inflatable+Rentals+LLC"
+                href="https://www.google.com/maps/place/Orlando+Inflatable+Rentals+LLC/@28.3675331,-82.5008482,135844m/data=!3m1!1e3!4m12!1m2!2m1!1sorlando+inflatable+rentals+llc!3m8!1s0x88e75dea47c42fdf:0xd2badb3440ac0bf9!8m2!3d28.5665396!4d-81.26076!9m1!1b1!15sCh5vcmxhbmRvIGluZmxhdGFibGUgcmVudGFscyBsbGNaICIeb3JsYW5kbyBpbmZsYXRhYmxlIHJlbnRhbHMgbGxjkgEecGFydHlfZXF1aXBtZW50X3JlbnRhbF9zZXJ2aWNlmgEkQ2hkRFNVaE5NRzluUzBWSlEwRm5TVVJvZW1NM1h6ZDNSUkFC4AEA-gEFCIgDEDk!16s%2Fg%2F11hzcy3lym?entry=ttu&g_ep=EgoyMDI2MDUyNi4wIKXMDSoASAFQAw%3D%3D"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-white text-sm md:text-base font-medium underline underline-offset-2 hover:text-accent transition-colors"
