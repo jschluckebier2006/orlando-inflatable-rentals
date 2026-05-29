@@ -70,7 +70,7 @@ export function ProductCard({ product, onClick }: ProductCardProps) {
           ) : (
             <>
               <ShoppingCart className="h-4 w-4 mr-1.5" />
-              Add to Cart
+              Book Now
             </>
           )}
         </Button>
