@@ -85,7 +85,7 @@ export function HeroSection() {
                     className="relative z-10 font-black text-white leading-tight text-lg"
                     style={{ textShadow: "0 2px 6px rgba(0,0,0,0.55)" }}
                   >
-                    Beat the Heat — Water Slides →
+                    Cool Off This Summer — Orlando Water Slide Rentals →
                   </span>
                 </div>
               </button>
