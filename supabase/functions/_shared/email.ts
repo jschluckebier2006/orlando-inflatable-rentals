@@ -93,7 +93,7 @@ export async function sendEmail(args: SendArgs): Promise<{ ok: boolean; skipped?
   if (existing && existing.status === "sent") return { ok: true, skipped: true };
 
   const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-  const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
+  const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY") ?? Deno.env.get("RESEND_API_KEY_1");
   if (!LOVABLE_API_KEY || !RESEND_API_KEY) {
     const err = "Missing LOVABLE_API_KEY or RESEND_API_KEY";
     await sb.from("email_send_log").insert({
