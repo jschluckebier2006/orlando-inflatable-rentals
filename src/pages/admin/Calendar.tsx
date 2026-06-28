@@ -8,8 +8,9 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { ChevronLeft, ChevronRight, Phone, MapPin, Plus, Ban } from "lucide-react";
+import { ChevronLeft, ChevronRight, Phone, MapPin, Plus, Ban, BellRing, CalendarClock } from "lucide-react";
 
 type BookingStatus = "pending" | "confirmed" | "cancelled" | "completed";
 
@@ -19,6 +20,7 @@ interface Booking {
   event_date: string;
   event_end_date: string | null;
   event_start_time: string | null;
+  created_at?: string;
   customer_name: string;
   customer_phone: string;
   event_address_line: string;
@@ -52,6 +54,27 @@ const STATUS_BADGE: Record<BookingStatus, string> = {
 
 type ViewMode = "month" | "week" | "day";
 
+function fmtTime(t?: string | null): string {
+  if (!t) return "";
+  const m = /^(\d{1,2}):(\d{2})/.exec(t);
+  if (!m) return t;
+  const h = parseInt(m[1], 10);
+  const mm = m[2];
+  const suffix = h >= 12 ? "pm" : "am";
+  const h12 = h % 12 === 0 ? 12 : h % 12;
+  return `${h12}:${mm}${suffix}`;
+}
+
+function fmtLocation(b: Booking): string {
+  return [b.event_address_line, [b.event_city, b.event_zip].filter(Boolean).join(" ")]
+    .filter(Boolean).join(", ");
+}
+
+function itemNames(b: Booking): string {
+  if (b.booking_items && b.booking_items.length > 0) return b.booking_items.map((i) => i.product_name).join(", ");
+  return b.product_name ?? "—";
+}
+
 export default function AdminCalendar() {
   const navigate = useNavigate();
   const [bookings, setBookings] = useState<Booking[]>([]);
@@ -66,7 +89,7 @@ export default function AdminCalendar() {
     const [{ data: bData }, { data: gbData }] = await Promise.all([
       supabase
         .from("bookings")
-        .select("id, event_date, event_end_date, event_start_time, customer_name, customer_phone, event_address_line, event_city, event_zip, status, product_id, product_name, booking_items(id, product_name)")
+        .select("id, event_date, event_end_date, event_start_time, created_at, customer_name, customer_phone, event_address_line, event_city, event_zip, status, product_id, product_name, booking_items(id, product_name)")
         .order("event_date", { ascending: true }),
       supabase
         .from("global_blackouts")
