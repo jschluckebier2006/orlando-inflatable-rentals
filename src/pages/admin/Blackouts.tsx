@@ -146,35 +146,52 @@ export default function AdminBlackouts() {
           <p className="text-sm text-muted-foreground">Loading…</p>
         ) : rows.length === 0 ? (
           <p className="text-sm text-muted-foreground">No global blackouts set.</p>
-        ) : (
-          <ul className="divide-y border border-border rounded-md">
-            {rows.map((r) => {
-              const single = r.start_date === r.end_date;
-              const past = r.end_date < today;
-              return (
-                <li key={r.id} className={`p-3 flex items-start justify-between gap-3 ${past ? "opacity-60" : ""}`}>
-                  <div className="min-w-0">
-                    <div className="font-medium">
-                      {single
-                        ? format(parseISO(r.start_date), "EEE, MMM d, yyyy")
-                        : `${format(parseISO(r.start_date), "MMM d, yyyy")} → ${format(parseISO(r.end_date), "MMM d, yyyy")}`}
-                      {past && <span className="ml-2 text-xs text-muted-foreground">(past)</span>}
-                    </div>
-                    {r.reason && <div className="text-sm text-muted-foreground mt-0.5">{r.reason}</div>}
+        ) : (() => {
+          const upcoming = rows.filter((r) => r.end_date >= today);
+          const past = rows.filter((r) => r.end_date < today);
+          const renderRow = (r: Blackout, isPast: boolean) => {
+            const single = r.start_date === r.end_date;
+            return (
+              <li key={r.id} className={`p-3 flex items-start justify-between gap-3 ${isPast ? "opacity-60" : ""}`}>
+                <div className="min-w-0">
+                  <div className="font-medium">
+                    {single
+                      ? format(parseISO(r.start_date), "EEE, MMM d, yyyy")
+                      : `${format(parseISO(r.start_date), "MMM d, yyyy")} → ${format(parseISO(r.end_date), "MMM d, yyyy")}`}
                   </div>
-                  <div className="flex items-center gap-1 shrink-0">
-                    <Button variant="ghost" size="sm" onClick={() => openEdit(r)} aria-label="Edit blackout">
-                      <Pencil className="h-4 w-4" />
-                    </Button>
-                    <Button variant="ghost" size="sm" onClick={() => setConfirmId(r.id)} className="text-destructive" aria-label="Delete blackout">
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
-        )}
+                  {r.reason && <div className="text-sm text-muted-foreground mt-0.5">{r.reason}</div>}
+                </div>
+                <div className="flex items-center gap-1 shrink-0">
+                  <Button variant="ghost" size="icon" className="h-11 w-11" onClick={() => openEdit(r)} aria-label="Edit blackout">
+                    <Pencil className="h-4 w-4" />
+                  </Button>
+                  <Button variant="ghost" size="icon" className="h-11 w-11 text-destructive" onClick={() => setConfirmId(r.id)} aria-label="Delete blackout">
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              </li>
+            );
+          };
+          return (
+            <div className="space-y-4">
+              <ul className="divide-y border border-border rounded-md">
+                {upcoming.length === 0 ? (
+                  <li className="p-3 text-sm text-muted-foreground">No upcoming blackouts.</li>
+                ) : (
+                  upcoming.map((r) => renderRow(r, false))
+                )}
+              </ul>
+              {past.length > 0 && (
+                <div>
+                  <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">Past</div>
+                  <ul className="divide-y border border-border rounded-md">
+                    {past.map((r) => renderRow(r, true))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          );
+        })()}
       </Card>
 
       <AlertDialog open={!!confirmId} onOpenChange={(o) => !o && setConfirmId(null)}>
