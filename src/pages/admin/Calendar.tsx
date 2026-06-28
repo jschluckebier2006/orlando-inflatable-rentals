@@ -257,7 +257,7 @@ export default function AdminCalendar() {
                         <Badge className={`${STATUS_BADGE[b.status]} shrink-0 capitalize`}>{b.status}</Badge>
                       </div>
                       <div className="text-sm text-muted-foreground truncate">
-                        {b.customer_name}{b.event_start_time ? ` · ${fmtTime(b.event_start_time)}` : ""}
+                        {b.customer_name}{b.event_start_time ? ` · ${fmtTime(b.event_start_time)}` : ""}{fmtLocation(b) ? ` · ${fmtLocation(b)}` : ""}
                       </div>
                       {fmtLocation(b) && (
                         <div className="text-xs text-muted-foreground inline-flex items-start gap-1 mt-0.5">
