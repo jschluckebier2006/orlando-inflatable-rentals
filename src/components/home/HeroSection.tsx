@@ -11,7 +11,10 @@ export function HeroSection() {
   const [showJotform, setShowJotform] = useState(false);
   const navigate = useNavigate();
   const [reviewsCount, setReviewsCount] = useState(getSettings().googleReviewsCount);
-  useEffect(() => subscribeAppSettings(() => setReviewsCount(getSettings().googleReviewsCount)), []);
+  useEffect(() => {
+    const unsub = subscribeAppSettings(() => setReviewsCount(getSettings().googleReviewsCount));
+    return () => { unsub(); };
+  }, []);
 
   return (
     <>
