@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -140,13 +140,13 @@ export default function InventoryDetail() {
   if (loading || !item) return <div className="p-6 text-sm text-muted-foreground">Loading…</div>;
 
   return (
-    <div className="p-6 space-y-4 max-w-4xl">
+    <div className="p-4 md:p-6 space-y-4 max-w-4xl">
       <div className="flex items-center justify-between gap-2">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 min-w-0">
           <Button variant="ghost" size="icon" onClick={() => nav("/admin/inventory")}><ArrowLeft className="h-4 w-4"/></Button>
-          <h1 className="text-2xl font-display font-bold">{isNew ? "New item" : item.name || id}</h1>
+          <h1 className="text-2xl font-display font-bold truncate min-w-0">{isNew ? "New item" : item.name || id}</h1>
         </div>
-        <Button onClick={save} disabled={saving}>{saving ? "Saving…" : "Save"}</Button>
+        <Button onClick={save} disabled={saving} className="shrink-0">{saving ? "Saving…" : "Save"}</Button>
       </div>
 
       <Tabs defaultValue="details">
@@ -200,10 +200,10 @@ export default function InventoryDetail() {
                   <div key={im.id} className="border rounded-md overflow-hidden">
                     <div className="aspect-square bg-muted"><img src={im.url} alt="" className="w-full h-full object-contain"/></div>
                     <div className="p-2 flex items-center justify-between gap-1">
-                      <Button size="sm" variant={im.is_primary ? "default" : "outline"} onClick={() => setPrimary(im)} disabled={im.is_primary}>
+                      <Button size="sm" variant={im.is_primary ? "default" : "outline"} className="min-h-[44px]" onClick={() => setPrimary(im)} disabled={im.is_primary}>
                         <Star className="h-3 w-3 mr-1"/> {im.is_primary ? "Primary" : "Make primary"}
                       </Button>
-                      <Button size="icon" variant="ghost" onClick={() => deleteImage(im)}><Trash2 className="h-4 w-4"/></Button>
+                      <Button size="icon" variant="ghost" className="h-11 w-11" onClick={() => deleteImage(im)}><Trash2 className="h-4 w-4"/></Button>
                     </div>
                   </div>
                 ))}
@@ -230,7 +230,7 @@ export default function InventoryDetail() {
                     <strong>{format(parseISO(b.start_date), "MMM d, yyyy")}</strong> → <strong>{format(parseISO(b.end_date), "MMM d, yyyy")}</strong>
                     {b.reason && <span className="text-muted-foreground"> · {b.reason}</span>}
                   </div>
-                  <Button size="icon" variant="ghost" onClick={() => delBlackout(b)}><Trash2 className="h-4 w-4"/></Button>
+                  <Button size="icon" variant="ghost" className="h-11 w-11" onClick={() => delBlackout(b)}><Trash2 className="h-4 w-4"/></Button>
                 </div>
               ))}
             </div>
@@ -263,7 +263,7 @@ export default function InventoryDetail() {
                     <strong>{format(parseISO(m.performed_at), "MMM d, yyyy")}</strong> · <span className="capitalize">{m.kind}</span>
                     {m.notes && <span className="text-muted-foreground"> — {m.notes}</span>}
                   </div>
-                  <Button size="icon" variant="ghost" onClick={() => delMaint(m)}><Trash2 className="h-4 w-4"/></Button>
+                  <Button size="icon" variant="ghost" className="h-11 w-11" onClick={() => delMaint(m)}><Trash2 className="h-4 w-4"/></Button>
                 </div>
               ))}
             </div>
@@ -275,7 +275,7 @@ export default function InventoryDetail() {
             {bookings.length === 0 ? <p className="p-4 text-sm text-muted-foreground">No bookings for this item yet.</p> : (
               <div className="divide-y">
                 {bookings.map((b) => (
-                  <a key={b.id} href={`/admin/bookings?focus=${b.id}`} className="p-3 flex items-center gap-3 hover:bg-muted/50 text-sm">
+                  <Link key={b.id} to={`/admin/bookings?open=${b.id}`} className="p-3 flex items-center gap-3 hover:bg-muted/50 text-sm">
                     <div className="flex-1">
                       <div className="font-medium">{b.customer_name}</div>
                       <div className="text-xs text-muted-foreground">
@@ -284,7 +284,7 @@ export default function InventoryDetail() {
                       </div>
                     </div>
                     <span className="text-xs uppercase tracking-wide">{b.status}</span>
-                  </a>
+                  </Link>
                 ))}
               </div>
             )}
