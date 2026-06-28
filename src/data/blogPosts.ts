@@ -10,6 +10,13 @@ export interface BlogPost {
 
 export const blogPosts: BlogPost[] = [
   {
+    slug: "orlando-birthday-party-venues-guide",
+    title: "Orlando Birthday Party Venues That Allow Bounce House & Water Slide Rentals",
+    excerpt: "A local's guide to East Orlando parks, community centers, and backyard-friendly venues in Alafaya, Avalon Park, Waterford Lakes & more that permit inflatable rentals.",
+    image: siteImages.kidsGroupBounce1,
+    category: "Party Planning"
+  },
+  {
     slug: "bounce-house-rental-pricing-orlando-2025",
     title: "How Much is a Bounce House Rental in Orlando, Florida (2025 Pricing Guide)",
     excerpt: "Bounce house rentals cost $139-$149 for full-day rentals in Orlando, Florida. Orlando Inflatable Rentals LLC provides 6-8 hour rental periods with free delivery, setup, and breakdown included.",
