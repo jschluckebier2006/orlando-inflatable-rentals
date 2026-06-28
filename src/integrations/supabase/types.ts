@@ -57,6 +57,10 @@ export type Database = {
         Row: {
           damage_waiver_rate: number
           default_deposit: number
+          google_place_id: string | null
+          google_rating: number | null
+          google_reviews_count: number | null
+          google_reviews_updated_at: string | null
           id: number
           online_checkout_fee_rate: number
           tax_rate: number
@@ -66,6 +70,10 @@ export type Database = {
         Insert: {
           damage_waiver_rate?: number
           default_deposit?: number
+          google_place_id?: string | null
+          google_rating?: number | null
+          google_reviews_count?: number | null
+          google_reviews_updated_at?: string | null
           id?: number
           online_checkout_fee_rate?: number
           tax_rate?: number
@@ -75,6 +83,10 @@ export type Database = {
         Update: {
           damage_waiver_rate?: number
           default_deposit?: number
+          google_place_id?: string | null
+          google_rating?: number | null
+          google_reviews_count?: number | null
+          google_reviews_updated_at?: string | null
           id?: number
           online_checkout_fee_rate?: number
           tax_rate?: number
@@ -792,6 +804,14 @@ export type Database = {
         Returns: {
           event_date: string
           product_id: string
+        }[]
+      }
+      get_public_google_reviews: {
+        Args: never
+        Returns: {
+          rating: number
+          reviews_count: number
+          updated_at: string
         }[]
       }
       get_public_pricing: {
