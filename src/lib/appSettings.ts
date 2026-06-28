@@ -12,6 +12,8 @@ interface RuntimeSettings {
   damageWaiverRate: number;
   defaultDeposit: number;
   onlineCheckoutFeeRate: number;
+  googleReviewsCount: number;
+  googleRating: number;
 }
 
 const DEFAULTS: RuntimeSettings = {
@@ -19,6 +21,8 @@ const DEFAULTS: RuntimeSettings = {
   damageWaiverRate: 0.10,
   defaultDeposit: 5,
   onlineCheckoutFeeRate: 0.04,
+  googleReviewsCount: 68,
+  googleRating: 5.0,
 };
 
 let current: RuntimeSettings = { ...DEFAULTS };
@@ -46,16 +50,25 @@ function emit() {
 
 export async function loadAppSettings(): Promise<void> {
   try {
-    const [{ data: s }, { data: z }] = await Promise.all([
+    const [{ data: s }, { data: z }, { data: g }] = await Promise.all([
       (supabase as any).rpc("get_public_pricing").then((r: any) => ({ data: Array.isArray(r.data) ? r.data[0] : r.data })),
       (supabase.from("delivery_zones") as any).select("zip,city,fee,status"),
+      (supabase as any).rpc("get_public_google_reviews").then((r: any) => ({ data: Array.isArray(r.data) ? r.data[0] : r.data })),
     ]);
     if (s) {
       current = {
+        ...current,
         taxRate: Number(s.tax_rate) || DEFAULTS.taxRate,
         damageWaiverRate: Number(s.damage_waiver_rate) || DEFAULTS.damageWaiverRate,
         defaultDeposit: Number(s.default_deposit) || DEFAULTS.defaultDeposit,
         onlineCheckoutFeeRate: Number(s.online_checkout_fee_rate) || DEFAULTS.onlineCheckoutFeeRate,
+      };
+    }
+    if (g && g.reviews_count != null) {
+      current = {
+        ...current,
+        googleReviewsCount: Number(g.reviews_count) || DEFAULTS.googleReviewsCount,
+        googleRating: Number(g.rating) || DEFAULTS.googleRating,
       };
     }
     if (Array.isArray(z)) {

@@ -1,14 +1,20 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Phone, ArrowRight, Star } from "lucide-react";
 import { JotformModal } from "@/components/JotformModal";
 import { BOOKING_ENABLED } from "@/config/featureFlags";
 import heroBackground from "@/assets/orlando-inflatables-hero.webp";
+import { getSettings, subscribeAppSettings } from "@/lib/appSettings";
 
 export function HeroSection() {
   const [showJotform, setShowJotform] = useState(false);
   const navigate = useNavigate();
+  const [reviewsCount, setReviewsCount] = useState(getSettings().googleReviewsCount);
+  useEffect(() => {
+    const unsub = subscribeAppSettings(() => setReviewsCount(getSettings().googleReviewsCount));
+    return () => { unsub(); };
+  }, []);
 
   return (
     <>
@@ -54,7 +60,7 @@ export function HeroSection() {
                 rel="noopener noreferrer"
                 className="text-white text-sm md:text-base font-medium underline underline-offset-2 hover:text-accent transition-colors"
               >
-                68 Google Reviews
+                {reviewsCount} Google Reviews
               </a>
             </div>
 
