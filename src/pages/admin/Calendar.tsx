@@ -273,26 +273,30 @@ export default function AdminCalendar() {
         </div>
       </Card>
 
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="font-display text-2xl md:text-3xl font-bold">Calendar</h1>
-        <div className="flex items-center gap-2 flex-wrap">
+      <div className="space-y-2">
+        <div className="flex items-center justify-between gap-2">
+          <h1 className="font-display text-2xl md:text-3xl font-bold">Calendar</h1>
+          <Button size="sm" className="min-h-[44px] hidden md:inline-flex" onClick={() => navigate("/admin/new")}>
+            <Plus className="h-4 w-4 mr-1" /> New reservation
+          </Button>
+        </div>
+        <div className="flex items-center justify-between gap-2 flex-wrap">
           <div className="inline-flex rounded-md border border-border overflow-hidden">
             {(["month", "week", "day"] as ViewMode[]).map((v) => (
               <button
                 key={v}
                 onClick={() => setView(v)}
-                className={`px-3 py-1.5 text-sm capitalize ${view === v ? "bg-primary text-primary-foreground" : "bg-background"}`}
+                className={`px-3 min-h-[44px] text-sm capitalize ${view === v ? "bg-primary text-primary-foreground" : "bg-background"}`}
               >
                 {v}
               </button>
             ))}
           </div>
-          <Button variant="outline" size="sm" onClick={() => shift(-1)}><ChevronLeft className="h-4 w-4" /></Button>
-          <Button variant="outline" size="sm" onClick={() => setCursor(new Date())}>Today</Button>
-          <Button variant="outline" size="sm" onClick={() => shift(1)}><ChevronRight className="h-4 w-4" /></Button>
-          <Button size="sm" onClick={() => navigate("/admin/new")}>
-            <Plus className="h-4 w-4 mr-1" /> New reservation
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" className="min-h-[44px] min-w-[44px]" onClick={() => shift(-1)}><ChevronLeft className="h-4 w-4" /></Button>
+            <Button variant="outline" size="sm" className="min-h-[44px]" onClick={() => setCursor(new Date())}>Today</Button>
+            <Button variant="outline" size="sm" className="min-h-[44px] min-w-[44px]" onClick={() => shift(1)}><ChevronRight className="h-4 w-4" /></Button>
+          </div>
         </div>
       </div>
 

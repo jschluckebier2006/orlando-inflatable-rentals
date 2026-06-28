@@ -153,7 +153,7 @@ export default function Inventory() {
   const imgUrl = (i: Item) => i.primary_image_url || (i.legacy_image ? `/src/assets/inventory/${i.legacy_image}` : null);
 
   return (
-    <div className="p-6 space-y-4">
+    <div className="p-4 md:p-6 space-y-4">
       <div className="flex items-center justify-between flex-wrap gap-2">
         <div>
           <h1 className="text-2xl font-display font-bold flex items-center gap-2"><Boxes className="h-6 w-6"/> Inventory</h1>
@@ -181,13 +181,13 @@ export default function Inventory() {
           <TabsTrigger value="health">Image health{issues > 0 ? ` (${issues})` : ""}</TabsTrigger>
         </TabsList>
         <TabsContent value="items" className="space-y-4 mt-4">
-      <Card className="p-3 flex flex-wrap gap-2 items-center">
-        <div className="relative flex-1 min-w-[200px]">
+      <Card className="p-3 flex flex-col sm:flex-row sm:flex-wrap gap-2 sm:items-center">
+        <div className="relative flex-1 min-w-0 sm:min-w-[200px]">
           <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground"/>
           <Input className="pl-8" placeholder="Search name or ID…" value={search} onChange={(e)=>setSearch(e.target.value)} />
         </div>
         <Select value={cat} onValueChange={setCat}>
-          <SelectTrigger className="w-56"><SelectValue/></SelectTrigger>
+          <SelectTrigger className="w-full sm:w-56"><SelectValue/></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All categories</SelectItem>
             {CATS.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
@@ -233,7 +233,7 @@ export default function Inventory() {
                 </div>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button size="icon" variant="ghost" className="lg:hidden" aria-label="Row actions">
+                    <Button size="icon" variant="ghost" className="lg:hidden h-11 w-11" aria-label="Row actions">
                       <MoreHorizontal className="h-4 w-4" />
                     </Button>
                   </DropdownMenuTrigger>

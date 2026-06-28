@@ -55,13 +55,13 @@ export function AdminSidebar() {
             <SidebarMenu>
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild isActive={isActive(item.url, item.end)}>
+                  <SidebarMenuButton asChild isActive={isActive(item.url, item.end)} className="min-h-[44px]">
                     <NavLink to={item.url} end={item.end} className="flex items-center gap-2">
                       <item.icon className="h-4 w-4" />
                       {!collapsed && <span>{item.title}</span>}
                       {item.url === "/admin/inventory" && inventoryIssues > 0 && (
-                        <span className={`ml-auto inline-flex items-center justify-center rounded-full bg-destructive text-destructive-foreground text-[10px] font-semibold ${collapsed ? "w-2 h-2" : "min-w-[18px] h-[18px] px-1"}`}>
-                          {!collapsed && inventoryIssues}
+                        <span className={`ml-auto inline-flex items-center justify-center rounded-full bg-destructive text-destructive-foreground text-[10px] font-semibold min-w-[18px] h-[18px] px-1`}>
+                          {inventoryIssues}
                         </span>
                       )}
                     </NavLink>

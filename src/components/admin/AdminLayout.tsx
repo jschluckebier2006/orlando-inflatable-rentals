@@ -4,6 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AdminSidebar } from "./AdminSidebar";
 import { Button } from "@/components/ui/button";
+import { NavLink, useLocation } from "react-router-dom";
+import { Calendar, ListChecks, Boxes, Ban, Plus } from "lucide-react";
 
 export default function AdminLayout() {
   const navigate = useNavigate();
@@ -63,11 +65,42 @@ export default function AdminLayout() {
             </div>
             <Button variant="outline" size="sm" onClick={signOut}>Sign out</Button>
           </header>
-          <main className="flex-1 p-4 md:p-6 overflow-x-hidden">
+          <main className="flex-1 p-4 md:p-6 overflow-x-hidden pb-20 md:pb-6">
             <Outlet />
           </main>
+          <MobileBottomNav />
         </div>
       </div>
     </SidebarProvider>
+  );
+}
+
+const bottomItems = [
+  { to: "/admin", label: "Calendar", icon: Calendar, end: true },
+  { to: "/admin/bookings", label: "Bookings", icon: ListChecks },
+  { to: "/admin/new", label: "New", icon: Plus },
+  { to: "/admin/inventory", label: "Inventory", icon: Boxes },
+  { to: "/admin/blackouts", label: "Blackouts", icon: Ban },
+];
+
+function MobileBottomNav() {
+  const { pathname } = useLocation();
+  return (
+    <nav className="md:hidden fixed bottom-0 inset-x-0 z-50 h-16 border-t border-border bg-background flex items-stretch">
+      {bottomItems.map((it) => {
+        const active = it.end ? pathname === it.to : pathname === it.to || pathname.startsWith(it.to + "/");
+        return (
+          <NavLink
+            key={it.to}
+            to={it.to}
+            end={it.end}
+            className={`flex-1 flex flex-col items-center justify-center gap-0.5 text-[10px] font-medium ${active ? "text-primary" : "text-muted-foreground"}`}
+          >
+            <it.icon className="h-5 w-5" />
+            <span>{it.label}</span>
+          </NavLink>
+        );
+      })}
+    </nav>
   );
 }
