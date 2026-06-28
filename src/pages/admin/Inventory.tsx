@@ -6,8 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Boxes, Copy, Plus, Search, ArrowUp, ArrowDown, Eye, EyeOff, MoreHorizontal, Trash2 } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -38,8 +36,6 @@ export default function Inventory() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [cat, setCat] = useState<string>("all");
-  const [bulkOpen, setBulkOpen] = useState(false);
-  const [bulkPct, setBulkPct] = useState("10");
   const [tab, setTab] = useState<"items" | "health">("items");
   const [deleteTarget, setDeleteTarget] = useState<Item | null>(null);
   const [deleting, setDeleting] = useState(false);
@@ -91,19 +87,6 @@ export default function Inventory() {
     nav(`/admin/inventory/${newId}`);
   }
 
-  async function bulkAdjust() {
-    const pct = Number(bulkPct);
-    if (!isFinite(pct) || pct === 0) return;
-    const targets = filtered;
-    if (!confirm(`Adjust price by ${pct}% for ${targets.length} item${targets.length===1?"":"s"}?`)) return;
-    for (const t of targets) {
-      const np = Math.round(Number(t.base_price) * (1 + pct / 100));
-      await (supabase.from("inventory_items") as any).update({ base_price: np }).eq("id", t.id);
-    }
-    setBulkOpen(false);
-    toast({ title: `Updated ${targets.length} prices` });
-    load();
-  }
 
   async function deleteProduct(item: Item) {
     setDeleting(true);
@@ -160,7 +143,7 @@ export default function Inventory() {
           <p className="text-sm text-muted-foreground">{items.length} items · edit pricing, photos, stock, and availability.</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" onClick={() => setBulkOpen(true)} disabled={filtered.length === 0}>Bulk price %</Button>
+          
           <Button onClick={() => nav("/admin/inventory/new")}><Plus className="h-4 w-4 mr-1"/> New item</Button>
         </div>
       </div>
@@ -264,26 +247,6 @@ export default function Inventory() {
         </TabsContent>
       </Tabs>
 
-      <Dialog open={bulkOpen} onOpenChange={setBulkOpen}>
-        <DialogContent className="max-w-sm">
-          <DialogHeader><DialogTitle>Bulk price adjustment</DialogTitle></DialogHeader>
-          <div className="space-y-3">
-            <p className="text-sm text-muted-foreground">Apply to <strong>{filtered.length}</strong> currently filtered item{filtered.length===1?"":"s"}.</p>
-            <div>
-              <Label>Percent change</Label>
-              <div className="flex items-center gap-1">
-                <Input type="number" value={bulkPct} onChange={(e)=>setBulkPct(e.target.value)}/>
-                <span className="text-sm">%</span>
-              </div>
-              <p className="text-xs text-muted-foreground mt-1">Use a negative number to discount.</p>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={()=>setBulkOpen(false)}>Cancel</Button>
-            <Button onClick={bulkAdjust}>Apply</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
 
       <AlertDialog open={!!deleteTarget} onOpenChange={(o) => { if (!o && !deleting) setDeleteTarget(null); }}>
         <AlertDialogContent>
