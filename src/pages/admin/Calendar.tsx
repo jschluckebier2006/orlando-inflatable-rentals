@@ -9,7 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { ChevronLeft, ChevronRight, Phone, MapPin, Plus } from "lucide-react";
+import { ChevronLeft, ChevronRight, Phone, MapPin, Plus, Ban } from "lucide-react";
 
 type BookingStatus = "pending" | "confirmed" | "cancelled" | "completed";
 
@@ -30,6 +30,13 @@ interface Booking {
   booking_items?: BookingItem[];
 }
 
+interface GlobalBlackout {
+  id: string;
+  start_date: string;
+  end_date: string;
+  reason: string | null;
+}
+
 const STATUS_COLORS: Record<BookingStatus, string> = {
   pending: "bg-yellow-500",
   confirmed: "bg-green-500",
@@ -48,6 +55,7 @@ type ViewMode = "month" | "week" | "day";
 export default function AdminCalendar() {
   const navigate = useNavigate();
   const [bookings, setBookings] = useState<Booking[]>([]);
+  const [blackouts, setBlackouts] = useState<GlobalBlackout[]>([]);
   const [loading, setLoading] = useState(true);
   const [view, setView] = useState<ViewMode>("month");
   const [cursor, setCursor] = useState<Date>(new Date());
@@ -55,11 +63,18 @@ export default function AdminCalendar() {
 
   async function load() {
     setLoading(true);
-    const { data } = await supabase
-      .from("bookings")
-      .select("id, event_date, event_end_date, event_start_time, customer_name, customer_phone, event_address_line, event_city, event_zip, status, product_id, product_name, booking_items(id, product_name)")
-      .order("event_date", { ascending: true });
-    setBookings((data as any) ?? []);
+    const [{ data: bData }, { data: gbData }] = await Promise.all([
+      supabase
+        .from("bookings")
+        .select("id, event_date, event_end_date, event_start_time, customer_name, customer_phone, event_address_line, event_city, event_zip, status, product_id, product_name, booking_items(id, product_name)")
+        .order("event_date", { ascending: true }),
+      supabase
+        .from("global_blackouts")
+        .select("id, start_date, end_date, reason")
+        .order("start_date", { ascending: true }),
+    ]);
+    setBookings((bData as any) ?? []);
+    setBlackouts((gbData as any) ?? []);
     setLoading(false);
   }
   useEffect(() => { load(); }, []);
@@ -78,6 +93,21 @@ export default function AdminCalendar() {
     }
     return m;
   }, [bookings]);
+
+  const blackoutMap = useMemo(() => {
+    const m = new Map<string, GlobalBlackout[]>();
+    for (const b of blackouts) {
+      const start = parseISO(b.start_date);
+      const end = parseISO(b.end_date);
+      for (const d of eachDayOfInterval({ start, end })) {
+        const key = format(d, "yyyy-MM-dd");
+        const arr = m.get(key) ?? [];
+        arr.push(b);
+        m.set(key, arr);
+      }
+    }
+    return m;
+  }, [blackouts]);
 
   const days = useMemo(() => {
     if (view === "month") {
@@ -102,6 +132,7 @@ export default function AdminCalendar() {
   }
 
   const selected = selectedDate ? dayMap.get(selectedDate) ?? [] : [];
+  const selectedBlackouts = selectedDate ? blackoutMap.get(selectedDate) ?? [] : [];
   // Hide cancelled bookings from the grid; they only appear inside the day sheet.
   function visibleOnGrid(list: Booking[]) { return list.filter((b) => b.status !== "cancelled"); }
   const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -144,6 +175,8 @@ export default function AdminCalendar() {
           {days.map((d) => {
             const key = format(d, "yyyy-MM-dd");
             const list = dayMap.get(key) ?? [];
+            const dayBlackouts = blackoutMap.get(key) ?? [];
+            const isBlackout = dayBlackouts.length > 0;
             const inMonth = view !== "month" || isSameMonth(d, cursor);
             const today = isToday(d);
             return (
@@ -153,14 +186,20 @@ export default function AdminCalendar() {
                 className={[
                   view === "day" ? "min-h-[300px]" : "min-h-[5rem] aspect-square",
                   "rounded-md border p-1.5 flex flex-col text-left transition hover:bg-accent",
-                  inMonth ? "bg-background" : "bg-muted/30",
-                  today ? "border-primary border-2" : "border-border",
+                  isBlackout ? "bg-destructive/10" : (inMonth ? "bg-background" : "bg-muted/30"),
+                  today ? "border-primary border-2" : (isBlackout ? "border-destructive/40" : "border-border"),
                 ].join(" ")}
               >
-                <div className={`text-xs font-semibold ${today ? "text-primary" : ""} ${inMonth ? "" : "text-muted-foreground"}`}>
-                  {view === "day" ? format(d, "EEEE, MMM d") : format(d, "d")}
+                <div className={`text-xs font-semibold flex items-center justify-between gap-1 ${today ? "text-primary" : ""} ${inMonth ? "" : "text-muted-foreground"}`}>
+                  <span>{view === "day" ? format(d, "EEEE, MMM d") : format(d, "d")}</span>
+                  {isBlackout && <Ban className="h-3 w-3 text-destructive shrink-0" />}
                 </div>
                 <div className="flex-1 mt-1 space-y-0.5 overflow-hidden">
+                  {isBlackout && (
+                    <div className="text-[10px] font-semibold text-destructive uppercase tracking-wide truncate">
+                      Blackout{view !== "month" && dayBlackouts[0].reason ? `: ${dayBlackouts[0].reason}` : ""}
+                    </div>
+                  )}
                   {visibleOnGrid(list).slice(0, view === "month" ? 3 : 8).map((b) => (
                     <div key={b.id} className="flex items-center gap-1 text-xs truncate">
                       <span className={`inline-block w-2 h-2 rounded-full ${STATUS_COLORS[b.status]}`} />
@@ -182,6 +221,9 @@ export default function AdminCalendar() {
               <span className={`inline-block w-2.5 h-2.5 rounded-full ${STATUS_COLORS[s]}`} /> {s}
             </span>
           ))}
+          <span className="inline-flex items-center gap-1.5">
+            <span className="inline-block w-2.5 h-2.5 rounded-sm bg-destructive/30 border border-destructive/40" /> blackout
+          </span>
           {loading && <span>Loading…</span>}
         </div>
       </div>
@@ -192,6 +234,24 @@ export default function AdminCalendar() {
             <SheetTitle>{selectedDate && format(parseISO(selectedDate), "EEEE, MMMM d, yyyy")}</SheetTitle>
           </SheetHeader>
           <div className="mt-4 space-y-3">
+            {selectedBlackouts.length > 0 && (
+              <div className="rounded-md border border-destructive/40 bg-destructive/10 p-3">
+                <div className="flex items-center gap-2 font-semibold text-destructive">
+                  <Ban className="h-4 w-4" /> Global blackout
+                </div>
+                <ul className="mt-1 text-sm text-destructive/90 space-y-0.5">
+                  {selectedBlackouts.map((bo) => (
+                    <li key={bo.id}>{bo.reason || "No reason given"}</li>
+                  ))}
+                </ul>
+                <button
+                  className="mt-2 text-xs underline text-destructive"
+                  onClick={() => navigate("/admin/blackouts")}
+                >
+                  Manage blackout dates →
+                </button>
+              </div>
+            )}
             <Button
               size="sm"
               onClick={() => {
