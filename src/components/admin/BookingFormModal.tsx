@@ -313,10 +313,12 @@ export default function BookingFormModal({ open, onOpenChange, booking, onSaved 
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader><DialogTitle>{isEdit ? "Edit Booking" : "New Booking"}</DialogTitle></DialogHeader>
+      <DialogContent className="max-w-3xl h-[95vh] sm:h-[90vh] flex flex-col p-0 gap-0">
+        <DialogHeader className="shrink-0 border-b px-6 py-4">
+          <DialogTitle>{isEdit ? "Edit Booking" : "New Booking"}</DialogTitle>
+        </DialogHeader>
 
-        <div className="space-y-6">
+        <div className="flex-1 overflow-y-auto px-6 py-4 space-y-6">
           <section className="space-y-3">
             <h3 className="font-semibold">Customer</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -543,7 +545,7 @@ export default function BookingFormModal({ open, onOpenChange, booking, onSaved 
           </section>
         </div>
 
-        <DialogFooter>
+        <DialogFooter className="shrink-0 border-t px-6 py-3 bg-background">
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={saving}>Cancel</Button>
           <Button onClick={save} disabled={saving}>{saving ? "Saving…" : isEdit ? "Save changes" : "Create booking"}</Button>
         </DialogFooter>
