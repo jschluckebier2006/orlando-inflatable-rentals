@@ -236,16 +236,16 @@ export default function AdminCalendar() {
           <h2 className="font-display font-semibold">Coming up — next 7 days</h2>
         </div>
         <div className="space-y-4">
-          {upcomingByDay.map(({ date, list }) => (
+          {upcomingByDay.filter(({ list }) => list.length > 0).length === 0 && (
+            <p className="text-sm text-muted-foreground">No bookings in the next 7 days.</p>
+          )}
+          {upcomingByDay.filter(({ list }) => list.length > 0).map(({ date, list }) => (
             <div key={date}>
               <h3 className="font-display text-lg font-bold leading-tight">
                 {format(parseISO(date), "EEEE")}
                 <span className="text-muted-foreground font-normal text-sm ml-2">{format(parseISO(date), "MMM d")}</span>
               </h3>
-              {list.length === 0 ? (
-                <p className="text-sm text-muted-foreground mt-1">No bookings.</p>
-              ) : (
-                <ul className="mt-2 divide-y border border-border rounded-md bg-background">
+              <ul className="mt-2 divide-y border border-border rounded-md bg-background">
                   {list.map((b) => (
                     <li
                       key={`${date}-${b.id}`}
@@ -267,8 +267,7 @@ export default function AdminCalendar() {
                       )}
                     </li>
                   ))}
-                </ul>
-              )}
+              </ul>
             </div>
           ))}
         </div>
@@ -330,14 +329,41 @@ export default function AdminCalendar() {
                   {isBlackout && <Ban className="h-3 w-3 text-destructive shrink-0" />}
                 </div>
                 <div className="flex-1 mt-1 space-y-0.5 overflow-hidden">
-                  {visibleOnGrid(list).slice(0, view === "month" ? 3 : 8).map((b) => (
-                    <div key={b.id} className="flex items-center gap-1 text-xs truncate">
-                      <span className={`inline-block w-2 h-2 rounded-full ${STATUS_COLORS[b.status]}`} />
-                      <span className="truncate">{b.customer_name}</span>
-                    </div>
-                  ))}
-                  {visibleOnGrid(list).length > (view === "month" ? 3 : 8) && (
-                    <div className="text-[10px] text-muted-foreground">+{visibleOnGrid(list).length - (view === "month" ? 3 : 8)} more</div>
+                  {view === "month" ? (
+                    <>
+                      {/* Mobile: compact dots row with count. Desktop: stacked names. */}
+                      <div className="flex flex-wrap items-center gap-1 sm:hidden">
+                        {visibleOnGrid(list).slice(0, 4).map((b) => (
+                          <span key={b.id} className={`inline-block w-2 h-2 rounded-full ${STATUS_COLORS[b.status]}`} />
+                        ))}
+                        {visibleOnGrid(list).length > 4 && (
+                          <span className="text-[10px] font-semibold text-muted-foreground">+{visibleOnGrid(list).length - 4}</span>
+                        )}
+                      </div>
+                      <div className="hidden sm:block space-y-0.5">
+                        {visibleOnGrid(list).slice(0, 3).map((b) => (
+                          <div key={b.id} className="flex items-center gap-1 text-xs truncate">
+                            <span className={`inline-block w-2 h-2 rounded-full ${STATUS_COLORS[b.status]}`} />
+                            <span className="truncate">{b.customer_name}</span>
+                          </div>
+                        ))}
+                        {visibleOnGrid(list).length > 3 && (
+                          <div className="text-xs font-semibold text-muted-foreground">+{visibleOnGrid(list).length - 3} more</div>
+                        )}
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      {visibleOnGrid(list).slice(0, 8).map((b) => (
+                        <div key={b.id} className="flex items-center gap-1 text-xs truncate">
+                          <span className={`inline-block w-2 h-2 rounded-full ${STATUS_COLORS[b.status]}`} />
+                          <span className="truncate">{b.customer_name}</span>
+                        </div>
+                      ))}
+                      {visibleOnGrid(list).length > 8 && (
+                        <div className="text-xs font-semibold text-muted-foreground">+{visibleOnGrid(list).length - 8} more</div>
+                      )}
+                    </>
                   )}
                 </div>
               </button>

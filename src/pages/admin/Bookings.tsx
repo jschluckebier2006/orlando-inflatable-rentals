@@ -382,10 +382,72 @@ export default function AdminBookings() {
               </Select>
             </div>
 
-            <BookingsCalendar bookings={bookings} />
-            <UpcomingWeekList bookings={bookings} />
+            <div className="hidden md:block space-y-4">
+              <BookingsCalendar bookings={bookings} />
+              <UpcomingWeekList bookings={bookings} />
+            </div>
 
-            <div className="bg-card rounded-lg border border-border overflow-x-auto">
+            {/* Mobile card list */}
+            <ul className="md:hidden space-y-2">
+              {loading ? (
+                <li className="text-center py-8 text-muted-foreground">Loading...</li>
+              ) : activeFiltered.length === 0 ? (
+                <li className="text-center py-8 text-muted-foreground">No bookings</li>
+              ) : activeFiltered.map((b) => (
+                <li key={b.id} className="bg-card rounded-lg border border-border p-3 space-y-2">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0">
+                      <div className="font-semibold">
+                        {format(new Date(b.event_date + "T12:00:00"), "EEE, MMM d")}
+                        {b.event_start_time && <span className="text-muted-foreground font-normal"> · {fmtTime(b.event_start_time)}</span>}
+                      </div>
+                      <div className="font-medium truncate">{b.customer_name}</div>
+                      <div className="text-xs text-muted-foreground">
+                        <a href={`tel:${b.customer_phone}`} className="hover:underline">{b.customer_phone}</a>
+                      </div>
+                    </div>
+                    <Badge className={`${STATUS_COLORS[b.status]} shrink-0 capitalize`}>{b.status}</Badge>
+                  </div>
+
+                  <div className="text-sm">
+                    {b.booking_items && b.booking_items.length > 0
+                      ? b.booking_items.map((it) => it.product_name).join(", ")
+                      : b.product_name ?? "—"}
+                  </div>
+
+                  <div className="text-xs text-muted-foreground">
+                    {b.event_address_line}{b.event_city ? `, ${b.event_city}` : ""}{b.event_zip ? ` ${b.event_zip}` : ""}
+                  </div>
+
+                  {b.payment_status && (
+                    <div className="flex flex-wrap items-center gap-2 text-xs">
+                      <Badge className={PAYMENT_COLORS[b.payment_status]}>{PAYMENT_LABELS[b.payment_status]}</Badge>
+                      {b.balance_due != null && Number(b.balance_due) > 0 && (
+                        <span className="font-semibold text-destructive">Bal ${Number(b.balance_due).toFixed(2)}</span>
+                      )}
+                    </div>
+                  )}
+
+                  <div className="flex flex-wrap gap-2 pt-1">
+                    <Button size="sm" className="min-h-[44px] flex-1" variant="outline" onClick={() => { setEditing(b as any); setFormOpen(true); }}>
+                      <Pencil className="h-4 w-4 mr-1" /> Edit
+                    </Button>
+                    {b.status === "pending" && (
+                      <Button size="sm" className="min-h-[44px] flex-1" onClick={() => updateStatus(b.id, "confirmed")}>Confirm</Button>
+                    )}
+                    {b.status === "confirmed" && (
+                      <Button size="sm" className="min-h-[44px] flex-1" variant="outline" onClick={() => updateStatus(b.id, "completed")}>Complete</Button>
+                    )}
+                    {b.status !== "cancelled" && b.status !== "completed" && (
+                      <Button size="sm" className="min-h-[44px]" variant="destructive" onClick={() => { setCancelTarget(b); setCancelReason(""); setRefundConfirmed(false); }}>Cancel</Button>
+                    )}
+                    <Button size="sm" className="min-h-[44px]" variant="destructive" onClick={() => { setDeleteTarget(b); setDeleteConfirmText(""); }}>Delete</Button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+
+            <div className="hidden md:block bg-card rounded-lg border border-border overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
