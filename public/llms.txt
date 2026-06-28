@@ -1,0 +1,40 @@
+# Orlando Inflatable Rentals
+
+> Orlando-area party and event rental company specializing in bounce houses, water slides, combo units, obstacle courses, interactive games, concessions, tables, and chairs. Online booking with delivery across East Orlando and surrounding communities.
+
+## Pages
+
+- [Home](/): Browse inflatable rentals and start a booking.
+- [Rentals](/rentals): Full catalog of bounce houses, water slides, combos, obstacle courses, interactive games, concessions, tables, and chairs.
+- [Water Slide Rentals](/water-slide-rentals): Water slides and slip-n-slides for summer events.
+- [Bounce House with Slide Combo Rentals](/bounce-slide-combo-rentals): Bounce house + slide combination units.
+- [Obstacle Course Rentals](/obstacle-course-rentals): Inflatable obstacle courses for competitive fun.
+- [Interactive Game Rentals](/interactive-game-rentals): Carnival-style and sports interactive games.
+- [Bounce House Rentals](/bounce-house-rentals): Classic bounce houses in multiple themes.
+- [Concession Rentals](/concession-rentals): Sno-cone, popcorn, and cotton candy machines.
+- [Table & Chair Rentals](/table-chair-rentals): Folding tables and chairs for parties.
+- [Delivery Area](/delivery-area): Delivery coverage map and local communities served.
+- [Events](/events): Inflatable rentals for birthdays, school events, church events, corporate events, and graduation parties.
+- [Contact](/contact): Contact form, phone number, and business hours.
+- [Blog](/blog): Articles about party planning, bounce house themes, pricing, and local Orlando venues.
+- [Privacy Policy](/privacy-policy): Privacy policy and data practices.
+
+## Delivery Areas
+
+- [Alafaya Delivery](/water-slide-and-bounce-house-rental-alafaya): Delivery coverage for Alafaya, FL.
+- [Avalon Park Delivery](/water-slide-and-bounce-house-rental-avalon-park): Delivery coverage for Avalon Park, FL.
+
+## City Service Pages
+
+- [Bounce House Rentals Alafaya](/bounce-house-rentals-alafaya): Bounce house rentals delivered to Alafaya.
+- [Water Slide Rentals Alafaya](/water-slide-rentals-alafaya): Water slide rentals delivered to Alafaya.
+
+## Events
+
+- [Birthday Party Rentals](/events/birthday-party-inflatable-rentals-in-orlando): Inflatables for Orlando birthday parties.
+- [School Event Rentals](/events/school-event-inflatable-rentals-in-orlando): Inflatables for school field days and festivals.
+
+## Blog
+
+- [Bounce House Rental Pricing Orlando 2025](/blog/bounce-house-rental-pricing-orlando-2025): Current pricing guide for Orlando bounce house rentals.
+- [Orlando Birthday Party Venues Guide](/blog/orlando-birthday-party-venues-guide): Guide to Orlando birthday party venues with inflatable rentals.
