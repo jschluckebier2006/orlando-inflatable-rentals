@@ -87,19 +87,6 @@ export default function Inventory() {
     nav(`/admin/inventory/${newId}`);
   }
 
-  async function bulkAdjust() {
-    const pct = Number(bulkPct);
-    if (!isFinite(pct) || pct === 0) return;
-    const targets = filtered;
-    if (!confirm(`Adjust price by ${pct}% for ${targets.length} item${targets.length===1?"":"s"}?`)) return;
-    for (const t of targets) {
-      const np = Math.round(Number(t.base_price) * (1 + pct / 100));
-      await (supabase.from("inventory_items") as any).update({ base_price: np }).eq("id", t.id);
-    }
-    setBulkOpen(false);
-    toast({ title: `Updated ${targets.length} prices` });
-    load();
-  }
 
   async function deleteProduct(item: Item) {
     setDeleting(true);
