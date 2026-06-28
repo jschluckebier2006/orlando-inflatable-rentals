@@ -6,7 +6,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
-import { Trash2, Ban } from "lucide-react";
+import { Trash2, Ban, Pencil } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -34,6 +41,11 @@ export default function AdminBlackouts() {
   const [end, setEnd] = useState("");
   const [reason, setReason] = useState("");
   const [confirmId, setConfirmId] = useState<string | null>(null);
+  const [editing, setEditing] = useState<Blackout | null>(null);
+  const [editStart, setEditStart] = useState("");
+  const [editEnd, setEditEnd] = useState("");
+  const [editReason, setEditReason] = useState("");
+  const [editSaving, setEditSaving] = useState(false);
 
   async function load() {
     setLoading(true);
@@ -69,6 +81,30 @@ export default function AdminBlackouts() {
     if (error) return toast.error(error.message);
     toast.success("Blackout removed");
     setConfirmId(null);
+    load();
+  }
+
+  function openEdit(r: Blackout) {
+    setEditing(r);
+    setEditStart(r.start_date);
+    setEditEnd(r.end_date);
+    setEditReason(r.reason ?? "");
+  }
+
+  async function saveEdit() {
+    if (!editing) return;
+    if (!editStart) return toast.error("Pick a start date");
+    const endVal = editEnd || editStart;
+    if (endVal < editStart) return toast.error("End date must be on or after start date");
+    setEditSaving(true);
+    const { error } = await supabase
+      .from("global_blackouts")
+      .update({ start_date: editStart, end_date: endVal, reason: editReason.trim() || null })
+      .eq("id", editing.id);
+    setEditSaving(false);
+    if (error) return toast.error(error.message);
+    toast.success("Blackout updated");
+    setEditing(null);
     load();
   }
 
@@ -126,9 +162,14 @@ export default function AdminBlackouts() {
                     </div>
                     {r.reason && <div className="text-sm text-muted-foreground mt-0.5">{r.reason}</div>}
                   </div>
-                  <Button variant="ghost" size="sm" onClick={() => setConfirmId(r.id)} className="text-destructive">
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                  <div className="flex items-center gap-1 shrink-0">
+                    <Button variant="ghost" size="sm" onClick={() => openEdit(r)} aria-label="Edit blackout">
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                    <Button variant="ghost" size="sm" onClick={() => setConfirmId(r.id)} className="text-destructive" aria-label="Delete blackout">
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </li>
               );
             })}
@@ -152,6 +193,34 @@ export default function AdminBlackouts() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <Dialog open={!!editing} onOpenChange={(o) => !o && setEditing(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit blackout</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="grid sm:grid-cols-2 gap-3">
+              <div>
+                <Label htmlFor="edit-start">Start date</Label>
+                <Input id="edit-start" type="date" value={editStart} onChange={(e) => setEditStart(e.target.value)} />
+              </div>
+              <div>
+                <Label htmlFor="edit-end">End date</Label>
+                <Input id="edit-end" type="date" min={editStart} value={editEnd} onChange={(e) => setEditEnd(e.target.value)} />
+              </div>
+            </div>
+            <div>
+              <Label htmlFor="edit-reason">Reason <span className="text-muted-foreground text-xs">(optional)</span></Label>
+              <Input id="edit-reason" value={editReason} onChange={(e) => setEditReason(e.target.value)} />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditing(null)}>Cancel</Button>
+            <Button onClick={saveEdit} disabled={editSaving}>{editSaving ? "Saving…" : "Save changes"}</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
