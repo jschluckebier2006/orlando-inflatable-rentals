@@ -330,11 +330,6 @@ export default function AdminCalendar() {
                   {isBlackout && <Ban className="h-3 w-3 text-destructive shrink-0" />}
                 </div>
                 <div className="flex-1 mt-1 space-y-0.5 overflow-hidden">
-                  {isBlackout && (
-                    <div className="text-[10px] font-semibold text-destructive uppercase tracking-wide truncate">
-                      Blackout{view !== "month" && dayBlackouts[0].reason ? `: ${dayBlackouts[0].reason}` : ""}
-                    </div>
-                  )}
                   {visibleOnGrid(list).slice(0, view === "month" ? 3 : 8).map((b) => (
                     <div key={b.id} className="flex items-center gap-1 text-xs truncate">
                       <span className={`inline-block w-2 h-2 rounded-full ${STATUS_COLORS[b.status]}`} />
