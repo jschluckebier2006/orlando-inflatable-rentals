@@ -126,6 +126,22 @@ export default function AdminBookings() {
   const [editing, setEditing] = useState<BookingFormBooking | null>(null);
   const [formOpen, setFormOpen] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
+
+  useEffect(() => {
+    const openId = searchParams.get("open");
+    if (!openId || bookings.length === 0) return;
+    const b = bookings.find((bk) => bk.id === openId);
+    if (b) {
+      setEditing(b as any);
+      setFormOpen(true);
+      setSearchParams((p) => {
+        const np = new URLSearchParams(p);
+        np.delete("open");
+        return np;
+      });
+    }
+  }, [searchParams, bookings]);
+
   const tab: "active" | "cancelled" =
     searchParams.get("tab") === "cancelled" ? "cancelled" : "active";
   const setTab = (t: "active" | "cancelled") =>
