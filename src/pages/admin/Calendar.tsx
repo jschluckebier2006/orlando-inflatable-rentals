@@ -8,8 +8,9 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { ChevronLeft, ChevronRight, Phone, MapPin, Plus, Ban } from "lucide-react";
+import { ChevronLeft, ChevronRight, Phone, MapPin, Plus, Ban, BellRing, CalendarClock } from "lucide-react";
 
 type BookingStatus = "pending" | "confirmed" | "cancelled" | "completed";
 
@@ -19,6 +20,7 @@ interface Booking {
   event_date: string;
   event_end_date: string | null;
   event_start_time: string | null;
+  created_at?: string;
   customer_name: string;
   customer_phone: string;
   event_address_line: string;
@@ -52,6 +54,27 @@ const STATUS_BADGE: Record<BookingStatus, string> = {
 
 type ViewMode = "month" | "week" | "day";
 
+function fmtTime(t?: string | null): string {
+  if (!t) return "";
+  const m = /^(\d{1,2}):(\d{2})/.exec(t);
+  if (!m) return t;
+  const h = parseInt(m[1], 10);
+  const mm = m[2];
+  const suffix = h >= 12 ? "pm" : "am";
+  const h12 = h % 12 === 0 ? 12 : h % 12;
+  return `${h12}:${mm}${suffix}`;
+}
+
+function fmtLocation(b: Booking): string {
+  return [b.event_address_line, [b.event_city, b.event_zip].filter(Boolean).join(" ")]
+    .filter(Boolean).join(", ");
+}
+
+function itemNames(b: Booking): string {
+  if (b.booking_items && b.booking_items.length > 0) return b.booking_items.map((i) => i.product_name).join(", ");
+  return b.product_name ?? "—";
+}
+
 export default function AdminCalendar() {
   const navigate = useNavigate();
   const [bookings, setBookings] = useState<Booking[]>([]);
@@ -66,7 +89,7 @@ export default function AdminCalendar() {
     const [{ data: bData }, { data: gbData }] = await Promise.all([
       supabase
         .from("bookings")
-        .select("id, event_date, event_end_date, event_start_time, customer_name, customer_phone, event_address_line, event_city, event_zip, status, product_id, product_name, booking_items(id, product_name)")
+        .select("id, event_date, event_end_date, event_start_time, created_at, customer_name, customer_phone, event_address_line, event_city, event_zip, status, product_id, product_name, booking_items(id, product_name)")
         .order("event_date", { ascending: true }),
       supabase
         .from("global_blackouts")
@@ -137,8 +160,120 @@ export default function AdminCalendar() {
   function visibleOnGrid(list: Booking[]) { return list.filter((b) => b.status !== "cancelled"); }
   const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
+  const pendingAlerts = useMemo(
+    () => bookings
+      .filter((b) => b.status === "pending")
+      .sort((a, b) => (b.created_at ?? "").localeCompare(a.created_at ?? "")),
+    [bookings]
+  );
+
+  const upcomingByDay = useMemo(() => {
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const horizon = addDays(today, 6);
+    const todayKey = format(today, "yyyy-MM-dd");
+    const horizonKey = format(horizon, "yyyy-MM-dd");
+    const buckets = new Map<string, Booking[]>();
+    for (let i = 0; i < 7; i++) buckets.set(format(addDays(today, i), "yyyy-MM-dd"), []);
+    for (const b of bookings) {
+      if (b.status !== "pending" && b.status !== "confirmed") continue;
+      const start = b.event_date;
+      const end = b.event_end_date ?? b.event_date;
+      if (end < todayKey || start > horizonKey) continue;
+      for (const d of eachDayOfInterval({ start: parseISO(start), end: parseISO(end) })) {
+        const k = format(d, "yyyy-MM-dd");
+        if (buckets.has(k)) buckets.get(k)!.push(b);
+      }
+    }
+    return Array.from(buckets.entries()).map(([date, list]) => ({
+      date,
+      list: list.sort((a, b) => (a.event_start_time ?? "").localeCompare(b.event_start_time ?? "")),
+    }));
+  }, [bookings]);
+
   return (
     <div className="space-y-4">
+      {/* New booking alerts */}
+      <Card className={`p-4 border-l-4 ${pendingAlerts.length > 0 ? "border-l-yellow-500 bg-yellow-500/5" : "border-l-muted"}`}>
+        <div className="flex items-center justify-between gap-2 mb-2">
+          <div className="flex items-center gap-2">
+            <BellRing className={`h-5 w-5 ${pendingAlerts.length > 0 ? "text-yellow-600" : "text-muted-foreground"}`} />
+            <h2 className="font-display font-semibold">New booking alerts</h2>
+            <Badge variant={pendingAlerts.length > 0 ? "default" : "secondary"} className={pendingAlerts.length > 0 ? "bg-yellow-500 text-yellow-950 hover:bg-yellow-500" : ""}>
+              {pendingAlerts.length}
+            </Badge>
+          </div>
+          {pendingAlerts.length > 3 && (
+            <Button variant="ghost" size="sm" onClick={() => navigate("/admin/bookings")}>View all</Button>
+          )}
+        </div>
+        {pendingAlerts.length === 0 ? (
+          <p className="text-sm text-muted-foreground">All caught up — no new bookings awaiting confirmation.</p>
+        ) : (
+          <ul className="divide-y border border-border rounded-md bg-background">
+            {pendingAlerts.slice(0, 5).map((b) => (
+              <li
+                key={b.id}
+                className="p-3 cursor-pointer hover:bg-accent flex items-start justify-between gap-3"
+                onClick={() => navigate(`/admin/bookings?open=${b.id}`)}
+              >
+                <div className="min-w-0">
+                  <div className="font-medium truncate">{b.customer_name}</div>
+                  <div className="text-xs text-muted-foreground truncate">
+                    {format(parseISO(b.event_date), "EEE, MMM d")}{b.event_start_time ? ` · ${fmtTime(b.event_start_time)}` : ""} · {itemNames(b)}
+                  </div>
+                </div>
+                <Badge className={`${STATUS_BADGE.pending} shrink-0`}>pending</Badge>
+              </li>
+            ))}
+          </ul>
+        )}
+      </Card>
+
+      {/* Coming up — next 7 days */}
+      <Card className="p-4">
+        <div className="flex items-center gap-2 mb-3">
+          <CalendarClock className="h-5 w-5 text-primary" />
+          <h2 className="font-display font-semibold">Coming up — next 7 days</h2>
+        </div>
+        <div className="space-y-4">
+          {upcomingByDay.map(({ date, list }) => (
+            <div key={date}>
+              <h3 className="font-display text-lg font-bold leading-tight">
+                {format(parseISO(date), "EEEE")}
+                <span className="text-muted-foreground font-normal text-sm ml-2">{format(parseISO(date), "MMM d")}</span>
+              </h3>
+              {list.length === 0 ? (
+                <p className="text-sm text-muted-foreground mt-1">No bookings.</p>
+              ) : (
+                <ul className="mt-2 divide-y border border-border rounded-md bg-background">
+                  {list.map((b) => (
+                    <li
+                      key={`${date}-${b.id}`}
+                      className="p-3 cursor-pointer hover:bg-accent"
+                      onClick={() => navigate(`/admin/bookings?open=${b.id}`)}
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="font-medium truncate">{itemNames(b)}</div>
+                        <Badge className={`${STATUS_BADGE[b.status]} shrink-0 capitalize`}>{b.status}</Badge>
+                      </div>
+                      <div className="text-sm text-muted-foreground truncate">
+                        {b.customer_name}{b.event_start_time ? ` · ${fmtTime(b.event_start_time)}` : ""}
+                      </div>
+                      {fmtLocation(b) && (
+                        <div className="text-xs text-muted-foreground inline-flex items-start gap-1 mt-0.5">
+                          <MapPin className="h-3 w-3 mt-0.5 shrink-0" />
+                          <span className="truncate">{fmtLocation(b)}</span>
+                        </div>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          ))}
+        </div>
+      </Card>
+
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="font-display text-2xl md:text-3xl font-bold">Calendar</h1>
         <div className="flex items-center gap-2 flex-wrap">
