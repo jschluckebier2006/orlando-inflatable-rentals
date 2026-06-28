@@ -36,8 +36,6 @@ export default function Inventory() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [cat, setCat] = useState<string>("all");
-  const [bulkOpen, setBulkOpen] = useState(false);
-  const [bulkPct, setBulkPct] = useState("10");
   const [tab, setTab] = useState<"items" | "health">("items");
   const [deleteTarget, setDeleteTarget] = useState<Item | null>(null);
   const [deleting, setDeleting] = useState(false);
