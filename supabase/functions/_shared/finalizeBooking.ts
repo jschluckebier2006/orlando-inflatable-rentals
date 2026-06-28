@@ -202,6 +202,24 @@ export async function finalizeBookingFromSession(
   // Cleanup pending
   await supabase.from("pending_bookings").delete().eq("stripe_session_id", session.id);
 
+  // Record the Stripe checkout deposit as a booking_payments row so the
+  // recompute trigger sees the full picture. Without this row, the first
+  // admin balance charge causes the trigger to overwrite amount_paid with
+  // just the admin-charge sum, leaving a phantom DEPOSIT_CHARGE balance.
+  if (amountCharged > 0 && insertPayload.stripe_payment_intent_id) {
+    const { error: depErr } = await supabase.from("booking_payments").insert({
+      booking_id: bookingId,
+      method: "stripe_deposit",
+      amount: amountCharged,
+      reference: insertPayload.stripe_payment_intent_id,
+      notes: "Stripe Checkout deposit (auto-recorded by finalizeBooking).",
+      recorded_by: "system",
+    });
+    if (depErr) {
+      console.error("[finalizeBooking] deposit payment insert failed", depErr);
+    }
+  }
+
   // Fire emails best-effort. send-booking-emails dedupes via email_send_log
   // idempotency_key = "booking_confirm_customer:<booking_id>" / "booking_new_admin:<booking_id>",
   // so a webhook + fallback race never double-sends.
