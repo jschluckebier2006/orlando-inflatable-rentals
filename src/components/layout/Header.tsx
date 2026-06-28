@@ -274,7 +274,7 @@ export function Header() {
 
         {/* Mobile Navigation */}
         {mobileMenuOpen && (
-          <div className="lg:hidden border-t border-border">
+          <div id="mobile-navigation" className="lg:hidden border-t border-border">
             <div className="container-page py-4 space-y-4">
               <Link 
                 to="/" 
