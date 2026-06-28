@@ -86,6 +86,7 @@ const AdminNotifications = lazy(() => import("./pages/admin/Notifications"));
 const AdminEmails = lazy(() => import("./pages/admin/Emails"));
 const AdminInventory = lazy(() => import("./pages/admin/Inventory"));
 const AdminInventoryDetail = lazy(() => import("./pages/admin/InventoryDetail"));
+const AdminBlackouts = lazy(() => import("./pages/admin/Blackouts"));
 
 const queryClient = new QueryClient();
 
@@ -174,6 +175,7 @@ const App = () => {
                 <Route path="new" element={<AdminNewReservation />} />
                 <Route path="inventory" element={<AdminInventory />} />
                 <Route path="inventory/:id" element={<AdminInventoryDetail />} />
+                <Route path="blackouts" element={<AdminBlackouts />} />
                 <Route path="activity" element={<AdminActivity />} />
                 <Route path="notifications" element={<AdminNotifications />} />
                 <Route path="emails" element={<AdminEmails />} />
