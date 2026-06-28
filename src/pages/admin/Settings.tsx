@@ -20,6 +20,10 @@ export default function Settings() {
   const [feePct, setFeePct] = useState("4");
   const [savingPricing, setSavingPricing] = useState(false);
 
+  const [reviewsCount, setReviewsCount] = useState("68");
+  const [reviewsRating, setReviewsRating] = useState("5.0");
+  const [savingReviews, setSavingReviews] = useState(false);
+
   const [zones, setZones] = useState<Zone[]>([]);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<"all" | ZoneStatus>("all");
@@ -35,6 +39,8 @@ export default function Settings() {
       setWaiverPct(String(Number(s.damage_waiver_rate) * 100));
       setDeposit(String(Number(s.default_deposit)));
       setFeePct(String(Number(s.online_checkout_fee_rate ?? 0.04) * 100));
+      if (s.google_reviews_count != null) setReviewsCount(String(s.google_reviews_count));
+      if (s.google_rating != null) setReviewsRating(String(s.google_rating));
     }
     setZones((z ?? []) as Zone[]);
   }
@@ -56,6 +62,23 @@ export default function Settings() {
     setSavingPricing(false);
     if (error) return toast({ title: "Save failed", description: error.message, variant: "destructive" });
     toast({ title: "Pricing settings saved" });
+    await loadAppSettings();
+  }
+
+  async function saveReviews() {
+    const count = Number(reviewsCount);
+    const rating = Number(reviewsRating);
+    if (!Number.isInteger(count) || count < 0 || count > 100000) return toast({ title: "Reviews count must be 0–100000", variant: "destructive" });
+    if (!isFinite(rating) || rating < 0 || rating > 5) return toast({ title: "Rating must be 0–5", variant: "destructive" });
+    setSavingReviews(true);
+    const { error } = await (supabase.from("app_settings") as any).update({
+      google_reviews_count: count,
+      google_rating: rating,
+      google_reviews_updated_at: new Date().toISOString(),
+    }).eq("id", 1);
+    setSavingReviews(false);
+    if (error) return toast({ title: "Save failed", description: error.message, variant: "destructive" });
+    toast({ title: "Google reviews updated" });
     await loadAppSettings();
   }
 
@@ -129,6 +152,26 @@ export default function Settings() {
         </div>
         <div className="flex justify-end">
           <Button onClick={savePricing} disabled={savingPricing}>{savingPricing ? "Saving…" : "Save pricing"}</Button>
+        </div>
+      </Card>
+
+      <Card className="p-4 space-y-4">
+        <div>
+          <h2 className="font-semibold">Google reviews</h2>
+          <p className="text-xs text-muted-foreground">Manually update the homepage review count and star rating. Changes apply instantly.</p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div>
+            <Label>Reviews count</Label>
+            <Input type="number" min="0" step="1" value={reviewsCount} onChange={(e) => setReviewsCount(e.target.value)} />
+          </div>
+          <div>
+            <Label>Star rating</Label>
+            <Input type="number" min="0" max="5" step="0.1" value={reviewsRating} onChange={(e) => setReviewsRating(e.target.value)} />
+          </div>
+          <div className="flex items-end">
+            <Button onClick={saveReviews} disabled={savingReviews}>{savingReviews ? "Saving…" : "Save reviews"}</Button>
+          </div>
         </div>
       </Card>
 
