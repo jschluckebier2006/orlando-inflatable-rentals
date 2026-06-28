@@ -247,26 +247,6 @@ export default function Inventory() {
         </TabsContent>
       </Tabs>
 
-      <Dialog open={bulkOpen} onOpenChange={setBulkOpen}>
-        <DialogContent className="max-w-sm">
-          <DialogHeader><DialogTitle>Bulk price adjustment</DialogTitle></DialogHeader>
-          <div className="space-y-3">
-            <p className="text-sm text-muted-foreground">Apply to <strong>{filtered.length}</strong> currently filtered item{filtered.length===1?"":"s"}.</p>
-            <div>
-              <Label>Percent change</Label>
-              <div className="flex items-center gap-1">
-                <Input type="number" value={bulkPct} onChange={(e)=>setBulkPct(e.target.value)}/>
-                <span className="text-sm">%</span>
-              </div>
-              <p className="text-xs text-muted-foreground mt-1">Use a negative number to discount.</p>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={()=>setBulkOpen(false)}>Cancel</Button>
-            <Button onClick={bulkAdjust}>Apply</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
 
       <AlertDialog open={!!deleteTarget} onOpenChange={(o) => { if (!o && !deleting) setDeleteTarget(null); }}>
         <AlertDialogContent>
