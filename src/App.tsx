@@ -70,6 +70,7 @@ const Top3BounceHouseThemes = lazy(() => import("./pages/blog/Top3BounceHouseThe
 const ElevateCelebration = lazy(() => import("./pages/blog/ElevateCelebration"));
 const BounceHouseRentalsNearMe = lazy(() => import("./pages/blog/BounceHouseRentalsNearMe"));
 const FoundingOfChristmasFlorida = lazy(() => import("./pages/blog/FoundingOfChristmasFlorida"));
+const OrlandoBirthdayPartyVenuesGuide = lazy(() => import("./pages/blog/OrlandoBirthdayPartyVenuesGuide"));
 const ThankYou = lazy(() => import("./pages/ThankYou"));
 const WebVitals = lazy(() => import("./pages/WebVitals"));
 const CheckoutReturn = lazy(() => import("./pages/CheckoutReturn"));
@@ -163,6 +164,7 @@ const App = () => {
               <Route path="/blog/elevate-celebration-bounce-house-rental" element={<ElevateCelebration />} />
               <Route path="/blog/bounce-house-rentals-near-me" element={<BounceHouseRentalsNearMe />} />
               <Route path="/blog/founding-of-christmas-florida" element={<FoundingOfChristmasFlorida />} />
+              <Route path="/blog/orlando-birthday-party-venues-guide" element={<OrlandoBirthdayPartyVenuesGuide />} />
               <Route path="/thank-you" element={<ThankYou />} />
               <Route path="/web-vitals" element={<WebVitals />} />
               <Route path="/checkout/return" element={<CheckoutReturn />} />

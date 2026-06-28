@@ -1,5 +1,6 @@
 import { Layout } from "@/components/layout/Layout";
 import { SEOHead } from "@/components/seo/SEOHead";
+import { useLocation } from "react-router-dom";
 import { LocalBusinessSchema } from "@/components/seo/LocalBusinessSchema";
 import { OrganizationSchema } from "@/components/seo/OrganizationSchema";
 import { FAQPageSchema } from "@/components/seo/FAQPageSchema";
@@ -40,12 +41,29 @@ const homepageFaqs = [
 ];
 
 const Index = () => {
+  const { pathname } = useLocation();
+  const isKeywordRoute = pathname === "/water-slide-and-bounce-house-rentals-orlando";
+
+  const seo = isKeywordRoute
+    ? {
+        title: "Water Slide & Bounce House Rentals in Orlando, FL",
+        description:
+          "Orlando water slide & bounce house rentals with free delivery, setup & pickup in East Orlando and Orange County. (407) 497-1840.",
+        canonical: "/water-slide-and-bounce-house-rentals-orlando",
+      }
+    : {
+        title: "Bounce House & Water Slide Rentals - Orlando, FL",
+        description:
+          "Orlando's local bounce house & water slide rentals. Free delivery, setup & pickup across East Orlando. Book online or call (407) 497-1840.",
+        canonical: "/",
+      };
+
   return (
     <Layout>
       <SEOHead
-        title="Bounce House & Water Slide Rentals in Orlando FL"
-        description="Orlando Inflatables is your one-stop shop for bounce house, water slide, obstacle course, and party rental equipment in East Orlando, Orange County. Book your rental today! (407) 497-1840"
-        canonical="/"
+        title={seo.title}
+        description={seo.description}
+        canonical={seo.canonical}
       />
       <LocalBusinessSchema />
       <OrganizationSchema />

@@ -38,7 +38,7 @@ export default function WaterSlideRentals() {
     <Layout>
       <SEOHead
         title="Water Slide Rentals in Orlando, FL"
-        description="Beat the heat with water slide rentals in Orlando, FL. Dual-lane & single-lane water slides for parties & events in East Orlando & Orange County. Call (407) 497-1840."
+        description="Beat the heat with inflatable water slide rentals in East Orlando. Free delivery & setup. Call (407) 497-1840."
         canonical="/water-slide-rentals"
       />
       <ServiceSchema

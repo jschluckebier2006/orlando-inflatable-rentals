@@ -262,6 +262,9 @@ export function Header() {
                 type="button"
                 className="p-2 rounded-md text-foreground hover:bg-accent"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                aria-label={mobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+                aria-expanded={mobileMenuOpen}
+                aria-controls="mobile-navigation"
               >
                 {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
               </button>
@@ -271,7 +274,7 @@ export function Header() {
 
         {/* Mobile Navigation */}
         {mobileMenuOpen && (
-          <div className="lg:hidden border-t border-border">
+          <div id="mobile-navigation" className="lg:hidden border-t border-border">
             <div className="container-page py-4 space-y-4">
               <Link 
                 to="/" 
