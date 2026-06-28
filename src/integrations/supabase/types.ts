@@ -533,6 +533,33 @@ export type Database = {
         }
         Relationships: []
       }
+      global_blackouts: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          end_date: string
+          id: string
+          reason: string | null
+          start_date: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          end_date: string
+          id?: string
+          reason?: string | null
+          start_date: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          end_date?: string
+          id?: string
+          reason?: string | null
+          start_date?: string
+        }
+        Relationships: []
+      }
       inventory_blackouts: {
         Row: {
           created_at: string
