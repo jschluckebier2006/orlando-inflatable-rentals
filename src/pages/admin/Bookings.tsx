@@ -359,7 +359,7 @@ export default function AdminBookings() {
           <div className="flex items-center gap-2">
             <Button onClick={() => { setEditing(null); setFormOpen(true); }}><Plus className="h-4 w-4 mr-1" />New booking</Button>
             <Button variant="outline" onClick={load} disabled={loading}>Refresh</Button>
-            <Button variant="outline" onClick={signOut}>Sign out</Button>
+            <Button variant="outline" onClick={signOut} className="hidden md:inline-flex">Sign out</Button>
           </div>
         </div>
 
