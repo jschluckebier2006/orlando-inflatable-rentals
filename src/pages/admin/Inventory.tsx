@@ -143,7 +143,7 @@ export default function Inventory() {
           <p className="text-sm text-muted-foreground">{items.length} items · edit pricing, photos, stock, and availability.</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" onClick={() => setBulkOpen(true)} disabled={filtered.length === 0}>Bulk price %</Button>
+          
           <Button onClick={() => nav("/admin/inventory/new")}><Plus className="h-4 w-4 mr-1"/> New item</Button>
         </div>
       </div>
