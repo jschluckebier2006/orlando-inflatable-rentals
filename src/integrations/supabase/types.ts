@@ -767,6 +767,15 @@ export type Database = {
           product_id: string
         }[]
       }
+      get_public_pricing: {
+        Args: never
+        Returns: {
+          damage_waiver_rate: number
+          default_deposit: number
+          online_checkout_fee_rate: number
+          tax_rate: number
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
