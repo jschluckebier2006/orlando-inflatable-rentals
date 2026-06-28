@@ -54,7 +54,7 @@ export function HeroSection() {
                 rel="noopener noreferrer"
                 className="text-white text-sm md:text-base font-medium underline underline-offset-2 hover:text-accent transition-colors"
               >
-                63 Google Reviews
+                68 Google Reviews
               </a>
             </div>
 
