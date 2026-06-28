@@ -47,7 +47,7 @@ function emit() {
 export async function loadAppSettings(): Promise<void> {
   try {
     const [{ data: s }, { data: z }] = await Promise.all([
-      (supabase.from("app_settings") as any).select("tax_rate,damage_waiver_rate,default_deposit,online_checkout_fee_rate").eq("id", 1).maybeSingle(),
+      (supabase as any).rpc("get_public_pricing").then((r: any) => ({ data: Array.isArray(r.data) ? r.data[0] : r.data })),
       (supabase.from("delivery_zones") as any).select("zip,city,fee,status"),
     ]);
     if (s) {
