@@ -11,6 +11,7 @@ import obstacleCourseImg from "@/assets/obstacle-course-category.webp";
 import interactiveGamesImg from "@/assets/interactive-games-category.webp";
 import concessionsImg from "@/assets/concessions-category.webp";
 import tablesChairsImg from "@/assets/tables-chairs-category.webp";
+import tentsImg from "@/assets/tents-category.jpg";
 
 const categories = [
   { name: "Bounce Houses", description: "Fun bounce houses for all ages", href: "/bounce-house-rentals", image: bounceHouseCategoryImg },
@@ -20,6 +21,7 @@ const categories = [
   { name: "Interactive Games", description: "Engaging games for everyone", href: "/interactive-game-rentals", image: interactiveGamesImg },
   { name: "Concessions", description: "Popcorn, snow cones & more", href: "/concession-rentals", image: concessionsImg },
   { name: "Tables & Chairs", description: "Seating for your event", href: "/table-chair-rentals", image: tablesChairsImg },
+  { name: "Tents", description: "Shade and shelter for any event", href: "/tent-rentals", image: tentsImg },
 ];
 
 export default function Rentals() {
