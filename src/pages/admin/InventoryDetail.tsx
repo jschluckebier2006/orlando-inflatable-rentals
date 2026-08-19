@@ -13,13 +13,16 @@ import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Trash2, Upload, Star, Plus } from "lucide-react";
 import { format, parseISO } from "date-fns";
 
-const CATS = ["water-slides","bounce-slide-combos","interactive-games","bounce-houses","obstacle-courses","concessions","tables-chairs"];
+const CATS = ["water-slides","bounce-slide-combos","interactive-games","bounce-houses","obstacle-courses","concessions","tables-chairs","tents"];
+
+interface Spec { label: string; value: string; }
 
 interface Item {
   id: string; name: string; slug: string; category: string; base_price: number;
   description: string | null; dimensions: string | null; capacity: string | null;
   age_range: string | null; stock_count: number; active: boolean; sort_order: number;
   primary_image_url: string | null; legacy_image: string | null;
+  bookable_online: boolean; specs: Spec[];
 }
 interface Img { id: string; url: string; storage_path: string | null; is_primary: boolean; sort_order: number; }
 interface Blackout { id: string; start_date: string; end_date: string; reason: string | null; }
@@ -44,7 +47,7 @@ export default function InventoryDetail() {
   async function load() {
     setLoading(true);
     if (isNew) {
-      setItem({ id: "", name: "", slug: "", category: "water-slides", base_price: 0, description: "", dimensions: "", capacity: "", age_range: "", stock_count: 1, active: true, sort_order: 999, primary_image_url: null, legacy_image: null });
+      setItem({ id: "", name: "", slug: "", category: "water-slides", base_price: 0, description: "", dimensions: "", capacity: "", age_range: "", stock_count: 1, active: true, sort_order: 999, primary_image_url: null, legacy_image: null, bookable_online: true, specs: [] });
       setLoading(false); return;
     }
     const [it, im, bl, mt, bk] = await Promise.all([
@@ -54,7 +57,8 @@ export default function InventoryDetail() {
       (supabase.from("inventory_maintenance") as any).select("*").eq("item_id", id).order("performed_at", { ascending: false }),
       (supabase.from("booking_items") as any).select("booking_id, bookings:booking_id(id,event_date,event_end_date,customer_name,status)").eq("product_id", id).limit(50),
     ]);
-    setItem(it.data as Item);
+    const raw = it.data as any;
+    setItem(raw ? ({ ...raw, bookable_online: raw.bookable_online !== false, specs: Array.isArray(raw.specs) ? raw.specs : [] } as Item) : null);
     setImages((im.data ?? []) as Img[]);
     setBlackouts((bl.data ?? []) as Blackout[]);
     setMaint((mt.data ?? []) as Maint[]);
