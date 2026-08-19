@@ -68,15 +68,17 @@ Weddings, Graduations, and Backyard Parties
 Tent Rental FAQs
 ```
 
-- 250+ words of original customer-facing copy across those sections. Service area named in prose using the cities we actually deliver to (Alafaya, Avalon Park, Azalea Park, Bithlo, Christmas, Chuluota, Eastwood, Stoneybrook, Waterford Lakes, Wedgefield) — no invented cities, no invented stats or claims about inventory or experience.
-- FAQ block with `FAQPageSchema` (allowed — not a product offer), in this order: Do you deliver and set up tent rentals in Orlando? / Can a tent be set up on grass, concrete, or pavement? / How many guests fit under a 20x20 tent? / Can I rent a tent for a backyard party or graduation? / Do I need a permit or HOA approval for a tent? (general answer per the liability rules) / How far in advance should I book? / Does the tent rental include tables and chairs? (verbatim answer below) / How do I reserve the tent? (by phone at 407-497-1840 — not bookable online).
+- 250+ words of original customer-facing copy across those sections, uniquely worded (no reuse of other category-page prose). No invented stats or claims about inventory or experience.
+- **Service area — verified against existing pages.** `DeliveryAreaLinks.tsx`, `WaterSlideRentals.tsx`, and `TableChairRentals.tsx` all list the same 10 cities: Alafaya, Avalon Park, Azalea Park, Bithlo, Christmas, Chuluota, Eastwood, Stoneybrook, Waterford Lakes, Wedgefield. **No difference** — the tent page uses this same list, in prose, with the same `/water-slide-and-bounce-house-rental-<slug>` internal links.
+- FAQ block with `FAQPageSchema` (allowed — not a product offer), in this order: Do you deliver and set up tent rentals in Orlando? / Can a tent be set up on grass, concrete, or pavement? / How many guests fit under a 20x20 tent? / Can I rent a tent for a backyard party or graduation? / Do I need a permit or HOA approval for a tent? (general answer per the liability rules) / Does the tent rental include tables and chairs? (verbatim answer below) / How do I reserve the tent? (by phone at 407-497-1840 — not bookable online).
+- **"How far in advance should I book?" is removed** — the supplied answer came through as the literal placeholder `[PASTE YOUR UNCLE'S ANSWER]`, so per your instruction the question is dropped entirely rather than invented. Send the wording later and it can be added.
 - Page closes with a "Call to Reserve" CTA block using the same `tel:+14074971840` link and the `call_to_reserve` GA4 event.
 - Schema: `BreadcrumbSchema` + `ServiceSchema` + `FAQPageSchema` only — **no Product/Offer schema**, since the item is not transactable online.
 
 **Tent-only messaging (no tables or chairs included)**
 - FAQ item "Does the tent rental include tables and chairs?" answer, verbatim: "No — the 20x20 High Peak Frame Tent is the tent only. Tables and chairs can be added to your reservation for an additional fee. Just let us know what you need when you call and we'll quote it with your tent."
 - Product detail modal only (card stays compact): a line directly under the spec table — "Tent only. Tables and chairs available as add-ons." in `text-xs text-muted-foreground`, matching the phone-number line styling.
-- "What Size Tent Do You Need?" section: the 40-seated-guest figure is framed as what *fits* under the canopy, not what is supplied — seating is not included.
+- "What Size Tent Do You Need?" section: both figures (40 with tables, 67 without) are framed as planning guidance for what comfortably fits under the canopy — never as a capacity limit or occupancy figure — and seating is not included.
 - One natural in-copy cross-link to `/table-chair-rentals` with descriptive anchor text such as "table and chair rentals" (no banner, no callout).
 - No mention of a bundled tent + table + chair package anywhere — no teaser, "coming soon", or waitlist.
 
