@@ -9,11 +9,11 @@ Note: an existing project rule said "never add tents." This request replaces it 
 - Its card looks identical to every other product card, but shows a compact spec table and a **"Call to Reserve"** button (phone icon, taps to dial 407-497-1840) instead of "Book Now".
 - Product photos: the detail modal gets a **multi-photo gallery** (main image + thumbnail strip), so several tent photos uploaded from the admin all show.
 
-## Product content
+## Product content (you enter this in the admin UI, not a migration)
 
 Description (2–3 sentences, matching site tone): white high-peak frame tent with an elegant peaked silhouette; no center poles so the entire 400 sq ft floor is usable; free-standing frame sets up on grass or hard surfaces; ideal for weddings, graduations and backyard parties, with professional delivery and setup by our team.
 
-Specs table:
+Specs to enter (price shown once — the card's normal `$379 / day` line is hidden when specs include a Price row, so there is no duplicate):
 
 ```text
 Price               $379 per day
@@ -31,16 +31,24 @@ Any product can be flagged phone-only or given a spec list — the tent is just 
 **Data model**
 - Migration: add `bookable_online boolean not null default true` and `specs jsonb not null default '[]'` to `public.inventory_items`. Existing rows unaffected.
 - `src/lib/inventory.ts`: extend `Product` with `bookableOnline?: boolean` (defaults true in `normalize`), `specs?: { label: string; value: string }[]`, and `images: string[]` (all `inventory_images` rows, primary first). Add `"tents"` to `ProductCategory`, `CATEGORY_LABELS`, `CATEGORY_LINKS`.
-- Insert the tent row via migration (slug `20x20-high-peak-frame-tent`, `base_price 379`, `bookable_online false`, specs JSON, `stock_count 1`).
+- Schema only — **no product insert in the migration**. The tent is created through the admin UI.
+- `stock_count` is left at its default and never rendered for `bookableOnline === false` products; an audit pass removes any stock/availability text on those (card, modal, category page, admin-facing storefront copy).
+- `images: string[]` is built from `inventory_images` (primary first, then `sort_order`), falling back to the single resolved `image`. Products with one image get an array of length 1, and the thumbnail strip only renders when `images.length > 1`, so every existing product looks byte-identical to today.
 
 **UI**
 - New `src/components/inventory/ProductSpecs.tsx`: 2-col `dl`, `text-xs`, muted left label / right-aligned value, `divide-y divide-border`, tight row padding. Rendered between description and CTA.
-- `ProductCard.tsx`: card becomes `flex flex-col h-full` with the CTA in an `mt-auto` footer so equal-height grid alignment holds. When `bookableOnline === false`, render `<Button asChild variant="secondary">` wrapping `<a href="tel:+14074971840">` with a `Phone` icon, label "Call to Reserve", and the requested `aria-label`. Same size/min-height as Book Now; the anchor stops click propagation so it never opens the booking modal.
+- `ProductCard.tsx`: card becomes `flex flex-col h-full` with the CTA in an `mt-auto` footer so equal-height grid alignment holds. When `bookableOnline === false`, render `<Button asChild variant="secondary">` wrapping `<a href="tel:+14074971840">` with a `Phone` icon, label "Call to Reserve", and the requested `aria-label`. Same size/min-height as Book Now; the anchor stops click propagation so it never opens the booking modal. Directly beneath it, visible muted text `407-497-1840` (`text-xs text-muted-foreground text-center`) so desktop users can read the number.
+- The `$379 / day` price line is suppressed when the product's specs already contain a `Price` row.
 - `ProductDetailModal.tsx`: same CTA swap + specs table; thumbnail gallery when `images.length > 1`.
-- `CartContext.addItem`: ignore products with `bookableOnline === false` (guardrail); `CategoryCard` tiles route through the same modal and inherit the CTA.
+- `CartContext.addItem`: for `bookableOnline === false`, skip the add **and** fire a toast — "This item is reserved by phone" with the description containing a `tel:+14074971840` link rendered as `407-497-1840`. `CategoryCard` tiles route through the same modal and inherit the CTA.
+
+**GA4 tracking**
+- `gtag.js` for `G-CSD46XS8PZ` is already loaded in `index.html`. Add a small `src/lib/analytics.ts` helper (`trackEvent(name, params)`) that safely calls `window.gtag('event', ...)` when present.
+- Every "Call to Reserve" click (card and detail modal) fires `call_to_reserve` with `{ product_slug, product_name, phone: "407-497-1840" }` before navigation.
 
 **Pages / routing**
 - New `src/pages/TentRentals.tsx` modeled on `TableChairRentals.tsx` (hero → grid → SEO content), route in `App.tsx`, entry in `Rentals.tsx`, card in `AllCategoryCarousels.tsx`, nav/footer category links, and `public/sitemap.xml`.
+- SEO: unique `SEOHead` title/description, single H1 ("Tent Rentals in Orlando, FL"), canonical `/tent-rentals`, and 250+ words of original supporting copy — what a high peak frame tent is, how a frame tent differs from a pole tent (no center poles, free-standing, usable floor area), surface options and anchoring on grass vs. concrete, HOA/park permit and wind considerations, sizing guidance for 40 seated guests, and the East Orlando delivery area. `BreadcrumbSchema` + `ServiceSchema` only — **no Product/Offer schema**, since the item is not transactable online.
 
 **Admin**
 - `InventoryDetail.tsx`: add `tents` to the category select, a "Bookable online" switch, and a repeatable label/value spec editor persisting to the new columns.
