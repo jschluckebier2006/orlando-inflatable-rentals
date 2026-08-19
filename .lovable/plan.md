@@ -9,11 +9,11 @@ Note: an existing project rule said "never add tents." This request replaces it 
 - Its card looks identical to every other product card, but shows a compact spec table and a **"Call to Reserve"** button (phone icon, taps to dial 407-497-1840) instead of "Book Now".
 - Product photos: the detail modal gets a **multi-photo gallery** (main image + thumbnail strip), so several tent photos uploaded from the admin all show.
 
-## Product content
+## Product content (you enter this in the admin UI, not a migration)
 
 Description (2–3 sentences, matching site tone): white high-peak frame tent with an elegant peaked silhouette; no center poles so the entire 400 sq ft floor is usable; free-standing frame sets up on grass or hard surfaces; ideal for weddings, graduations and backyard parties, with professional delivery and setup by our team.
 
-Specs table:
+Specs to enter (price shown once — the card's normal `$379 / day` line is hidden when specs include a Price row, so there is no duplicate):
 
 ```text
 Price               $379 per day
