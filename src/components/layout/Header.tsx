@@ -30,6 +30,7 @@ const rentalCategories = [
   { name: "Interactive Games", href: "/interactive-game-rentals", description: "Engaging games for everyone" },
   { name: "Concessions", href: "/concession-rentals", description: "Popcorn, snow cones & more" },
   { name: "Tables & Chairs", href: "/table-chair-rentals", description: "Seating for your event" },
+  { name: "Tents", href: "/tent-rentals", description: "Shade and shelter for any event" },
 ];
 
 const deliveryAreas = [
