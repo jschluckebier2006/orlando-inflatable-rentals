@@ -48,7 +48,30 @@ Any product can be flagged phone-only or given a spec list — the tent is just 
 
 **Pages / routing**
 - New `src/pages/TentRentals.tsx` modeled on `TableChairRentals.tsx` (hero → grid → SEO content), route in `App.tsx`, entry in `Rentals.tsx`, card in `AllCategoryCarousels.tsx`, nav/footer category links, and `public/sitemap.xml`.
-- SEO: unique `SEOHead` title/description, single H1 ("Tent Rentals in Orlando, FL"), canonical `/tent-rentals`, and 250+ words of original supporting copy — what a high peak frame tent is, how a frame tent differs from a pole tent (no center poles, free-standing, usable floor area), surface options and anchoring on grass vs. concrete, HOA/park permit and wind considerations, sizing guidance for 40 seated guests, and the East Orlando delivery area. `BreadcrumbSchema` + `ServiceSchema` only — **no Product/Offer schema**, since the item is not transactable online.
+
+**Liability copy rules (highest priority on this page)**
+- No specific wind ratings or wind-speed thresholds, no permit requirements or thresholds, no occupancy limits, no setback distances. No numbers of that kind anywhere on the page.
+- Permit/HOA guidance is general, in this spirit: "Requirements vary by venue, neighborhood, and municipality. Check with your venue, HOA, or local parks department about tent permits before your event date, and let us know about any restrictions when you call."
+- Weather: we monitor conditions and work with the customer on scheduling — no thresholds. Any borderline sentence gets left out.
+
+**/tent-rentals SEO plan**
+- Keywords — primary: *tent rentals Orlando FL*, *tent rental Orlando*. Secondary: party tent rental Orlando, wedding tent rental Orlando, 20x20 tent rental, frame tent rental, backyard party tent, graduation party tent rental, tent delivery and setup Orlando, high peak tent rental, canopy tent rental Orlando. Worked in naturally — no stuffing.
+- `SEOHead` title: "Tent Rentals in Orlando, FL | 20x20 High Peak Frame Tent | Orlando Inflatables". Meta description includes "tent rentals Orlando", "delivery and setup", and 407-497-1840. Canonical `/tent-rentals`.
+- Single H1: "Tent Rentals in Orlando, FL". H2s in this exact order:
+
+```text
+20x20 High Peak Frame Tent Rental
+Frame Tent vs. Pole Tent — What's the Difference?
+What Size Tent Do You Need?
+Tent Delivery and Setup Across Orlando
+Weddings, Graduations, and Backyard Parties
+Tent Rental FAQs
+```
+
+- 250+ words of original customer-facing copy across those sections. Service area named in prose using the cities we actually deliver to (Alafaya, Avalon Park, Azalea Park, Bithlo, Christmas, Chuluota, Eastwood, Stoneybrook, Waterford Lakes, Wedgefield) — no invented cities, no invented stats or claims about inventory or experience.
+- FAQ block with `FAQPageSchema` (allowed — not a product offer), in this order: Do you deliver and set up tent rentals in Orlando? / Can a tent be set up on grass, concrete, or pavement? / How many guests fit under a 20x20 tent? / Can I rent a tent for a backyard party or graduation? / Do I need a permit or HOA approval for a tent? (general answer per the liability rules) / How far in advance should I book? / Does the tent rental include tables and chairs? (verbatim answer below) / How do I reserve the tent? (by phone at 407-497-1840 — not bookable online).
+- Page closes with a "Call to Reserve" CTA block using the same `tel:+14074971840` link and the `call_to_reserve` GA4 event.
+- Schema: `BreadcrumbSchema` + `ServiceSchema` + `FAQPageSchema` only — **no Product/Offer schema**, since the item is not transactable online.
 
 **Tent-only messaging (no tables or chairs included)**
 - FAQ item "Does the tent rental include tables and chairs?" answer, verbatim: "No — the 20x20 High Peak Frame Tent is the tent only. Tables and chairs can be added to your reservation for an additional fee. Just let us know what you need when you call and we'll quote it with your tent."
