@@ -50,5 +50,12 @@ Any product can be flagged phone-only or given a spec list — the tent is just 
 - New `src/pages/TentRentals.tsx` modeled on `TableChairRentals.tsx` (hero → grid → SEO content), route in `App.tsx`, entry in `Rentals.tsx`, card in `AllCategoryCarousels.tsx`, nav/footer category links, and `public/sitemap.xml`.
 - SEO: unique `SEOHead` title/description, single H1 ("Tent Rentals in Orlando, FL"), canonical `/tent-rentals`, and 250+ words of original supporting copy — what a high peak frame tent is, how a frame tent differs from a pole tent (no center poles, free-standing, usable floor area), surface options and anchoring on grass vs. concrete, HOA/park permit and wind considerations, sizing guidance for 40 seated guests, and the East Orlando delivery area. `BreadcrumbSchema` + `ServiceSchema` only — **no Product/Offer schema**, since the item is not transactable online.
 
+**Tent-only messaging (no tables or chairs included)**
+- FAQ item "Does the tent rental include tables and chairs?" answer, verbatim: "No — the 20x20 High Peak Frame Tent is the tent only. Tables and chairs can be added to your reservation for an additional fee. Just let us know what you need when you call and we'll quote it with your tent."
+- Product detail modal only (card stays compact): a line directly under the spec table — "Tent only. Tables and chairs available as add-ons." in `text-xs text-muted-foreground`, matching the phone-number line styling.
+- "What Size Tent Do You Need?" section: the 40-seated-guest figure is framed as what *fits* under the canopy, not what is supplied — seating is not included.
+- One natural in-copy cross-link to `/table-chair-rentals` with descriptive anchor text such as "table and chair rentals" (no banner, no callout).
+- No mention of a bundled tent + table + chair package anywhere — no teaser, "coming soon", or waitlist.
+
 **Admin**
 - `InventoryDetail.tsx`: add `tents` to the category select, a "Bookable online" switch, and a repeatable label/value spec editor persisting to the new columns.
