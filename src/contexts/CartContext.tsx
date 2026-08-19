@@ -1,6 +1,8 @@
 import { createContext, useContext, useEffect, useMemo, useState, ReactNode } from "react";
 import type { Product } from "@/lib/inventory";
 import { DURATION_MULTIPLIERS, type DurationType } from "@/lib/pricing";
+import { toast } from "@/hooks/use-toast";
+import { RESERVE_PHONE, RESERVE_PHONE_HREF } from "@/lib/analytics";
 
 export interface CartItem {
   id: string;
@@ -72,9 +74,26 @@ export function CartProvider({ children }: { children: ReactNode }) {
     total,
     duration,
     setDuration,
-    addItem: (p) => setItems((cur) =>
-      cur.some((i) => i.id === p.id) ? cur : [...cur, { id: p.id, name: p.name, price: p.price, image: p.image }]
-    ),
+    addItem: (p) => {
+      if (p.bookableOnline === false) {
+        toast({
+          title: "This item is reserved by phone",
+          description: (
+            <span>
+              Call{" "}
+              <a href={RESERVE_PHONE_HREF} className="underline font-semibold">
+                {RESERVE_PHONE}
+              </a>{" "}
+              to reserve it.
+            </span>
+          ),
+        });
+        return;
+      }
+      setItems((cur) =>
+        cur.some((i) => i.id === p.id) ? cur : [...cur, { id: p.id, name: p.name, price: p.price, image: p.image }]
+      );
+    },
     removeItem: (id) => setItems((cur) => cur.filter((i) => i.id !== id)),
     clear: () => setItems([]),
     has: (id) => items.some((i) => i.id === id),
