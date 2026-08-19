@@ -650,6 +650,7 @@ export type Database = {
           active: boolean
           age_range: string | null
           base_price: number
+          bookable_online: boolean
           capacity: string | null
           category: string
           created_at: string
@@ -662,6 +663,7 @@ export type Database = {
           primary_image_url: string | null
           slug: string
           sort_order: number
+          specs: Json
           stock_count: number
           updated_at: string
         }
@@ -669,6 +671,7 @@ export type Database = {
           active?: boolean
           age_range?: string | null
           base_price?: number
+          bookable_online?: boolean
           capacity?: string | null
           category: string
           created_at?: string
@@ -681,6 +684,7 @@ export type Database = {
           primary_image_url?: string | null
           slug: string
           sort_order?: number
+          specs?: Json
           stock_count?: number
           updated_at?: string
         }
@@ -688,6 +692,7 @@ export type Database = {
           active?: boolean
           age_range?: string | null
           base_price?: number
+          bookable_online?: boolean
           capacity?: string | null
           category?: string
           created_at?: string
@@ -700,6 +705,7 @@ export type Database = {
           primary_image_url?: string | null
           slug?: string
           sort_order?: number
+          specs?: Json
           stock_count?: number
           updated_at?: string
         }

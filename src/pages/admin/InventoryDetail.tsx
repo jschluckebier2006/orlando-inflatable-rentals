@@ -13,13 +13,16 @@ import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Trash2, Upload, Star, Plus } from "lucide-react";
 import { format, parseISO } from "date-fns";
 
-const CATS = ["water-slides","bounce-slide-combos","interactive-games","bounce-houses","obstacle-courses","concessions","tables-chairs"];
+const CATS = ["water-slides","bounce-slide-combos","interactive-games","bounce-houses","obstacle-courses","concessions","tables-chairs","tents"];
+
+interface Spec { label: string; value: string; }
 
 interface Item {
   id: string; name: string; slug: string; category: string; base_price: number;
   description: string | null; dimensions: string | null; capacity: string | null;
   age_range: string | null; stock_count: number; active: boolean; sort_order: number;
   primary_image_url: string | null; legacy_image: string | null;
+  bookable_online: boolean; specs: Spec[];
 }
 interface Img { id: string; url: string; storage_path: string | null; is_primary: boolean; sort_order: number; }
 interface Blackout { id: string; start_date: string; end_date: string; reason: string | null; }
@@ -44,7 +47,7 @@ export default function InventoryDetail() {
   async function load() {
     setLoading(true);
     if (isNew) {
-      setItem({ id: "", name: "", slug: "", category: "water-slides", base_price: 0, description: "", dimensions: "", capacity: "", age_range: "", stock_count: 1, active: true, sort_order: 999, primary_image_url: null, legacy_image: null });
+      setItem({ id: "", name: "", slug: "", category: "water-slides", base_price: 0, description: "", dimensions: "", capacity: "", age_range: "", stock_count: 1, active: true, sort_order: 999, primary_image_url: null, legacy_image: null, bookable_online: true, specs: [] });
       setLoading(false); return;
     }
     const [it, im, bl, mt, bk] = await Promise.all([
@@ -54,7 +57,8 @@ export default function InventoryDetail() {
       (supabase.from("inventory_maintenance") as any).select("*").eq("item_id", id).order("performed_at", { ascending: false }),
       (supabase.from("booking_items") as any).select("booking_id, bookings:booking_id(id,event_date,event_end_date,customer_name,status)").eq("product_id", id).limit(50),
     ]);
-    setItem(it.data as Item);
+    const raw = it.data as any;
+    setItem(raw ? ({ ...raw, bookable_online: raw.bookable_online !== false, specs: Array.isArray(raw.specs) ? raw.specs : [] } as Item) : null);
     setImages((im.data ?? []) as Img[]);
     setBlackouts((bl.data ?? []) as Blackout[]);
     setMaint((mt.data ?? []) as Maint[]);
@@ -180,6 +184,30 @@ export default function InventoryDetail() {
               <div className="md:col-span-2"><Label>Age range</Label><Input value={item.age_range ?? ""} onChange={(e)=>patch({age_range: e.target.value})}/></div>
               <div className="md:col-span-2"><Label>Description</Label><Textarea rows={4} value={item.description ?? ""} onChange={(e)=>patch({description: e.target.value})}/></div>
               <div className="md:col-span-2 flex items-center gap-2"><Switch checked={item.active} onCheckedChange={(v)=>patch({active: v})}/><Label>Visible on site</Label></div>
+              <div className="md:col-span-2 flex items-center gap-2"><Switch checked={item.bookable_online} onCheckedChange={(v)=>patch({bookable_online: v})}/><Label>Bookable online (off = phone reservations only)</Label></div>
+              <div className="md:col-span-2 space-y-2">
+                <Label>Specs (shown as a small table on the product card)</Label>
+                {item.specs.map((s, i) => (
+                  <div key={i} className="flex gap-2">
+                    <Input
+                      placeholder="Label"
+                      value={s.label}
+                      onChange={(e) => patch({ specs: item.specs.map((x, j) => j === i ? { ...x, label: e.target.value } : x) })}
+                    />
+                    <Input
+                      placeholder="Value"
+                      value={s.value}
+                      onChange={(e) => patch({ specs: item.specs.map((x, j) => j === i ? { ...x, value: e.target.value } : x) })}
+                    />
+                    <Button variant="ghost" size="icon" className="shrink-0" onClick={() => patch({ specs: item.specs.filter((_, j) => j !== i) })} aria-label="Remove spec">
+                      <Trash2 className="h-4 w-4"/>
+                    </Button>
+                  </div>
+                ))}
+                <Button variant="outline" size="sm" onClick={() => patch({ specs: [...item.specs, { label: "", value: "" }] })}>
+                  <Plus className="h-4 w-4 mr-1"/> Add spec row
+                </Button>
+              </div>
             </div>
           </Card>
         </TabsContent>

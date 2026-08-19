@@ -26,6 +26,7 @@ const ObstacleCourseRentals = lazy(() => import("./pages/ObstacleCourseRentals")
 const InteractiveGameRentals = lazy(() => import("./pages/InteractiveGameRentals"));
 const ConcessionRentals = lazy(() => import("./pages/ConcessionRentals"));
 const TableChairRentals = lazy(() => import("./pages/TableChairRentals"));
+const TentRentals = lazy(() => import("./pages/TentRentals"));
 const AlafayaDelivery = lazy(() => import("./pages/delivery/Alafaya"));
 const AvalonParkDelivery = lazy(() => import("./pages/delivery/AvalonPark"));
 const AzaleaParkDelivery = lazy(() => import("./pages/delivery/AzaleaPark"));
@@ -120,6 +121,7 @@ const App = () => {
               <Route path="/interactive-game-rentals" element={<InteractiveGameRentals />} />
               <Route path="/concession-rentals" element={<ConcessionRentals />} />
               <Route path="/table-chair-rentals" element={<TableChairRentals />} />
+              <Route path="/tent-rentals" element={<TentRentals />} />
               <Route path="/water-slide-and-bounce-house-rental-alafaya" element={<AlafayaDelivery />} />
               <Route path="/water-slide-and-bounce-house-rental-avalon-park" element={<AvalonParkDelivery />} />
               <Route path="/water-slide-and-bounce-house-rental-azalea-park" element={<AzaleaParkDelivery />} />

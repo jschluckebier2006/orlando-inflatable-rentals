@@ -7,6 +7,7 @@ import obstacleCourseImg from "@/assets/obstacle-course-category.webp";
 import interactiveGamesImg from "@/assets/interactive-games-category.webp";
 import concessionsImg from "@/assets/concessions-category.webp";
 import tablesChairsImg from "@/assets/tables-chairs-category.webp";
+import tentsImg from "@/assets/tents-category.jpg";
 const categories = [{
   name: "Bounce Houses",
   description: "Fun bounce houses for all ages and themes",
@@ -42,6 +43,11 @@ const categories = [{
   description: "Comfortable seating for all your guests",
   href: "/table-chair-rentals",
   image: tablesChairsImg
+}, {
+  name: "Tents",
+  description: "Shade and shelter for weddings and parties",
+  href: "/tent-rentals",
+  image: tentsImg
 }];
 export function CategoriesSection() {
   return <section className="section-padding">

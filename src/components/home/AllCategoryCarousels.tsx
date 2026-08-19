@@ -43,6 +43,11 @@ export function AllCategoryCarousels() {
             products={by("concessions")}
             categoryLink="/concession-rentals"
           />
+          <CategoryCard
+            title="Tent Rentals"
+            products={by("tents")}
+            categoryLink="/tent-rentals"
+          />
         </div>
       </div>
     </section>
