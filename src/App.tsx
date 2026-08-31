@@ -161,6 +161,9 @@ const App = () => {
               <Route path="/events/corporate-event-inflatable-rentals-in-orlando" element={<CorporateEvents />} />
               <Route path="/events/graduation-party-water-slide-rentals-in-orlando" element={<GraduationEvents />} />
               <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+              <Route path="/faq" element={<FAQ />} />
+              <Route path="/cancellation-policy" element={<CancellationPolicy />} />
+              <Route path="/terms-of-service" element={<TermsOfService />} />
               <Route path="/blog" element={<Blog />} />
               <Route path="/blog/bounce-house-rental-pricing-orlando-2025" element={<BounceHousePricing2025 />} />
               <Route path="/blog/corporate-team-building-with-inflatables" element={<CorporateTeamBuilding />} />
