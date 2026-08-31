@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { X } from "lucide-react";
-import promoImage from "@/assets/labor-day-promo.jpg.asset.json";
+import promoImage from "@/assets/labor-day-promo.webp";
 
 /** Offer end: September 6, 2026, 11:59 PM Eastern (UTC-4) — edit here to change the run window. */
 const PROMO_END = new Date("2026-09-07T03:59:59Z");
