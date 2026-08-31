@@ -11,6 +11,7 @@ import NotFound from "./pages/NotFound";
 import { CartProvider } from "./contexts/CartContext";
 import { CartDrawer } from "./components/cart/CartDrawer";
 import { CheckoutModal } from "./components/booking/CheckoutModal";
+import { LaborDayPromoModal } from "./components/promo/LaborDayPromoModal";
 import { useEffect } from "react";
 import { loadAppSettings } from "./lib/appSettings";
 
@@ -196,6 +197,7 @@ const App = () => {
           </Suspense>
           <CartDrawer />
           <CheckoutModal />
+          <LaborDayPromoModal />
           </CartProvider>
         </TooltipProvider>
       </BrowserRouter>
