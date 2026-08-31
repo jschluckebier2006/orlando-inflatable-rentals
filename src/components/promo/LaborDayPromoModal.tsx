@@ -50,7 +50,7 @@ export function LaborDayPromoModal() {
 
           <div className="relative">
             <img
-              src={promoImage.url}
+              src={promoImage}
               alt="Free overnight rental this weekend only — rent any inflatable and keep it overnight at no extra charge."
               className="block w-full rounded-t-2xl object-cover object-top max-h-[min(60vh,420px)] [@media(max-height:500px)]:max-h-[38vh]"
             />
