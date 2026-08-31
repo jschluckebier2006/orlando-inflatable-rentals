@@ -63,6 +63,9 @@ const ChurchEvents = lazy(() => import("./pages/events/ChurchEvents"));
 const CorporateEvents = lazy(() => import("./pages/events/CorporateEvents"));
 const GraduationEvents = lazy(() => import("./pages/events/GraduationEvents"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
+const FAQ = lazy(() => import("./pages/FAQ"));
+const CancellationPolicy = lazy(() => import("./pages/CancellationPolicy"));
+const TermsOfService = lazy(() => import("./pages/TermsOfService"));
 const Blog = lazy(() => import("./pages/Blog"));
 const BounceHousePricing2025 = lazy(() => import("./pages/blog/BounceHousePricing2025"));
 const CorporateTeamBuilding = lazy(() => import("./pages/blog/CorporateTeamBuilding"));
@@ -158,6 +161,9 @@ const App = () => {
               <Route path="/events/corporate-event-inflatable-rentals-in-orlando" element={<CorporateEvents />} />
               <Route path="/events/graduation-party-water-slide-rentals-in-orlando" element={<GraduationEvents />} />
               <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+              <Route path="/faq" element={<FAQ />} />
+              <Route path="/cancellation-policy" element={<CancellationPolicy />} />
+              <Route path="/terms-of-service" element={<TermsOfService />} />
               <Route path="/blog" element={<Blog />} />
               <Route path="/blog/bounce-house-rental-pricing-orlando-2025" element={<BounceHousePricing2025 />} />
               <Route path="/blog/corporate-team-building-with-inflatables" element={<CorporateTeamBuilding />} />
