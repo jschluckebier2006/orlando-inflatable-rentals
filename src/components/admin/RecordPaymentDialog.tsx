@@ -155,6 +155,7 @@ export function RecordPaymentDialog({ open, onOpenChange, bookingId, defaultAmou
                 <SelectItem value="cash">Cash</SelectItem>
                 <SelectItem value="check">Check</SelectItem>
                 <SelectItem value="card_external">Card on site / Square / external</SelectItem>
+                <SelectItem value="stripe_captured">Stripe payment already captured</SelectItem>
                 <SelectItem value="stripe_link">Send Stripe payment link by email</SelectItem>
               </SelectContent>
             </Select>
@@ -165,9 +166,27 @@ export function RecordPaymentDialog({ open, onOpenChange, bookingId, defaultAmou
           </div>
           {method !== "stripe_link" && (
             <div>
-              <Label>{method === "check" ? "Check #" : method === "card_external" ? "Last 4 / reference" : "Reference (optional)"}</Label>
-              <Input value={reference} onChange={(e) => setReference(e.target.value)} />
+              <Label>
+                {method === "check"
+                  ? "Check #"
+                  : method === "card_external"
+                    ? "Last 4 / reference"
+                    : method === "stripe_captured"
+                      ? "Stripe PaymentIntent ID *"
+                      : "Reference (optional)"}
+              </Label>
+              <Input
+                value={reference}
+                onChange={(e) => setReference(e.target.value)}
+                placeholder={method === "stripe_captured" ? "pi_3U71gY0ozdYluEdQ1oeUBWrJ" : undefined}
+              />
             </div>
+          )}
+          {method === "stripe_captured" && (
+            <p className="text-xs text-muted-foreground">
+              Credits a charge the customer already paid in Stripe. No new charge is made — the amount is applied to the
+              balance and the PaymentIntent is linked to this booking. Reusing an ID that's already credited is blocked.
+            </p>
           )}
           {method !== "stripe_link" && (
             <div>
