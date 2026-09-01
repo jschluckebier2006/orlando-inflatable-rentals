@@ -725,14 +725,24 @@ export default function AdminCalendar() {
             <SheetTitle>{selectedDate && format(parseISO(selectedDate), "EEEE, MMMM d, yyyy")}</SheetTitle>
           </SheetHeader>
           <div className="mt-4 space-y-3">
-            {selectedBlackouts.length > 0 && (
+            {selectedGlobalEntries.length > 0 && (
               <div className="rounded-md border border-destructive/40 bg-destructive/10 p-3">
                 <div className="flex items-center gap-2 font-semibold text-destructive">
-                  <Ban className="h-4 w-4" /> Global blackout
+                  <Ban className="h-4 w-4" /> Closed — all products
                 </div>
-                <ul className="mt-1 text-sm text-destructive/90 space-y-0.5">
-                  {selectedBlackouts.map((bo) => (
-                    <li key={bo.id}>{bo.reason || "No reason given"}</li>
+                <ul className="mt-2 space-y-2">
+                  {selectedGlobalEntries.map((e) => (
+                    <li key={e.id} className="flex items-start justify-between gap-2">
+                      <div className="min-w-0">
+                        <div className="text-sm text-destructive/90 whitespace-pre-wrap break-words">
+                          {e.reason?.trim() || "No reason given"}
+                        </div>
+                        <div className="text-[11px] text-muted-foreground">{fmtRange(e.start_date, e.end_date)}</div>
+                      </div>
+                      <BlackoutPopover entry={e} onRemove={removeBlackout}>
+                        <button type="button" className="text-xs underline text-destructive shrink-0">Details</button>
+                      </BlackoutPopover>
+                    </li>
                   ))}
                 </ul>
                 <button
@@ -743,6 +753,43 @@ export default function AdminCalendar() {
                 </button>
               </div>
             )}
+            {selectedItemEntries.length > 0 && (
+              <div className="rounded-md border border-border p-3">
+                <div className="flex items-center gap-2 font-semibold text-sm">
+                  <Ban className="h-4 w-4 text-destructive" /> Blocked items ({selectedItemEntries.length})
+                </div>
+                <ul className="mt-2 space-y-2">
+                  {selectedItemEntries.map((e) => (
+                    <li
+                      key={e.id}
+                      className={`flex items-start justify-between gap-2 rounded-md p-2 ${e.overlapCount > 1 ? "bg-amber-500/10 border border-amber-500/40" : "bg-muted/50"}`}
+                    >
+                      <div className="min-w-0">
+                        <div className="text-sm font-medium line-through decoration-1 text-muted-foreground break-words">
+                          {e.label}
+                        </div>
+                        {e.overlapCount > 1 && (
+                          <div className="text-[11px] text-amber-800 inline-flex items-center gap-1 mt-0.5">
+                            <AlertTriangle className="h-3 w-3" /> {e.overlapCount} holds on this item for this date
+                          </div>
+                        )}
+                        <div className="text-xs whitespace-pre-wrap break-words mt-0.5">
+                          {e.reason?.trim() || "No reason given"}
+                        </div>
+                        <div className="text-[11px] text-muted-foreground mt-0.5">
+                          {fmtRange(e.start_date, e.end_date)}
+                          {e.created_at ? ` · created ${format(parseISO(e.created_at), "MMM d, yyyy h:mma")}` : ""}
+                        </div>
+                      </div>
+                      <BlackoutPopover entry={e} onRemove={removeBlackout}>
+                        <button type="button" className="text-xs underline text-destructive shrink-0">Manage</button>
+                      </BlackoutPopover>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
             <Button
               size="sm"
               onClick={() => {
