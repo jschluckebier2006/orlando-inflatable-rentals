@@ -10,7 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { ChevronLeft, ChevronRight, Phone, MapPin, Plus, Ban, BellRing, CalendarClock } from "lucide-react";
+import { ChevronLeft, ChevronRight, Phone, MapPin, Plus, Ban, BellRing, CalendarClock, AlertTriangle } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
 
 type BookingStatus = "pending" | "confirmed" | "cancelled" | "completed";
 
@@ -84,9 +85,11 @@ export default function AdminCalendar() {
   const [cursor, setCursor] = useState<Date>(new Date());
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
+  const [reviewQueue, setReviewQueue] = useState<any[]>([]);
+
   async function load() {
     setLoading(true);
-    const [{ data: bData }, { data: gbData }] = await Promise.all([
+    const [{ data: bData }, { data: gbData }, { data: rData }] = await Promise.all([
       supabase
         .from("bookings")
         .select("id, event_date, event_end_date, event_start_time, created_at, customer_name, customer_phone, event_address_line, event_city, event_zip, status, product_id, product_name, booking_items(id, product_name)")
@@ -95,11 +98,31 @@ export default function AdminCalendar() {
         .from("global_blackouts")
         .select("id, start_date, end_date, reason")
         .order("start_date", { ascending: true }),
+      supabase
+        .from("bookings")
+        .select("id, customer_name, customer_email, customer_phone, event_date, finalize_error, stripe_session_id, stripe_payment_intent_id")
+        .eq("needs_review", true)
+        .order("needs_review_at", { ascending: false }),
     ]);
     setBookings((bData as any) ?? []);
     setBlackouts((gbData as any) ?? []);
+    setReviewQueue((rData as any) ?? []);
     setLoading(false);
   }
+
+  async function clearReview(id: string) {
+    const { error } = await supabase
+      .from("bookings")
+      .update({ needs_review: false, needs_review_at: null } as any)
+      .eq("id", id);
+    if (error) {
+      toast({ title: "Could not clear the flag", description: error.message, variant: "destructive" });
+      return;
+    }
+    toast({ title: "Marked resolved" });
+    setReviewQueue((q) => q.filter((b) => b.id !== id));
+  }
+
   useEffect(() => { load(); }, []);
 
   const dayMap = useMemo(() => {
@@ -192,6 +215,51 @@ export default function AdminCalendar() {
 
   return (
     <div className="space-y-4">
+      {/* Needs review — paid checkouts that failed to finalize */}
+      {reviewQueue.length > 0 && (
+        <Card className="p-4 border-l-4 border-l-destructive bg-destructive/5">
+          <div className="flex items-center gap-2 mb-2">
+            <AlertTriangle className="h-5 w-5 text-destructive" />
+            <h2 className="font-display font-semibold">Needs review — payment taken, booking incomplete</h2>
+            <Badge variant="destructive">{reviewQueue.length}</Badge>
+          </div>
+          <p className="text-sm text-muted-foreground mb-3">
+            These customers paid but their booking could not be created automatically. Nothing was deleted —
+            fix the details below and clear the flag.
+          </p>
+          <ul className="divide-y border border-destructive/30 rounded-md bg-background">
+            {reviewQueue.map((b) => (
+              <li key={b.id} className="p-3 space-y-2">
+                <div
+                  className="flex items-start justify-between gap-3 cursor-pointer"
+                  onClick={() => navigate(`/admin/bookings?open=${b.id}`)}
+                >
+                  <div className="min-w-0">
+                    <div className="font-medium truncate">{b.customer_name}</div>
+                    <div className="text-xs text-muted-foreground truncate">
+                      {b.event_date ? format(parseISO(b.event_date), "EEE, MMM d yyyy") : "—"} · {b.customer_email} · {b.customer_phone}
+                    </div>
+                  </div>
+                  <Badge variant="destructive" className="shrink-0">needs review</Badge>
+                </div>
+                {b.finalize_error && (
+                  <pre className="text-[11px] leading-snug whitespace-pre-wrap bg-muted rounded p-2 text-muted-foreground overflow-x-auto">
+                    {b.finalize_error}
+                  </pre>
+                )}
+                <div className="flex flex-wrap gap-2 text-[11px] text-muted-foreground">
+                  {b.stripe_session_id && <span className="font-mono">session {b.stripe_session_id}</span>}
+                  {b.stripe_payment_intent_id && <span className="font-mono">pi {b.stripe_payment_intent_id}</span>}
+                </div>
+                <Button size="sm" variant="outline" onClick={() => clearReview(b.id)}>
+                  Mark resolved
+                </Button>
+              </li>
+            ))}
+          </ul>
+        </Card>
+      )}
+
       {/* New booking alerts */}
       <Card className={`p-4 border-l-4 ${pendingAlerts.length > 0 ? "border-l-yellow-500 bg-yellow-500/5" : "border-l-muted"}`}>
         <div className="flex items-center justify-between gap-2 mb-2">

@@ -77,6 +77,50 @@ Deno.serve(async (req) => {
     const deliveryFee = zone.status === "paid" ? Math.round(zone.fee * 100) / 100 : 0;
     const deliveryZoneCity = zone.city;
 
+    // ---- Date range validation (defense in depth) ----
+    // Catch a malformed or impossible date here with a clear 400 rather than
+    // letting it reach the availability triggers as an opaque 500.
+    const startDate = new Date(`${d.event_date}T00:00:00Z`);
+    if (Number.isNaN(startDate.getTime()) || startDate.toISOString().slice(0, 10) !== d.event_date) {
+      return new Response(JSON.stringify({ error: "That event date isn't a valid calendar date." }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    const todayUtc = new Date(new Date().toISOString().slice(0, 10) + "T00:00:00Z");
+    if (startDate.getTime() < todayUtc.getTime() - 86400_000) {
+      return new Response(JSON.stringify({ error: "That event date is in the past. Please pick a future date." }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    if (startDate.getTime() > todayUtc.getTime() + 730 * 86400_000) {
+      return new Response(JSON.stringify({ error: "That event date is too far out. Please call (407) 497-1840." }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    // Multi-day rentals extend the end date; keep it consistent with finalize.
+    const spanDays = d.duration_type === "weekend" ? 2 : d.duration_type === "overnight" ? 1 : 0;
+    const endDateStr = new Date(startDate.getTime() + spanDays * 86400_000).toISOString().slice(0, 10);
+    if (endDateStr < d.event_date) {
+      return new Response(JSON.stringify({ error: "Invalid rental date range." }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // ---- Availability pre-check: don't take money for a date we can't serve.
+    const { data: available, error: availErr } = await supabaseAdmin.rpc("is_date_range_available", {
+      p_product_ids: d.items.map((i) => i.product_id),
+      p_start: d.event_date,
+      p_end: endDateStr,
+      p_exclude_booking_id: "00000000-0000-0000-0000-000000000000",
+    });
+    if (availErr) {
+      console.error("[create-booking-checkout] availability check failed", availErr);
+    } else if (available === false) {
+      return new Response(JSON.stringify({
+        error: "One or more of those items just became unavailable for your dates. Please pick another date or call (407) 497-1840.",
+      }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+
     // Compute totals server-side (never trust the client)
     const subtotal = Math.round(d.items.reduce((s, i) => s + i.product_price, 0) * multiplier * 100) / 100;
     if (subtotal <= 0) {

@@ -255,7 +255,10 @@ export type Database = {
           event_start_time: string | null
           event_type: string | null
           event_zip: string
+          finalize_error: string | null
           id: string
+          needs_review: boolean
+          needs_review_at: string | null
           notes: string | null
           payment_method_choice: string | null
           payment_status: string
@@ -303,7 +306,10 @@ export type Database = {
           event_start_time?: string | null
           event_type?: string | null
           event_zip: string
+          finalize_error?: string | null
           id?: string
+          needs_review?: boolean
+          needs_review_at?: string | null
           notes?: string | null
           payment_method_choice?: string | null
           payment_status?: string
@@ -351,7 +357,10 @@ export type Database = {
           event_start_time?: string | null
           event_type?: string | null
           event_zip?: string
+          finalize_error?: string | null
           id?: string
+          needs_review?: boolean
+          needs_review_at?: string | null
           notes?: string | null
           payment_method_choice?: string | null
           payment_status?: string
@@ -449,6 +458,7 @@ export type Database = {
           error_message: string | null
           id: string
           idempotency_key: string
+          payload_snapshot: Json | null
           recipient_email: string
           related_booking_id: string | null
           related_session_id: string | null
@@ -461,6 +471,7 @@ export type Database = {
           error_message?: string | null
           id?: string
           idempotency_key: string
+          payload_snapshot?: Json | null
           recipient_email: string
           related_booking_id?: string | null
           related_session_id?: string | null
@@ -473,6 +484,7 @@ export type Database = {
           error_message?: string | null
           id?: string
           idempotency_key?: string
+          payload_snapshot?: Json | null
           recipient_email?: string
           related_booking_id?: string | null
           related_session_id?: string | null
@@ -794,11 +806,54 @@ export type Database = {
         }
         Relationships: []
       }
+      webhook_events: {
+        Row: {
+          created_at: string
+          error_message: string | null
+          event_id: string
+          event_type: string
+          id: string
+          payment_intent_id: string | null
+          result: string | null
+          session_id: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          error_message?: string | null
+          event_id: string
+          event_type: string
+          id?: string
+          payment_intent_id?: string | null
+          result?: string | null
+          session_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          error_message?: string | null
+          event_id?: string
+          event_type?: string
+          id?: string
+          payment_intent_id?: string | null
+          result?: string | null
+          session_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      create_booking_with_items: {
+        Args: { p_booking: Json; p_items: Json }
+        Returns: string
+      }
       get_booked_dates: {
         Args: { _product_id: string }
         Returns: {

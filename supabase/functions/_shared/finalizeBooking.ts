@@ -16,6 +16,7 @@ export type FinalizeStatus =
   | "not_paid"
   | "not_a_booking"
   | "no_pending"
+  | "needs_review"
   | "error";
 
 export interface FinalizeResult {
@@ -150,57 +151,65 @@ export async function finalizeBookingFromSession(
     delivery_zone_city: deliveryZoneCity,
   };
 
-  // Plain insert. The partial unique index
-  // bookings_stripe_session_id_uniq (stripe_session_id) WHERE stripe_session_id IS NOT NULL
-  // can't be referenced by ON CONFLICT (Postgres requires a non-partial constraint),
-  // so we rely on catching 23505 below.
-  const insertRes = await supabase
-    .from("bookings")
-    .insert(insertPayload)
-    .select("id");
-
-  if (insertRes.error) {
-    // Treat unique-violation as already-processed by other path.
-    const code = (insertRes.error as any).code;
-    if (code === "23505") {
-      const { data: existing } = await supabase
-        .from("bookings").select("id").eq("stripe_session_id", session.id).maybeSingle();
-      if (existing?.id) return { status: "already_exists", booking_id: existing.id };
-    }
-    console.error("[finalizeBooking] insert booking failed", insertRes.error);
-    return { status: "error", message: insertRes.error.message };
-  }
-
-  // ignoreDuplicates returns an empty array when the row already existed.
-  let bookingId = insertRes.data?.[0]?.id as string | undefined;
-  if (!bookingId) {
-    const { data: existing } = await supabase
-      .from("bookings").select("id").eq("stripe_session_id", session.id).maybeSingle();
-    if (existing?.id) {
-      // Best-effort cleanup if the other path didn't get there yet.
-      await supabase.from("pending_bookings").delete().eq("stripe_session_id", session.id);
-      return { status: "already_exists", booking_id: existing.id };
-    }
-    return { status: "error", message: "insert returned no row and no existing booking" };
-  }
-
-  // Items
   const itemRows = p.items.map((i: any) => ({
-    booking_id: bookingId!,
     product_id: i.product_id,
     product_name: i.product_name,
     product_price: i.product_price,
     unit_price: Math.round(i.product_price * multiplier * 100) / 100,
   }));
-  const { error: itemsErr } = await supabase.from("booking_items").insert(itemRows);
-  if (itemsErr) {
-    console.error("[finalizeBooking] insert booking_items failed", itemsErr);
-    await supabase.from("bookings").delete().eq("id", bookingId);
-    return { status: "error", message: itemsErr.message };
+
+  // ---- Pre-insert validation: fail fast with a clear reason instead of a
+  // trigger-driven 500 deep inside the transaction. ----
+  const validationError = validatePayload(insertPayload, itemRows);
+  if (validationError) {
+    console.error("[finalizeBooking] validation failed", validationError);
+    return await parkForReview(supabase, session, insertPayload, validationError);
   }
 
-  // Cleanup pending
+  // ---- Atomic create: booking + items in ONE database transaction. ----
+  // If the items insert fails (blackout, double-booking, bad range), the whole
+  // transaction rolls back — there is no half-built booking and, critically,
+  // no compensating delete of a booking the customer already paid for.
+  const { data: newId, error: createErr } = await supabase.rpc("create_booking_with_items", {
+    p_booking: insertPayload,
+    p_items: itemRows,
+  });
+
+  if (createErr) {
+    // A unique violation means another path (webhook vs. status poll) already
+    // finalized this session or PaymentIntent. That's success, not failure.
+    if ((createErr as any).code === "23505") {
+      const { data: existing } = await supabase
+        .from("bookings").select("id")
+        .or(
+          `stripe_session_id.eq.${session.id}` +
+          (insertPayload.stripe_payment_intent_id
+            ? `,stripe_payment_intent_id.eq.${insertPayload.stripe_payment_intent_id}`
+            : ""),
+        )
+        .maybeSingle();
+      if (existing?.id) {
+        await supabase.from("pending_bookings").delete().eq("stripe_session_id", session.id);
+        return { status: "already_exists", booking_id: existing.id };
+      }
+    }
+    console.error("[finalizeBooking] atomic create failed", createErr);
+    // The money is already taken. Never drop it on the floor — park the booking
+    // for human review with the exact Postgres message attached.
+    return await parkForReview(supabase, session, insertPayload, createErr.message);
+  }
+
+  const bookingId = newId as unknown as string;
+  if (!bookingId) {
+    return await parkForReview(
+      supabase, session, insertPayload,
+      "create_booking_with_items returned no id",
+    );
+  }
+
+  // Cleanup pending. Only after the booking is durably committed.
   await supabase.from("pending_bookings").delete().eq("stripe_session_id", session.id);
+
 
   // Record the Stripe checkout deposit as a booking_payments row so the
   // recompute trigger sees the full picture. Without this row, the first
@@ -230,4 +239,131 @@ export async function finalizeBookingFromSession(
   }
 
   return { status: "created", booking_id: bookingId };
+}
+
+// ---------------------------------------------------------------------------
+// Validation — range-check everything the database constrains, before insert.
+// ---------------------------------------------------------------------------
+const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+
+function validatePayload(b: Record<string, any>, items: any[]): string | null {
+  if (!DATE_RE.test(String(b.event_date ?? ""))) {
+    return `Invalid event_date: ${b.event_date}`;
+  }
+  if (!DATE_RE.test(String(b.event_end_date ?? ""))) {
+    return `Invalid event_end_date: ${b.event_end_date}`;
+  }
+  if (b.event_end_date < b.event_date) {
+    return `Inverted date range: event_end_date ${b.event_end_date} is before event_date ${b.event_date}`;
+  }
+  if (!Array.isArray(items) || items.length === 0) {
+    return "Booking has no rental items";
+  }
+  if (items.length > 20) {
+    return `Too many items on one booking (${items.length})`;
+  }
+  for (const i of items) {
+    if (!i.product_id || !i.product_name) return "Item is missing product_id or product_name";
+    const price = Number(i.product_price);
+    if (!Number.isFinite(price) || price < 0) return `Invalid price on item ${i.product_name}`;
+  }
+  for (const f of ["customer_name", "customer_email", "customer_phone", "event_address_line", "event_city", "event_zip"]) {
+    if (!b[f]) return `Missing required field: ${f}`;
+  }
+  if (!Number.isFinite(Number(b.total_amount)) || Number(b.total_amount) < 0) {
+    return `Invalid total_amount: ${b.total_amount}`;
+  }
+  return null;
+}
+
+// ---------------------------------------------------------------------------
+// parkForReview — the money is already captured, so we never discard the order.
+// Persist a booking flagged needs_review with the raw failure text, record the
+// deposit against it, and alert an admin loudly.
+// ---------------------------------------------------------------------------
+async function parkForReview(
+  supabase: SupabaseClient,
+  session: MinimalSession,
+  insertPayload: Record<string, any>,
+  errorMessage: string,
+): Promise<FinalizeResult> {
+  // Clamp anything that would trip a CHECK constraint so the review row itself
+  // can always be written. The original values live on in finalize_error.
+  const safe: Record<string, any> = { ...insertPayload };
+  if (!DATE_RE.test(String(safe.event_date ?? ""))) {
+    safe.event_date = new Date().toISOString().slice(0, 10);
+  }
+  if (!DATE_RE.test(String(safe.event_end_date ?? "")) || safe.event_end_date < safe.event_date) {
+    safe.event_end_date = safe.event_date;
+  }
+  safe.customer_name ||= "UNKNOWN — needs review";
+  safe.customer_email ||= "unknown@needs-review.local";
+  safe.customer_phone ||= "unknown";
+  safe.event_address_line ||= "UNKNOWN — needs review";
+  safe.event_city ||= "UNKNOWN";
+  safe.event_zip ||= "00000";
+  // Park as pending (not confirmed) so it never looks like a live, dispatchable job.
+  safe.status = "pending";
+  safe.needs_review = true;
+  safe.needs_review_at = new Date().toISOString();
+  safe.finalize_error =
+    `${errorMessage}\n\noriginal event_date=${insertPayload.event_date} ` +
+    `event_end_date=${insertPayload.event_end_date} session=${session.id}`;
+
+  const { data, error } = await supabase.from("bookings").insert(safe).select("id").maybeSingle();
+
+  if (error) {
+    // Someone else already created it — that's fine.
+    if ((error as any).code === "23505") {
+      const { data: existing } = await supabase
+        .from("bookings").select("id").eq("stripe_session_id", session.id).maybeSingle();
+      if (existing?.id) return { status: "already_exists", booking_id: existing.id };
+    }
+    console.error("[finalizeBooking] parkForReview insert failed", error);
+    // Deliberately keep the pending_bookings row: it is now the only copy.
+    return { status: "error", message: `${errorMessage} (and needs_review persist failed: ${error.message})` };
+  }
+
+  const bookingId = data?.id as string | undefined;
+  console.error("[finalizeBooking] parked booking for review", bookingId, errorMessage);
+
+  // Record the captured deposit so the balance is right when a human fixes it.
+  if (bookingId && Number(safe.amount_paid) > 0 && safe.stripe_payment_intent_id) {
+    await supabase.from("booking_payments").insert({
+      booking_id: bookingId,
+      method: "stripe_deposit",
+      amount: safe.amount_paid,
+      reference: safe.stripe_payment_intent_id,
+      notes: "Stripe Checkout deposit (booking parked for review).",
+      recorded_by: "system",
+    });
+  }
+
+  // Keep the pending_bookings row so the original cart survives for the rebuild.
+  await notifyAdminNeedsReview(supabase, bookingId ?? "(unknown)", session.id, errorMessage, safe);
+
+  return { status: "needs_review", booking_id: bookingId, message: errorMessage };
+}
+
+async function notifyAdminNeedsReview(
+  supabase: SupabaseClient,
+  bookingId: string,
+  sessionId: string,
+  errorMessage: string,
+  snapshot: Record<string, any>,
+): Promise<void> {
+  try {
+    await supabase.functions.invoke("send-booking-emails", {
+      body: {
+        needs_review: {
+          booking_id: bookingId,
+          session_id: sessionId,
+          error: errorMessage,
+          snapshot,
+        },
+      },
+    });
+  } catch (e) {
+    console.error("[finalizeBooking] needs_review alert failed", e);
+  }
 }
