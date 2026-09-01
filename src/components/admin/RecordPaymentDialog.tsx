@@ -85,11 +85,31 @@ export function RecordPaymentDialog({ open, onOpenChange, bookingId, defaultAmou
     }
 
     const { data: { session } } = await supabase.auth.getSession();
+    const ref = reference.trim() || null;
+
+    if (method === "stripe_captured" && ref) {
+      // Guard against crediting the same Stripe charge twice
+      const { data: dupe } = await (supabase.from("booking_payments") as any)
+        .select("id, booking_id")
+        .eq("method", "stripe_captured")
+        .eq("reference", ref)
+        .maybeSingle();
+      if (dupe) {
+        setSaving(false);
+        toast({
+          title: "This Stripe payment is already credited",
+          description: `${ref} is already recorded on a booking.`,
+          variant: "destructive",
+        });
+        return;
+      }
+    }
+
     const { error } = await (supabase.from("booking_payments") as any).insert({
       booking_id: bookingId,
       method,
       amount: amt,
-      reference: reference.trim() || null,
+      reference: ref,
       notes: notes.trim() || null,
       recorded_by: session?.user?.email ?? null,
     });
@@ -97,6 +117,11 @@ export function RecordPaymentDialog({ open, onOpenChange, bookingId, defaultAmou
       setSaving(false);
       toast({ title: "Save failed", description: error.message, variant: "destructive" });
       return;
+    }
+    if (method === "stripe_captured" && ref) {
+      await (supabase.from("bookings") as any)
+        .update({ stripe_payment_intent_id: ref })
+        .eq("id", bookingId);
     }
     // Bump status to confirmed if still pending
     await (supabase.from("bookings") as any)
