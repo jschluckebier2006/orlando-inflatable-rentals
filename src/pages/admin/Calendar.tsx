@@ -627,9 +627,9 @@ export default function AdminCalendar() {
                         {visibleOnGrid(list).slice(0, 4).map((b) => (
                           <span key={b.id} className={`inline-block w-2 h-2 rounded-full ${STATUS_COLORS[b.status]}`} />
                         ))}
-                        {itemEntries.length > 0 && (
+                        {globalEntries.length > 0 && (
                           <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-destructive">
-                            <Ban className="h-2.5 w-2.5" />{itemEntries.length}
+                            <Ban className="h-2.5 w-2.5" />{globalEntries.length}
                           </span>
                         )}
                         {visibleOnGrid(list).length > 4 && (
@@ -649,9 +649,7 @@ export default function AdminCalendar() {
                               type="button"
                               className={`w-full flex items-center gap-1 text-xs rounded-sm px-0.5 ${e.overlapCount > 1 ? "bg-amber-500/15 text-amber-800" : "text-muted-foreground"}`}
                             >
-                              {e.overlapCount > 1
-                                ? <AlertTriangle className="h-2.5 w-2.5 shrink-0" />
-                                : <Ban className="h-2.5 w-2.5 shrink-0 text-destructive/70" />}
+                              {e.overlapCount > 1 && <AlertTriangle className="h-2.5 w-2.5 shrink-0" />}
                               <span className="truncate line-through decoration-1">{e.label}</span>
                             </button>
                           </BlackoutPopover>
@@ -675,9 +673,7 @@ export default function AdminCalendar() {
                             type="button"
                             className={`w-full flex items-center gap-1 text-xs rounded-sm px-0.5 ${e.overlapCount > 1 ? "bg-amber-500/15 text-amber-800" : "text-muted-foreground"}`}
                           >
-                            {e.overlapCount > 1
-                              ? <AlertTriangle className="h-3 w-3 shrink-0" />
-                              : <Ban className="h-3 w-3 shrink-0 text-destructive/70" />}
+                            {e.overlapCount > 1 && <AlertTriangle className="h-3 w-3 shrink-0" />}
                             <span className="truncate line-through decoration-1">{e.label}</span>
                           </button>
                         </BlackoutPopover>
