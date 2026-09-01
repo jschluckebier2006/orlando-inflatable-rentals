@@ -374,7 +374,7 @@ export default function AdminCalendar() {
   }
 
   const selected = selectedDate ? dayMap.get(selectedDate) ?? [] : [];
-  const selectedBlackouts = selectedDate ? blackoutMap.get(selectedDate) ?? [] : [];
+  
   const selectedGlobalEntries = selectedDate ? globalEntryMap.get(selectedDate) ?? [] : [];
   const selectedItemEntries = selectedDate ? itemEntryMap.get(selectedDate) ?? [] : [];
   // Hide cancelled bookings from the grid; they only appear inside the day sheet.
