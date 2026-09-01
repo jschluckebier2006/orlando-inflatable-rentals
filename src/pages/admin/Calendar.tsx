@@ -279,20 +279,8 @@ export default function AdminCalendar() {
     return m;
   }, [bookings]);
 
-  const blackoutMap = useMemo(() => {
-    const m = new Map<string, GlobalBlackout[]>();
-    for (const b of blackouts) {
-      const start = parseISO(b.start_date);
-      const end = parseISO(b.end_date);
-      for (const d of eachDayOfInterval({ start, end })) {
-        const key = format(d, "yyyy-MM-dd");
-        const arr = m.get(key) ?? [];
-        arr.push(b);
-        m.set(key, arr);
-      }
-    }
-    return m;
-  }, [blackouts]);
+
+
 
   /** Global blackouts as unified entries, keyed by date. */
   const globalEntryMap = useMemo(() => {
