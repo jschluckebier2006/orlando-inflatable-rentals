@@ -26,15 +26,19 @@ For the 9/19 record: account/receipt email **cvstrickland05@gmail.com — Cynthi
 
 No global blackout — 9/6 is Labor Day Saturday with the promo running, so a company-wide block is off the table. Item-level only:
 
-- Once you send the item lists from the phone calls, add `inventory_blackouts` rows for exactly those items on 2026-09-06 and 2026-09-19. The rest of the fleet stays sellable on both dates.
-- Nothing is blocked until those lists arrive; no interim block is applied.
+- **9/6, Kiana's item — matched:** `18' Tiki Plunge Dual Lane Water Slide`, item id **`tiki-plunge-18`** (slug `18-tiki-plunge-water-slide`, stock_count 1, active). It currently has no blackout rows at all. Add one `inventory_blackouts` row: `item_id = 'tiki-plunge-18'`, `start_date = end_date = 2026-09-06`, reason "Held for Kiana George — paid deposit pi_3U71gY0ozdYluEdQ1oeUBWrJ, booking being rebuilt by phone". With stock_count 1 this fully protects the unit; the rest of the fleet stays sellable for the promo weekend.
+- **9/19, Cynthia's items:** blocked once you send the item list. Nothing applied on that date until then.
 
 ## 4. Entering Kiana's booking with the deposit already paid
 
+Recovered from the abandoned-cart alert email: Kiana George — kianageorge23@gmail.com — 407-338-0568, event Sunday 2026-09-06, cart `18' Tiki Plunge Dual Lane Water Slide` $309.00, cart total $329.09, deposit captured $5.45 (`pi_3U71gY0ozdYluEdQ1oeUBWrJ`, session `cs_live_a13B3teO…`). Still needed by phone: delivery address and setup/pickup times.
+
 Do **not** send her through checkout again. Correct path:
 
-1. Create the booking in the admin "New booking" form with the items, address, date and times collected by phone. Leave payment fields at default (unpaid).
-2. Record the deposit Stripe already captured — $5.45 against `pi_3U71gY0ozdYluEdQ1oeUBWrJ` (session `cs_live_a13B3teO…`, event 2026-09-06).
+1. Create the booking in the admin "New booking" form with the recovered item and contact details plus the address and times from the callback. Leave payment fields at default (unpaid).
+2. Record the deposit Stripe already captured — $5.45 against `pi_3U71gY0ozdYluEdQ1oeUBWrJ`.
+3. Remove the `tiki-plunge-18` blackout row for 9/6 once the real booking exists, so the booking itself holds the date.
+
 
 
 Right now `RecordPaymentDialog` offers cash, check, card-external and "send Stripe link" — none of which represent an already-captured Stripe charge, and the admin form has no field for a PaymentIntent ID. Pass 2 adds that:
