@@ -28,7 +28,14 @@ The day detail sheet also lists the blackouts for that date — item-level ones 
 
 No show/hide toggle. Blackouts always render.
 
+**6. Overlapping holds on the same item and date**
+When two or more blackouts cover the same item on the same day, each of those entries gets a warning indicator (amber triangle + amber tint) and the popover notes "N holds on this item for this date", so a stale or conflicting hold is visible instead of silently stacking.
+
+**7. Truncation never hides a blackout**
+When a day cell overflows, at least one blackout entry is always kept in the visible slots — bookings give up a slot first. The "+N more" counter covers everything hidden. A fully-committed date can never look open in month view.
+
 ## Verification
+
 
 Against the live holds: 2026-09-06 shows `18' Tiki Plunge Dual Lane Water Slide` (two rows exist for that date — an owner-offline hold and a "sewing reinforcement" hold, both will show) plus `4-in-1 Aqua Palms Combo` (9/6–9/7); 2026-09-19 shows `15' Tropic Shock Dual Lane Water Slide`. All struck through, alongside any real bookings on those dates. The long "Handled offline by owner…" reason must be fully readable in the popover.
 
