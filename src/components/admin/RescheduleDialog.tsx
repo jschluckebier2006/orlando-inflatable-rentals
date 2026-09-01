@@ -46,13 +46,18 @@ export function RescheduleDialog({ open, onOpenChange, bookingId, currentStart, 
     }
   }, [open, currentStart, currentEnd]);
 
+  // The end date can never precede the start date — a reschedule that moves the
+  // start past a stale end used to persist an inverted range and break checkout.
+  const safeEnd = end && start && end >= start ? end : start;
+
   async function checkConflicts(): Promise<ConflictRow[]> {
     if (!productIds.length || !start) { setChecked(true); return []; }
+
     setChecking(true);
     const { data } = await (supabase.rpc as any)("get_booked_dates_for_products", { _product_ids: productIds });
     setChecking(false);
     const rangeKeys = new Set(
-      eachDayOfInterval({ start: parseISO(start), end: parseISO(end || start) }).map((d) => format(d, "yyyy-MM-dd")),
+      eachDayOfInterval({ start: parseISO(start), end: parseISO(safeEnd || start) }).map((d) => format(d, "yyyy-MM-dd")),
     );
     const currentRange = new Set(
       eachDayOfInterval({ start: parseISO(currentStart), end: parseISO(currentEnd || currentStart) }).map((d) => format(d, "yyyy-MM-dd")),
@@ -92,7 +97,7 @@ export function RescheduleDialog({ open, onOpenChange, bookingId, currentStart, 
     if (!force && conflicts.length > 0) return;
     setSaving(true);
     const { error } = await (supabase.from("bookings") as any)
-      .update({ event_date: start, event_end_date: end || start })
+      .update({ event_date: start, event_end_date: safeEnd || start })
       .eq("id", bookingId);
     if (error) {
       setSaving(false);
@@ -102,8 +107,8 @@ export function RescheduleDialog({ open, onOpenChange, bookingId, currentStart, 
     await logActivity({
       bookingId,
       kind: "date_change",
-      message: `Rescheduled from ${currentStart}${currentEnd && currentEnd !== currentStart ? `→${currentEnd}` : ""} to ${start}${end && end !== start ? `→${end}` : ""}${force ? " (override: conflicts ignored)" : ""}.`,
-      metadata: { from_start: currentStart, from_end: currentEnd, to_start: start, to_end: end, override: force },
+      message: `Rescheduled from ${currentStart}${currentEnd && currentEnd !== currentStart ? `→${currentEnd}` : ""} to ${start}${safeEnd && safeEnd !== start ? `→${safeEnd}` : ""}${force ? " (override: conflicts ignored)" : ""}.`,
+      metadata: { from_start: currentStart, from_end: currentEnd, to_start: start, to_end: safeEnd, override: force },
     });
     // Fire customer + admin notification email (non-blocking)
     try {
