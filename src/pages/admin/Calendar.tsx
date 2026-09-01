@@ -200,6 +200,7 @@ export default function AdminCalendar() {
   const navigate = useNavigate();
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [blackouts, setBlackouts] = useState<GlobalBlackout[]>([]);
+  const [itemBlackouts, setItemBlackouts] = useState<ItemBlackout[]>([]);
   const [loading, setLoading] = useState(true);
   const [view, setView] = useState<ViewMode>("month");
   const [cursor, setCursor] = useState<Date>(new Date());
@@ -209,26 +210,44 @@ export default function AdminCalendar() {
 
   async function load() {
     setLoading(true);
-    const [{ data: bData }, { data: gbData }, { data: rData }] = await Promise.all([
+    const [{ data: bData }, { data: gbData }, { data: rData }, { data: ibData }] = await Promise.all([
       supabase
         .from("bookings")
         .select("id, event_date, event_end_date, event_start_time, created_at, customer_name, customer_phone, event_address_line, event_city, event_zip, status, product_id, product_name, booking_items(id, product_name)")
         .order("event_date", { ascending: true }),
       supabase
         .from("global_blackouts")
-        .select("id, start_date, end_date, reason")
+        .select("id, start_date, end_date, reason, created_at")
         .order("start_date", { ascending: true }),
       supabase
         .from("bookings")
         .select("id, customer_name, customer_email, customer_phone, event_date, finalize_error, stripe_session_id, stripe_payment_intent_id")
         .eq("needs_review", true)
         .order("needs_review_at", { ascending: false }),
+      supabase
+        .from("inventory_blackouts")
+        .select("id, item_id, start_date, end_date, reason, created_at, inventory_items(name)")
+        .order("start_date", { ascending: true }),
     ]);
     setBookings((bData as any) ?? []);
     setBlackouts((gbData as any) ?? []);
     setReviewQueue((rData as any) ?? []);
+    setItemBlackouts((ibData as any) ?? []);
     setLoading(false);
   }
+
+  async function removeBlackout(entry: BlackoutEntry) {
+    const table = entry.kind === "global" ? "global_blackouts" : "inventory_blackouts";
+    const { error } = await supabase.from(table as any).delete().eq("id", entry.id);
+    if (error) {
+      toast({ title: "Could not remove the blackout", description: error.message, variant: "destructive" });
+      return;
+    }
+    toast({ title: "Blackout removed", description: `${entry.label} — ${fmtRange(entry.start_date, entry.end_date)}` });
+    if (entry.kind === "global") setBlackouts((l) => l.filter((b) => b.id !== entry.id));
+    else setItemBlackouts((l) => l.filter((b) => b.id !== entry.id));
+  }
+
 
   async function clearReview(id: string) {
     const { error } = await supabase
