@@ -580,7 +580,7 @@ export default function AdminCalendar() {
             const list = dayMap.get(key) ?? [];
             const globalEntries = globalEntryMap.get(key) ?? [];
             const itemEntries = itemEntryMap.get(key) ?? [];
-            const isBlackout = globalEntries.length > 0 || itemEntries.length > 0;
+            const hasGlobalBlackout = globalEntries.length > 0;
             const hasConflict = itemEntries.some((e) => e.overlapCount > 1);
             const inMonth = view !== "month" || isSameMonth(d, cursor);
             const today = isToday(d);
@@ -596,15 +596,15 @@ export default function AdminCalendar() {
                 className={[
                   view === "day" ? "min-h-[300px]" : "min-h-[5rem] aspect-square",
                   "rounded-md border p-1.5 flex flex-col text-left transition hover:bg-accent cursor-pointer",
-                  isBlackout ? "bg-destructive/10" : (inMonth ? "bg-background" : "bg-muted/30"),
-                  today ? "border-primary border-2" : (isBlackout ? "border-destructive/40" : "border-border"),
+                  hasGlobalBlackout ? "bg-destructive/10" : (inMonth ? "bg-background" : "bg-muted/30"),
+                  today ? "border-primary border-2" : (hasGlobalBlackout ? "border-destructive/40" : "border-border"),
                 ].join(" ")}
               >
                 <div className={`text-xs font-semibold flex items-center justify-between gap-1 ${today ? "text-primary" : ""} ${inMonth ? "" : "text-muted-foreground"}`}>
                   <span>{view === "day" ? format(d, "EEEE, MMM d") : format(d, "d")}</span>
                   <span className="flex items-center gap-0.5 shrink-0">
                     {hasConflict && <AlertTriangle className="h-3 w-3 text-amber-600" />}
-                    {isBlackout && <Ban className="h-3 w-3 text-destructive" />}
+                    {hasGlobalBlackout && <Ban className="h-3 w-3 text-destructive" />}
                   </span>
                 </div>
                 <div className="flex-1 mt-1 space-y-0.5 overflow-hidden">
@@ -627,9 +627,9 @@ export default function AdminCalendar() {
                         {visibleOnGrid(list).slice(0, 4).map((b) => (
                           <span key={b.id} className={`inline-block w-2 h-2 rounded-full ${STATUS_COLORS[b.status]}`} />
                         ))}
-                        {itemEntries.length > 0 && (
+                        {globalEntries.length > 0 && (
                           <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-destructive">
-                            <Ban className="h-2.5 w-2.5" />{itemEntries.length}
+                            <Ban className="h-2.5 w-2.5" />{globalEntries.length}
                           </span>
                         )}
                         {visibleOnGrid(list).length > 4 && (
@@ -649,9 +649,7 @@ export default function AdminCalendar() {
                               type="button"
                               className={`w-full flex items-center gap-1 text-xs rounded-sm px-0.5 ${e.overlapCount > 1 ? "bg-amber-500/15 text-amber-800" : "text-muted-foreground"}`}
                             >
-                              {e.overlapCount > 1
-                                ? <AlertTriangle className="h-2.5 w-2.5 shrink-0" />
-                                : <Ban className="h-2.5 w-2.5 shrink-0 text-destructive/70" />}
+                              {e.overlapCount > 1 && <AlertTriangle className="h-2.5 w-2.5 shrink-0" />}
                               <span className="truncate line-through decoration-1">{e.label}</span>
                             </button>
                           </BlackoutPopover>
@@ -675,9 +673,7 @@ export default function AdminCalendar() {
                             type="button"
                             className={`w-full flex items-center gap-1 text-xs rounded-sm px-0.5 ${e.overlapCount > 1 ? "bg-amber-500/15 text-amber-800" : "text-muted-foreground"}`}
                           >
-                            {e.overlapCount > 1
-                              ? <AlertTriangle className="h-3 w-3 shrink-0" />
-                              : <Ban className="h-3 w-3 shrink-0 text-destructive/70" />}
+                            {e.overlapCount > 1 && <AlertTriangle className="h-3 w-3 shrink-0" />}
                             <span className="truncate line-through decoration-1">{e.label}</span>
                           </button>
                         </BlackoutPopover>
@@ -701,7 +697,7 @@ export default function AdminCalendar() {
             </span>
           ))}
           <span className="inline-flex items-center gap-1.5">
-            <span className="inline-block w-2.5 h-2.5 rounded-sm bg-destructive/30 border border-destructive/40" /> blackout
+            <span className="inline-block w-2.5 h-2.5 rounded-sm bg-destructive/30 border border-destructive/40" /> global blackout
           </span>
           <span className="inline-flex items-center gap-1.5">
             <AlertTriangle className="h-3 w-3 text-amber-600" /> overlapping holds
@@ -746,14 +742,14 @@ export default function AdminCalendar() {
             )}
             {selectedItemEntries.length > 0 && (
               <div className="rounded-md border border-border p-3">
-                <div className="flex items-center gap-2 font-semibold text-sm">
-                  <Ban className="h-4 w-4 text-destructive" /> Blocked items ({selectedItemEntries.length})
+                <div className="font-semibold text-sm text-muted-foreground">
+                  Blocked items ({selectedItemEntries.length})
                 </div>
                 <ul className="mt-2 space-y-2">
                   {selectedItemEntries.map((e) => (
                     <li
                       key={e.id}
-                      className={`flex items-start justify-between gap-2 rounded-md p-2 ${e.overlapCount > 1 ? "bg-amber-500/10 border border-amber-500/40" : "bg-muted/50"}`}
+                      className={`flex items-start justify-between gap-2 rounded-md p-2 ${e.overlapCount > 1 ? "bg-amber-500/10 border border-amber-500/40" : ""}`}
                     >
                       <div className="min-w-0">
                         <div className="text-sm font-medium line-through decoration-1 text-muted-foreground break-words">
