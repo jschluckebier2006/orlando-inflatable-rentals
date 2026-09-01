@@ -10,7 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { ChevronLeft, ChevronRight, Phone, MapPin, Plus, Ban, BellRing, CalendarClock, AlertTriangle } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { ChevronLeft, ChevronRight, Phone, MapPin, Plus, Ban, BellRing, CalendarClock, AlertTriangle, Trash2 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
 type BookingStatus = "pending" | "confirmed" | "cancelled" | "completed";
@@ -39,6 +40,125 @@ interface GlobalBlackout {
   end_date: string;
   reason: string | null;
 }
+
+interface ItemBlackout {
+  id: string;
+  item_id: string;
+  start_date: string;
+  end_date: string;
+  reason: string | null;
+  created_at: string;
+  inventory_items?: { name: string } | null;
+}
+
+/** Unified shape used by the popover for both blackout kinds. */
+interface BlackoutEntry {
+  id: string;
+  kind: "item" | "global";
+  label: string;
+  start_date: string;
+  end_date: string;
+  reason: string | null;
+  created_at?: string | null;
+  /** Number of holds covering the same item on this date (item blackouts only). */
+  overlapCount: number;
+}
+
+function fmtRange(start: string, end: string): string {
+  return start === end
+    ? format(parseISO(start), "EEE, MMM d, yyyy")
+    : `${format(parseISO(start), "MMM d, yyyy")} → ${format(parseISO(end), "MMM d, yyyy")}`;
+}
+
+function BlackoutPopover({
+  entry,
+  onRemove,
+  children,
+}: {
+  entry: BlackoutEntry;
+  onRemove: (entry: BlackoutEntry) => Promise<void>;
+  children: React.ReactNode;
+}) {
+  const [open, setOpen] = useState(false);
+  const [confirming, setConfirming] = useState(false);
+  const [busy, setBusy] = useState(false);
+
+  return (
+    <Popover
+      open={open}
+      onOpenChange={(o) => {
+        setOpen(o);
+        if (!o) setConfirming(false);
+      }}
+    >
+      <PopoverTrigger asChild onClick={(e) => e.stopPropagation()}>
+        {children}
+      </PopoverTrigger>
+      <PopoverContent
+        align="start"
+        className="w-80 max-w-[90vw] space-y-2"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-start gap-2">
+          <Ban className="h-4 w-4 text-destructive mt-0.5 shrink-0" />
+          <div className="min-w-0">
+            <div className="font-semibold leading-tight break-words">{entry.label}</div>
+            <div className="text-xs text-muted-foreground mt-0.5">{fmtRange(entry.start_date, entry.end_date)}</div>
+          </div>
+        </div>
+
+        {entry.overlapCount > 1 && (
+          <div className="flex items-start gap-2 rounded-md border border-amber-500/40 bg-amber-500/10 p-2 text-xs text-amber-900">
+            <AlertTriangle className="h-3.5 w-3.5 mt-0.5 shrink-0" />
+            <span>{entry.overlapCount} holds on this item for this date — one may be stale.</span>
+          </div>
+        )}
+
+        <div className="rounded-md bg-muted p-2 text-sm whitespace-pre-wrap break-words">
+          {entry.reason?.trim() ? entry.reason : "No reason given"}
+        </div>
+
+        <div className="text-[11px] text-muted-foreground">
+          {entry.kind === "global" ? "Applies to all products" : "Item-level block"}
+          {entry.created_at ? ` · created ${format(parseISO(entry.created_at), "MMM d, yyyy h:mma")}` : ""}
+        </div>
+
+        {confirming ? (
+          <div className="space-y-2 rounded-md border border-destructive/40 bg-destructive/5 p-2">
+            <p className="text-xs text-destructive">
+              Remove this block? The date becomes bookable again.
+            </p>
+            <div className="flex gap-2">
+              <Button size="sm" variant="outline" onClick={() => setConfirming(false)} disabled={busy}>
+                Cancel
+              </Button>
+              <Button
+                size="sm"
+                variant="destructive"
+                disabled={busy}
+                onClick={async () => {
+                  setBusy(true);
+                  await onRemove(entry);
+                  setBusy(false);
+                  setConfirming(false);
+                  setOpen(false);
+                }}
+              >
+                {busy ? "Removing…" : "Remove"}
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <Button size="sm" variant="outline" className="text-destructive" onClick={() => setConfirming(true)}>
+            <Trash2 className="h-3.5 w-3.5 mr-1" /> Remove blackout
+          </Button>
+        )}
+      </PopoverContent>
+    </Popover>
+  );
+}
+
+
 
 const STATUS_COLORS: Record<BookingStatus, string> = {
   pending: "bg-yellow-500",
@@ -80,6 +200,7 @@ export default function AdminCalendar() {
   const navigate = useNavigate();
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [blackouts, setBlackouts] = useState<GlobalBlackout[]>([]);
+  const [itemBlackouts, setItemBlackouts] = useState<ItemBlackout[]>([]);
   const [loading, setLoading] = useState(true);
   const [view, setView] = useState<ViewMode>("month");
   const [cursor, setCursor] = useState<Date>(new Date());
@@ -89,26 +210,44 @@ export default function AdminCalendar() {
 
   async function load() {
     setLoading(true);
-    const [{ data: bData }, { data: gbData }, { data: rData }] = await Promise.all([
+    const [{ data: bData }, { data: gbData }, { data: rData }, { data: ibData }] = await Promise.all([
       supabase
         .from("bookings")
         .select("id, event_date, event_end_date, event_start_time, created_at, customer_name, customer_phone, event_address_line, event_city, event_zip, status, product_id, product_name, booking_items(id, product_name)")
         .order("event_date", { ascending: true }),
       supabase
         .from("global_blackouts")
-        .select("id, start_date, end_date, reason")
+        .select("id, start_date, end_date, reason, created_at")
         .order("start_date", { ascending: true }),
       supabase
         .from("bookings")
         .select("id, customer_name, customer_email, customer_phone, event_date, finalize_error, stripe_session_id, stripe_payment_intent_id")
         .eq("needs_review", true)
         .order("needs_review_at", { ascending: false }),
+      supabase
+        .from("inventory_blackouts")
+        .select("id, item_id, start_date, end_date, reason, created_at, inventory_items(name)")
+        .order("start_date", { ascending: true }),
     ]);
     setBookings((bData as any) ?? []);
     setBlackouts((gbData as any) ?? []);
     setReviewQueue((rData as any) ?? []);
+    setItemBlackouts((ibData as any) ?? []);
     setLoading(false);
   }
+
+  async function removeBlackout(entry: BlackoutEntry) {
+    const table = entry.kind === "global" ? "global_blackouts" : "inventory_blackouts";
+    const { error } = await supabase.from(table as any).delete().eq("id", entry.id);
+    if (error) {
+      toast({ title: "Could not remove the blackout", description: error.message, variant: "destructive" });
+      return;
+    }
+    toast({ title: "Blackout removed", description: `${entry.label} — ${fmtRange(entry.start_date, entry.end_date)}` });
+    if (entry.kind === "global") setBlackouts((l) => l.filter((b) => b.id !== entry.id));
+    else setItemBlackouts((l) => l.filter((b) => b.id !== entry.id));
+  }
+
 
   async function clearReview(id: string) {
     const { error } = await supabase
@@ -140,20 +279,65 @@ export default function AdminCalendar() {
     return m;
   }, [bookings]);
 
-  const blackoutMap = useMemo(() => {
-    const m = new Map<string, GlobalBlackout[]>();
+
+
+
+  /** Global blackouts as unified entries, keyed by date. */
+  const globalEntryMap = useMemo(() => {
+    const m = new Map<string, BlackoutEntry[]>();
     for (const b of blackouts) {
-      const start = parseISO(b.start_date);
-      const end = parseISO(b.end_date);
-      for (const d of eachDayOfInterval({ start, end })) {
+      for (const d of eachDayOfInterval({ start: parseISO(b.start_date), end: parseISO(b.end_date) })) {
         const key = format(d, "yyyy-MM-dd");
         const arr = m.get(key) ?? [];
-        arr.push(b);
+        arr.push({
+          id: b.id,
+          kind: "global",
+          label: "All products",
+          start_date: b.start_date,
+          end_date: b.end_date,
+          reason: b.reason,
+          created_at: (b as any).created_at ?? null,
+          overlapCount: 1,
+        });
         m.set(key, arr);
       }
     }
     return m;
   }, [blackouts]);
+
+  /** Item-level blackouts as unified entries, keyed by date, with per-item overlap counts. */
+  const itemEntryMap = useMemo(() => {
+    const m = new Map<string, BlackoutEntry[]>();
+    for (const b of itemBlackouts) {
+      for (const d of eachDayOfInterval({ start: parseISO(b.start_date), end: parseISO(b.end_date) })) {
+        const key = format(d, "yyyy-MM-dd");
+        const arr = m.get(key) ?? [];
+        arr.push({
+          id: b.id,
+          kind: "item",
+          label: b.inventory_items?.name ?? b.item_id,
+          start_date: b.start_date,
+          end_date: b.end_date,
+          reason: b.reason,
+          created_at: b.created_at,
+          overlapCount: 1,
+          // keep the item id for overlap counting
+          ...(({ item_id: b.item_id } as any)),
+        } as BlackoutEntry);
+        m.set(key, arr);
+      }
+    }
+    // flag overlaps: same item, same date, more than one hold
+    for (const [, arr] of m) {
+      const counts = new Map<string, number>();
+      for (const e of arr) counts.set((e as any).item_id, (counts.get((e as any).item_id) ?? 0) + 1);
+      for (const e of arr) e.overlapCount = counts.get((e as any).item_id) ?? 1;
+      arr.sort((a, b) => b.overlapCount - a.overlapCount || a.label.localeCompare(b.label));
+    }
+    return m;
+  }, [itemBlackouts]);
+
+
 
   const days = useMemo(() => {
     if (view === "month") {
@@ -178,9 +362,22 @@ export default function AdminCalendar() {
   }
 
   const selected = selectedDate ? dayMap.get(selectedDate) ?? [] : [];
-  const selectedBlackouts = selectedDate ? blackoutMap.get(selectedDate) ?? [] : [];
+  
+  const selectedGlobalEntries = selectedDate ? globalEntryMap.get(selectedDate) ?? [] : [];
+  const selectedItemEntries = selectedDate ? itemEntryMap.get(selectedDate) ?? [] : [];
   // Hide cancelled bookings from the grid; they only appear inside the day sheet.
   function visibleOnGrid(list: Booking[]) { return list.filter((b) => b.status !== "cancelled"); }
+
+  /** Split visible slots so at least one blackout always survives truncation. */
+  function splitCell(list: Booking[], bos: BlackoutEntry[], max: number) {
+    const bk = visibleOnGrid(list);
+    const total = bk.length + bos.length;
+    if (total <= max) return { bookings: bk, blackouts: bos, more: 0 };
+    const boShow = Math.min(bos.length, Math.max(bos.length > 0 ? 1 : 0, max - bk.length));
+    const bkShow = Math.max(0, max - boShow);
+    return { bookings: bk.slice(0, bkShow), blackouts: bos.slice(0, boShow), more: total - bkShow - boShow };
+  }
+
   const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
   const pendingAlerts = useMemo(
@@ -381,26 +578,48 @@ export default function AdminCalendar() {
           {days.map((d) => {
             const key = format(d, "yyyy-MM-dd");
             const list = dayMap.get(key) ?? [];
-            const dayBlackouts = blackoutMap.get(key) ?? [];
-            const isBlackout = dayBlackouts.length > 0;
+            const globalEntries = globalEntryMap.get(key) ?? [];
+            const itemEntries = itemEntryMap.get(key) ?? [];
+            const isBlackout = globalEntries.length > 0 || itemEntries.length > 0;
+            const hasConflict = itemEntries.some((e) => e.overlapCount > 1);
             const inMonth = view !== "month" || isSameMonth(d, cursor);
             const today = isToday(d);
+            const max = view === "month" ? 3 : 8;
+            const cell = splitCell(list, itemEntries, max);
             return (
-              <button
+              <div
                 key={key}
+                role="button"
+                tabIndex={0}
                 onClick={() => setSelectedDate(key)}
+                onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setSelectedDate(key); } }}
                 className={[
                   view === "day" ? "min-h-[300px]" : "min-h-[5rem] aspect-square",
-                  "rounded-md border p-1.5 flex flex-col text-left transition hover:bg-accent",
+                  "rounded-md border p-1.5 flex flex-col text-left transition hover:bg-accent cursor-pointer",
                   isBlackout ? "bg-destructive/10" : (inMonth ? "bg-background" : "bg-muted/30"),
                   today ? "border-primary border-2" : (isBlackout ? "border-destructive/40" : "border-border"),
                 ].join(" ")}
               >
                 <div className={`text-xs font-semibold flex items-center justify-between gap-1 ${today ? "text-primary" : ""} ${inMonth ? "" : "text-muted-foreground"}`}>
                   <span>{view === "day" ? format(d, "EEEE, MMM d") : format(d, "d")}</span>
-                  {isBlackout && <Ban className="h-3 w-3 text-destructive shrink-0" />}
+                  <span className="flex items-center gap-0.5 shrink-0">
+                    {hasConflict && <AlertTriangle className="h-3 w-3 text-amber-600" />}
+                    {isBlackout && <Ban className="h-3 w-3 text-destructive" />}
+                  </span>
                 </div>
                 <div className="flex-1 mt-1 space-y-0.5 overflow-hidden">
+                  {/* Global blackouts — full-width banner across the top of the cell */}
+                  {globalEntries.map((e) => (
+                    <BlackoutPopover key={e.id} entry={e} onRemove={removeBlackout}>
+                      <button
+                        type="button"
+                        className="w-full block text-left text-[10px] sm:text-xs font-semibold rounded-sm bg-destructive/25 text-destructive px-1 py-0.5 truncate"
+                      >
+                        Closed{e.reason ? ` — ${e.reason}` : ""}
+                      </button>
+                    </BlackoutPopover>
+                  ))}
+
                   {view === "month" ? (
                     <>
                       {/* Mobile: compact dots row with count. Desktop: stacked names. */}
@@ -408,40 +627,72 @@ export default function AdminCalendar() {
                         {visibleOnGrid(list).slice(0, 4).map((b) => (
                           <span key={b.id} className={`inline-block w-2 h-2 rounded-full ${STATUS_COLORS[b.status]}`} />
                         ))}
+                        {itemEntries.length > 0 && (
+                          <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-destructive">
+                            <Ban className="h-2.5 w-2.5" />{itemEntries.length}
+                          </span>
+                        )}
                         {visibleOnGrid(list).length > 4 && (
                           <span className="text-[10px] font-semibold text-muted-foreground">+{visibleOnGrid(list).length - 4}</span>
                         )}
                       </div>
                       <div className="hidden sm:block space-y-0.5">
-                        {visibleOnGrid(list).slice(0, 3).map((b) => (
+                        {cell.bookings.map((b) => (
                           <div key={b.id} className="flex items-center gap-1 text-xs truncate">
                             <span className={`inline-block w-2 h-2 rounded-full ${STATUS_COLORS[b.status]}`} />
                             <span className="truncate">{b.customer_name}</span>
                           </div>
                         ))}
-                        {visibleOnGrid(list).length > 3 && (
-                          <div className="text-xs font-semibold text-muted-foreground">+{visibleOnGrid(list).length - 3} more</div>
+                        {cell.blackouts.map((e) => (
+                          <BlackoutPopover key={e.id} entry={e} onRemove={removeBlackout}>
+                            <button
+                              type="button"
+                              className={`w-full flex items-center gap-1 text-xs rounded-sm px-0.5 ${e.overlapCount > 1 ? "bg-amber-500/15 text-amber-800" : "text-muted-foreground"}`}
+                            >
+                              {e.overlapCount > 1
+                                ? <AlertTriangle className="h-2.5 w-2.5 shrink-0" />
+                                : <Ban className="h-2.5 w-2.5 shrink-0 text-destructive/70" />}
+                              <span className="truncate line-through decoration-1">{e.label}</span>
+                            </button>
+                          </BlackoutPopover>
+                        ))}
+                        {cell.more > 0 && (
+                          <div className="text-xs font-semibold text-muted-foreground">+{cell.more} more</div>
                         )}
                       </div>
                     </>
                   ) : (
                     <>
-                      {visibleOnGrid(list).slice(0, 8).map((b) => (
+                      {cell.bookings.map((b) => (
                         <div key={b.id} className="flex items-center gap-1 text-xs truncate">
                           <span className={`inline-block w-2 h-2 rounded-full ${STATUS_COLORS[b.status]}`} />
                           <span className="truncate">{b.customer_name}</span>
                         </div>
                       ))}
-                      {visibleOnGrid(list).length > 8 && (
-                        <div className="text-xs font-semibold text-muted-foreground">+{visibleOnGrid(list).length - 8} more</div>
+                      {cell.blackouts.map((e) => (
+                        <BlackoutPopover key={e.id} entry={e} onRemove={removeBlackout}>
+                          <button
+                            type="button"
+                            className={`w-full flex items-center gap-1 text-xs rounded-sm px-0.5 ${e.overlapCount > 1 ? "bg-amber-500/15 text-amber-800" : "text-muted-foreground"}`}
+                          >
+                            {e.overlapCount > 1
+                              ? <AlertTriangle className="h-3 w-3 shrink-0" />
+                              : <Ban className="h-3 w-3 shrink-0 text-destructive/70" />}
+                            <span className="truncate line-through decoration-1">{e.label}</span>
+                          </button>
+                        </BlackoutPopover>
+                      ))}
+                      {cell.more > 0 && (
+                        <div className="text-xs font-semibold text-muted-foreground">+{cell.more} more</div>
                       )}
                     </>
                   )}
                 </div>
-              </button>
+              </div>
             );
           })}
         </div>
+
 
         <div className="flex items-center gap-4 mt-3 text-xs text-muted-foreground flex-wrap">
           {(["pending", "confirmed", "completed", "cancelled"] as BookingStatus[]).map((s) => (
@@ -451,6 +702,9 @@ export default function AdminCalendar() {
           ))}
           <span className="inline-flex items-center gap-1.5">
             <span className="inline-block w-2.5 h-2.5 rounded-sm bg-destructive/30 border border-destructive/40" /> blackout
+          </span>
+          <span className="inline-flex items-center gap-1.5">
+            <AlertTriangle className="h-3 w-3 text-amber-600" /> overlapping holds
           </span>
           {loading && <span>Loading…</span>}
         </div>
@@ -462,14 +716,24 @@ export default function AdminCalendar() {
             <SheetTitle>{selectedDate && format(parseISO(selectedDate), "EEEE, MMMM d, yyyy")}</SheetTitle>
           </SheetHeader>
           <div className="mt-4 space-y-3">
-            {selectedBlackouts.length > 0 && (
+            {selectedGlobalEntries.length > 0 && (
               <div className="rounded-md border border-destructive/40 bg-destructive/10 p-3">
                 <div className="flex items-center gap-2 font-semibold text-destructive">
-                  <Ban className="h-4 w-4" /> Global blackout
+                  <Ban className="h-4 w-4" /> Closed — all products
                 </div>
-                <ul className="mt-1 text-sm text-destructive/90 space-y-0.5">
-                  {selectedBlackouts.map((bo) => (
-                    <li key={bo.id}>{bo.reason || "No reason given"}</li>
+                <ul className="mt-2 space-y-2">
+                  {selectedGlobalEntries.map((e) => (
+                    <li key={e.id} className="flex items-start justify-between gap-2">
+                      <div className="min-w-0">
+                        <div className="text-sm text-destructive/90 whitespace-pre-wrap break-words">
+                          {e.reason?.trim() || "No reason given"}
+                        </div>
+                        <div className="text-[11px] text-muted-foreground">{fmtRange(e.start_date, e.end_date)}</div>
+                      </div>
+                      <BlackoutPopover entry={e} onRemove={removeBlackout}>
+                        <button type="button" className="text-xs underline text-destructive shrink-0">Details</button>
+                      </BlackoutPopover>
+                    </li>
                   ))}
                 </ul>
                 <button
@@ -480,6 +744,43 @@ export default function AdminCalendar() {
                 </button>
               </div>
             )}
+            {selectedItemEntries.length > 0 && (
+              <div className="rounded-md border border-border p-3">
+                <div className="flex items-center gap-2 font-semibold text-sm">
+                  <Ban className="h-4 w-4 text-destructive" /> Blocked items ({selectedItemEntries.length})
+                </div>
+                <ul className="mt-2 space-y-2">
+                  {selectedItemEntries.map((e) => (
+                    <li
+                      key={e.id}
+                      className={`flex items-start justify-between gap-2 rounded-md p-2 ${e.overlapCount > 1 ? "bg-amber-500/10 border border-amber-500/40" : "bg-muted/50"}`}
+                    >
+                      <div className="min-w-0">
+                        <div className="text-sm font-medium line-through decoration-1 text-muted-foreground break-words">
+                          {e.label}
+                        </div>
+                        {e.overlapCount > 1 && (
+                          <div className="text-[11px] text-amber-800 inline-flex items-center gap-1 mt-0.5">
+                            <AlertTriangle className="h-3 w-3" /> {e.overlapCount} holds on this item for this date
+                          </div>
+                        )}
+                        <div className="text-xs whitespace-pre-wrap break-words mt-0.5">
+                          {e.reason?.trim() || "No reason given"}
+                        </div>
+                        <div className="text-[11px] text-muted-foreground mt-0.5">
+                          {fmtRange(e.start_date, e.end_date)}
+                          {e.created_at ? ` · created ${format(parseISO(e.created_at), "MMM d, yyyy h:mma")}` : ""}
+                        </div>
+                      </div>
+                      <BlackoutPopover entry={e} onRemove={removeBlackout}>
+                        <button type="button" className="text-xs underline text-destructive shrink-0">Manage</button>
+                      </BlackoutPopover>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
             <Button
               size="sm"
               onClick={() => {
