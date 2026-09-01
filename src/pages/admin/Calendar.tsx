@@ -375,8 +375,21 @@ export default function AdminCalendar() {
 
   const selected = selectedDate ? dayMap.get(selectedDate) ?? [] : [];
   const selectedBlackouts = selectedDate ? blackoutMap.get(selectedDate) ?? [] : [];
+  const selectedGlobalEntries = selectedDate ? globalEntryMap.get(selectedDate) ?? [] : [];
+  const selectedItemEntries = selectedDate ? itemEntryMap.get(selectedDate) ?? [] : [];
   // Hide cancelled bookings from the grid; they only appear inside the day sheet.
   function visibleOnGrid(list: Booking[]) { return list.filter((b) => b.status !== "cancelled"); }
+
+  /** Split visible slots so at least one blackout always survives truncation. */
+  function splitCell(list: Booking[], bos: BlackoutEntry[], max: number) {
+    const bk = visibleOnGrid(list);
+    const total = bk.length + bos.length;
+    if (total <= max) return { bookings: bk, blackouts: bos, more: 0 };
+    const boShow = Math.min(bos.length, Math.max(bos.length > 0 ? 1 : 0, max - bk.length));
+    const bkShow = Math.max(0, max - boShow);
+    return { bookings: bk.slice(0, bkShow), blackouts: bos.slice(0, boShow), more: total - bkShow - boShow };
+  }
+
   const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
   const pendingAlerts = useMemo(
