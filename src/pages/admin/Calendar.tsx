@@ -10,7 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { ChevronLeft, ChevronRight, Phone, MapPin, Plus, Ban, BellRing, CalendarClock, AlertTriangle } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { ChevronLeft, ChevronRight, Phone, MapPin, Plus, Ban, BellRing, CalendarClock, AlertTriangle, Trash2 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
 type BookingStatus = "pending" | "confirmed" | "cancelled" | "completed";
