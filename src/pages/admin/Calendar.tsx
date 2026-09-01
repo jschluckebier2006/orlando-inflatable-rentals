@@ -580,7 +580,7 @@ export default function AdminCalendar() {
             const list = dayMap.get(key) ?? [];
             const globalEntries = globalEntryMap.get(key) ?? [];
             const itemEntries = itemEntryMap.get(key) ?? [];
-            const isBlackout = globalEntries.length > 0 || itemEntries.length > 0;
+            const hasGlobalBlackout = globalEntries.length > 0;
             const hasConflict = itemEntries.some((e) => e.overlapCount > 1);
             const inMonth = view !== "month" || isSameMonth(d, cursor);
             const today = isToday(d);
@@ -596,15 +596,15 @@ export default function AdminCalendar() {
                 className={[
                   view === "day" ? "min-h-[300px]" : "min-h-[5rem] aspect-square",
                   "rounded-md border p-1.5 flex flex-col text-left transition hover:bg-accent cursor-pointer",
-                  isBlackout ? "bg-destructive/10" : (inMonth ? "bg-background" : "bg-muted/30"),
-                  today ? "border-primary border-2" : (isBlackout ? "border-destructive/40" : "border-border"),
+                  hasGlobalBlackout ? "bg-destructive/10" : (inMonth ? "bg-background" : "bg-muted/30"),
+                  today ? "border-primary border-2" : (hasGlobalBlackout ? "border-destructive/40" : "border-border"),
                 ].join(" ")}
               >
                 <div className={`text-xs font-semibold flex items-center justify-between gap-1 ${today ? "text-primary" : ""} ${inMonth ? "" : "text-muted-foreground"}`}>
                   <span>{view === "day" ? format(d, "EEEE, MMM d") : format(d, "d")}</span>
                   <span className="flex items-center gap-0.5 shrink-0">
                     {hasConflict && <AlertTriangle className="h-3 w-3 text-amber-600" />}
-                    {isBlackout && <Ban className="h-3 w-3 text-destructive" />}
+                    {hasGlobalBlackout && <Ban className="h-3 w-3 text-destructive" />}
                   </span>
                 </div>
                 <div className="flex-1 mt-1 space-y-0.5 overflow-hidden">
