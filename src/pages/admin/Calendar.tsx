@@ -41,6 +41,125 @@ interface GlobalBlackout {
   reason: string | null;
 }
 
+interface ItemBlackout {
+  id: string;
+  item_id: string;
+  start_date: string;
+  end_date: string;
+  reason: string | null;
+  created_at: string;
+  inventory_items?: { name: string } | null;
+}
+
+/** Unified shape used by the popover for both blackout kinds. */
+interface BlackoutEntry {
+  id: string;
+  kind: "item" | "global";
+  label: string;
+  start_date: string;
+  end_date: string;
+  reason: string | null;
+  created_at?: string | null;
+  /** Number of holds covering the same item on this date (item blackouts only). */
+  overlapCount: number;
+}
+
+function fmtRange(start: string, end: string): string {
+  return start === end
+    ? format(parseISO(start), "EEE, MMM d, yyyy")
+    : `${format(parseISO(start), "MMM d, yyyy")} → ${format(parseISO(end), "MMM d, yyyy")}`;
+}
+
+function BlackoutPopover({
+  entry,
+  onRemove,
+  children,
+}: {
+  entry: BlackoutEntry;
+  onRemove: (entry: BlackoutEntry) => Promise<void>;
+  children: React.ReactNode;
+}) {
+  const [open, setOpen] = useState(false);
+  const [confirming, setConfirming] = useState(false);
+  const [busy, setBusy] = useState(false);
+
+  return (
+    <Popover
+      open={open}
+      onOpenChange={(o) => {
+        setOpen(o);
+        if (!o) setConfirming(false);
+      }}
+    >
+      <PopoverTrigger asChild onClick={(e) => e.stopPropagation()}>
+        {children}
+      </PopoverTrigger>
+      <PopoverContent
+        align="start"
+        className="w-80 max-w-[90vw] space-y-2"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-start gap-2">
+          <Ban className="h-4 w-4 text-destructive mt-0.5 shrink-0" />
+          <div className="min-w-0">
+            <div className="font-semibold leading-tight break-words">{entry.label}</div>
+            <div className="text-xs text-muted-foreground mt-0.5">{fmtRange(entry.start_date, entry.end_date)}</div>
+          </div>
+        </div>
+
+        {entry.overlapCount > 1 && (
+          <div className="flex items-start gap-2 rounded-md border border-amber-500/40 bg-amber-500/10 p-2 text-xs text-amber-900">
+            <AlertTriangle className="h-3.5 w-3.5 mt-0.5 shrink-0" />
+            <span>{entry.overlapCount} holds on this item for this date — one may be stale.</span>
+          </div>
+        )}
+
+        <div className="rounded-md bg-muted p-2 text-sm whitespace-pre-wrap break-words">
+          {entry.reason?.trim() ? entry.reason : "No reason given"}
+        </div>
+
+        <div className="text-[11px] text-muted-foreground">
+          {entry.kind === "global" ? "Applies to all products" : "Item-level block"}
+          {entry.created_at ? ` · created ${format(parseISO(entry.created_at), "MMM d, yyyy h:mma")}` : ""}
+        </div>
+
+        {confirming ? (
+          <div className="space-y-2 rounded-md border border-destructive/40 bg-destructive/5 p-2">
+            <p className="text-xs text-destructive">
+              Remove this block? The date becomes bookable again.
+            </p>
+            <div className="flex gap-2">
+              <Button size="sm" variant="outline" onClick={() => setConfirming(false)} disabled={busy}>
+                Cancel
+              </Button>
+              <Button
+                size="sm"
+                variant="destructive"
+                disabled={busy}
+                onClick={async () => {
+                  setBusy(true);
+                  await onRemove(entry);
+                  setBusy(false);
+                  setConfirming(false);
+                  setOpen(false);
+                }}
+              >
+                {busy ? "Removing…" : "Remove"}
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <Button size="sm" variant="outline" className="text-destructive" onClick={() => setConfirming(true)}>
+            <Trash2 className="h-3.5 w-3.5 mr-1" /> Remove blackout
+          </Button>
+        )}
+      </PopoverContent>
+    </Popover>
+  );
+}
+
+
+
 const STATUS_COLORS: Record<BookingStatus, string> = {
   pending: "bg-yellow-500",
   confirmed: "bg-green-500",
