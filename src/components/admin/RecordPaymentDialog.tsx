@@ -9,13 +9,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { logActivity } from "@/lib/adminActivity";
 
-type Method = "cash" | "check" | "card_external" | "stripe_link";
+type Method = "cash" | "check" | "card_external" | "stripe_link" | "stripe_captured";
 
 const METHOD_LABEL: Record<Method, string> = {
   cash: "Cash",
   check: "Check",
   card_external: "Card on site / Square / external",
   stripe_link: "Send Stripe payment link by email",
+  stripe_captured: "Stripe payment already captured",
 };
 
 interface Props {
@@ -50,6 +51,14 @@ export function RecordPaymentDialog({ open, onOpenChange, bookingId, defaultAmou
       toast({ title: "Enter a valid amount", variant: "destructive" });
       return;
     }
+    if (method === "stripe_captured" && !/^pi_[A-Za-z0-9]+$/.test(reference.trim())) {
+      toast({
+        title: "Enter the Stripe PaymentIntent ID",
+        description: "It looks like pi_3U71gY0ozdYluEdQ1oeUBWrJ.",
+        variant: "destructive",
+      });
+      return;
+    }
     setSaving(true);
     if (method === "stripe_link") {
       // Email a Stripe checkout link via existing edge function
@@ -76,11 +85,31 @@ export function RecordPaymentDialog({ open, onOpenChange, bookingId, defaultAmou
     }
 
     const { data: { session } } = await supabase.auth.getSession();
+    const ref = reference.trim() || null;
+
+    if (method === "stripe_captured" && ref) {
+      // Guard against crediting the same Stripe charge twice
+      const { data: dupe } = await (supabase.from("booking_payments") as any)
+        .select("id, booking_id")
+        .eq("method", "stripe_captured")
+        .eq("reference", ref)
+        .maybeSingle();
+      if (dupe) {
+        setSaving(false);
+        toast({
+          title: "This Stripe payment is already credited",
+          description: `${ref} is already recorded on a booking.`,
+          variant: "destructive",
+        });
+        return;
+      }
+    }
+
     const { error } = await (supabase.from("booking_payments") as any).insert({
       booking_id: bookingId,
       method,
       amount: amt,
-      reference: reference.trim() || null,
+      reference: ref,
       notes: notes.trim() || null,
       recorded_by: session?.user?.email ?? null,
     });
@@ -88,6 +117,11 @@ export function RecordPaymentDialog({ open, onOpenChange, bookingId, defaultAmou
       setSaving(false);
       toast({ title: "Save failed", description: error.message, variant: "destructive" });
       return;
+    }
+    if (method === "stripe_captured" && ref) {
+      await (supabase.from("bookings") as any)
+        .update({ stripe_payment_intent_id: ref })
+        .eq("id", bookingId);
     }
     // Bump status to confirmed if still pending
     await (supabase.from("bookings") as any)
@@ -121,6 +155,7 @@ export function RecordPaymentDialog({ open, onOpenChange, bookingId, defaultAmou
                 <SelectItem value="cash">Cash</SelectItem>
                 <SelectItem value="check">Check</SelectItem>
                 <SelectItem value="card_external">Card on site / Square / external</SelectItem>
+                <SelectItem value="stripe_captured">Stripe payment already captured</SelectItem>
                 <SelectItem value="stripe_link">Send Stripe payment link by email</SelectItem>
               </SelectContent>
             </Select>
@@ -131,9 +166,27 @@ export function RecordPaymentDialog({ open, onOpenChange, bookingId, defaultAmou
           </div>
           {method !== "stripe_link" && (
             <div>
-              <Label>{method === "check" ? "Check #" : method === "card_external" ? "Last 4 / reference" : "Reference (optional)"}</Label>
-              <Input value={reference} onChange={(e) => setReference(e.target.value)} />
+              <Label>
+                {method === "check"
+                  ? "Check #"
+                  : method === "card_external"
+                    ? "Last 4 / reference"
+                    : method === "stripe_captured"
+                      ? "Stripe PaymentIntent ID *"
+                      : "Reference (optional)"}
+              </Label>
+              <Input
+                value={reference}
+                onChange={(e) => setReference(e.target.value)}
+                placeholder={method === "stripe_captured" ? "pi_3U71gY0ozdYluEdQ1oeUBWrJ" : undefined}
+              />
             </div>
+          )}
+          {method === "stripe_captured" && (
+            <p className="text-xs text-muted-foreground">
+              Credits a charge the customer already paid in Stripe. No new charge is made — the amount is applied to the
+              balance and the PaymentIntent is linked to this booking. Reusing an ID that's already credited is blocked.
+            </p>
           )}
           {method !== "stripe_link" && (
             <div>
