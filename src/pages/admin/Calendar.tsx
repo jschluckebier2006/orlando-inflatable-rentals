@@ -742,14 +742,14 @@ export default function AdminCalendar() {
             )}
             {selectedItemEntries.length > 0 && (
               <div className="rounded-md border border-border p-3">
-                <div className="flex items-center gap-2 font-semibold text-sm">
-                  <Ban className="h-4 w-4 text-destructive" /> Blocked items ({selectedItemEntries.length})
+                <div className="font-semibold text-sm text-muted-foreground">
+                  Blocked items ({selectedItemEntries.length})
                 </div>
                 <ul className="mt-2 space-y-2">
                   {selectedItemEntries.map((e) => (
                     <li
                       key={e.id}
-                      className={`flex items-start justify-between gap-2 rounded-md p-2 ${e.overlapCount > 1 ? "bg-amber-500/10 border border-amber-500/40" : "bg-muted/50"}`}
+                      className={`flex items-start justify-between gap-2 rounded-md p-2 ${e.overlapCount > 1 ? "bg-amber-500/10 border border-amber-500/40" : ""}`}
                     >
                       <div className="min-w-0">
                         <div className="text-sm font-medium line-through decoration-1 text-muted-foreground break-words">
