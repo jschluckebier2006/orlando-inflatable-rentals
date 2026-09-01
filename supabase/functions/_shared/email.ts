@@ -80,6 +80,12 @@ export interface SendArgs {
   templateName: string;
   relatedBookingId?: string | null;
   relatedSessionId?: string | null;
+  /**
+   * Durable snapshot of the source data behind this email (e.g. the full
+   * abandoned-cart payload). Written to email_send_log.payload_snapshot so the
+   * record stays recoverable even after pending_bookings is purged.
+   */
+  payloadSnapshot?: unknown;
 }
 
 export async function sendEmail(args: SendArgs): Promise<{ ok: boolean; skipped?: boolean; error?: string }> {
@@ -104,6 +110,7 @@ export async function sendEmail(args: SendArgs): Promise<{ ok: boolean; skipped?
       error_message: err,
       related_booking_id: args.relatedBookingId ?? null,
       related_session_id: args.relatedSessionId ?? null,
+      payload_snapshot: (args.payloadSnapshot ?? null) as never,
     });
     return { ok: false, error: err };
   }
@@ -138,6 +145,7 @@ export async function sendEmail(args: SendArgs): Promise<{ ok: boolean; skipped?
         error_message: msg.slice(0, 500),
         related_booking_id: args.relatedBookingId ?? null,
         related_session_id: args.relatedSessionId ?? null,
+      payload_snapshot: (args.payloadSnapshot ?? null) as never,
       });
       return { ok: false, error: msg };
     }
@@ -149,6 +157,7 @@ export async function sendEmail(args: SendArgs): Promise<{ ok: boolean; skipped?
       resend_message_id: data?.id ?? null,
       related_booking_id: args.relatedBookingId ?? null,
       related_session_id: args.relatedSessionId ?? null,
+      payload_snapshot: (args.payloadSnapshot ?? null) as never,
     });
     return { ok: true };
   } catch (e) {
@@ -161,6 +170,7 @@ export async function sendEmail(args: SendArgs): Promise<{ ok: boolean; skipped?
       error_message: msg.slice(0, 500),
       related_booking_id: args.relatedBookingId ?? null,
       related_session_id: args.relatedSessionId ?? null,
+      payload_snapshot: (args.payloadSnapshot ?? null) as never,
     });
     return { ok: false, error: msg };
   }

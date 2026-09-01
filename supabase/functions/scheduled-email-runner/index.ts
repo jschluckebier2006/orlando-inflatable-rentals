@@ -8,6 +8,7 @@ import {
   type BookingForEmail,
   type AbandonedCartInfo,
 } from "../_shared/email.ts";
+import { createStripeClient } from "../_shared/stripe.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -37,10 +38,36 @@ Deno.serve(async (req) => {
         .limit(50);
       let sent = 0;
       for (const p of pendings ?? []) {
-        // Skip if a real booking exists for this session (already converted).
+        // ---- Suppression: never call a paying customer "abandoned". --------
+        // 1) A booking already exists for this session or its PaymentIntent
+        //    (converted normally, or parked as needs_review).
         const { data: existing } = await sb
-          .from("bookings").select("id").eq("stripe_session_id", p.stripe_session_id).maybeSingle();
+          .from("bookings").select("id, needs_review")
+          .eq("stripe_session_id", p.stripe_session_id).maybeSingle();
         if (existing) continue;
+
+        // 2) Stripe shows a payment attempt on the session. Retention is now
+        //    30 days, so rows linger well past checkout — without this check
+        //    the runner would alert on carts that actually paid.
+        let paymentAttempted = false;
+        try {
+          const stripe = createStripeClient("live");
+          const s: any = await stripe.checkout.sessions.retrieve(p.stripe_session_id, {
+            expand: ["payment_intent"],
+          });
+          const pi = typeof s.payment_intent === "string" ? null : s.payment_intent;
+          paymentAttempted =
+            s.payment_status === "paid" ||
+            s.payment_status === "no_payment_required" ||
+            Boolean(pi && pi.status !== "requires_payment_method" && pi.status !== "canceled");
+        } catch (e) {
+          console.error("[abandoned_cart] stripe check failed", p.stripe_session_id, e);
+        }
+        if (paymentAttempted) {
+          console.log("[abandoned_cart] suppressed — payment attempt found", p.stripe_session_id);
+          continue;
+        }
+
         // Idempotency log check happens inside sendEmail.
         const payload = (p as any).payload ?? {};
         const info: AbandonedCartInfo = {
@@ -59,6 +86,16 @@ Deno.serve(async (req) => {
           templateName: "abandoned_cart_admin",
           idempotencyKey: `abandoned_cart:${p.stripe_session_id}`,
           relatedSessionId: p.stripe_session_id,
+          // Durable copy of the whole cart. Survives any future purge of
+          // pending_bookings, so a recoverable order can never be lost again.
+          payloadSnapshot: {
+            stripe_session_id: p.stripe_session_id,
+            created_at: p.created_at,
+            amount_total: Number(p.amount_total),
+            deposit_amount: Number((p as any).deposit_amount ?? 0),
+            amount_charged: Number((p as any).amount_charged ?? 0),
+            payload,
+          },
         });
         if (r.ok && !r.skipped) sent++;
       }
