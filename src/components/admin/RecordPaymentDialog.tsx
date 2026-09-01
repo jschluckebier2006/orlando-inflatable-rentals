@@ -9,13 +9,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { logActivity } from "@/lib/adminActivity";
 
-type Method = "cash" | "check" | "card_external" | "stripe_link";
+type Method = "cash" | "check" | "card_external" | "stripe_link" | "stripe_captured";
 
 const METHOD_LABEL: Record<Method, string> = {
   cash: "Cash",
   check: "Check",
   card_external: "Card on site / Square / external",
   stripe_link: "Send Stripe payment link by email",
+  stripe_captured: "Stripe payment already captured",
 };
 
 interface Props {
