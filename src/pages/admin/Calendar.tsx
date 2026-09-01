@@ -590,26 +590,48 @@ export default function AdminCalendar() {
           {days.map((d) => {
             const key = format(d, "yyyy-MM-dd");
             const list = dayMap.get(key) ?? [];
-            const dayBlackouts = blackoutMap.get(key) ?? [];
-            const isBlackout = dayBlackouts.length > 0;
+            const globalEntries = globalEntryMap.get(key) ?? [];
+            const itemEntries = itemEntryMap.get(key) ?? [];
+            const isBlackout = globalEntries.length > 0 || itemEntries.length > 0;
+            const hasConflict = itemEntries.some((e) => e.overlapCount > 1);
             const inMonth = view !== "month" || isSameMonth(d, cursor);
             const today = isToday(d);
+            const max = view === "month" ? 3 : 8;
+            const cell = splitCell(list, itemEntries, max);
             return (
-              <button
+              <div
                 key={key}
+                role="button"
+                tabIndex={0}
                 onClick={() => setSelectedDate(key)}
+                onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setSelectedDate(key); } }}
                 className={[
                   view === "day" ? "min-h-[300px]" : "min-h-[5rem] aspect-square",
-                  "rounded-md border p-1.5 flex flex-col text-left transition hover:bg-accent",
+                  "rounded-md border p-1.5 flex flex-col text-left transition hover:bg-accent cursor-pointer",
                   isBlackout ? "bg-destructive/10" : (inMonth ? "bg-background" : "bg-muted/30"),
                   today ? "border-primary border-2" : (isBlackout ? "border-destructive/40" : "border-border"),
                 ].join(" ")}
               >
                 <div className={`text-xs font-semibold flex items-center justify-between gap-1 ${today ? "text-primary" : ""} ${inMonth ? "" : "text-muted-foreground"}`}>
                   <span>{view === "day" ? format(d, "EEEE, MMM d") : format(d, "d")}</span>
-                  {isBlackout && <Ban className="h-3 w-3 text-destructive shrink-0" />}
+                  <span className="flex items-center gap-0.5 shrink-0">
+                    {hasConflict && <AlertTriangle className="h-3 w-3 text-amber-600" />}
+                    {isBlackout && <Ban className="h-3 w-3 text-destructive" />}
+                  </span>
                 </div>
                 <div className="flex-1 mt-1 space-y-0.5 overflow-hidden">
+                  {/* Global blackouts — full-width banner across the top of the cell */}
+                  {globalEntries.map((e) => (
+                    <BlackoutPopover key={e.id} entry={e} onRemove={removeBlackout}>
+                      <button
+                        type="button"
+                        className="w-full block text-left text-[10px] sm:text-xs font-semibold rounded-sm bg-destructive/25 text-destructive px-1 py-0.5 truncate"
+                      >
+                        Closed{e.reason ? ` — ${e.reason}` : ""}
+                      </button>
+                    </BlackoutPopover>
+                  ))}
+
                   {view === "month" ? (
                     <>
                       {/* Mobile: compact dots row with count. Desktop: stacked names. */}
@@ -617,40 +639,72 @@ export default function AdminCalendar() {
                         {visibleOnGrid(list).slice(0, 4).map((b) => (
                           <span key={b.id} className={`inline-block w-2 h-2 rounded-full ${STATUS_COLORS[b.status]}`} />
                         ))}
+                        {itemEntries.length > 0 && (
+                          <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-destructive">
+                            <Ban className="h-2.5 w-2.5" />{itemEntries.length}
+                          </span>
+                        )}
                         {visibleOnGrid(list).length > 4 && (
                           <span className="text-[10px] font-semibold text-muted-foreground">+{visibleOnGrid(list).length - 4}</span>
                         )}
                       </div>
                       <div className="hidden sm:block space-y-0.5">
-                        {visibleOnGrid(list).slice(0, 3).map((b) => (
+                        {cell.bookings.map((b) => (
                           <div key={b.id} className="flex items-center gap-1 text-xs truncate">
                             <span className={`inline-block w-2 h-2 rounded-full ${STATUS_COLORS[b.status]}`} />
                             <span className="truncate">{b.customer_name}</span>
                           </div>
                         ))}
-                        {visibleOnGrid(list).length > 3 && (
-                          <div className="text-xs font-semibold text-muted-foreground">+{visibleOnGrid(list).length - 3} more</div>
+                        {cell.blackouts.map((e) => (
+                          <BlackoutPopover key={e.id} entry={e} onRemove={removeBlackout}>
+                            <button
+                              type="button"
+                              className={`w-full flex items-center gap-1 text-xs rounded-sm px-0.5 ${e.overlapCount > 1 ? "bg-amber-500/15 text-amber-800" : "text-muted-foreground"}`}
+                            >
+                              {e.overlapCount > 1
+                                ? <AlertTriangle className="h-2.5 w-2.5 shrink-0" />
+                                : <Ban className="h-2.5 w-2.5 shrink-0 text-destructive/70" />}
+                              <span className="truncate line-through decoration-1">{e.label}</span>
+                            </button>
+                          </BlackoutPopover>
+                        ))}
+                        {cell.more > 0 && (
+                          <div className="text-xs font-semibold text-muted-foreground">+{cell.more} more</div>
                         )}
                       </div>
                     </>
                   ) : (
                     <>
-                      {visibleOnGrid(list).slice(0, 8).map((b) => (
+                      {cell.bookings.map((b) => (
                         <div key={b.id} className="flex items-center gap-1 text-xs truncate">
                           <span className={`inline-block w-2 h-2 rounded-full ${STATUS_COLORS[b.status]}`} />
                           <span className="truncate">{b.customer_name}</span>
                         </div>
                       ))}
-                      {visibleOnGrid(list).length > 8 && (
-                        <div className="text-xs font-semibold text-muted-foreground">+{visibleOnGrid(list).length - 8} more</div>
+                      {cell.blackouts.map((e) => (
+                        <BlackoutPopover key={e.id} entry={e} onRemove={removeBlackout}>
+                          <button
+                            type="button"
+                            className={`w-full flex items-center gap-1 text-xs rounded-sm px-0.5 ${e.overlapCount > 1 ? "bg-amber-500/15 text-amber-800" : "text-muted-foreground"}`}
+                          >
+                            {e.overlapCount > 1
+                              ? <AlertTriangle className="h-3 w-3 shrink-0" />
+                              : <Ban className="h-3 w-3 shrink-0 text-destructive/70" />}
+                            <span className="truncate line-through decoration-1">{e.label}</span>
+                          </button>
+                        </BlackoutPopover>
+                      ))}
+                      {cell.more > 0 && (
+                        <div className="text-xs font-semibold text-muted-foreground">+{cell.more} more</div>
                       )}
                     </>
                   )}
                 </div>
-              </button>
+              </div>
             );
           })}
         </div>
+
 
         <div className="flex items-center gap-4 mt-3 text-xs text-muted-foreground flex-wrap">
           {(["pending", "confirmed", "completed", "cancelled"] as BookingStatus[]).map((s) => (
