@@ -11,25 +11,31 @@ What the database shows now:
 
 This is strong evidence of a genuine abandonment, but it is inferred from an absence. Before Pass 2 code, run one direct read: retrieve `cs_live_a1HDww3X…` from Stripe and report its `payment_status`, `status`, `payment_intent` (if any) and the PaymentIntent's status, plus `customer_details`. If it returns `unpaid`/`expired` with no succeeded PaymentIntent, it is confirmed as a real abandonment. If it shows a succeeded payment, it is a third lost customer and gets the same rebuild treatment as the other two.
 
-## 2. Name cross-reference on the 9/19 charge
+## 2. Corrected charge pairing + name cross-reference
 
-Record both identities on the 9/19 charge (`pi_3U71gY0ozdYluEdQ1oeUBWrJ`): account/receipt email **cvstrickland05@gmail.com — Cynthia Strickland**, PaymentIntent billing name **Josh Strickland**. When the booking is rebuilt, put the customer name as `Cynthia Strickland` and add a note line: `Stripe billing name: Josh Strickland (pi_3U71gY0ozdYluEdQ1oeUBWrJ)`. Same note goes on the customer record so the two names stay linked.
+Corrected pairing (to be re-verified against the reconciliation output before any record is written — retrieve both PaymentIntents and their sessions from Stripe and confirm email, amount and session ID line up):
+
+| Customer | Event date | PaymentIntent | Session |
+| --- | --- | --- | --- |
+| Kiana George | 2026-09-06 | `pi_3U71gY0ozdYluEdQ1oeUBWrJ` | `cs_live_a13B3teO…` |
+| Cynthia Strickland (Stripe billing name Josh Strickland) | 2026-09-19 | `pi_3UAf5D0ozdYluEdQ1ruPUH6n` | `cs_live_a1yfk72U…` |
+
+For the 9/19 record: account/receipt email **cvstrickland05@gmail.com — Cynthia Strickland**, PaymentIntent billing name **Josh Strickland**. Customer name goes in as `Cynthia Strickland`, with a note line `Stripe billing name: Josh Strickland (pi_3UAf5D0ozdYluEdQ1ruPUH6n)` on both the booking and the customer record so the two names stay linked.
 
 ## 3. Blocking 2026-09-06 and 2026-09-19
 
-Product-level blocking is not possible yet — the item lists lived only in `pending_bookings` and were purged. Two options:
+No global blackout — 9/6 is Labor Day Saturday with the promo running, so a company-wide block is off the table. Item-level only:
 
-- **Company-wide block (available now):** add `global_blackouts` rows for 2026-09-06 and 2026-09-19. This stops all new online bookings on those dates. Existing bookings are untouched (there is already a confirmed booking on 9/6 — Amy Meeker — which stays valid), but any further online checkout on those dates is blocked.
-- **Item-level block:** once you have Kiana's and Cynthia's item lists by phone, replace the global block with `inventory_blackouts` rows for just those items, so the rest of the fleet stays sellable on those two dates.
-
-Recommendation: apply the global block now, swap to item-level as soon as the phone calls come in. Confirm and it goes in as a data change, no schema change.
+- Once you send the item lists from the phone calls, add `inventory_blackouts` rows for exactly those items on 2026-09-06 and 2026-09-19. The rest of the fleet stays sellable on both dates.
+- Nothing is blocked until those lists arrive; no interim block is applied.
 
 ## 4. Entering Kiana's booking with the deposit already paid
 
 Do **not** send her through checkout again. Correct path:
 
 1. Create the booking in the admin "New booking" form with the items, address, date and times collected by phone. Leave payment fields at default (unpaid).
-2. Record the deposit that Stripe already captured — $5.45 against `pi_3U71gY0ozdYluEdQ1oeUBWrJ`.
+2. Record the deposit Stripe already captured — $5.45 against `pi_3U71gY0ozdYluEdQ1oeUBWrJ` (session `cs_live_a13B3teO…`, event 2026-09-06).
+
 
 Right now `RecordPaymentDialog` offers cash, check, card-external and "send Stripe link" — none of which represent an already-captured Stripe charge, and the admin form has no field for a PaymentIntent ID. Pass 2 adds that:
 
