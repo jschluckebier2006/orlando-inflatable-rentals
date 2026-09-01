@@ -51,6 +51,14 @@ export function RecordPaymentDialog({ open, onOpenChange, bookingId, defaultAmou
       toast({ title: "Enter a valid amount", variant: "destructive" });
       return;
     }
+    if (method === "stripe_captured" && !/^pi_[A-Za-z0-9]+$/.test(reference.trim())) {
+      toast({
+        title: "Enter the Stripe PaymentIntent ID",
+        description: "It looks like pi_3U71gY0ozdYluEdQ1oeUBWrJ.",
+        variant: "destructive",
+      });
+      return;
+    }
     setSaving(true);
     if (method === "stripe_link") {
       // Email a Stripe checkout link via existing edge function
