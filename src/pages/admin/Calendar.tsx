@@ -703,6 +703,9 @@ export default function AdminCalendar() {
           <span className="inline-flex items-center gap-1.5">
             <span className="inline-block w-2.5 h-2.5 rounded-sm bg-destructive/30 border border-destructive/40" /> blackout
           </span>
+          <span className="inline-flex items-center gap-1.5">
+            <AlertTriangle className="h-3 w-3 text-amber-600" /> overlapping holds
+          </span>
           {loading && <span>Loading…</span>}
         </div>
       </div>
