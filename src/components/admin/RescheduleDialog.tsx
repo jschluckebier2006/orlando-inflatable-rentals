@@ -46,8 +46,13 @@ export function RescheduleDialog({ open, onOpenChange, bookingId, currentStart, 
     }
   }, [open, currentStart, currentEnd]);
 
+  // The end date can never precede the start date — a reschedule that moves the
+  // start past a stale end used to persist an inverted range and break checkout.
+  const safeEnd = end && start && end >= start ? end : start;
+
   async function checkConflicts(): Promise<ConflictRow[]> {
     if (!productIds.length || !start) { setChecked(true); return []; }
+
     setChecking(true);
     const { data } = await (supabase.rpc as any)("get_booked_dates_for_products", { _product_ids: productIds });
     setChecking(false);
