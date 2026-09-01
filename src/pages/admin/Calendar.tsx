@@ -294,6 +294,63 @@ export default function AdminCalendar() {
     return m;
   }, [blackouts]);
 
+  /** Global blackouts as unified entries, keyed by date. */
+  const globalEntryMap = useMemo(() => {
+    const m = new Map<string, BlackoutEntry[]>();
+    for (const b of blackouts) {
+      for (const d of eachDayOfInterval({ start: parseISO(b.start_date), end: parseISO(b.end_date) })) {
+        const key = format(d, "yyyy-MM-dd");
+        const arr = m.get(key) ?? [];
+        arr.push({
+          id: b.id,
+          kind: "global",
+          label: "All products",
+          start_date: b.start_date,
+          end_date: b.end_date,
+          reason: b.reason,
+          created_at: (b as any).created_at ?? null,
+          overlapCount: 1,
+        });
+        m.set(key, arr);
+      }
+    }
+    return m;
+  }, [blackouts]);
+
+  /** Item-level blackouts as unified entries, keyed by date, with per-item overlap counts. */
+  const itemEntryMap = useMemo(() => {
+    const m = new Map<string, BlackoutEntry[]>();
+    for (const b of itemBlackouts) {
+      for (const d of eachDayOfInterval({ start: parseISO(b.start_date), end: parseISO(b.end_date) })) {
+        const key = format(d, "yyyy-MM-dd");
+        const arr = m.get(key) ?? [];
+        arr.push({
+          id: b.id,
+          kind: "item",
+          label: b.inventory_items?.name ?? b.item_id,
+          start_date: b.start_date,
+          end_date: b.end_date,
+          reason: b.reason,
+          created_at: b.created_at,
+          overlapCount: 1,
+          // keep the item id for overlap counting
+          ...(({ item_id: b.item_id } as any)),
+        } as BlackoutEntry);
+        m.set(key, arr);
+      }
+    }
+    // flag overlaps: same item, same date, more than one hold
+    for (const [, arr] of m) {
+      const counts = new Map<string, number>();
+      for (const e of arr) counts.set((e as any).item_id, (counts.get((e as any).item_id) ?? 0) + 1);
+      for (const e of arr) e.overlapCount = counts.get((e as any).item_id) ?? 1;
+      arr.sort((a, b) => b.overlapCount - a.overlapCount || a.label.localeCompare(b.label));
+    }
+    return m;
+  }, [itemBlackouts]);
+
+
+
   const days = useMemo(() => {
     if (view === "month") {
       const ms = startOfMonth(cursor);
