@@ -112,7 +112,10 @@ export default function BookingFormModal({ open, onOpenChange, booking, onSaved 
   const [paymentMethod, setPaymentMethod] = useState<"card_on_file" | "cash_on_delivery" | "other">("cash_on_delivery");
   const hasSavedCard = !!(booking?.stripe_customer_id && booking?.stripe_payment_method_id);
   const persistedBalance = Number(booking?.balance_due ?? 0);
-  const fullyPaid = booking?.payment_status === "paid_in_full";
+  const fullyPaid = booking?.payment_status === "paid_in_full"
+    || (Number(booking?.total_amount ?? 0) > 0
+      && Number(booking?.amount_paid ?? 0) >= Number(booking?.total_amount ?? 0) - 0.005);
+
 
   async function chargeBalanceNow() {
     if (!booking?.id) return;
