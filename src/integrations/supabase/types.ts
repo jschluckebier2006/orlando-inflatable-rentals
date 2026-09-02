@@ -228,6 +228,7 @@ export type Database = {
       bookings: {
         Row: {
           amount_paid: number
+          archived: boolean
           balance_due: number | null
           cancel_reason: string | null
           cancelled_at: string | null
@@ -279,6 +280,7 @@ export type Database = {
         }
         Insert: {
           amount_paid?: number
+          archived?: boolean
           balance_due?: number | null
           cancel_reason?: string | null
           cancelled_at?: string | null
@@ -330,6 +332,7 @@ export type Database = {
         }
         Update: {
           amount_paid?: number
+          archived?: boolean
           balance_due?: number | null
           cancel_reason?: string | null
           cancelled_at?: string | null
