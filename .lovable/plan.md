@@ -85,6 +85,9 @@ Safe to dismiss.
 
 ## Implementation order (on approval)
 
-1. Webhook crash recovery: try/catch, stale-claim takeover, heartbeat, stuck-`processing` watchdog alert, reconciler awareness of deliberately deleted bookings.
-2. Weekend `spanDays` off-by-one plus shared range helper.
-3. Nothing for #3.
+1. **Database migration:** hard-delete audit trigger on `bookings` + lookup indexes for reconciliation and the stuck-`processing` watchdog.
+2. **`payments-webhook`:** whole-handler try/catch, stale-claim takeover, heartbeat, watchdog alert on stuck rows.
+3. **`stripe-reconcile`:** exclude sessions whose booking was deliberately deleted (from the audit log), report them separately, and surface stuck webhook claims.
+4. **Weekend range:** shared `rentalEndDate` helper used by both checkout pre-check and finalize, then the 2026-09-05 verification query.
+5. Nothing for #3 — dismiss.
+
