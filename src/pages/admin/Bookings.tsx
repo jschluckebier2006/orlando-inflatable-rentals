@@ -288,14 +288,33 @@ export default function AdminBookings() {
   }
 
   async function unarchive(b: Booking) {
-    const { error } = await supabase.from("bookings").update({ archived: false }).eq("id", b.id);
+    // A completed-archived booking was auto-filed by the daily job. Restoring it
+    // must give back a workable record, so it returns to "confirmed".
+    const restoreStatus: BookingStatus | null = b.status === "completed" ? "confirmed" : null;
+    const patch: Record<string, unknown> = { archived: false };
+    if (restoreStatus) patch.status = restoreStatus;
+    const { error } = await supabase.from("bookings").update(patch as never).eq("id", b.id);
     if (error) {
       toast({ title: "Unarchive failed", description: error.message, variant: "destructive" });
       return;
     }
-    setBookings((bs) => bs.map((x) => (x.id === b.id ? { ...x, archived: false } : x)));
-    toast({ title: "Booking unarchived" });
+    await logActivity({
+      bookingId: b.id,
+      kind: "archived",
+      message: restoreStatus
+        ? "Booking unarchived — restored to confirmed"
+        : "Booking unarchived",
+      metadata: { previous_status: b.status, new_status: restoreStatus ?? b.status },
+    });
+    setBookings((bs) => bs.map((x) => (x.id === b.id
+      ? { ...x, archived: false, status: restoreStatus ?? x.status }
+      : x)));
+    toast({
+      title: "Booking unarchived",
+      description: restoreStatus ? "Restored as a confirmed booking." : undefined,
+    });
   }
+
 
   async function confirmDelete() {
     if (!deleteTarget || deleteConfirmText !== "DELETE") return;
