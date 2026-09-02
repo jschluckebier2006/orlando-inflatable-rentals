@@ -9,6 +9,7 @@
 import type { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { loadSettings } from "./settings.ts";
 import { computeBreakdown, DEPOSIT_NET, DEPOSIT_CHARGE } from "./pricing.ts";
+import { rentalEndDate } from "./rentalDates.ts";
 
 export type FinalizeStatus =
   | "created"
