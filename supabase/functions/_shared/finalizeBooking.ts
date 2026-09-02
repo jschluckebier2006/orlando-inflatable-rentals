@@ -66,10 +66,8 @@ export async function finalizeBookingFromSession(
   const p = pending.payload;
 
   // Recompute end date / time defaults exactly like create-booking-checkout would have
-  const startDate = new Date(p.event_date + "T00:00:00Z");
-  const endDate = new Date(startDate);
-  if (p.duration_type !== "7hour") endDate.setUTCDate(endDate.getUTCDate() + 1);
-  const endDateStr = endDate.toISOString().slice(0, 10);
+  // (shared helper — the availability pre-check uses the very same function).
+  const endDateStr = rentalEndDate(p.event_date, p.duration_type);
   let event_start_time = p.event_start_time;
   let event_end_time = p.event_end_time;
   if (p.duration_type === "overnight") event_end_time = "08:00";
