@@ -3,6 +3,7 @@ import { z } from "https://esm.sh/zod@3.23.8";
 import { type StripeEnv, createStripeClient } from "../_shared/stripe.ts";
 import { loadSettings, lookupZoneIn } from "../_shared/settings.ts";
 import { computeBreakdown, DEPOSIT_NET, DEPOSIT_CHARGE } from "../_shared/pricing.ts";
+import { rentalEndDate } from "../_shared/rentalDates.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
