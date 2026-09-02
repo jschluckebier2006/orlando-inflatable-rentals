@@ -5,7 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { logActivity, type ActivityKind } from "@/lib/adminActivity";
 import { format, parseISO } from "date-fns";
-import { MessageSquare, ArrowRightLeft, DollarSign, CalendarRange, Mail, Sparkles, Pencil, XCircle, RotateCcw } from "lucide-react";
+import { MessageSquare, ArrowRightLeft, DollarSign, CalendarRange, Mail, Sparkles, Pencil, XCircle, RotateCcw, Archive } from "lucide-react";
 
 interface Entry {
   id: string;
@@ -25,6 +25,7 @@ const ICON: Record<ActivityKind, any> = {
   edited: Pencil,
   cancelled: XCircle,
   restored: RotateCcw,
+  archived: Archive,
 };
 
 export function ActivityFeed({ bookingId, customerId }: { bookingId?: string; customerId?: string }) {

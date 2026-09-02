@@ -26,7 +26,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { ChevronLeft, ChevronRight, Phone, MapPin } from "lucide-react";
+import { ChevronLeft, ChevronRight, Phone, MapPin, Archive } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import BookingFormModal, { type BookingFormBooking } from "@/components/admin/BookingFormModal";
 import { Plus, Pencil } from "lucide-react";
@@ -79,6 +79,8 @@ interface Booking {
   deposit_amount?: number | null;
   total_amount?: number | null;
   stripe_session_id?: string | null;
+  stripe_payment_intent_id?: string | null;
+  archived?: boolean | null;
   cancelled_at?: string | null;
   cancel_reason?: string | null;
   booking_items?: BookingItem[];
@@ -114,6 +116,11 @@ function fmtTime(t?: string | null): string {
   const suffix = h >= 12 ? "pm" : "am";
   const h12 = h % 12 === 0 ? 12 : h % 12;
   return `${h12}:${mm}${suffix}`;
+}
+
+/** A booking with money attached can never be hard-deleted — archive it instead. */
+function hasCapturedPayment(b: Booking): boolean {
+  return Number(b.amount_paid ?? 0) > 0 || !!b.stripe_payment_intent_id;
 }
 
 export default function AdminBookings() {
@@ -160,6 +167,12 @@ export default function AdminBookings() {
   // Restore dialog state
   const [restoreTarget, setRestoreTarget] = useState<Booking | null>(null);
   const [restoreSubmitting, setRestoreSubmitting] = useState(false);
+
+  // Archive dialog state
+  const [archiveTarget, setArchiveTarget] = useState<Booking | null>(null);
+  const [archiveReason, setArchiveReason] = useState("");
+  const [archiveSubmitting, setArchiveSubmitting] = useState(false);
+  const [showArchived, setShowArchived] = useState(false);
 
   // Delete dialog state
   const [deleteTarget, setDeleteTarget] = useState<Booking | null>(null);
@@ -240,8 +253,60 @@ export default function AdminBookings() {
     setCancelSubmitting(false);
   }
 
+  async function confirmArchive() {
+    if (!archiveTarget) return;
+    setArchiveSubmitting(true);
+    const b = archiveTarget;
+    const reason = archiveReason.trim() || null;
+    const cancelledAt = b.cancelled_at ?? new Date().toISOString();
+    const { error } = await supabase.from("bookings")
+      .update({
+        status: "cancelled",
+        archived: true,
+        cancelled_at: cancelledAt,
+        cancel_reason: reason ?? b.cancel_reason ?? "Archived by admin",
+      })
+      .eq("id", b.id);
+    if (error) {
+      toast({ title: "Archive failed", description: error.message, variant: "destructive" });
+      setArchiveSubmitting(false);
+      return;
+    }
+    await logActivity({
+      bookingId: b.id,
+      kind: "archived",
+      message: reason ? `Booking archived — ${reason}` : "Booking archived",
+      metadata: { reason, previous_status: b.status },
+    });
+    setBookings((bs) => bs.map((x) => x.id === b.id
+      ? { ...x, status: "cancelled", archived: true, cancelled_at: cancelledAt, cancel_reason: reason ?? x.cancel_reason ?? "Archived by admin" }
+      : x));
+    toast({ title: "Booking archived", description: "The record is preserved and hidden from the default list." });
+    setArchiveTarget(null);
+    setArchiveReason("");
+    setArchiveSubmitting(false);
+  }
+
+  async function unarchive(b: Booking) {
+    const { error } = await supabase.from("bookings").update({ archived: false }).eq("id", b.id);
+    if (error) {
+      toast({ title: "Unarchive failed", description: error.message, variant: "destructive" });
+      return;
+    }
+    setBookings((bs) => bs.map((x) => (x.id === b.id ? { ...x, archived: false } : x)));
+    toast({ title: "Booking unarchived" });
+  }
+
   async function confirmDelete() {
     if (!deleteTarget || deleteConfirmText !== "DELETE") return;
+    if (hasCapturedPayment(deleteTarget)) {
+      toast({
+        title: "This booking has a captured payment",
+        description: "Paid bookings can't be deleted. Cancel and archive it instead.",
+        variant: "destructive",
+      });
+      return;
+    }
     setDeleteSubmitting(true);
     const id = deleteTarget.id;
     // Remove child rows first to avoid orphans
@@ -345,11 +410,12 @@ export default function AdminBookings() {
     );
   }
 
-  const activeAll = bookings.filter((b) => b.status !== "cancelled");
+  const activeAll = bookings.filter((b) => b.status !== "cancelled" && !b.archived);
   const activeFiltered = filter === "all"
     ? activeAll
     : activeAll.filter((b) => b.status === filter);
-  const cancelledList = bookings.filter((b) => b.status === "cancelled");
+  const cancelledList = bookings.filter((b) => b.status === "cancelled" && (showArchived || !b.archived));
+  const archivedCount = bookings.filter((b) => b.archived).length;
 
   return (
     <div className="min-h-screen bg-muted/20 p-4 md:p-8">
@@ -441,7 +507,15 @@ export default function AdminBookings() {
                     {b.status !== "cancelled" && b.status !== "completed" && (
                       <Button size="sm" className="min-h-[44px]" variant="destructive" onClick={() => { setCancelTarget(b); setCancelReason(""); setRefundConfirmed(false); }}>Cancel</Button>
                     )}
-                    <Button size="sm" className="min-h-[44px]" variant="destructive" onClick={() => { setDeleteTarget(b); setDeleteConfirmText(""); }}>Delete</Button>
+                    {hasCapturedPayment(b) ? (
+                      !b.archived && (
+                        <Button size="sm" className="min-h-[44px]" variant="outline" onClick={() => { setArchiveTarget(b); setArchiveReason(""); }}>
+                          <Archive className="h-4 w-4 mr-1" /> Archive
+                        </Button>
+                      )
+                    ) : (
+                      <Button size="sm" className="min-h-[44px]" variant="destructive" onClick={() => { setDeleteTarget(b); setDeleteConfirmText(""); }}>Delete</Button>
+                    )}
                   </div>
                 </li>
               ))}
@@ -514,10 +588,18 @@ export default function AdminBookings() {
                             setRefundConfirmed(false);
                           }}>Cancel</Button>
                         )}
-                        <Button size="sm" variant="destructive" onClick={() => {
-                          setDeleteTarget(b);
-                          setDeleteConfirmText("");
-                        }}>Delete</Button>
+                        {hasCapturedPayment(b) ? (
+                          !b.archived && (
+                            <Button size="sm" variant="outline" onClick={() => { setArchiveTarget(b); setArchiveReason(""); }}>
+                              <Archive className="h-3 w-3 mr-1" /> Archive
+                            </Button>
+                          )
+                        ) : (
+                          <Button size="sm" variant="destructive" onClick={() => {
+                            setDeleteTarget(b);
+                            setDeleteConfirmText("");
+                          }}>Delete</Button>
+                        )}
                       </div>
                   </TableCell>
                   <TableCell>
@@ -568,12 +650,36 @@ export default function AdminBookings() {
             </div>
           </TabsContent>
 
-          <TabsContent value="cancelled">
+          <TabsContent value="cancelled" className="space-y-3">
+            <div className="flex items-center justify-end gap-2">
+              <Checkbox
+                id="show-archived"
+                checked={showArchived}
+                onCheckedChange={(v) => setShowArchived(v === true)}
+              />
+              <label htmlFor="show-archived" className="text-sm text-muted-foreground">
+                Show archived ({archivedCount})
+              </label>
+            </div>
             <CancelledBookingsTable
               rows={cancelledList as any}
               onRestore={(b) => setRestoreTarget(b as any)}
               onView={(b) => { setEditing(b as any); setFormOpen(true); }}
             />
+            {showArchived && archivedCount > 0 && (
+              <ul className="space-y-2">
+                {bookings.filter((b) => b.archived).map((b) => (
+                  <li key={b.id} className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border bg-card p-3 text-sm">
+                    <div className="min-w-0">
+                      <span className="font-medium">{b.customer_name}</span>
+                      <span className="text-muted-foreground"> · {format(new Date(b.event_date + "T12:00:00"), "MMM d, yyyy")}</span>
+                      {b.cancel_reason && <div className="text-xs text-muted-foreground">{b.cancel_reason}</div>}
+                    </div>
+                    <Button size="sm" variant="outline" onClick={() => unarchive(b)}>Unarchive</Button>
+                  </li>
+                ))}
+              </ul>
+            )}
           </TabsContent>
         </Tabs>
       </div>
@@ -640,6 +746,36 @@ export default function AdminBookings() {
               onClick={(e) => { e.preventDefault(); confirmRestore(); }}
             >
               Restore booking
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={!!archiveTarget} onOpenChange={(o) => { if (!o) { setArchiveTarget(null); setArchiveReason(""); } }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Archive this booking?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This booking has a captured payment, so it can't be permanently deleted. It will be
+              cancelled and archived — the full record is preserved and hidden from the default list.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          {archiveTarget && (
+            <div className="text-sm space-y-1">
+              <div><span className="text-muted-foreground">Customer:</span> <strong>{archiveTarget.customer_name}</strong></div>
+              <div><span className="text-muted-foreground">Date:</span> <strong>{format(parseISO(archiveTarget.event_date), "EEE, MMM d, yyyy")}</strong></div>
+              <div><span className="text-muted-foreground">Paid:</span> <strong>${Number(archiveTarget.amount_paid ?? 0).toFixed(2)}</strong></div>
+            </div>
+          )}
+          <Textarea
+            value={archiveReason}
+            onChange={(e) => setArchiveReason(e.target.value)}
+            placeholder="Reason (optional)"
+          />
+          <AlertDialogFooter>
+            <AlertDialogCancel>Keep booking</AlertDialogCancel>
+            <AlertDialogAction onClick={(e) => { e.preventDefault(); confirmArchive(); }} disabled={archiveSubmitting}>
+              {archiveSubmitting ? "Archiving..." : "Cancel & archive"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

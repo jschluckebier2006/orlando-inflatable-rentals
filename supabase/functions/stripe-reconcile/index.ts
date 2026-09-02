@@ -155,8 +155,37 @@ Deno.serve(async (req) => {
     const matchedSessions = new Set((bySession ?? []).map((b: any) => b.stripe_session_id));
     const matchedPis = new Set((byPi ?? []).map((b: any) => b.stripe_payment_intent_id));
 
+    // ---- Deliberate hard deletions -----------------------------------------
+    // A booking that an admin permanently deleted leaves a full snapshot in
+    // admin_audit_log. Those charges are NOT lost orphans — they are reported as
+    // context so the reconciler stops crying wolf over an intentional deletion.
+    const { data: deletions } = await admin
+      .from("admin_audit_log")
+      .select("entity_id, actor_email, created_at, summary, metadata")
+      .eq("entity_type", "booking")
+      .eq("action", "hard_delete")
+      .order("created_at", { ascending: false })
+      .limit(500);
+
+    const deletedBySession = new Map<string, any>();
+    const deletedByPi = new Map<string, any>();
+    for (const d of deletions ?? []) {
+      const m = (d as any).metadata ?? {};
+      if (m.stripe_session_id) deletedBySession.set(m.stripe_session_id, d);
+      if (m.stripe_payment_intent_id) deletedByPi.set(m.stripe_payment_intent_id, d);
+    }
+
+    // ---- Stuck webhook claims ----------------------------------------------
+    const { data: stuckClaims } = await admin
+      .from("webhook_events")
+      .select("event_id, event_type, session_id, payment_intent_id, updated_at")
+      .eq("status", "processing")
+      .lt("updated_at", new Date(Date.now() - 10 * 60_000).toISOString())
+      .limit(50);
+
     const orphans: any[] = [];
     const refundedExcluded: any[] = [];
+    const deliberatelyDeleted: any[] = [];
 
     for (const s of paid) {
       const pi = typeof s.payment_intent === "string" ? null : s.payment_intent;
@@ -176,6 +205,21 @@ Deno.serve(async (req) => {
         refunds = refundState(fullPi ?? pi, charge);
       } catch (_e) {
         refunds = refundState(pi, null);
+      }
+
+      const deletionRecord = deletedBySession.get(s.id) ?? (piId ? deletedByPi.get(piId) : null);
+      if (deletionRecord) {
+        deliberatelyDeleted.push({
+          session_id: s.id,
+          payment_intent_id: piId ?? null,
+          amount: (s.amount_total ?? 0) / 100,
+          customer_email: s.customer_details?.email ?? s.customer_email ?? null,
+          deleted_by: deletionRecord.actor_email,
+          deleted_at: deletionRecord.created_at,
+          summary: deletionRecord.summary,
+          reason: "booking was deliberately hard-deleted by an admin — excluded from orphan list",
+        });
+        continue;
       }
 
       if (refunds?.fully_refunded) {
@@ -231,12 +275,15 @@ Deno.serve(async (req) => {
       paid_sessions: paid.length,
       refunded_excluded_count: refundedExcluded.length,
       refunded_excluded: refundedExcluded,
+      deliberately_deleted_count: deliberatelyDeleted.length,
+      deliberately_deleted: deliberatelyDeleted,
+      stuck_webhook_claims: stuckClaims ?? [],
       orphan_count: orphans.length,
       orphans,
     };
 
     // ---- Cron: alert on anything still holding money ------------------------
-    if (isCron && orphans.length > 0) {
+    if (isCron && (orphans.length > 0 || (stuckClaims ?? []).length > 0)) {
       const esc = (v: unknown) =>
         String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]!));
       const rows = orphans.map((o) => `
@@ -247,15 +294,20 @@ Deno.serve(async (req) => {
 </tr>`).join("");
       await sendEmail({
         to: ADMIN_EMAILS,
-        subject: `🚨 ${orphans.length} Stripe charge(s) with no booking`,
+        subject: orphans.length
+          ? `🚨 ${orphans.length} Stripe charge(s) with no booking`
+          : `🚨 ${(stuckClaims ?? []).length} stuck webhook claim(s)`,
         html: `<h2 style="color:#c0392b;">Reconciliation found unmatched charges</h2>
 <p>These Stripe payments took money and have no booking in the system. Fully refunded charges are excluded automatically.</p>
 <table cellpadding="0" cellspacing="0" style="border-collapse:collapse;font-size:14px;width:100%;">
 <tr><th align="left" style="padding:6px;">Customer</th><th align="left" style="padding:6px;">Amount</th><th align="left" style="padding:6px;">Stripe refs</th></tr>
-${rows}</table>`,
+${rows}</table>
+${(stuckClaims ?? []).length ? `<h3 style="color:#c0392b;">Stuck webhook claims</h3>
+<p>These Stripe events have been mid-processing for over 10 minutes. A paid order may not have been finalized.</p>
+<ul>${(stuckClaims ?? []).map((c: any) => `<li>${esc(c.event_id)} — session ${esc(c.session_id)} — since ${esc(c.updated_at)}</li>`).join("")}</ul>` : ""}`,
         from: "alerts",
         templateName: "reconcile_orphans_admin",
-        idempotencyKey: `reconcile:${new Date().toISOString().slice(0, 10)}:${orphans.map((o) => o.session_id).sort().join(",").slice(0, 200)}`,
+        idempotencyKey: `reconcile:${new Date().toISOString().slice(0, 10)}:${[...orphans.map((o) => o.session_id), ...(stuckClaims ?? []).map((c: any) => c.event_id)].sort().join(",").slice(0, 200)}`,
         payloadSnapshot: report,
       });
     }

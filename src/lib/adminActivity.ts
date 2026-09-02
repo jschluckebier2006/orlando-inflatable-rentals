@@ -9,7 +9,8 @@ export type ActivityKind =
   | "created"
   | "edited"
   | "cancelled"
-  | "restored";
+  | "restored"
+  | "archived";
 
 export async function logActivity(params: {
   bookingId?: string | null;
