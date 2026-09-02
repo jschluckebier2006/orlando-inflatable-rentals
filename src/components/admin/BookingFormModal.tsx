@@ -274,8 +274,9 @@ export default function BookingFormModal({ open, onOpenChange, booking, onSaved 
       event_type: eventType.trim() || null,
       notes: notes.trim() || null,
       status,
-      payment_status: paymentStatus,
-      amount_paid: Number(amountPaid) || 0,
+      payment_status: derivedPaymentStatus,
+      amount_paid: paidAmount,
+
       subtotal,
       discount_type: discountType === "none" ? null : discountType,
       discount_value: discountType === "none" ? null : Number(discountValue) || 0,
