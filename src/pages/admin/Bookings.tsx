@@ -687,18 +687,41 @@ export default function AdminBookings() {
             />
             {showArchived && archivedCount > 0 && (
               <ul className="space-y-2">
-                {bookings.filter((b) => b.archived).map((b) => (
-                  <li key={b.id} className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border bg-card p-3 text-sm">
-                    <div className="min-w-0">
-                      <span className="font-medium">{b.customer_name}</span>
-                      <span className="text-muted-foreground"> · {format(new Date(b.event_date + "T12:00:00"), "MMM d, yyyy")}</span>
-                      {b.cancel_reason && <div className="text-xs text-muted-foreground">{b.cancel_reason}</div>}
-                    </div>
-                    <Button size="sm" variant="outline" onClick={() => unarchive(b)}>Unarchive</Button>
-                  </li>
-                ))}
+                {bookings.filter((b) => b.archived).map((b) => {
+                  const completed = b.status === "completed";
+                  return (
+                    <li
+                      key={b.id}
+                      className={`flex flex-wrap items-center justify-between gap-2 rounded-md border p-3 text-sm ${
+                        completed ? "border-green-600/40 bg-green-500/5" : "border-border bg-card"
+                      }`}
+                    >
+                      <div className="min-w-0 space-y-1">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <Badge className={completed ? "bg-green-600/20 text-green-900" : "bg-red-500/20 text-red-900"}>
+                            {completed ? "Completed" : "Cancelled"}
+                          </Badge>
+                          <span className="font-medium">{b.customer_name}</span>
+                          <span className="text-muted-foreground">
+                            · {format(new Date(b.event_date + "T12:00:00"), "MMM d, yyyy")}
+                          </span>
+                        </div>
+                        {completed ? (
+                          <div className="text-xs text-muted-foreground">
+                            Job delivered · Paid ${Number(b.amount_paid ?? 0).toFixed(2)}
+                            {b.total_amount != null && ` of $${Number(b.total_amount).toFixed(2)}`}
+                          </div>
+                        ) : (
+                          b.cancel_reason && <div className="text-xs text-muted-foreground">{b.cancel_reason}</div>
+                        )}
+                      </div>
+                      <Button size="sm" variant="outline" onClick={() => unarchive(b)}>Unarchive</Button>
+                    </li>
+                  );
+                })}
               </ul>
             )}
+
           </TabsContent>
         </Tabs>
       </div>
