@@ -25,14 +25,23 @@ Evidence:
 `stripe-reconcile` flags a paid, non-refunded Stripe session with no matching `bookings` row. Her charge is still held and her booking row was hard-deleted, so she matches the orphan test. The reconciler has no concept of "the booking existed and was deliberately deleted."
 
 ### Any other orders lost the same way since the deploy?
-No. Since 2026-09-01 there are zero new `bookings`, zero `needs_review` rows, and exactly one `webhook_events` row (completed). There has been no live checkout traffic since the deploy, so no order has been swallowed.
+No. Since 2026-09-01 there are zero new `bookings`, zero `needs_review` rows, and exactly one `webhook_events` row (completed).
+
+### Is checkout silently broken, or is it genuinely quiet?
+Genuinely quiet — with one caveat. Evidence that the checkout path is alive: two real `abandoned_cart_admin` alerts fired on 2026-09-01 at 00:25 and 00:30 UTC. That alert only fires for a `pending_bookings` row, which is written *after* validation, the availability pre-check, and a successful Stripe session creation. So on 09-01 real customers reached Stripe checkout and the server-side path worked end to end; they simply did not pay. Booking volume is naturally low anyway — 7 bookings in the last 30 days (last one 2026-08-25), so a 1-2 day gap is normal for this shop.
+
+The caveat: those two carts abandoned *at the payment step*, and the payload snapshots are NULL, so I cannot tell what dates they wanted. A weekend rental refused by the off-by-one would be rejected *before* a session exists, so it leaves no `pending_bookings` row and no alert — it is invisible in the database. Retained edge-function logs show no `create-booking-checkout` entries at all, so I cannot rule out a silent refusal by log evidence either. Nothing suggests checkout is broken; the off-by-one is the one path that could turn a customer away without a trace, which is why fix #2 goes in before the holiday weekend.
 
 ### Proposed fix (implement first)
 1. **Wrap the whole handler in try/catch** in `payments-webhook`. Any thrown error marks the row `failed` with the message and returns 500 so Stripe retries into real reprocessing.
 2. **Expire stale claims.** Treat a `processing` row older than 5 minutes as reclaimable: on a duplicate hit, if `status = 'processing'` and `updated_at < now() - 5 min`, take the claim over (atomic conditional UPDATE) and reprocess instead of answering "duplicate".
-3. **Watchdog alert.** Extend the daily reconcile cron (and add a short-interval check) to find `webhook_events` rows stuck at `processing` for more than 10 minutes, park the affected session via the existing `needs_review` path, and email admins. A stuck marker must never sit silent.
-4. **Heartbeat.** Update `updated_at` when finalize starts, so the age test measures real staleness.
-5. **Reconciler refinement.** Record hard-deleted booking session IDs (a small `deleted_bookings` ledger or an audit-log entry on delete) so a deliberately removed booking stops re-alerting as a lost order every morning.
+3. **Watchdog alert.** A stuck `processing` row older than 10 minutes raises a loud admin alert (checked by the reconcile cron and on each webhook call), so a stalled claim can never sit silent.
+4. **Heartbeat.** Touch `updated_at` when finalize starts, so the age test measures real staleness.
+5. **Audit every hard delete (expanded).** A `BEFORE DELETE` trigger on `public.bookings` writes an `admin_audit_log` row for any permanent deletion, capturing booking ID, customer name/email/phone, event dates, status, totals, Stripe session and PaymentIntent, who deleted it (JWT email, or `system/service`), the timestamp, and the complete row as a JSON snapshot in `before`. The log is already append-only (updates and deletes are denied by RLS), so the trace cannot be erased. `stripe-reconcile` then consults this log and excludes sessions whose booking was deliberately deleted — with the deletion shown as context rather than an orphan alert.
+
+### Recommendation on hard delete (no change yet)
+I recommend **removing hard delete for any booking with a captured payment** and replacing it with cancel/archive. Reasons: the money still exists in Stripe, so deleting the record makes a legitimate order indistinguishable from a lost one — exactly what produced this morning's false alarm; refund/chargeback disputes need the original record; and Florida sales-tax records should be retained. Suggested rule: bookings with `amount_paid = 0` and no `stripe_payment_intent_id` may still be hard-deleted (test rows, typos); anything with captured money gets `status = 'cancelled'` plus an `archived` flag that hides it from the default list. With the audit trigger now in place, even a hard delete leaves a trace, so this is a follow-up decision, not a blocker.
+
 
 ## 2. Weekend rentals wrongly refused at checkout
 
