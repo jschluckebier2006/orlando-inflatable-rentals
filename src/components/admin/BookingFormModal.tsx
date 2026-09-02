@@ -112,7 +112,10 @@ export default function BookingFormModal({ open, onOpenChange, booking, onSaved 
   const [paymentMethod, setPaymentMethod] = useState<"card_on_file" | "cash_on_delivery" | "other">("cash_on_delivery");
   const hasSavedCard = !!(booking?.stripe_customer_id && booking?.stripe_payment_method_id);
   const persistedBalance = Number(booking?.balance_due ?? 0);
-  const fullyPaid = booking?.payment_status === "paid_in_full";
+  const fullyPaid = booking?.payment_status === "paid_in_full"
+    || (Number(booking?.total_amount ?? 0) > 0
+      && Number(booking?.amount_paid ?? 0) >= Number(booking?.total_amount ?? 0) - 0.005);
+
 
   async function chargeBalanceNow() {
     if (!booking?.id) return;
@@ -219,7 +222,19 @@ export default function BookingFormModal({ open, onOpenChange, booking, onSaved 
   const taxAmount = bd.tax;
   const checkoutFeeAmount = bd.checkoutFee;
   const total = bd.total;
-  const balanceDue = Math.max(0, Math.round((total - (Number(amountPaid) || 0)) * 100) / 100);
+  const paidAmount = Number(amountPaid) || 0;
+  // Paid-in-full is decided by the money, not by the stored status label.
+  const isPaidInFull = total > 0 && paidAmount >= total - 0.005;
+  const balanceDue = isPaidInFull ? 0 : Math.max(0, Math.round((total - paidAmount) * 100) / 100);
+  const derivedPaymentStatus: PaymentStatus =
+    paymentStatus === "refunded"
+      ? "refunded"
+      : isPaidInFull
+        ? "paid_in_full"
+        : paidAmount > 0
+          ? "deposit_paid"
+          : "unpaid";
+
 
   function addProduct(productId: string) {
     const p = products.find((x) => x.id === productId);
@@ -262,8 +277,9 @@ export default function BookingFormModal({ open, onOpenChange, booking, onSaved 
       event_type: eventType.trim() || null,
       notes: notes.trim() || null,
       status,
-      payment_status: paymentStatus,
-      amount_paid: Number(amountPaid) || 0,
+      payment_status: derivedPaymentStatus,
+      amount_paid: paidAmount,
+
       subtotal,
       discount_type: discountType === "none" ? null : discountType,
       discount_value: discountType === "none" ? null : Number(discountValue) || 0,
@@ -451,8 +467,18 @@ export default function BookingFormModal({ open, onOpenChange, booking, onSaved 
               </div>
             )}
             <div className="flex justify-between font-semibold text-base"><span>Total</span><span>${total.toFixed(2)}</span></div>
-            <div className="flex justify-between"><span>Paid</span><span>${(Number(amountPaid) || 0).toFixed(2)}</span></div>
-            <div className="flex justify-between font-semibold"><span>Balance due</span><span>${balanceDue.toFixed(2)}</span></div>
+            {isPaidInFull ? (
+              <div className="flex justify-between font-semibold text-green-700">
+                <span>Paid in full</span>
+                <span>Paid ${paidAmount.toFixed(2)} of ${total.toFixed(2)}</span>
+              </div>
+            ) : (
+              <>
+                <div className="flex justify-between"><span>Paid</span><span>${paidAmount.toFixed(2)}</span></div>
+                <div className="flex justify-between font-semibold"><span>Balance due</span><span>${balanceDue.toFixed(2)}</span></div>
+              </>
+            )}
+
           </section>
 
           <section className="space-y-2">
@@ -480,7 +506,7 @@ export default function BookingFormModal({ open, onOpenChange, booking, onSaved 
 
           <section className="space-y-3">
             <h3 className="font-semibold">Status & Payment</h3>
-            {isEdit && booking && persistedBalance > 0 && !fullyPaid && (
+            {isEdit && booking && persistedBalance > 0 && !fullyPaid && !isPaidInFull && (
               <div className="rounded-md border border-border p-3 bg-muted/30 space-y-2">
                 {paymentChoice === "card_on_file" && hasSavedCard ? (
                   <>
