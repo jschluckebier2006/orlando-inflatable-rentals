@@ -507,7 +507,15 @@ export default function AdminBookings() {
                     {b.status !== "cancelled" && b.status !== "completed" && (
                       <Button size="sm" className="min-h-[44px]" variant="destructive" onClick={() => { setCancelTarget(b); setCancelReason(""); setRefundConfirmed(false); }}>Cancel</Button>
                     )}
-                    <Button size="sm" className="min-h-[44px]" variant="destructive" onClick={() => { setDeleteTarget(b); setDeleteConfirmText(""); }}>Delete</Button>
+                    {hasCapturedPayment(b) ? (
+                      !b.archived && (
+                        <Button size="sm" className="min-h-[44px]" variant="outline" onClick={() => { setArchiveTarget(b); setArchiveReason(""); }}>
+                          <Archive className="h-4 w-4 mr-1" /> Archive
+                        </Button>
+                      )
+                    ) : (
+                      <Button size="sm" className="min-h-[44px]" variant="destructive" onClick={() => { setDeleteTarget(b); setDeleteConfirmText(""); }}>Delete</Button>
+                    )}
                   </div>
                 </li>
               ))}
@@ -580,10 +588,18 @@ export default function AdminBookings() {
                             setRefundConfirmed(false);
                           }}>Cancel</Button>
                         )}
-                        <Button size="sm" variant="destructive" onClick={() => {
-                          setDeleteTarget(b);
-                          setDeleteConfirmText("");
-                        }}>Delete</Button>
+                        {hasCapturedPayment(b) ? (
+                          !b.archived && (
+                            <Button size="sm" variant="outline" onClick={() => { setArchiveTarget(b); setArchiveReason(""); }}>
+                              <Archive className="h-3 w-3 mr-1" /> Archive
+                            </Button>
+                          )
+                        ) : (
+                          <Button size="sm" variant="destructive" onClick={() => {
+                            setDeleteTarget(b);
+                            setDeleteConfirmText("");
+                          }}>Delete</Button>
+                        )}
                       </div>
                   </TableCell>
                   <TableCell>
