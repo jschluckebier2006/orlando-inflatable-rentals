@@ -219,7 +219,19 @@ export default function BookingFormModal({ open, onOpenChange, booking, onSaved 
   const taxAmount = bd.tax;
   const checkoutFeeAmount = bd.checkoutFee;
   const total = bd.total;
-  const balanceDue = Math.max(0, Math.round((total - (Number(amountPaid) || 0)) * 100) / 100);
+  const paidAmount = Number(amountPaid) || 0;
+  // Paid-in-full is decided by the money, not by the stored status label.
+  const isPaidInFull = total > 0 && paidAmount >= total - 0.005;
+  const balanceDue = isPaidInFull ? 0 : Math.max(0, Math.round((total - paidAmount) * 100) / 100);
+  const derivedPaymentStatus: PaymentStatus =
+    paymentStatus === "refunded"
+      ? "refunded"
+      : isPaidInFull
+        ? "paid_in_full"
+        : paidAmount > 0
+          ? "deposit_paid"
+          : "unpaid";
+
 
   function addProduct(productId: string) {
     const p = products.find((x) => x.id === productId);
