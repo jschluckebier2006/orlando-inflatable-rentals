@@ -503,7 +503,7 @@ export default function BookingFormModal({ open, onOpenChange, booking, onSaved 
 
           <section className="space-y-3">
             <h3 className="font-semibold">Status & Payment</h3>
-            {isEdit && booking && persistedBalance > 0 && !fullyPaid && (
+            {isEdit && booking && persistedBalance > 0 && !fullyPaid && !isPaidInFull && (
               <div className="rounded-md border border-border p-3 bg-muted/30 space-y-2">
                 {paymentChoice === "card_on_file" && hasSavedCard ? (
                   <>
