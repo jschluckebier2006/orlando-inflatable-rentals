@@ -650,12 +650,36 @@ export default function AdminBookings() {
             </div>
           </TabsContent>
 
-          <TabsContent value="cancelled">
+          <TabsContent value="cancelled" className="space-y-3">
+            <div className="flex items-center justify-end gap-2">
+              <Checkbox
+                id="show-archived"
+                checked={showArchived}
+                onCheckedChange={(v) => setShowArchived(v === true)}
+              />
+              <label htmlFor="show-archived" className="text-sm text-muted-foreground">
+                Show archived ({archivedCount})
+              </label>
+            </div>
             <CancelledBookingsTable
               rows={cancelledList as any}
               onRestore={(b) => setRestoreTarget(b as any)}
               onView={(b) => { setEditing(b as any); setFormOpen(true); }}
             />
+            {showArchived && archivedCount > 0 && (
+              <ul className="space-y-2">
+                {bookings.filter((b) => b.archived).map((b) => (
+                  <li key={b.id} className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border bg-card p-3 text-sm">
+                    <div className="min-w-0">
+                      <span className="font-medium">{b.customer_name}</span>
+                      <span className="text-muted-foreground"> · {format(new Date(b.event_date + "T12:00:00"), "MMM d, yyyy")}</span>
+                      {b.cancel_reason && <div className="text-xs text-muted-foreground">{b.cancel_reason}</div>}
+                    </div>
+                    <Button size="sm" variant="outline" onClick={() => unarchive(b)}>Unarchive</Button>
+                  </li>
+                ))}
+              </ul>
+            )}
           </TabsContent>
         </Tabs>
       </div>
@@ -722,6 +746,36 @@ export default function AdminBookings() {
               onClick={(e) => { e.preventDefault(); confirmRestore(); }}
             >
               Restore booking
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={!!archiveTarget} onOpenChange={(o) => { if (!o) { setArchiveTarget(null); setArchiveReason(""); } }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Archive this booking?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This booking has a captured payment, so it can't be permanently deleted. It will be
+              cancelled and archived — the full record is preserved and hidden from the default list.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          {archiveTarget && (
+            <div className="text-sm space-y-1">
+              <div><span className="text-muted-foreground">Customer:</span> <strong>{archiveTarget.customer_name}</strong></div>
+              <div><span className="text-muted-foreground">Date:</span> <strong>{format(parseISO(archiveTarget.event_date), "EEE, MMM d, yyyy")}</strong></div>
+              <div><span className="text-muted-foreground">Paid:</span> <strong>${Number(archiveTarget.amount_paid ?? 0).toFixed(2)}</strong></div>
+            </div>
+          )}
+          <Textarea
+            value={archiveReason}
+            onChange={(e) => setArchiveReason(e.target.value)}
+            placeholder="Reason (optional)"
+          />
+          <AlertDialogFooter>
+            <AlertDialogCancel>Keep booking</AlertDialogCancel>
+            <AlertDialogAction onClick={(e) => { e.preventDefault(); confirmArchive(); }} disabled={archiveSubmitting}>
+              {archiveSubmitting ? "Archiving..." : "Cancel & archive"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
