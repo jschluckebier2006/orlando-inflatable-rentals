@@ -3,6 +3,7 @@ import { z } from "https://esm.sh/zod@3.23.8";
 import { type StripeEnv, createStripeClient } from "../_shared/stripe.ts";
 import { loadSettings, lookupZoneIn } from "../_shared/settings.ts";
 import { computeBreakdown, DEPOSIT_NET, DEPOSIT_CHARGE } from "../_shared/pricing.ts";
+import { rentalEndDate } from "../_shared/rentalDates.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -97,9 +98,9 @@ Deno.serve(async (req) => {
         status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
-    // Multi-day rentals extend the end date; keep it consistent with finalize.
-    const spanDays = d.duration_type === "weekend" ? 2 : d.duration_type === "overnight" ? 1 : 0;
-    const endDateStr = new Date(startDate.getTime() + spanDays * 86400_000).toISOString().slice(0, 10);
+    // Multi-day rentals extend the end date; shared helper keeps this
+    // identical to finalizeBooking so the two can never drift.
+    const endDateStr = rentalEndDate(d.event_date, d.duration_type);
     if (endDateStr < d.event_date) {
       return new Response(JSON.stringify({ error: "Invalid rental date range." }), {
         status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
