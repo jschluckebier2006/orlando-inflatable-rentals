@@ -269,10 +269,16 @@ function bookingDetailsBlock(b: BookingForEmail) {
 }
 
 function totalsBlock(b: BookingForEmail) {
-  const balance = Number(b.balance_due ?? 0);
+  const total = Number(b.total_amount ?? 0);
+  const paid = Number(b.amount_paid ?? 0);
+  // Trust the money, not the stored balance column — a stale balance must never
+  // print a phantom amount due on a fully paid booking.
+  const paidInFull = total > 0 && paid >= total - 0.005;
+  const balance = paidInFull ? 0 : Math.max(0, Number(b.balance_due ?? Math.max(0, total - paid)));
   const balanceLine = balance > 0
     ? `<tr><td style="color:#54657a;">Balance due on delivery</td><td style="text-align:right;"><strong>${fmtMoney(balance)}</strong></td></tr>`
     : `<tr><td colspan="2" style="text-align:right;color:#1a8a4a;font-weight:bold;">Paid in full ✓</td></tr>`;
+
   const subtotalLine = b.subtotal != null
     ? `<tr><td style="color:#54657a;">Subtotal</td><td style="text-align:right;">${fmtMoney(b.subtotal)}</td></tr>` : "";
   const waiverLine = b.damage_waiver_selected && Number(b.damage_waiver_amount ?? 0) > 0
