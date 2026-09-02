@@ -71,7 +71,8 @@ Live blackouts relevant to Labor Day weekend (2026-09-05/06):
 With the current math, a Sat 2026-09-05 weekend rental of `aqua-palms-combo-4in1` is evaluated through Monday 09-07 and refused.
 
 ### Proposed fix
-Change `spanDays` for `weekend` from 2 to 1 so the pre-check range is identical to the range finalize writes, and add a shared helper so the two files can never drift again.
+Add a shared `rentalEndDate(startDate, durationType)` helper in `supabase/functions/_shared/` returning `start + 0` for `7hour` and `start + 1` for `overnight` and `weekend`. Both `create-booking-checkout` (pre-check) and `finalizeBooking` use it, so the two can never drift. Verification after the fix: `is_date_range_available` for `aqua-palms-combo-4in1` over 2026-09-05 → 2026-09-06 must return true despite the 09-07 blackout, and the same call over 09-05 → 09-07 must still return false.
+
 
 ## 3. "Paid bookings fail to finalize — booking is deleted" — STALE
 
