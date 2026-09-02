@@ -39,8 +39,9 @@ The caveat: those two carts abandoned *at the payment step*, and the payload sna
 4. **Heartbeat.** Touch `updated_at` when finalize starts, so the age test measures real staleness.
 5. **Audit every hard delete (expanded).** A `BEFORE DELETE` trigger on `public.bookings` writes an `admin_audit_log` row for any permanent deletion, capturing booking ID, customer name/email/phone, event dates, status, totals, Stripe session and PaymentIntent, who deleted it (JWT email, or `system/service`), the timestamp, and the complete row as a JSON snapshot in `before`. The log is already append-only (updates and deletes are denied by RLS), so the trace cannot be erased. `stripe-reconcile` then consults this log and excludes sessions whose booking was deliberately deleted — with the deletion shown as context rather than an orphan alert.
 
-### Recommendation on hard delete (no change yet)
-I recommend **removing hard delete for any booking with a captured payment** and replacing it with cancel/archive. Reasons: the money still exists in Stripe, so deleting the record makes a legitimate order indistinguishable from a lost one — exactly what produced this morning's false alarm; refund/chargeback disputes need the original record; and Florida sales-tax records should be retained. Suggested rule: bookings with `amount_paid = 0` and no `stripe_payment_intent_id` may still be hard-deleted (test rows, typos); anything with captured money gets `status = 'cancelled'` plus an `archived` flag that hides it from the default list. With the audit trigger now in place, even a hard delete leaves a trace, so this is a follow-up decision, not a blocker.
+### Hard delete policy (accepted — implement in this pass)
+Hard delete is removed for any booking that has money attached: `amount_paid > 0` OR a non-null `stripe_payment_intent_id`. Those become cancel + archive — `status = 'cancelled'`, `cancelled_at`, a cancel reason, and a new `archived` flag that hides the row from the default admin list while preserving the record. Hard delete stays available only for zero-payment records (test rows, typos). Enforced in two places: the admin UI (`src/pages/admin/Bookings.tsx` offers Archive instead of Delete when money is attached) and a database `BEFORE DELETE` guard that raises an exception on any paid booking, so the rule cannot be bypassed. The audit trigger stays in place regardless.
+
 
 
 ## 2. Weekend rentals wrongly refused at checkout
@@ -83,11 +84,24 @@ Confirmed stale on all three checks:
 
 Safe to dismiss.
 
-## Implementation order (on approval)
+## Does the off-by-one affect the public availability calendar too?
 
-1. **Database migration:** hard-delete audit trigger on `bookings` + lookup indexes for reconciliation and the stuck-`processing` watchdog.
-2. **`payments-webhook`:** whole-handler try/catch, stale-claim takeover, heartbeat, watchdog alert on stuck rows.
-3. **`stripe-reconcile`:** exclude sessions whose booking was deliberately deleted (from the audit log), report them separately, and surface stuck webhook claims.
-4. **Weekend range:** shared `rentalEndDate` helper used by both checkout pre-check and finalize, then the 2026-09-05 verification query.
-5. Nothing for #3 — dismiss.
+No — checked before planning. `src/components/booking/CheckoutModal.tsx` computes occupied days as `[start]` for `7hour` and `[start, start + 1]` for everything else, and derives `endDate` the same way. That already matches finalize (Sat + 1 = Sun). The customer-facing calendar therefore does **not** grey out a Saturday because of a Monday block. The defect is confined to the server-side pre-check in `create-booking-checkout`, which means the failure mode is the worse-feeling one — the customer picks a date the calendar offered, fills in everything, and is refused at the payment step — but it is not hiding dates during browsing. The shared helper removes the divergence at its source.
+
+## Implementation order (approved)
+
+**Ship first, on its own, then report before continuing:**
+
+1. **Weekend range fix.** New `supabase/functions/_shared/rentalDates.ts` exporting `rentalSpanDays` / `rentalEndDate` (`7hour` -> +0, `overnight` and `weekend` -> +1). `create-booking-checkout` and `finalizeBooking` both call it; the local `spanDays` expression and the inline `setUTCDate` block are deleted. Deploy, then verify with a direct call to `is_date_range_available` for `aqua-palms-combo-4in1`:
+   - 2026-09-05 → 2026-09-06 must return **true** (available) despite the 09-07 blackout
+   - 2026-09-05 → 2026-09-07 must return **false** (unavailable)
+
+**Then, after the report:**
+
+2. **Database migration:** hard-delete audit trigger on `bookings` (full JSON snapshot, customer, event date, Stripe refs, actor, timestamp) + `archived` column + `BEFORE DELETE` guard blocking deletion of any booking with `amount_paid > 0` or a `stripe_payment_intent_id` + lookup indexes for reconciliation and the stuck-`processing` watchdog.
+3. **Admin UI:** `src/pages/admin/Bookings.tsx` shows Archive (cancel + archive) instead of Delete for paid bookings; archived rows hidden from the default list with a toggle to view them.
+4. **`payments-webhook`:** whole-handler try/catch, stale-claim takeover after 5 minutes, heartbeat, watchdog alert on rows stuck in `processing`.
+5. **`stripe-reconcile`:** consult the audit log so deliberately deleted bookings are reported as context, not orphan alerts; surface stuck webhook claims.
+6. Nothing for #3 — dismiss.
+
 
