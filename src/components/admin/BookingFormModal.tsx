@@ -220,7 +220,10 @@ export default function BookingFormModal({ open, onOpenChange, booking, onSaved 
       setPaymentMethod("cash_on_delivery");
       setItems([]);
     }
+    setRepriceMode(false);
+    setRepriceConfirmOpen(false);
   }, [open, booking]);
+
 
   const multiplier = DURATION_MULTIPLIERS[duration];
   const subtotal = useMemo(
