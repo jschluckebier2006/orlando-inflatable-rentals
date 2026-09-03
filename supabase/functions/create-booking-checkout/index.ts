@@ -115,7 +115,12 @@ Deno.serve(async (req) => {
       p_exclude_booking_id: "00000000-0000-0000-0000-000000000000",
     });
     if (availErr) {
+      // A failed check is not a pass: never take money on dates we could not
+      // verify as free.
       console.error("[create-booking-checkout] availability check failed", availErr);
+      return new Response(JSON.stringify({
+        error: "We couldn't confirm availability for those dates right now. Please try again or call (407) 497-1840.",
+      }), { status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     } else if (available === false) {
       return new Response(JSON.stringify({
         error: "One or more of those items just became unavailable for your dates. Please pick another date or call (407) 497-1840.",
