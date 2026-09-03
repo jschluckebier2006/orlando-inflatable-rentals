@@ -439,7 +439,7 @@ export default function BookingFormModal({ open, onOpenChange, booking, onSaved 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div>
                 <Label>Duration</Label>
-                <Select value={duration} onValueChange={(v) => setDuration(v as DurationType)}>
+                <Select value={duration} onValueChange={(v) => setDuration(v as DurationType)} disabled={moneyLocked}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
                     {(["7hour", "overnight", "weekend"] as DurationType[]).map((d) => (
@@ -479,7 +479,7 @@ export default function BookingFormModal({ open, onOpenChange, booking, onSaved 
           <section className="space-y-3">
             <div className="flex items-center justify-between">
               <h3 className="font-semibold">Items</h3>
-              <Select value="" onValueChange={addProduct}>
+              <Select value="" onValueChange={addProduct} disabled={moneyLocked}>
                 <SelectTrigger className="w-64"><SelectValue placeholder="+ Add product" /></SelectTrigger>
                 <SelectContent>
                   {products.map((p) => (<SelectItem key={p.id} value={p.id}>{p.name} — ${p.price}</SelectItem>))}
@@ -498,9 +498,9 @@ export default function BookingFormModal({ open, onOpenChange, booking, onSaved 
                     </div>
                     <div className="flex items-center gap-1">
                       <span className="text-sm">$</span>
-                      <Input type="number" step="0.01" className="w-24" value={it.unit_price} onChange={(e) => updateItemPrice(idx, Number(e.target.value) || 0)} />
+                      <Input type="number" step="0.01" className="w-24" value={it.unit_price} onChange={(e) => updateItemPrice(idx, Number(e.target.value) || 0)} disabled={moneyLocked} />
                     </div>
-                    <Button type="button" variant="ghost" size="icon" onClick={() => removeItem(idx)}>
+                    <Button type="button" variant="ghost" size="icon" onClick={() => removeItem(idx)} disabled={moneyLocked}>
                       <Trash2 className="h-4 w-4" />
                     </Button>
                   </li>
@@ -514,7 +514,7 @@ export default function BookingFormModal({ open, onOpenChange, booking, onSaved 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               <div>
                 <Label>Type</Label>
-                <Select value={discountType} onValueChange={(v) => setDiscountType(v as any)}>
+                <Select value={discountType} onValueChange={(v) => setDiscountType(v as any)} disabled={moneyLocked}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="none">No discount</SelectItem>
@@ -525,11 +525,11 @@ export default function BookingFormModal({ open, onOpenChange, booking, onSaved 
               </div>
               <div>
                 <Label>{discountType === "percent" ? "Percent (%)" : "Amount ($)"}</Label>
-                <Input type="number" step="0.01" min="0" value={discountValue} onChange={(e) => setDiscountValue(e.target.value)} disabled={discountType === "none"} />
+                <Input type="number" step="0.01" min="0" value={discountValue} onChange={(e) => setDiscountValue(e.target.value)} disabled={moneyLocked || discountType === "none"} />
               </div>
               <div>
                 <Label>Reason (optional)</Label>
-                <Input value={discountReason} onChange={(e) => setDiscountReason(e.target.value)} disabled={discountType === "none"} placeholder="Repeat customer" />
+                <Input value={discountReason} onChange={(e) => setDiscountReason(e.target.value)} disabled={moneyLocked || discountType === "none"} placeholder="Repeat customer" />
               </div>
             </div>
           </section>
@@ -601,7 +601,7 @@ export default function BookingFormModal({ open, onOpenChange, booking, onSaved 
 
           <section className="space-y-2">
             <Label>Damage Waiver</Label>
-            <Select value={damageWaiver ? "yes" : "no"} onValueChange={(v) => setDamageWaiver(v === "yes")}>
+            <Select value={damageWaiver ? "yes" : "no"} onValueChange={(v) => setDamageWaiver(v === "yes")} disabled={moneyLocked}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="yes">Yes - Recommended (10%)</SelectItem>
@@ -612,7 +612,7 @@ export default function BookingFormModal({ open, onOpenChange, booking, onSaved 
 
           <section className="space-y-2">
             <Label>Payment type</Label>
-            <Select value={paymentMethod} onValueChange={(v) => setPaymentMethod(v as any)}>
+            <Select value={paymentMethod} onValueChange={(v) => setPaymentMethod(v as any)} disabled={moneyLocked}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="card_on_file">Card (adds 4% Online Payment Convenience Fee)</SelectItem>
@@ -666,7 +666,7 @@ export default function BookingFormModal({ open, onOpenChange, booking, onSaved 
               </div>
               <div>
                 <Label>Payment status</Label>
-                <Select value={paymentStatus} onValueChange={(v) => setPaymentStatus(v as PaymentStatus)}>
+                <Select value={paymentStatus} onValueChange={(v) => setPaymentStatus(v as PaymentStatus)} disabled={moneyLocked}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="unpaid">Unpaid</SelectItem>
@@ -678,7 +678,7 @@ export default function BookingFormModal({ open, onOpenChange, booking, onSaved 
               </div>
               <div>
                 <Label>Amount paid ($)</Label>
-                <Input type="number" step="0.01" min="0" value={amountPaid} onChange={(e) => setAmountPaid(e.target.value)} />
+                <Input type="number" step="0.01" min="0" value={amountPaid} onChange={(e) => setAmountPaid(e.target.value)} disabled={hasPayment} />
               </div>
             </div>
           </section>
