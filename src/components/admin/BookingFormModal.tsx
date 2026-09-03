@@ -659,9 +659,49 @@ export default function BookingFormModal({ open, onOpenChange, booking, onSaved 
 
         <DialogFooter className="shrink-0 border-t px-6 py-3 bg-background">
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={saving}>Cancel</Button>
-          <Button onClick={save} disabled={saving}>{saving ? "Saving…" : isEdit ? "Save changes" : "Create booking"}</Button>
+          <Button onClick={() => save()} disabled={saving}>{saving ? "Saving…" : isEdit ? "Save changes" : "Create booking"}</Button>
         </DialogFooter>
       </DialogContent>
+
+      <AlertDialog open={repriceConfirmOpen} onOpenChange={setRepriceConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Re-price this booking?</AlertDialogTitle>
+            <AlertDialogDescription asChild>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between"><span>Current total</span><span>${storedTotal.toFixed(2)}</span></div>
+                <div className="flex justify-between font-semibold"><span>New total</span><span>${total.toFixed(2)}</span></div>
+                <div className="flex justify-between"><span>Already paid</span><span>${storedPaid.toFixed(2)}</span></div>
+                {repriceBalance > 0.005 ? (
+                  <div className="flex justify-between font-semibold text-destructive">
+                    <span>Balance due after change</span><span>${repriceBalance.toFixed(2)}</span>
+                  </div>
+                ) : repriceBalance < -0.005 ? (
+                  <div className="flex justify-between font-semibold text-destructive">
+                    <span>Credit owed to customer</span><span>${Math.abs(repriceBalance).toFixed(2)}</span>
+                  </div>
+                ) : (
+                  <div className="flex justify-between font-semibold text-green-700">
+                    <span>Result</span><span>Paid in full</span>
+                  </div>
+                )}
+                <p className="pt-1">
+                  {repriceDelta === 0
+                    ? "The total does not change."
+                    : `This changes the total by ${repriceDelta > 0 ? "+" : "−"}$${Math.abs(repriceDelta).toFixed(2)} and will be recorded in the booking activity log.`}
+                </p>
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={saving}>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={() => { setRepriceConfirmOpen(false); save(true); }} disabled={saving}>
+              Confirm new price
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       {isEdit && booking?.id && (
         <RescheduleDialog
           open={rescheduleOpen}
