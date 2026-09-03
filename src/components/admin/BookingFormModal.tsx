@@ -68,6 +68,8 @@ export interface BookingFormBooking {
   damage_waiver_amount?: number | null;
   tax_rate?: number | null;
   tax_amount?: number | null;
+  delivery_fee?: number | null;
+  checkout_fee_amount?: number | null;
   balance_due?: number | null;
   payment_method_choice?: "card_on_file" | "cash_on_delivery" | null;
   stripe_customer_id?: string | null;
