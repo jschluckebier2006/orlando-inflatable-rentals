@@ -241,12 +241,15 @@ export default function BookingFormModal({ open, onOpenChange, booking, onSaved 
     () => computeBreakdown(
       afterDiscount,
       damageWaiver,
-      0,
+      // Carry the booking's own delivery fee through, otherwise re-pricing
+      // silently drops it out of the total.
+      isEdit ? storedDeliveryFee : 0,
       paymentMethod === "card_on_file" ? "card_on_file" : "cash_on_delivery",
     ),
-    [afterDiscount, damageWaiver, paymentMethod]
+    [afterDiscount, damageWaiver, isEdit, storedDeliveryFee, paymentMethod]
   );
   const damageWaiverAmount = bd.damageWaiver;
+  const deliveryFeeAmount = bd.deliveryFee;
   const taxAmount = bd.tax;
   const checkoutFeeAmount = bd.checkoutFee;
   const total = bd.total;
@@ -262,6 +265,27 @@ export default function BookingFormModal({ open, onOpenChange, booking, onSaved 
         : paidAmount > 0
           ? "deposit_paid"
           : "unpaid";
+
+  // While locked, every figure on screen comes straight from the stored row —
+  // nothing is recalculated, so nothing can drift away from what was charged.
+  const shownSubtotal = moneyLocked ? Number(booking?.subtotal ?? 0) : subtotal;
+  const shownDiscount = moneyLocked ? Number(booking?.discount_amount ?? 0) : discountAmount;
+  const shownWaiver = moneyLocked ? Number(booking?.damage_waiver_amount ?? 0) : damageWaiverAmount;
+  const shownDelivery = moneyLocked ? storedDeliveryFee : deliveryFeeAmount;
+  const shownTax = moneyLocked ? Number(booking?.tax_amount ?? 0) : taxAmount;
+  const shownFee = moneyLocked ? Number(booking?.checkout_fee_amount ?? 0) : checkoutFeeAmount;
+  const shownTotal = moneyLocked ? storedTotal : total;
+  const shownPaid = moneyLocked ? storedPaid : paidAmount;
+  const shownPaidInFull = shownTotal > 0 && shownPaid >= shownTotal - 0.005;
+  const shownBalance = shownPaidInFull
+    ? 0
+    : Math.max(0, Math.round((shownTotal - shownPaid) * 100) / 100);
+
+  // Re-price preview: what the confirmation dialog spells out before writing.
+  const repriceDelta = Math.round((total - storedTotal) * 100) / 100;
+  const repriceBalance = Math.round((total - storedPaid) * 100) / 100;
+
+
 
 
   function addProduct(productId: string) {
