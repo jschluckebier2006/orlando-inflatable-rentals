@@ -120,15 +120,26 @@ export default function BookingFormModal({ open, onOpenChange, booking, onSaved 
   const [rescheduleOpen, setRescheduleOpen] = useState(false);
   const [chargingBalance, setChargingBalance] = useState(false);
   const [recordPaymentOpen, setRecordPaymentOpen] = useState(false);
+  // Re-pricing a booking that already took money must be deliberate, never a
+  // side effect of pressing Save.
+  const [repriceMode, setRepriceMode] = useState(false);
+  const [repriceConfirmOpen, setRepriceConfirmOpen] = useState(false);
 
   const paymentChoice = booking?.payment_method_choice ?? null;
   // Admin-side payment type selector. "other" behaves like cash (no fee).
   const [paymentMethod, setPaymentMethod] = useState<"card_on_file" | "cash_on_delivery" | "other">("cash_on_delivery");
   const hasSavedCard = !!(booking?.stripe_customer_id && booking?.stripe_payment_method_id);
   const persistedBalance = Number(booking?.balance_due ?? 0);
+  const storedPaid = Number(booking?.amount_paid ?? 0);
+  const storedTotal = Number(booking?.total_amount ?? 0);
+  const storedDeliveryFee = Number(booking?.delivery_fee ?? 0);
+  // Any recorded payment freezes the money on this booking.
+  const hasPayment = isEdit && storedPaid > 0;
+  const moneyLocked = hasPayment && !repriceMode;
   const fullyPaid = booking?.payment_status === "paid_in_full"
-    || (Number(booking?.total_amount ?? 0) > 0
-      && Number(booking?.amount_paid ?? 0) >= Number(booking?.total_amount ?? 0) - 0.005);
+    || (storedTotal > 0 && storedPaid >= storedTotal - 0.005);
+
+
 
 
   async function chargeBalanceNow() {
