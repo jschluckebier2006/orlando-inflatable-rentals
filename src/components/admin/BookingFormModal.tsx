@@ -288,6 +288,31 @@ export default function BookingFormModal({ open, onOpenChange, booking, onSaved 
 
 
 
+  // Leaving re-price mode restores every pricing field to the stored values,
+  // so an abandoned edit cannot linger in the form.
+  function cancelReprice() {
+    setRepriceMode(false);
+    setRepriceConfirmOpen(false);
+    if (!booking) return;
+    setDuration((booking.duration_type as DurationType) || "7hour");
+    setDiscountType((booking.discount_type as any) || "none");
+    setDiscountValue(String(booking.discount_value ?? 0));
+    setDiscountReason(booking.discount_reason || "");
+    setDamageWaiver(booking.damage_waiver_selected ?? true);
+    setPaymentMethod((booking.payment_method_choice as any) ?? "cash_on_delivery");
+    setPaymentStatus((booking.payment_status as PaymentStatus) || "unpaid");
+    setAmountPaid(String(booking.amount_paid ?? 0));
+    setItems(
+      (booking.booking_items || []).map((i) => ({
+        id: i.id,
+        product_id: i.product_id || "",
+        product_name: i.product_name,
+        product_price: Number(i.product_price),
+        unit_price: Number(i.unit_price ?? i.product_price),
+      }))
+    );
+  }
+
   function addProduct(productId: string) {
     const p = products.find((x) => x.id === productId);
     if (!p) return;
@@ -589,7 +614,7 @@ export default function BookingFormModal({ open, onOpenChange, booking, onSaved 
                       Re-pricing mode — saving will change the total for a booking that has already been paid.
                       You'll be asked to confirm.
                     </p>
-                    <Button type="button" variant="outline" size="sm" onClick={() => setRepriceMode(false)}>
+                    <Button type="button" variant="outline" size="sm" onClick={cancelReprice}>
                       Cancel re-pricing
                     </Button>
                   </div>
