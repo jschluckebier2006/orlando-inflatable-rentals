@@ -535,37 +535,69 @@ export default function BookingFormModal({ open, onOpenChange, booking, onSaved 
           </section>
 
           <section className="bg-muted/30 rounded-md p-3 space-y-1 text-sm">
-            <div className="flex justify-between"><span>Subtotal</span><span>${subtotal.toFixed(2)}</span></div>
-            {discountAmount > 0 && (
+            <div className="flex justify-between"><span>Subtotal</span><span>${shownSubtotal.toFixed(2)}</span></div>
+            {shownDiscount > 0 && (
               <div className="flex justify-between text-destructive">
-                <span>Discount{discountType === "percent" ? ` (${discountValue}%)` : ""}</span>
-                <span>−${discountAmount.toFixed(2)}</span>
+                <span>Discount{!moneyLocked && discountType === "percent" ? ` (${discountValue}%)` : ""}</span>
+                <span>−${shownDiscount.toFixed(2)}</span>
               </div>
             )}
-            {damageWaiver && (
-              <div className="flex justify-between"><span>Damage Waiver (10%)</span><span>${damageWaiverAmount.toFixed(2)}</span></div>
+            {shownWaiver > 0 && (
+              <div className="flex justify-between"><span>Damage Waiver (10%)</span><span>${shownWaiver.toFixed(2)}</span></div>
             )}
-            <div className="flex justify-between"><span>Sales Tax (6.5%)</span><span>${taxAmount.toFixed(2)}</span></div>
-            {paymentMethod === "card_on_file" && (
+            {shownDelivery > 0 && (
+              <div className="flex justify-between"><span>Delivery</span><span>${shownDelivery.toFixed(2)}</span></div>
+            )}
+            <div className="flex justify-between"><span>Sales Tax (6.5%)</span><span>${shownTax.toFixed(2)}</span></div>
+            {shownFee > 0 && (
               <div className="flex justify-between">
                 <span>Online Payment Convenience Fee (4%)</span>
-                <span>${checkoutFeeAmount.toFixed(2)}</span>
+                <span>${shownFee.toFixed(2)}</span>
               </div>
             )}
-            <div className="flex justify-between font-semibold text-base"><span>Total</span><span>${total.toFixed(2)}</span></div>
-            {isPaidInFull ? (
+            <div className="flex justify-between font-semibold text-base"><span>Total</span><span>${shownTotal.toFixed(2)}</span></div>
+            {shownPaidInFull ? (
               <div className="flex justify-between font-semibold text-green-700">
                 <span>Paid in full</span>
-                <span>Paid ${paidAmount.toFixed(2)} of ${total.toFixed(2)}</span>
+                <span>Paid ${shownPaid.toFixed(2)} of ${shownTotal.toFixed(2)}</span>
               </div>
             ) : (
               <>
-                <div className="flex justify-between"><span>Paid</span><span>${paidAmount.toFixed(2)}</span></div>
-                <div className="flex justify-between font-semibold"><span>Balance due</span><span>${balanceDue.toFixed(2)}</span></div>
+                <div className="flex justify-between"><span>Paid</span><span>${shownPaid.toFixed(2)}</span></div>
+                <div className="flex justify-between font-semibold"><span>Balance due</span><span>${shownBalance.toFixed(2)}</span></div>
               </>
             )}
 
+            {hasPayment && (
+              <div className="pt-3 mt-2 border-t flex items-start gap-2">
+                {moneyLocked ? (
+                  <>
+                    <Lock className="h-4 w-4 mt-0.5 shrink-0 text-muted-foreground" />
+                    <div className="flex-1 space-y-2">
+                      <p className="text-xs text-muted-foreground">
+                        This booking has a payment recorded, so the pricing is locked. Editing contact details,
+                        address, times or notes will not change the money.
+                      </p>
+                      <Button type="button" variant="outline" size="sm" onClick={() => setRepriceMode(true)}>
+                        Re-price booking
+                      </Button>
+                    </div>
+                  </>
+                ) : (
+                  <div className="flex-1 space-y-2">
+                    <p className="text-xs font-medium text-destructive">
+                      Re-pricing mode — saving will change the total for a booking that has already been paid.
+                      You'll be asked to confirm.
+                    </p>
+                    <Button type="button" variant="outline" size="sm" onClick={() => setRepriceMode(false)}>
+                      Cancel re-pricing
+                    </Button>
+                  </div>
+                )}
+              </div>
+            )}
           </section>
+
 
           <section className="space-y-2">
             <Label>Damage Waiver</Label>
