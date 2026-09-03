@@ -306,9 +306,15 @@ export default function BookingFormModal({ open, onOpenChange, booking, onSaved 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [duration]);
 
-  async function save() {
+  async function save(confirmedReprice = false) {
     if (!customerName.trim() || !phone.trim() || !eventDate) {
       toast({ title: "Missing required fields", description: "Customer name, phone, and date are required.", variant: "destructive" });
+      return;
+    }
+    // Changing the price of a booking that already took money needs an explicit
+    // confirmation showing the consequence.
+    if (hasPayment && repriceMode && !confirmedReprice) {
+      setRepriceConfirmOpen(true);
       return;
     }
     setSaving(true);
@@ -318,8 +324,6 @@ export default function BookingFormModal({ open, onOpenChange, booking, onSaved 
       event_end_date: endDate,
       event_start_time: startTime,
       event_end_time: endTime,
-      duration_type: duration,
-      price_multiplier: multiplier,
       customer_name: customerName.trim(),
       customer_email: email.trim(),
       customer_phone: phone.trim(),
@@ -329,39 +333,48 @@ export default function BookingFormModal({ open, onOpenChange, booking, onSaved 
       event_type: eventType.trim() || null,
       notes: notes.trim() || null,
       status,
-      payment_status: derivedPaymentStatus,
-      amount_paid: paidAmount,
-
-      subtotal,
-      discount_type: discountType === "none" ? null : discountType,
-      discount_value: discountType === "none" ? null : Number(discountValue) || 0,
-      discount_amount: discountAmount,
-      discount_reason: discountType === "none" ? null : (discountReason.trim() || null),
-      damage_waiver_selected: damageWaiver,
-      damage_waiver_amount: damageWaiverAmount,
-      tax_rate: TAX_RATE,
-      tax_amount: taxAmount,
-      checkout_fee_amount: checkoutFeeAmount,
-      payment_method_choice: paymentMethod === "other" ? null : paymentMethod,
-      total_amount: total,
-      balance_due: balanceDue,
-      product_id: items[0]?.product_id ?? null,
-      product_name: items[0]?.product_name ?? null,
-      product_price: items[0]?.product_price ?? null,
     };
+
+    // Locked bookings write no money columns at all — the stored totals, tax,
+    // fees, items and payment figures are left exactly as they are.
+    if (!moneyLocked) {
+      Object.assign(payload, {
+        duration_type: duration,
+        price_multiplier: multiplier,
+        payment_status: derivedPaymentStatus,
+        amount_paid: paidAmount,
+        subtotal,
+        discount_type: discountType === "none" ? null : discountType,
+        discount_value: discountType === "none" ? null : Number(discountValue) || 0,
+        discount_amount: discountAmount,
+        discount_reason: discountType === "none" ? null : (discountReason.trim() || null),
+        damage_waiver_selected: damageWaiver,
+        damage_waiver_amount: damageWaiverAmount,
+        delivery_fee: deliveryFeeAmount,
+        tax_rate: TAX_RATE,
+        tax_amount: taxAmount,
+        checkout_fee_amount: checkoutFeeAmount,
+        payment_method_choice: paymentMethod === "other" ? null : paymentMethod,
+        total_amount: total,
+        balance_due: balanceDue,
+        product_id: items[0]?.product_id ?? null,
+        product_name: items[0]?.product_name ?? null,
+        product_price: items[0]?.product_price ?? null,
+      });
+    }
 
     let bookingId = booking?.id;
     if (isEdit && bookingId) {
       const { error } = await (supabase.from("bookings") as any).update(payload).eq("id", bookingId);
       if (error) { setSaving(false); toast({ title: "Save failed", description: error.message, variant: "destructive" }); return; }
-      await supabase.from("booking_items").delete().eq("booking_id", bookingId);
+      if (!moneyLocked) await supabase.from("booking_items").delete().eq("booking_id", bookingId);
     } else {
       const { data, error } = await (supabase.from("bookings") as any).insert(payload).select("id").single();
       if (error || !data) { setSaving(false); toast({ title: "Create failed", description: error?.message, variant: "destructive" }); return; }
       bookingId = data.id;
     }
 
-    if (items.length > 0 && bookingId) {
+    if (!moneyLocked && items.length > 0 && bookingId) {
       const rows = items.map((i) => ({
         booking_id: bookingId!,
         product_id: i.product_id,
@@ -373,11 +386,32 @@ export default function BookingFormModal({ open, onOpenChange, booking, onSaved 
       if (itemErr) { setSaving(false); toast({ title: "Item save failed", description: itemErr.message, variant: "destructive" }); return; }
     }
 
+    if (hasPayment && repriceMode && bookingId) {
+      const outcome = repriceBalance > 0.005
+        ? `$${repriceBalance.toFixed(2)} balance due`
+        : repriceBalance < -0.005
+          ? `$${Math.abs(repriceBalance).toFixed(2)} credit owed to customer`
+          : "settled in full";
+      await logActivity({
+        bookingId,
+        kind: "payment",
+        message: `Booking re-priced: $${storedTotal.toFixed(2)} → $${total.toFixed(2)} (paid $${storedPaid.toFixed(2)}, ${outcome})`,
+        metadata: {
+          reason: "manual_reprice",
+          old_total: storedTotal,
+          new_total: total,
+          amount_paid: storedPaid,
+          resulting_balance: repriceBalance,
+        },
+      });
+    }
+
     setSaving(false);
     toast({ title: isEdit ? "Booking updated" : "Booking created" });
     onSaved();
     onOpenChange(false);
   }
+
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
