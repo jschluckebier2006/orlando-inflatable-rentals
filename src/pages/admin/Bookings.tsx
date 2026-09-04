@@ -643,11 +643,21 @@ export default function AdminBookings() {
                           }}>Cancel</Button>
                         )}
                         {hasCapturedPayment(b) ? (
-                          !b.archived && (
-                            <Button size="sm" variant="outline" onClick={() => { setArchiveTarget(b); setArchiveReason(""); }}>
-                              <Archive className="h-3 w-3 mr-1" /> Archive
+                          <>
+                            {!b.archived && (
+                              <Button size="sm" variant="outline" onClick={() => { setArchiveTarget(b); setArchiveReason(""); }}>
+                                <Archive className="h-3 w-3 mr-1" /> Archive
+                              </Button>
+                            )}
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="text-destructive border border-destructive/40 hover:bg-destructive/10"
+                              onClick={() => openPurge(b)}
+                            >
+                              <Trash2 className="h-3 w-3 mr-1" /> Permanently delete
                             </Button>
-                          )
+                          </>
                         ) : (
                           <Button size="sm" variant="destructive" onClick={() => {
                             setDeleteTarget(b);
