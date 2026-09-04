@@ -903,6 +903,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      purge_paid_booking: {
+        Args: { p_booking_id: string; p_reason: string }
+        Returns: Json
+      }
     }
     Enums: {
       app_role: "admin" | "staff" | "user"
