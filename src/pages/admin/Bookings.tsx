@@ -26,7 +26,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { ChevronLeft, ChevronRight, Phone, MapPin, Archive } from "lucide-react";
+import { ChevronLeft, ChevronRight, Phone, MapPin, Archive, Trash2 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import BookingFormModal, { type BookingFormBooking } from "@/components/admin/BookingFormModal";
 import { Plus, Pencil } from "lucide-react";
