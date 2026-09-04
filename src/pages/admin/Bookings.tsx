@@ -562,11 +562,21 @@ export default function AdminBookings() {
                       <Button size="sm" className="min-h-[44px]" variant="destructive" onClick={() => { setCancelTarget(b); setCancelReason(""); setRefundConfirmed(false); }}>Cancel</Button>
                     )}
                     {hasCapturedPayment(b) ? (
-                      !b.archived && (
-                        <Button size="sm" className="min-h-[44px]" variant="outline" onClick={() => { setArchiveTarget(b); setArchiveReason(""); }}>
-                          <Archive className="h-4 w-4 mr-1" /> Archive
+                      <>
+                        {!b.archived && (
+                          <Button size="sm" className="min-h-[44px]" variant="outline" onClick={() => { setArchiveTarget(b); setArchiveReason(""); }}>
+                            <Archive className="h-4 w-4 mr-1" /> Archive
+                          </Button>
+                        )}
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="min-h-[44px] text-destructive border border-destructive/40 hover:bg-destructive/10"
+                          onClick={() => openPurge(b)}
+                        >
+                          <Trash2 className="h-4 w-4 mr-1" /> Permanently delete
                         </Button>
-                      )
+                      </>
                     ) : (
                       <Button size="sm" className="min-h-[44px]" variant="destructive" onClick={() => { setDeleteTarget(b); setDeleteConfirmText(""); }}>Delete</Button>
                     )}
