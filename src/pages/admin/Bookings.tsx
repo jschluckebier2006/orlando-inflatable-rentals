@@ -26,7 +26,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { ChevronLeft, ChevronRight, Phone, MapPin, Archive } from "lucide-react";
+import { ChevronLeft, ChevronRight, Phone, MapPin, Archive, Trash2 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import BookingFormModal, { type BookingFormBooking } from "@/components/admin/BookingFormModal";
 import { Plus, Pencil } from "lucide-react";
@@ -178,6 +178,41 @@ export default function AdminBookings() {
   const [deleteTarget, setDeleteTarget] = useState<Booking | null>(null);
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
   const [deleteSubmitting, setDeleteSubmitting] = useState(false);
+
+  // Permanent purge dialog state (paid bookings only)
+  const [purgeTarget, setPurgeTarget] = useState<Booking | null>(null);
+  const [purgeConfirmText, setPurgeConfirmText] = useState("");
+  const [purgeReason, setPurgeReason] = useState("");
+  const [purgeSubmitting, setPurgeSubmitting] = useState(false);
+
+  function openPurge(b: Booking) {
+    setPurgeTarget(b);
+    setPurgeConfirmText("");
+    setPurgeReason("");
+  }
+
+  async function confirmPurge() {
+    if (!purgeTarget) return;
+    if (purgeConfirmText !== "PERMANENTLY DELETE") return;
+    if (purgeReason.trim().length < 3) return;
+    setPurgeSubmitting(true);
+    const id = purgeTarget.id;
+    const { error } = await supabase.rpc("purge_paid_booking", {
+      p_booking_id: id,
+      p_reason: purgeReason.trim(),
+    });
+    if (error) {
+      toast({ title: "Permanent delete failed", description: error.message, variant: "destructive" });
+      setPurgeSubmitting(false);
+      return;
+    }
+    setBookings((prev) => prev.filter((x) => x.id !== id));
+    toast({ title: "Booking permanently deleted", description: "A full snapshot was saved to the audit log. The Stripe charge is unaffected." });
+    setPurgeTarget(null);
+    setPurgeConfirmText("");
+    setPurgeReason("");
+    setPurgeSubmitting(false);
+  }
 
   useEffect(() => {
     (async () => {
@@ -527,11 +562,21 @@ export default function AdminBookings() {
                       <Button size="sm" className="min-h-[44px]" variant="destructive" onClick={() => { setCancelTarget(b); setCancelReason(""); setRefundConfirmed(false); }}>Cancel</Button>
                     )}
                     {hasCapturedPayment(b) ? (
-                      !b.archived && (
-                        <Button size="sm" className="min-h-[44px]" variant="outline" onClick={() => { setArchiveTarget(b); setArchiveReason(""); }}>
-                          <Archive className="h-4 w-4 mr-1" /> Archive
+                      <>
+                        {!b.archived && (
+                          <Button size="sm" className="min-h-[44px]" variant="outline" onClick={() => { setArchiveTarget(b); setArchiveReason(""); }}>
+                            <Archive className="h-4 w-4 mr-1" /> Archive
+                          </Button>
+                        )}
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="min-h-[44px] text-destructive border border-destructive/40 hover:bg-destructive/10"
+                          onClick={() => openPurge(b)}
+                        >
+                          <Trash2 className="h-4 w-4 mr-1" /> Permanently delete
                         </Button>
-                      )
+                      </>
                     ) : (
                       <Button size="sm" className="min-h-[44px]" variant="destructive" onClick={() => { setDeleteTarget(b); setDeleteConfirmText(""); }}>Delete</Button>
                     )}
@@ -608,11 +653,21 @@ export default function AdminBookings() {
                           }}>Cancel</Button>
                         )}
                         {hasCapturedPayment(b) ? (
-                          !b.archived && (
-                            <Button size="sm" variant="outline" onClick={() => { setArchiveTarget(b); setArchiveReason(""); }}>
-                              <Archive className="h-3 w-3 mr-1" /> Archive
+                          <>
+                            {!b.archived && (
+                              <Button size="sm" variant="outline" onClick={() => { setArchiveTarget(b); setArchiveReason(""); }}>
+                                <Archive className="h-3 w-3 mr-1" /> Archive
+                              </Button>
+                            )}
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="text-destructive border border-destructive/40 hover:bg-destructive/10"
+                              onClick={() => openPurge(b)}
+                            >
+                              <Trash2 className="h-3 w-3 mr-1" /> Permanently delete
                             </Button>
-                          )
+                          </>
                         ) : (
                           <Button size="sm" variant="destructive" onClick={() => {
                             setDeleteTarget(b);
@@ -857,6 +912,59 @@ export default function AdminBookings() {
               className={buttonVariants({ variant: "destructive" })}
             >
               Delete booking
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Permanent purge (paid bookings) */}
+      <AlertDialog open={!!purgeTarget} onOpenChange={(o) => { if (!o) { setPurgeTarget(null); setPurgeConfirmText(""); setPurgeReason(""); } }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-destructive">Permanently delete this paid booking?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This destroys the booking, its line items, its payment records and its activity history.
+              It cannot be undone. A complete snapshot is saved to the audit log first, and the Stripe
+              charge itself is not touched — it stays in Stripe's records.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+
+          {purgeTarget && (
+            <div className="rounded-md border border-destructive/40 bg-destructive/5 p-3 text-sm space-y-1">
+              <div><span className="text-muted-foreground">Customer:</span> <strong>{purgeTarget.customer_name}</strong></div>
+              <div><span className="text-muted-foreground">Event date:</span> <strong>{format(parseISO(purgeTarget.event_date), "EEE, MMM d, yyyy")}</strong></div>
+              <div><span className="text-muted-foreground">Amount paid:</span> <strong>${Number(purgeTarget.amount_paid ?? 0).toFixed(2)}</strong></div>
+              <div className="break-all">
+                <span className="text-muted-foreground">Stripe PaymentIntent:</span>{" "}
+                <strong>{purgeTarget.stripe_payment_intent_id ?? "—"}</strong>
+              </div>
+            </div>
+          )}
+
+          <div className="space-y-2">
+            <label className="text-sm">Reason (required):</label>
+            <Textarea
+              value={purgeReason}
+              onChange={(e) => setPurgeReason(e.target.value)}
+              placeholder="Why is this record being destroyed?"
+            />
+            <label className="text-sm">Type <strong>PERMANENTLY DELETE</strong> to confirm:</label>
+            <Input
+              value={purgeConfirmText}
+              onChange={(e) => setPurgeConfirmText(e.target.value)}
+              placeholder="PERMANENTLY DELETE"
+              autoComplete="off"
+            />
+          </div>
+
+          <AlertDialogFooter>
+            <AlertDialogCancel>Keep booking</AlertDialogCancel>
+            <AlertDialogAction
+              disabled={purgeConfirmText !== "PERMANENTLY DELETE" || purgeReason.trim().length < 3 || purgeSubmitting}
+              onClick={(e) => { e.preventDefault(); confirmPurge(); }}
+              className={buttonVariants({ variant: "destructive" })}
+            >
+              {purgeSubmitting ? "Deleting..." : "Permanently delete"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
