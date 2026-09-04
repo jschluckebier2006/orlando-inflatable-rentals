@@ -179,6 +179,41 @@ export default function AdminBookings() {
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
   const [deleteSubmitting, setDeleteSubmitting] = useState(false);
 
+  // Permanent purge dialog state (paid bookings only)
+  const [purgeTarget, setPurgeTarget] = useState<Booking | null>(null);
+  const [purgeConfirmText, setPurgeConfirmText] = useState("");
+  const [purgeReason, setPurgeReason] = useState("");
+  const [purgeSubmitting, setPurgeSubmitting] = useState(false);
+
+  function openPurge(b: Booking) {
+    setPurgeTarget(b);
+    setPurgeConfirmText("");
+    setPurgeReason("");
+  }
+
+  async function confirmPurge() {
+    if (!purgeTarget) return;
+    if (purgeConfirmText !== "PERMANENTLY DELETE") return;
+    if (purgeReason.trim().length < 3) return;
+    setPurgeSubmitting(true);
+    const id = purgeTarget.id;
+    const { error } = await supabase.rpc("purge_paid_booking", {
+      p_booking_id: id,
+      p_reason: purgeReason.trim(),
+    });
+    if (error) {
+      toast({ title: "Permanent delete failed", description: error.message, variant: "destructive" });
+      setPurgeSubmitting(false);
+      return;
+    }
+    setBookings((prev) => prev.filter((x) => x.id !== id));
+    toast({ title: "Booking permanently deleted", description: "A full snapshot was saved to the audit log. The Stripe charge is unaffected." });
+    setPurgeTarget(null);
+    setPurgeConfirmText("");
+    setPurgeReason("");
+    setPurgeSubmitting(false);
+  }
+
   useEffect(() => {
     (async () => {
       const { data: { session } } = await supabase.auth.getSession();
