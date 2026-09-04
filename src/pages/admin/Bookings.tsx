@@ -896,6 +896,59 @@ export default function AdminBookings() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Permanent purge (paid bookings) */}
+      <AlertDialog open={!!purgeTarget} onOpenChange={(o) => { if (!o) { setPurgeTarget(null); setPurgeConfirmText(""); setPurgeReason(""); } }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-destructive">Permanently delete this paid booking?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This destroys the booking, its line items, its payment records and its activity history.
+              It cannot be undone. A complete snapshot is saved to the audit log first, and the Stripe
+              charge itself is not touched — it stays in Stripe's records.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+
+          {purgeTarget && (
+            <div className="rounded-md border border-destructive/40 bg-destructive/5 p-3 text-sm space-y-1">
+              <div><span className="text-muted-foreground">Customer:</span> <strong>{purgeTarget.customer_name}</strong></div>
+              <div><span className="text-muted-foreground">Event date:</span> <strong>{format(parseISO(purgeTarget.event_date), "EEE, MMM d, yyyy")}</strong></div>
+              <div><span className="text-muted-foreground">Amount paid:</span> <strong>${Number(purgeTarget.amount_paid ?? 0).toFixed(2)}</strong></div>
+              <div className="break-all">
+                <span className="text-muted-foreground">Stripe PaymentIntent:</span>{" "}
+                <strong>{purgeTarget.stripe_payment_intent_id ?? "—"}</strong>
+              </div>
+            </div>
+          )}
+
+          <div className="space-y-2">
+            <label className="text-sm">Reason (required):</label>
+            <Textarea
+              value={purgeReason}
+              onChange={(e) => setPurgeReason(e.target.value)}
+              placeholder="Why is this record being destroyed?"
+            />
+            <label className="text-sm">Type <strong>PERMANENTLY DELETE</strong> to confirm:</label>
+            <Input
+              value={purgeConfirmText}
+              onChange={(e) => setPurgeConfirmText(e.target.value)}
+              placeholder="PERMANENTLY DELETE"
+              autoComplete="off"
+            />
+          </div>
+
+          <AlertDialogFooter>
+            <AlertDialogCancel>Keep booking</AlertDialogCancel>
+            <AlertDialogAction
+              disabled={purgeConfirmText !== "PERMANENTLY DELETE" || purgeReason.trim().length < 3 || purgeSubmitting}
+              onClick={(e) => { e.preventDefault(); confirmPurge(); }}
+              className={buttonVariants({ variant: "destructive" })}
+            >
+              {purgeSubmitting ? "Deleting..." : "Permanently delete"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
