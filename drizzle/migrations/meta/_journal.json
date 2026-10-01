@@ -8,6 +8,13 @@
       "when": 1790821038541,
       "tag": "0000_delivery_zones_free_or_call_only",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1790824246521,
+      "tag": "0001_lock_bookings_insert_to_admins",
+      "breakpoints": true
     }
   ]
 }
