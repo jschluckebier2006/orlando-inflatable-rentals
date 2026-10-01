@@ -671,9 +671,14 @@ export default function BookingFormModal({ open, onOpenChange, booking, onSaved 
                     </Button>
                   </>
                 ) : (
-                  <p className="text-sm text-muted-foreground">
-                    No saved card on file — record this payment manually using the form below.
-                  </p>
+                  <>
+                    <p className="text-sm">
+                      No saved card on file — record the <strong>${persistedBalance.toFixed(2)}</strong> balance manually.
+                    </p>
+                    <Button type="button" size="sm" variant="outline" onClick={() => setRecordPaymentOpen(true)}>
+                      Record payment
+                    </Button>
+                  </>
                 )}
               </div>
             )}
