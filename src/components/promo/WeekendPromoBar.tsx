@@ -44,7 +44,7 @@ export function WeekendPromoBar() {
     >
       <div className="container-page flex items-center gap-2 py-1.5 text-sm">
         <p className="flex-1 min-w-0 font-semibold leading-tight">
-          <span className="hidden sm:inline">🌙 Limited time — Book Saturday, Get Sunday FREE</span>
+          <span className="hidden sm:inline">Limited time — Book Saturday, Get Sunday FREE</span>
           <span className="sm:hidden">Book Saturday, Get Sunday FREE</span>
         </p>
         <a
