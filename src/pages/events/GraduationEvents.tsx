@@ -397,8 +397,8 @@ const GraduationEvents = () => {
                 <div className="flex items-start gap-3">
                   <CheckCircle className="h-6 w-6 text-primary flex-shrink-0 mt-0.5" />
                   <div>
-                    <h3 className="font-semibold">Free Delivery in Most Areas</h3>
-                    <p className="text-muted-foreground text-sm">Professional delivery and installation within our service area.</p>
+                    <h3 className="font-semibold">Free Delivery &amp; Setup</h3>
+                    <p className="text-muted-foreground text-sm">Free throughout East Orlando and Orange County — <a href="tel:4074971840" className="underline font-semibold">call</a> or <a href="sms:4074971840" className="underline font-semibold">text</a> <a href="tel:4074971840" className="underline font-semibold whitespace-nowrap">(407) 497-1840</a> for outlying areas.</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
