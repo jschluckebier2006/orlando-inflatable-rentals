@@ -15,7 +15,7 @@ const faqs = [
   {
     question: "What areas do you deliver to?",
     answer:
-      "We deliver throughout East Orlando, Orange County, and Central Florida, including Alafaya, Avalon Park, Azalea Park, Bithlo, Christmas, Chuluota, Eastwood, Stoneybrook, Waterford Lakes, and Wedgefield. Give us a call at (407) 497-1840 and we'll confirm delivery to your exact location.",
+      "We offer free delivery throughout East Orlando and Orange County, including Alafaya, Avalon Park, Azalea Park, Chuluota, Eastwood, Stoneybrook, Waterford Lakes, and Wedgefield. Bithlo and Christmas are call or text to book. Outside that area? Call or text us at (407) 497-1840 and we'll take care of you.",
   },
   {
     question: "How far in advance should I book?",
@@ -25,7 +25,7 @@ const faqs = [
   {
     question: "Is delivery and setup included in the price?",
     answer:
-      "Yes. Delivery, professional setup, and pickup are included within our standard service area. Our team anchors and inspects every unit before your guests arrive. A small delivery fee may apply for addresses on the outer edge of our zone, and it is always shown before you check out.",
+      "Yes. Delivery, professional setup, and pickup are included within our standard service area. Our team anchors and inspects every unit before your guests arrive. Delivery and setup are free throughout our service area, and a handful of outlying areas are booked by phone or text at (407) 497-1840.",
   },
   {
     question: "How long is a rental period?",
