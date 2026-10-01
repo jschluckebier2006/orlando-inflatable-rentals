@@ -65,17 +65,14 @@ Deno.serve(async (req) => {
 
     // ---- Server-side delivery-zone validation (defense in depth) ----
     const zone = lookupZoneIn(settings.zones, d.event_zip);
-    if (!zone) {
+    // Only known free ZIPs can book online. Call ZIPs and unknown ZIPs are refused.
+    if (!zone || zone.status !== "free") {
       return new Response(JSON.stringify({
-        error: "We don't service this ZIP for online booking. Please call (407) 497-1840.",
+        error: "This ZIP is just outside our standard delivery zone, so we book it personally. Please call or text (407) 497-1840.",
       }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
-    if (zone.status === "call") {
-      return new Response(JSON.stringify({
-        error: `${zone.city} requires a phone quote. Please call (407) 497-1840 to book this area.`,
-      }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
-    }
-    const deliveryFee = zone.status === "paid" ? Math.round(zone.fee * 100) / 100 : 0;
+    // Delivery is always free for online bookings.
+    const deliveryFee = 0;
     const deliveryZoneCity = zone.city;
 
     // ---- Date range validation (defense in depth) ----

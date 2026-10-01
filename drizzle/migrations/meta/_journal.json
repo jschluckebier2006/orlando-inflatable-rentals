@@ -1,0 +1,13 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1790821038541,
+      "tag": "0000_delivery_zones_free_or_call_only",
+      "breakpoints": true
+    }
+  ]
+}
