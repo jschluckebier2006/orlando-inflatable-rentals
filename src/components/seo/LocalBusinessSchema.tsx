@@ -1,5 +1,5 @@
 import { Helmet } from "react-helmet-async";
-import { SCHEMA_AREA_SERVED, isFreeDeliveryCity, callOrTextLine } from "@/data/serviceAreas";
+import { SCHEMA_AREA_SERVED, isFreeDeliveryCity } from "@/data/serviceAreas";
 
 interface LocalBusinessSchemaProps {
   pageName?: string;
