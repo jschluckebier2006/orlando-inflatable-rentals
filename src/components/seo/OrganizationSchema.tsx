@@ -1,4 +1,5 @@
 import { Helmet } from "react-helmet-async";
+import { SCHEMA_AREA_SERVED } from "@/data/serviceAreas";
 
 export function OrganizationSchema() {
   const schema = {
@@ -19,10 +20,7 @@ export function OrganizationSchema() {
       "postalCode": "32828",
       "addressCountry": "US"
     },
-    "areaServed": {
-      "@type": "State",
-      "name": "Florida"
-    },
+    "areaServed": SCHEMA_AREA_SERVED,
     "sameAs": [
       "https://www.facebook.com/profile.php?id=61563048615864",
       "https://www.instagram.com/orlandoinflatablesllc/",
