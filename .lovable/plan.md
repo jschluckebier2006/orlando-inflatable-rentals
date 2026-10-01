@@ -28,22 +28,30 @@ Old bookings that were charged a delivery fee keep it. Admin screens and emails 
 - Address step in the reservation window: for a call ZIP, the Continue button area is replaced with the friendly message you wrote, plus a **Call** button and a **Text** button for (407) 497-1840.
   - Everything the customer typed stays filled in.
   - GA4 records a `delivery_zone_call_required` event with the ZIP.
-- Homepage delivery section: rewrite the text so it says free delivery for most neighborhoods, and call or text to book for Bithlo and Christmas.
+- Service-area wording across the site (homepage, footer, menu, delivery-areas page, city pages, event pages, FAQ, search listing info): **on hold until you decide each city.** I'll apply only your decisions, and no city name is removed without your OK.
 
 ## Section 2: Book Saturday, get Sunday free
 
-- New switch `WEEKEND_PROMO_ACTIVE = true` in `src/lib/pricing.ts`. It controls:
+- One switch, stored in the database settings row next to tax and deposit: `weekend_promo_active`, on by default.
+  - The website reads it when the page loads.
+  - Both server price calculations (the checkout amount and the booking record) read the same value. No hand-copied switches.
+- The server decides the price. If the website shows something different, the customer is charged the server's price.
+- Admin Settings gets an on/off toggle, so you can end the promo without a code change.
+- The switch controls all of these together:
   - Full Weekend price: 1.0x while on, 1.6x when off.
   - The "FREE UPGRADE" badge versus the "+60%" badge.
-  - The new description: "Saturday 8 AM delivery through Sunday 8 PM pickup. Sunday is free for a limited time."
+  - The new description versus the original one.
   - Option order: Day Rental → Full Weekend → Overnight while on; the original order when off.
-- The two server copies follow the same rule. Each has its own matching switch with a comment pointing to the website copy, because the server can't import website files.
-- The cart drawer and the checkout's rental-length picker show the original price crossed out (for example ~~$238.40~~ $149.00).
+  - The crossed-out price.
+- The original price shows crossed out (for example ~~$238.40~~ $149.00) in:
+  - the cart drawer
+  - the checkout's rental-length picker
+  - the **final order summary on the payment step**, next to both the Full Weekend line and the subtotal
 - The Saturday-only calendar and the greyed-out unavailable dates stay as they are.
 
 ## Section 3: Weekend promo popup
 
-- New `src/components/WeekendPromoPopup.tsx`, added once in `App.tsx` inside the router and outside the page routes. It only appears when `WEEKEND_PROMO_ACTIVE` is on.
+- New `src/components/WeekendPromoPopup.tsx`, added once in `App.tsx` inside the router and outside the page routes. It only appears while the database promo switch is on.
 - When it opens:
   - On desktop (768px wide or more), when the mouse leaves through the top of the window.
   - On phones, at 50% scroll depth.
