@@ -1,53 +1,32 @@
-# Permanent delete for paid bookings + Megan backfill
+# Fix both monitoring findings
 
-## Answer to your question first
+## Finding 1 — Paid checkout stuck in review (critical) — resolve as stale, no code change
 
-The reconciler matches deletions **only** on the Stripe session ID and PaymentIntent ID stored in the audit entry's metadata. `created_at` is used for one thing only: sorting the most recent 500 deletion records it loads. There is currently 1 such record, so ordering is irrelevant and nothing depends on the timestamp. Using the real insertion time is safe.
+Verified before writing this plan:
 
-## Part 1 — Megan's reconstructed entry (as agreed, with your change)
+- The live database function `create_booking_with_items` is already the corrected, schema-aware version: it builds the column list from the real table schema, drops unknown keys, and lets column DEFAULTs fill anything the payload omits. A new `NOT NULL DEFAULT` column (like `archived`) can no longer break it.
+- That corrected function already exists in the repo as migration `20260903152754_...sql` — the finding's claim that "the fix did not apply" is outdated. The broken version it cites (in the Sept 1 migration) is superseded by the Sept 3 migration, which is how migrations work.
+- No bookings are currently stuck in `needs_review`, and both recent paid checkouts (Ryan Shaughnessy, Lyndsey Sutherland) finalized normally.
 
-One audit entry for booking `738ed40c-9ee8-48e7-84a3-30e7889aa2db`:
+Action: claim the finding, verify once more in build mode, then resolve it as **stale** with that evidence. No code changes.
 
-- Customer Megan Pahl, mlpahl1989@gmail.com, event 2026-08-22, $5.45 deposit
-- The Stripe session and PaymentIntent copied verbatim from the stored alert payload
-- Actor: unknown — predates deletion logging
-- Real insertion time (no backdating), plus `deletion_occurred_between: "2026-08-23 and 2026-09-02"`
-- `backfilled: true`, a reason field, and the four lifecycle emails listed as evidence
-- Summary line states plainly that it is a reconstructed record, not a captured one
+## Finding 2 — No way to record a balance on some part-paid bookings (medium) — fix in the edit form
 
-Confirmed earlier: no booking row exists, no audit row exists, the exclusion logic is sound, and she is the only unmatched charge in the last two morning alerts.
+The problem, confirmed in the code: the "Amount paid" field is permanently disabled on any booking that has a payment, and the "Mark cash collected" shortcut only appears for cash-on-delivery bookings. For a deposit-paid card booking (without a saved card) or an "Other" payment-method booking, the banner literally says "record this payment manually using the form below" — but that field is disabled. Staff are stuck.
 
-## Part 2 — Permanent delete for paid bookings
+The fix (in `src/components/admin/BookingFormModal.tsx` only):
 
-### What you see
+- In the balance-pending banner's fallback branch (payment method is "Other", or card without a saved card), replace the dead-end sentence with a real **"Record payment"** button that opens the existing `RecordPaymentDialog`, pre-filled with the outstanding balance.
+- The `RecordPaymentDialog` is already mounted on this form; it records into `booking_payments` (cash, check, external card, "Stripe payment already captured" with a PaymentIntent ID, or emails a Stripe payment link). A database trigger then recomputes `amount_paid`, `balance_due`, and `payment_status` on the booking automatically.
 
-On a paid booking, the overflow menu gains **Permanently delete** — placed apart from Archive, in destructive red, below a separator. The plain Delete stays where it is and stays blocked for paid bookings.
+Why this approach fits your money rules:
 
-The confirmation dialog:
+- It **never touches pricing**. The locked fields stay locked; re-pricing still requires the separate re-price confirmation.
+- The payment goes through one canonical path that writes a payment row and logs activity, instead of a raw edit to "Amount paid".
+- The disabled "Amount paid" input stays disabled — that is intentional under the money-lock rule; the dialog is the way to record money.
 
-- States exactly what is destroyed: the booking, its line items, its payment records, and its activity history
-- Shows customer name, event date, amount paid, and the Stripe PaymentIntent
-- Notes clearly that **the Stripe charge is untouched and remains in Stripe's records** — this deletes your record, not the payment
-- Requires a typed `PERMANENTLY DELETE`
-- Requires a written reason
-- Button stays disabled until both are filled in
+## Verification
 
-### What happens behind it
-
-Before anything is removed, the full booking row, every line item, every payment row and every activity entry are captured into the audit entry. The actor, the exact time, your typed reason, and the Stripe session and PaymentIntent IDs are recorded alongside it — those last two are what the reconciler matches on, so the charge is excluded from that morning's alert and every one after.
-
-### The guard stays strict
-
-The database guard is not loosened. Purge runs through a single admin-only path that marks itself as authorised for that one booking, for that one statement. Every other delete attempt on a paid booking — from the plain Delete button, from a script, from anywhere — still fails exactly as it does today.
-
-### Verification
-
-After building I will run a real end-to-end test: create a throwaway booking with a payment row, confirm the plain delete is refused, purge it through the new action, confirm the audit entry contains the full snapshot, and confirm a plain delete on a paid booking is still refused afterwards. Then re-run the reconciliation report and confirm Megan's charge moves from "unmatched" to "deliberately deleted" with an unmatched count of zero. I'll report actual results, not intentions.
-
-## Technical detail
-
-- `INSERT` into `public.admin_audit_log` for the backfill (data change, no schema change).
-- New `public.purge_paid_booking(p_booking_id uuid, p_reason text)` — `SECURITY DEFINER`, `search_path = public`. It: rejects non-admins via `has_role(auth.uid(), 'admin')`; requires a non-empty reason; assembles `before` as `{booking, items, payments, activity}` and `metadata` as `{purge: true, reason, stripe_session_id, stripe_payment_intent_id, amount_paid, customer_*, event_date}`; inserts the audit row with `action = 'hard_delete'`; sets `set_config('app.purge_authorized', p_booking_id::text, true)` (transaction-local); deletes children then the booking. `EXECUTE` granted to `authenticated` only.
-- `guard_and_audit_booking_delete()` is amended to skip its money block **only** when `current_setting('app.purge_authorized', true) = old.id::text`, and to skip writing its own audit row in that case (the RPC already wrote a richer one). All other behaviour, including the block for unauthorised deletes on paid bookings, is unchanged.
-- `Bookings.tsx`: new `purgeTarget` state, dialog with `purgeConfirmText` + `purgeReason`, calling the RPC and removing the row from local state on success. Existing `confirmDelete` and its `hasCapturedPayment` block stay as they are.
-- The reconciler needs no change — `deletedBySession` / `deletedByPi` already key off the metadata fields above.
+- Build clean; typecheck passes.
+- Playwright against the admin preview: open a deposit-paid booking with no saved card, confirm the banner shows "Record payment", record a partial payment, and confirm the balance, payment status and activity entry update — with the total unchanged.
+- Resolve finding 2 as **fixed** and finding 1 as **stale** in Project monitoring.
