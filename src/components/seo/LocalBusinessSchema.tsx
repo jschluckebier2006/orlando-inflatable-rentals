@@ -17,8 +17,10 @@ export function LocalBusinessSchema({ pageName, pageDescription, cityName, cityS
     : baseUrl;
 
   // Enhanced description for city pages
+  const freeCity = isFreeDeliveryCity(cityName);
+  const cityBookingLine = "Call or text (407) 497-1840 to book your date.";
   const description = cityName
-    ? `Orlando Inflatables provides professional bounce house and water slide rentals in ${cityName}, Florida. Serving ${cityName} with clean, safe party inflatables for birthday parties, school events, church events, and community celebrations. ${isFreeDeliveryCity(cityName) ? "Free delivery and setup included." : callOrTextLine(cityName)}`
+    ? `Orlando Inflatables provides professional bounce house and water slide rentals in ${cityName}, Florida. Serving ${cityName} with clean, safe party inflatables for birthday parties, school events, church events, and community celebrations. ${freeCity ? "Free delivery and setup included." : cityBookingLine}`
     : pageDescription || "Orlando Inflatables is your one-stop shop for bounce house and water slide rentals in East Orlando, Orange County, and Central Florida. We offer bounce houses, water slides, obstacle courses, interactive games, concessions, and table & chair rentals for birthday parties, school events, church events, corporate events, and graduations.";
 
   const schema = {
@@ -83,7 +85,7 @@ export function LocalBusinessSchema({ pageName, pageDescription, cityName, cityS
             "@type": "Service",
             name: "Bounce House Rental",
             description: cityName 
-              ? (isFreeDeliveryCity(cityName) ? `Professional bounce house rentals in ${cityName}, FL with free delivery and setup` : `Professional bounce house rentals in ${cityName}, FL with professional setup`)
+              ? (freeCity ? `Professional bounce house rentals in ${cityName}, FL with free delivery and setup` : `Professional bounce house rentals in ${cityName}, FL with professional setup. ${cityBookingLine}`)
               : "Professional bounce house rentals with free delivery in most areas and professional setup"
           }
         },
