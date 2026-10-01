@@ -81,6 +81,7 @@ const ThankYou = lazy(() => import("./pages/ThankYou"));
 const WebVitals = lazy(() => import("./pages/WebVitals"));
 const CheckoutReturn = lazy(() => import("./pages/CheckoutReturn"));
 const AdminLogin = lazy(() => import("./pages/admin/Login"));
+const AdminResetPassword = lazy(() => import("./pages/admin/ResetPassword"));
 const AdminBookings = lazy(() => import("./pages/admin/Bookings"));
 const AdminLayout = lazy(() => import("./components/admin/AdminLayout"));
 const AdminCalendar = lazy(() => import("./pages/admin/Calendar"));
@@ -179,6 +180,7 @@ const App = () => {
               <Route path="/web-vitals" element={<WebVitals />} />
               <Route path="/checkout/return" element={<CheckoutReturn />} />
               <Route path="/admin/login" element={<AdminLogin />} />
+              <Route path="/reset-password" element={<AdminResetPassword />} />
               <Route path="/admin" element={<AdminLayout />}>
                 <Route index element={<AdminCalendar />} />
                 <Route path="bookings" element={<AdminBookings />} />
