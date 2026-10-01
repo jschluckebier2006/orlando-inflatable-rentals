@@ -11,7 +11,7 @@ export default function AdminLogin() {
   const { toast } = useToast();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const [mode, setMode] = useState<"signin" | "signup" | "forgot">("signin");
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
