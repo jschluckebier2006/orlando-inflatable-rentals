@@ -1,3 +1,4 @@
+import { WeekendPromoBar } from "@/components/promo/WeekendPromoBar";
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Menu, X, Phone, ChevronDown } from "lucide-react";
@@ -66,6 +67,7 @@ export function Header() {
   return (
     <>
       <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80">
+        <WeekendPromoBar />
         {/* Top bar */}
         <div className="gradient-primary text-primary-foreground py-2">
           <div className="container-page flex items-center justify-between text-sm">

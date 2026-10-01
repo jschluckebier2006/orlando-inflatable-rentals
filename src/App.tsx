@@ -12,6 +12,7 @@ import { CartProvider } from "./contexts/CartContext";
 import { CartDrawer } from "./components/cart/CartDrawer";
 import { CheckoutModal } from "./components/booking/CheckoutModal";
 import { LaborDayPromoModal } from "./components/promo/LaborDayPromoModal";
+import { WeekendPromoModal } from "./components/promo/WeekendPromoModal";
 import { useEffect } from "react";
 import { loadAppSettings } from "./lib/appSettings";
 
@@ -198,6 +199,7 @@ const App = () => {
           <CartDrawer />
           <CheckoutModal />
           <LaborDayPromoModal />
+          <WeekendPromoModal />
           </CartProvider>
         </TooltipProvider>
       </BrowserRouter>
