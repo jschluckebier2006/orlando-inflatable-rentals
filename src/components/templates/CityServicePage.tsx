@@ -89,7 +89,7 @@ export function CityServicePage({ city, citySlug, serviceType, nearbyAreas, loca
         url={`/${pageSlug}`}
       />
       <FAQPageSchema faqs={faqItems} />
-      <LocalBusinessSchema cityName={city} />
+      <LocalBusinessSchema cityName={city} citySlug={citySlug} />
       <BreadcrumbSchema items={[
         { name: isBounceHouse ? "Bounce House Rentals" : "Water Slide Rentals", href: servicePath },
         { name: city, href: `/${pageSlug}` }
