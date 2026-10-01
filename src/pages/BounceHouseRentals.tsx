@@ -39,7 +39,7 @@ export default function BounceHouseRentals() {
     <Layout>
       <SEOHead
         title="Bounce House Rentals in Orlando, FL"
-        description="Rent bounce houses in Orlando, FL from Orlando Inflatables. Safe, clean, themed bounce houses for birthday parties & events. Free delivery & setup. Call (407) 497-1840."
+        description="Rent bounce houses in Orlando, FL from Orlando Inflatables. Safe, clean, themed bounce houses for birthday parties & events. Free delivery in most areas. Call (407) 497-1840."
         canonical="/bounce-house-rentals"
       />
       <ServiceSchema
@@ -134,7 +134,7 @@ export default function BounceHouseRentals() {
             <ul className="space-y-3 mb-8">
               <li className="flex items-start gap-3"><Check className="h-5 w-5 text-primary mt-1 flex-shrink-0" /><span className="text-muted-foreground"><strong>Safety First:</strong> All our inflatables meet or exceed safety standards. We're fully licensed and carry comprehensive liability insurance for your protection.</span></li>
               <li className="flex items-start gap-3"><Check className="h-5 w-5 text-primary mt-1 flex-shrink-0" /><span className="text-muted-foreground"><strong>Impeccably Clean:</strong> Every bounce house is professionally cleaned and sanitized using hospital-grade disinfectants after each rental.</span></li>
-              <li className="flex items-start gap-3"><Check className="h-5 w-5 text-primary mt-1 flex-shrink-0" /><span className="text-muted-foreground"><strong>Free Delivery & Setup:</strong> We deliver, set up, and pick up your bounce house at no extra charge throughout our East Orlando service area.</span></li>
+              <li className="flex items-start gap-3"><Check className="h-5 w-5 text-primary mt-1 flex-shrink-0" /><span className="text-muted-foreground"><strong>Free Delivery in Most Areas:</strong> We deliver, set up, and pick up your bounce house at no extra charge throughout our East Orlando service area.</span></li>
               <li className="flex items-start gap-3"><Check className="h-5 w-5 text-primary mt-1 flex-shrink-0" /><span className="text-muted-foreground"><strong>Variety of Options:</strong> From princess castles to sports arenas, we have bounce houses to match any party theme.</span></li>
               <li className="flex items-start gap-3"><Check className="h-5 w-5 text-primary mt-1 flex-shrink-0" /><span className="text-muted-foreground"><strong>Reliable Service:</strong> We show up on time, every time, with professional, courteous staff who ensure everything runs smoothly.</span></li>
             </ul>

@@ -397,7 +397,7 @@ const GraduationEvents = () => {
                 <div className="flex items-start gap-3">
                   <CheckCircle className="h-6 w-6 text-primary flex-shrink-0 mt-0.5" />
                   <div>
-                    <h3 className="font-semibold">Free Delivery & Setup</h3>
+                    <h3 className="font-semibold">Free Delivery in Most Areas</h3>
                     <p className="text-muted-foreground text-sm">Professional delivery and installation within our service area.</p>
                   </div>
                 </div>

@@ -42,7 +42,7 @@ export default function ObstacleCourseRentals() {
     <Layout>
       <SEOHead
         title="Obstacle Course Rentals in Orlando, FL"
-        description="Obstacle course rentals in Orlando, FL for birthday parties, school events & corporate functions. Free delivery & setup in East Orlando. Call (407) 497-1840."
+        description="Obstacle course rentals in Orlando, FL for birthday parties, school events & corporate functions. Free delivery in most areas. Call (407) 497-1840."
         canonical="/obstacle-course-rentals"
       />
       <ServiceSchema
