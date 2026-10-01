@@ -8,6 +8,27 @@
       "when": 1790821038541,
       "tag": "0000_delivery_zones_free_or_call_only",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1790824246521,
+      "tag": "0001_lock_bookings_insert_to_admins",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1790824308216,
+      "tag": "0002_lock_booking_items_insert_to_admins",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1790824373259,
+      "tag": "0003_lock_inventory_blackouts_read_to_admins",
+      "breakpoints": true
     }
   ]
 }
