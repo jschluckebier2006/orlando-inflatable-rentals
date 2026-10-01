@@ -145,12 +145,7 @@ export function PaymentStep({
           {damageWaiver && (
             <div className="flex justify-between"><span>Damage Waiver (10%)</span><span>${bd.damageWaiver.toFixed(2)}</span></div>
           )}
-          {bd.deliveryFee > 0 ? (
-            <div className="flex justify-between">
-              <span>Delivery {zoneCity ? `— ${zoneCity}` : ""}</span>
-              <span>${bd.deliveryFee.toFixed(2)}</span>
-            </div>
-          ) : zoneCity ? (
+          {zoneCity ? (
             <div className="flex justify-between text-green-700 dark:text-green-400">
               <span>Delivery — {zoneCity}</span>
               <span>FREE</span>
