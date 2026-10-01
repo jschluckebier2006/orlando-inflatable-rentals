@@ -72,6 +72,7 @@ export default {
         sm: "calc(var(--radius) - 4px)",
       },
       keyframes: {
+        "promo-slide-down": { from: { transform: "translateY(-100%)", opacity: "0" }, to: { transform: "translateY(0)", opacity: "1" } },
         "accordion-down": {
           from: { height: "0" },
           to: { height: "var(--radix-accordion-content-height)" },
@@ -94,6 +95,7 @@ export default {
         },
       },
       animation: {
+        "promo-slide-down": "promo-slide-down 0.35s ease-out",
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "bounce-gentle": "bounce-gentle 2s ease-in-out infinite",
