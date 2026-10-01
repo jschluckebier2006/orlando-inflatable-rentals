@@ -27,7 +27,7 @@ import tablesChairsImg from "@/assets/tables-chairs-category.webp";
 import { deliveryPageImages, deliveryPageImages2, getHeroBackground } from "@/components/home/ContentImages";
 import { ContentImageWithText } from "@/components/home/ContentImageWithText";
 import { ReviewsSection } from "@/components/home/ReviewsSection";
-import { isFreeDeliveryCity } from "@/data/serviceAreas";
+import { isFreeDeliveryCity, callOrTextLine } from "@/data/serviceAreas";
 import { CallOrTextLine } from "@/components/CallOrTextLine";
 
 const services = [
@@ -97,7 +97,7 @@ export function CityDeliveryPage({
     <Layout>
       <SEOHead
         title={metaTitle}
-        description={metaDescription}
+        description={freeCity ? metaDescription : `Bounce house and water slide rentals in ${cityName}, FL. ${callOrTextLine(cityName)}`}
         canonical={`/water-slide-and-bounce-house-rental-${citySlug}`}
         ogImage={ogImage}
       />
