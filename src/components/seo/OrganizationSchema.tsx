@@ -9,6 +9,8 @@ export function OrganizationSchema() {
     "alternateName": "Orlando Inflatable Rentals LLC",
     "url": "https://orlandoinflatables.com",
     "logo": "https://orlandoinflatables.com/logo.png",
+    "image": "https://orlandoinflatables.com/logo.png",
+    "priceRange": "$$",
     "description": "Orlando Inflatables is your one-stop shop for bounce house and water slide rentals in East Orlando, Orange County, and Central Florida.",
     "telephone": "+1-407-497-1840",
     "email": "orlandoinflatablesllc@gmail.com",
