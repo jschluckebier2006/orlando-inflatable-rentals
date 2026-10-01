@@ -116,7 +116,6 @@ export default function BounceHouseRentalsNearMe() {
       <hr />
 
       <p><strong>Orlando Inflatable Rentals LLC</strong></p>
-      <p>19621 Knight Tale Ln, Orlando, FL 32833</p>
       <p><a href="tel:4074971840">(407) 497-1840</a></p>
       <p>Email: orlandoinflatablesllc@gmail.com</p>
 

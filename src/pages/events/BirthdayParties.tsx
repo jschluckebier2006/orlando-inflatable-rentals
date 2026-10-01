@@ -122,7 +122,7 @@ const BirthdayParties = () => {
     <Layout>
       <SEOHead
         title="Birthday Party Inflatable Rentals in Orlando, FL"
-        description={"Make your child's birthday unforgettable with inflatable rentals in Orlando, FL. Bounce houses, water slides & more. Free delivery & setup. Call (407) 497-1840."}
+        description={"Make your child's birthday unforgettable with inflatable rentals in Orlando, FL. Bounce houses, water slides & more. Free delivery in most areas. Call (407) 497-1840."}
         canonical="/events/birthday-party-inflatable-rentals-in-orlando"
       />
       <ServiceSchema
@@ -321,7 +321,7 @@ const BirthdayParties = () => {
                 <div className="flex items-start gap-3">
                   <CheckCircle className="h-6 w-6 text-primary flex-shrink-0 mt-0.5" />
                   <div>
-                    <h3 className="font-semibold">Free Delivery & Setup</h3>
+                    <h3 className="font-semibold">Free Delivery in Most Areas</h3>
                     <p className="text-muted-foreground text-sm">We deliver to your location and handle all setup at no extra charge within our service area.</p>
                   </div>
                 </div>

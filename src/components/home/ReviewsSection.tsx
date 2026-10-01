@@ -361,7 +361,7 @@ export function ReviewsSection({ cityName }: ReviewsSectionProps) {
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
             {cityName
               ? `Don't just take our word for it - hear from families in ${cityName}!`
-              : "Real reviews from real customers across Orlando, Winter Park, Kissimmee, and surrounding areas."}
+              : "Real reviews from real customers across Orlando, Winter Park, Avalon Park, and surrounding areas."}
           </p>
         </div>
 

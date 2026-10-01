@@ -14,7 +14,7 @@ const nearbyAreas = [
 const faqs = [
   {
     question: "Do you really deliver bounce houses all the way to Bithlo?",
-    answer: "Absolutely! Bithlo is part of our core East Orange County service area. We provide free delivery, setup, and pickup to all Bithlo properties. Our team is experienced with rural routes and country roads.",
+    answer: "Absolutely! We deliver to Bithlo — call or text (407) 497-1840 to book your date. We handle setup and pickup for Bithlo properties. Our team is experienced with rural routes and country roads.",
   },
   {
     question: "What large inflatables work best on Bithlo's bigger properties?",
@@ -22,7 +22,7 @@ const faqs = [
   },
   {
     question: "How much does it cost to rent a bounce house in Bithlo?",
-    answer: "Bounce house rentals in Bithlo start at $199 for a full-day rental. Larger units and water slides may cost more. All prices include free delivery to Bithlo—no extra mileage fees for our rural customers.",
+    answer: "Bounce house rentals in Bithlo start at $199 for a full-day rental. Larger units and water slides may cost more. We deliver to Bithlo — call or text (407) 497-1840 to book your date.",
   },
   {
     question: "Can you set up on uneven or sloped terrain in Bithlo?",
@@ -279,7 +279,7 @@ export default function BithloDelivery() {
         cityName="Bithlo"
         citySlug="bithlo"
         metaTitle="Bounce House & Water Slide Rentals in Bithlo, FL"
-        metaDescription="Bounce house and water slide rentals in Bithlo, FL. Free delivery & setup to Bithlo from Orlando Inflatables. Call (407) 497-1840 to book."
+        metaDescription="Bounce house and water slide rentals in Bithlo, FL. We deliver to Bithlo — call or text (407) 497-1840 to book your date."
         nearbyAreas={nearbyAreas}
         ogImage="/og-images/og-bithlo.jpg"
         cityWikipediaUrl="https://en.wikipedia.org/wiki/Bithlo,_Florida"

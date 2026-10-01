@@ -25,7 +25,7 @@ export function DeliveryAreasSection() {
             We Deliver to Your Area
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Proudly serving East Orlando, Orange County, and Central Florida communities with free delivery!
+            Free delivery throughout East Orlando and Orange County. Outside that area? Call or <a href="sms:4074971840" className="underline">text</a> us at <a href="tel:4074971840" className="underline font-semibold">(407) 497-1840</a> and we'll take care of you.
           </p>
         </div>
 
@@ -33,7 +33,8 @@ export function DeliveryAreasSection() {
         <div className="bg-primary/5 border border-primary/20 rounded-xl px-6 py-5 mb-10 text-center">
           <p className="text-base md:text-lg font-semibold text-foreground">
             <span className="text-primary font-bold">We serve:</span>{" "}
-            Orlando · Winter Park · Kissimmee · Apopka · Sanford · Cocoa · Cocoa Beach
+            Orlando · Winter Park
+            <span className="text-muted-foreground font-normal"> · Call or text to book: Kissimmee · Apopka · Sanford</span>
             <span className="text-muted-foreground font-normal"> · and surrounding areas</span>
           </p>
         </div>

@@ -66,7 +66,7 @@ export default function BounceHousePricing2025() {
       <ul>
         <li><strong>Unit dimensions</strong> directly impact pricing with 13ft x 13ft Primary Color units costing $139 while 14ft x 14ft themed options vary</li>
         <li><strong>Theme complexity</strong> affects costs as Disney Princess units cost $139 compared to Dinosaur Raptor at $149 due to detailed graphics</li>
-        <li><strong>Delivery distance</strong> remains free within 25+ Central Florida communities including Orlando, Winter Park, and Oviedo</li>
+        <li><strong>Delivery distance</strong> is free throughout East Orlando and Orange County; outlying areas are booked by phone or text at (407) 497-1840</li>
         <li><strong>Seasonal pricing</strong> stays consistent throughout the year unlike competitors who increase rates during peak months</li>
         <li><strong>Additional fees</strong> include only a $50 non-refundable deposit with no hidden charges for setup or breakdown services</li>
       </ul>

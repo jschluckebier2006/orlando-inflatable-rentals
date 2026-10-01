@@ -27,6 +27,8 @@ import tablesChairsImg from "@/assets/tables-chairs-category.webp";
 import { deliveryPageImages, deliveryPageImages2, getHeroBackground } from "@/components/home/ContentImages";
 import { ContentImageWithText } from "@/components/home/ContentImageWithText";
 import { ReviewsSection } from "@/components/home/ReviewsSection";
+import { isFreeDeliveryCity, callOrTextLine } from "@/data/serviceAreas";
+import { CallOrTextLine } from "@/components/CallOrTextLine";
 
 const services = [
   { name: "Bounce Houses", href: "/bounce-house-rentals", image: bounceHouseCategoryImg },
@@ -83,6 +85,7 @@ export function CityDeliveryPage({
   ogImage,
 }: CityDeliveryPageProps) {
   const [showJotform, setShowJotform] = useState(false);
+  const freeCity = isFreeDeliveryCity(cityName);
   
   // Convert FAQs to schema format
   const faqSchemaItems = faqs.map(faq => ({
@@ -94,7 +97,7 @@ export function CityDeliveryPage({
     <Layout>
       <SEOHead
         title={metaTitle}
-        description={metaDescription}
+        description={freeCity ? metaDescription : `Bounce house and water slide rentals in ${cityName}, FL. ${callOrTextLine(cityName)}`}
         canonical={`/water-slide-and-bounce-house-rental-${citySlug}`}
         ogImage={ogImage}
       />
@@ -130,7 +133,7 @@ export function CityDeliveryPage({
               Bounce House & Water Slide Rentals in {cityName}
             </h1>
             <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto drop-shadow-md">
-              Your trusted party rental company serving {cityName} and surrounding areas. Free delivery on bounce houses, water slides, obstacle courses, and more!
+              Your trusted party rental company serving {cityName} and surrounding areas. {freeCity ? "Free delivery on bounce houses, water slides, obstacle courses, and more!" : <CallOrTextLine city={cityName} />}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button
@@ -382,7 +385,7 @@ export function CityDeliveryPage({
                 When you book with Orlando Inflatables for your {cityName} event, you're choosing the area's most trusted party rental company.
               </p>
               <ul className="space-y-2 text-muted-foreground">
-                <li>• <strong>Free Delivery & Setup:</strong> Complimentary delivery throughout {cityName}</li>
+                {freeCity ? <li>• <strong>Free Delivery & Setup:</strong> Complimentary delivery throughout {cityName}</li> : <li>• <strong>Delivery & Setup:</strong> <CallOrTextLine city={cityName} /></li>}
                 <li>• <strong>Clean & Sanitized:</strong> Every unit is thoroughly cleaned and inspected</li>
                 <li>• <strong>Licensed & Insured:</strong> Full liability coverage for your peace of mind</li>
                 <li>• <strong>On-Time Service:</strong> We arrive when promised and handle all setup</li>

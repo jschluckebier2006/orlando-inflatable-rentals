@@ -1,4 +1,5 @@
 import { Helmet } from "react-helmet-async";
+import { isFreeDeliveryCity, callOrTextLine } from "@/data/serviceAreas";
 
 interface NearbyArea {
   name: string;
@@ -13,6 +14,7 @@ interface ServiceAreaSchemaProps {
 
 export function ServiceAreaSchema({ cityName, citySlug, nearbyAreas }: ServiceAreaSchemaProps) {
   const baseUrl = "https://orlandoinflatables.com";
+  const free = isFreeDeliveryCity(cityName);
 
   // Service schema for the specific city
   const serviceSchema = {
@@ -20,7 +22,7 @@ export function ServiceAreaSchema({ cityName, citySlug, nearbyAreas }: ServiceAr
     "@type": "Service",
     "@id": `${baseUrl}/water-slide-and-bounce-house-rental-${citySlug}#service`,
     name: `Bounce House & Water Slide Rentals in ${cityName}`,
-    description: `Professional bounce house rentals, water slide rentals, and party inflatables in ${cityName}, Florida. Includes free delivery, professional setup, and pickup.`,
+    description: `Professional bounce house rentals, water slide rentals, and party inflatables in ${cityName}, Florida. ${free ? "Includes free delivery, professional setup, and pickup." : `Includes professional setup and pickup. ${callOrTextLine(cityName)}`}`,
     provider: {
       "@type": "LocalBusiness",
       "@id": `${baseUrl}/#organization`,
@@ -58,7 +60,7 @@ export function ServiceAreaSchema({ cityName, citySlug, nearbyAreas }: ServiceAr
         name: cityName
       }
     },
-    termsOfService: "Free delivery, setup, and pickup included"
+    termsOfService: free ? "Free delivery, setup, and pickup included" : callOrTextLine(cityName)
   };
 
   // GeoCircle for service area coverage
