@@ -77,8 +77,8 @@ export async function loadAppSettings(): Promise<void> {
         map[r.zip] = {
           zip: r.zip,
           city: r.city,
-          fee: Number(r.fee) || 0,
-          status: (r.status as ZoneStatus) ?? "paid",
+          fee: 0,
+          status: (r.status === "free" ? "free" : "call") as ZoneStatus,
         };
       }
       zonesOverlay = map;

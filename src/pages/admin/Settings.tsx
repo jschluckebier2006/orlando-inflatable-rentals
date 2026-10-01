@@ -9,7 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Trash2, Plus, Search } from "lucide-react";
 import { loadAppSettings } from "@/lib/appSettings";
 
-type ZoneStatus = "free" | "paid" | "call";
+type ZoneStatus = "free" | "call";
 interface Zone { zip: string; city: string; fee: number; status: ZoneStatus; }
 
 export default function Settings() {
@@ -27,7 +27,7 @@ export default function Settings() {
   const [zones, setZones] = useState<Zone[]>([]);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<"all" | ZoneStatus>("all");
-  const [newZone, setNewZone] = useState<Zone>({ zip: "", city: "", fee: 0, status: "paid" });
+  const [newZone, setNewZone] = useState<Zone>({ zip: "", city: "", fee: 0, status: "free" });
 
   async function loadAll() {
     const [{ data: s }, { data: z }] = await Promise.all([
@@ -85,14 +85,12 @@ export default function Settings() {
   async function upsertZone(z: Zone) {
     if (!/^\d{5}$/.test(z.zip)) return toast({ title: "ZIP must be 5 digits", variant: "destructive" });
     if (!z.city.trim()) return toast({ title: "City required", variant: "destructive" });
-    const fee = Number(z.fee);
-    if (!isFinite(fee) || fee < 0) return toast({ title: "Fee must be ≥ 0", variant: "destructive" });
     const { error } = await (supabase.from("delivery_zones") as any).upsert({
-      zip: z.zip, city: z.city.trim(), fee, status: z.status,
+      zip: z.zip, city: z.city.trim(), fee: 0, status: z.status,
     });
     if (error) return toast({ title: "Save failed", description: error.message, variant: "destructive" });
     toast({ title: `ZIP ${z.zip} saved` });
-    setNewZone({ zip: "", city: "", fee: 0, status: "paid" });
+    setNewZone({ zip: "", city: "", fee: 0, status: "free" });
     loadAll();
     loadAppSettings();
   }
@@ -179,14 +177,13 @@ export default function Settings() {
         <div>
           <h2 className="font-semibold">Delivery zones</h2>
           <p className="text-xs text-muted-foreground">
-            Per-ZIP fees and availability. <strong>free</strong> = no charge, <strong>paid</strong> = fee added at checkout, <strong>call</strong> = blocks online booking.
+            Per-ZIP availability. <strong>free</strong> = free delivery, bookable online. <strong>call</strong> = customer must call or text to book. Unlisted ZIPs are treated as call.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-5 gap-2 items-end p-3 rounded-md border bg-muted/30">
           <div className="md:col-span-1"><Label>ZIP</Label><Input maxLength={5} value={newZone.zip} onChange={(e) => setNewZone({ ...newZone, zip: e.target.value.replace(/\D/g, "").slice(0, 5) })} placeholder="32801" /></div>
-          <div className="md:col-span-2"><Label>City</Label><Input value={newZone.city} onChange={(e) => setNewZone({ ...newZone, city: e.target.value })} placeholder="Orlando" /></div>
-          <div><Label>Fee ($)</Label><Input type="number" value={newZone.fee} onChange={(e) => setNewZone({ ...newZone, fee: Number(e.target.value) || 0 })} /></div>
+          <div className="md:col-span-3"><Label>City</Label><Input value={newZone.city} onChange={(e) => setNewZone({ ...newZone, city: e.target.value })} placeholder="Orlando" /></div>
           <div className="flex gap-2 items-end">
             <div className="flex-1">
               <Label>Status</Label>
@@ -194,7 +191,6 @@ export default function Settings() {
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="free">Free</SelectItem>
-                  <SelectItem value="paid">Paid</SelectItem>
                   <SelectItem value="call">Call</SelectItem>
                 </SelectContent>
               </Select>
@@ -213,7 +209,6 @@ export default function Settings() {
             <SelectContent>
               <SelectItem value="all">All statuses</SelectItem>
               <SelectItem value="free">Free</SelectItem>
-              <SelectItem value="paid">Paid</SelectItem>
               <SelectItem value="call">Call</SelectItem>
             </SelectContent>
           </Select>
@@ -230,19 +225,17 @@ export default function Settings() {
 
 function ZoneRow({ zone, onSave, onDelete }: { zone: Zone; onSave: (z: Zone) => void; onDelete: () => void; }) {
   const [draft, setDraft] = useState<Zone>(zone);
-  const dirty = draft.city !== zone.city || Number(draft.fee) !== Number(zone.fee) || draft.status !== zone.status;
+  const dirty = draft.city !== zone.city || draft.status !== zone.status;
   useEffect(() => { setDraft(zone); }, [zone.zip, zone.city, zone.fee, zone.status]);
   return (
     <div className="grid grid-cols-1 md:grid-cols-5 gap-2 items-center p-2">
       <div className="font-mono text-sm pl-1">{zone.zip}</div>
-      <Input className="md:col-span-2" value={draft.city} onChange={(e) => setDraft({ ...draft, city: e.target.value })} />
-      <Input type="number" value={draft.fee} onChange={(e) => setDraft({ ...draft, fee: Number(e.target.value) || 0 })} />
+      <Input className="md:col-span-3" value={draft.city} onChange={(e) => setDraft({ ...draft, city: e.target.value })} />
       <div className="flex gap-1">
         <Select value={draft.status} onValueChange={(v) => setDraft({ ...draft, status: v as ZoneStatus })}>
           <SelectTrigger className="flex-1"><SelectValue /></SelectTrigger>
           <SelectContent>
             <SelectItem value="free">Free</SelectItem>
-            <SelectItem value="paid">Paid</SelectItem>
             <SelectItem value="call">Call</SelectItem>
           </SelectContent>
         </Select>
