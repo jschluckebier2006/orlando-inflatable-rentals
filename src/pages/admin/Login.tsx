@@ -11,7 +11,7 @@ export default function AdminLogin() {
   const { toast } = useToast();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const [mode, setMode] = useState<"signin" | "signup" | "forgot">("signin");
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
@@ -24,7 +24,14 @@ export default function AdminLogin() {
     e.preventDefault();
     setBusy(true);
     try {
-      if (mode === "signup") {
+      if (mode === "forgot") {
+        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+          redirectTo: `${window.location.origin}/reset-password`,
+        });
+        if (error) throw error;
+        toast({ title: "Reset link sent", description: "Check your email for a password reset link." });
+        setMode("signin");
+      } else if (mode === "signup") {
         const { error } = await supabase.auth.signUp({
           email,
           password,
@@ -48,18 +55,28 @@ export default function AdminLogin() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-muted/30 p-4">
       <form onSubmit={handleSubmit} className="w-full max-w-sm bg-card border border-border rounded-lg p-6 space-y-4">
-        <h1 className="font-display text-2xl font-bold">Admin {mode === "signin" ? "Sign In" : "Sign Up"}</h1>
+        <h1 className="font-display text-2xl font-bold">
+          Admin {mode === "signin" ? "Sign In" : mode === "signup" ? "Sign Up" : "Reset Password"}
+        </h1>
         <div className="space-y-1">
           <Label htmlFor="em">Email</Label>
           <Input id="em" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
         </div>
-        <div className="space-y-1">
-          <Label htmlFor="pw">Password</Label>
-          <Input id="pw" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} />
-        </div>
+        {mode !== "forgot" && (
+          <div className="space-y-1">
+            <Label htmlFor="pw">Password</Label>
+            <Input id="pw" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} />
+          </div>
+        )}
         <Button type="submit" className="w-full" disabled={busy}>
-          {busy ? "Working..." : mode === "signin" ? "Sign in" : "Create account"}
+          {busy ? "Working..." : mode === "signin" ? "Sign in" : mode === "signup" ? "Create account" : "Send reset link"}
         </Button>
+        {mode === "signin" && (
+          <button type="button" onClick={() => setMode("forgot")}
+            className="text-sm text-primary underline w-full text-center">
+            Forgot your password?
+          </button>
+        )}
         <button type="button" onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
           className="text-sm text-primary underline w-full text-center">
           {mode === "signin" ? "Need an account? Sign up" : "Have an account? Sign in"}
