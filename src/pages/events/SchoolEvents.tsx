@@ -123,8 +123,9 @@ const SchoolEvents = () => {
   return (
     <Layout>
       <SEOHead
-        title="School Event Inflatable Rentals in Orlando, FL"
-        description="School event inflatable rentals in Orlando, FL for field days, carnivals & graduation parties. Safe, insured equipment. Free delivery in East Orlando. Call (407) 497-1840."
+        title="School Event Rentals Orlando | Field Day Inflatables & Games"
+        description="School event rentals in Orlando for field days, carnivals & fall festivals: bounce houses, water slides, obstacle courses & games. Safe, insured equipment. Call (407) 497-1840."
+        exactTitle
         canonical="/events/school-event-inflatable-rentals-in-orlando"
       />
       <ServiceSchema

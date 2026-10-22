@@ -52,9 +52,9 @@ const Index = () => {
         canonical: "/water-slide-and-bounce-house-rentals-orlando",
       }
     : {
-        title: "Bounce House & Water Slide Rentals - Orlando, FL",
+        title: "Orlando Inflatable Rentals | Bounce Houses & Water Slides",
         description:
-          "Orlando's local bounce house & water slide rentals. Free delivery, setup & pickup across East Orlando. Book online or call (407) 497-1840.",
+          "Orlando bounce house & water slide rentals for birthdays, schools & churches. 5-star rated on Google, fully insured, professional setup & pickup. Call (407) 497-1840.",
         canonical: "/",
       };
 
@@ -64,6 +64,7 @@ const Index = () => {
         title={seo.title}
         description={seo.description}
         canonical={seo.canonical}
+        exactTitle={!isKeywordRoute}
       />
       <LocalBusinessSchema />
       <OrganizationSchema />
