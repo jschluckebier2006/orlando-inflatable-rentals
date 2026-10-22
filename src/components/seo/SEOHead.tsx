@@ -10,6 +10,8 @@ interface SEOHeadProps {
   datePublished?: string;
   dateModified?: string;
   schemaJson?: object | object[];
+  /** Use the title exactly as given (no " | Orlando Inflatables" suffix). */
+  exactTitle?: boolean;
 }
 
 export function SEOHead({
@@ -22,10 +24,11 @@ export function SEOHead({
   datePublished,
   dateModified,
   schemaJson,
+  exactTitle = false,
 }: SEOHeadProps) {
   const siteName = "Orlando Inflatables";
   const baseUrl = "https://orlandoinflatables.com";
-  const fullTitle = title.includes(siteName) ? title : `${title} | ${siteName}`;
+  const fullTitle = exactTitle || title.includes(siteName) ? title : `${title} | ${siteName}`;
   const canonicalUrl = `${baseUrl}${canonical}`;
   
   // Default OG image - use a real image from assets
