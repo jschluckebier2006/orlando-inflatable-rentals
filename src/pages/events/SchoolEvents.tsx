@@ -124,7 +124,7 @@ const SchoolEvents = () => {
     <Layout>
       <SEOHead
         title="School Event Rentals Orlando | Field Day Inflatables & Games"
-        description="School event rentals in Orlando for field days, carnivals & fall festivals: bounce houses, water slides, obstacle courses & games. Safe, insured equipment. Call (407) 497-1840."
+        description="School event rentals in Orlando for field days, carnivals & festivals: bounce houses, water slides, obstacle courses & games. Call (407) 497-1840."
         exactTitle
         canonical="/events/school-event-inflatable-rentals-in-orlando"
       />

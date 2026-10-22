@@ -54,7 +54,7 @@ const Index = () => {
     : {
         title: "Orlando Inflatable Rentals | Bounce Houses & Water Slides",
         description:
-          "Orlando bounce house & water slide rentals for birthdays, schools & churches. 5-star rated on Google, fully insured, professional setup & pickup. Call (407) 497-1840.",
+          "Orlando bounce house & water slide rentals for birthdays, schools & churches. 5-star rated, fully insured, setup & pickup included. Call (407) 497-1840.",
         canonical: "/",
       };
 
