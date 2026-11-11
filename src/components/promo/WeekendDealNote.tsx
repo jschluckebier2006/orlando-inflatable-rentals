@@ -21,7 +21,7 @@ export function WeekendDealNote({ className, source }: { className?: string; sou
       <a
         href="tel:4074971840"
         onClick={() => trackEvent("promo_note_call", { promo_name: PROMO_NAME, source })}
-        className="font-semibold text-primary underline underline-offset-2"
+        className="whitespace-nowrap font-semibold text-primary underline underline-offset-2"
       >
         (407) 497-1840
       </a>{" "}
