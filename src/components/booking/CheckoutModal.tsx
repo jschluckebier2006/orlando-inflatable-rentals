@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { format, addDays } from "date-fns";
-import { CalendarIcon, Check, Loader2, AlertTriangle, Trash2, Phone, MessageSquare } from "lucide-react";
+import { CalendarIcon, Check, Loader2, AlertTriangle, Trash2 } from "lucide-react";
 import {
   Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle,
 } from "@/components/ui/dialog";

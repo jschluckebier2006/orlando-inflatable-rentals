@@ -16,7 +16,7 @@ interface PaymentStepProps {
   /** Pre-tax, pre-waiver subtotal (items × duration multiplier). */
   subtotal: number;
   damageWaiver: boolean;
-  /** Auto-applied delivery fee from the zip-code zone lookup. */
+  /** Delivery fee from the ZIP's zone (display only — the server re-derives it). */
   deliveryFee?: number;
   /** Friendly zone label (e.g. "Avalon Park"). */
   zoneCity?: string | null;
@@ -145,12 +145,17 @@ export function PaymentStep({
           {damageWaiver && (
             <div className="flex justify-between"><span>Damage Waiver (10%)</span><span>${bd.damageWaiver.toFixed(2)}</span></div>
           )}
-          {zoneCity ? (
-            <div className="flex justify-between text-green-700 dark:text-green-400">
-              <span>Delivery — {zoneCity}</span>
-              <span>FREE</span>
+          {bd.deliveryFee > 0 ? (
+            <div className="flex justify-between">
+              <span>Delivery{zoneCity ? ` — ${zoneCity}` : ""}</span>
+              <span>${bd.deliveryFee.toFixed(2)}</span>
             </div>
-          ) : null}
+          ) : (
+            <div className="flex justify-between text-green-700 dark:text-green-400">
+              <span>Delivery{zoneCity ? ` — ${zoneCity}` : ""}</span>
+              <span>Free</span>
+            </div>
+          )}
           <div className="flex justify-between"><span>Sales Tax (6.5%)</span><span>${bd.tax.toFixed(2)}</span></div>
           {choice === "card_on_file" && (
             <div className="flex justify-between">
