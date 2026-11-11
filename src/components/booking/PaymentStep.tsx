@@ -8,7 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { getStripe, resolveStripeEnvironment } from "@/lib/stripe";
 import { cn } from "@/lib/utils";
-import { computeBreakdown, DEPOSIT_CHARGE, type PaymentMethodChoice } from "@/lib/pricing";
+import { computeBreakdown, DEPOSIT_CHARGE, salesTaxLabel, type PaymentMethodChoice } from "@/lib/pricing";
 
 const ORDER_MINIMUM = 100;
 
@@ -156,7 +156,7 @@ export function PaymentStep({
               <span>Free</span>
             </div>
           )}
-          <div className="flex justify-between"><span>Sales Tax (6.5%)</span><span>${bd.tax.toFixed(2)}</span></div>
+          <div className="flex justify-between"><span>{salesTaxLabel()}</span><span>${bd.tax.toFixed(2)}</span></div>
           {choice === "card_on_file" && (
             <div className="flex justify-between">
               <span>Online Payment Convenience Fee (4%)</span>

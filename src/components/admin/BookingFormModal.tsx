@@ -20,7 +20,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useInventory } from "@/lib/inventory";
 import { DURATION_MULTIPLIERS, DURATION_LABELS, type DurationType, endDateFor } from "@/lib/pricing";
-import { TAX_RATE, computeBreakdown } from "@/lib/pricing";
+import { TAX_RATE, computeBreakdown, salesTaxLabel } from "@/lib/pricing";
 import { logActivity } from "@/lib/adminActivity";
 import { format } from "date-fns";
 import { CalendarClock, CreditCard, Loader2 } from "lucide-react";
@@ -575,7 +575,7 @@ export default function BookingFormModal({ open, onOpenChange, booking, onSaved 
               <span>Delivery{booking?.delivery_zone_city ? ` — ${booking.delivery_zone_city}` : ""}</span>
               <span>{shownDelivery > 0 ? `$${shownDelivery.toFixed(2)}` : "Free"}</span>
             </div>
-            <div className="flex justify-between"><span>Sales Tax (6.5%)</span><span>${shownTax.toFixed(2)}</span></div>
+            <div className="flex justify-between"><span>{salesTaxLabel(booking?.tax_rate != null && Number(booking.tax_rate) > 0 ? Number(booking.tax_rate) : undefined)}</span><span>${shownTax.toFixed(2)}</span></div>
             {shownFee > 0 && (
               <div className="flex justify-between">
                 <span>Online Payment Convenience Fee (4%)</span>
