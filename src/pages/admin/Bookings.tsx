@@ -246,6 +246,7 @@ export default function AdminBookings() {
 
   async function load() {
     setLoading(true);
+    void loadRequests();
     const { data, error } = await supabase
       .from("bookings")
       .select("*, booking_items(id, product_name, product_price, unit_price)")
