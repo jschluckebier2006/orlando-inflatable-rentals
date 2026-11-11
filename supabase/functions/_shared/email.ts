@@ -1,6 +1,7 @@
 // Shared Resend email sender + branded templates for Orlando Inflatables.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { loadSettings } from "./settings.ts";
+import { formatTaxPct } from "./pricing.ts";
 
 const GATEWAY_URL = "https://connector-gateway.lovable.dev/resend";
 const FROM_BOOKINGS = "Orlando Inflatables <bookings@orlandoinflatables.com>";
@@ -277,11 +278,6 @@ function deliveryRow(b: BookingForEmail) {
   return fee > 0
     ? `<tr><td style="color:#54657a;">${label}</td><td style="text-align:right;">${fmtMoney(fee)}</td></tr>`
     : `<tr><td style="color:#54657a;">${label}</td><td style="text-align:right;color:#1a8a4a;">FREE</td></tr>`;
-}
-
-/** "6.5%" from 0.065, "7%" from 0.07. */
-export function formatTaxPct(rate: number): string {
-  return `${Number((rate * 100).toFixed(3))}%`;
 }
 
 /**

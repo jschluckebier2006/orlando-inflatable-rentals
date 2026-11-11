@@ -1,7 +1,7 @@
 // Delivery zone + pricing rules. Run with: bun test tests/
 import { describe, expect, test } from "bun:test";
 import { readFileSync } from "node:fs";
-import { computeBreakdown } from "../supabase/functions/_shared/pricing.ts";
+import { computeBreakdown, formatTaxPct } from "../supabase/functions/_shared/pricing.ts";
 import {
   DELIVERY_ZONES,
   deliveryFeeForZone,
@@ -84,5 +84,25 @@ describe("city page delivery status", () => {
     expect(getCityDelivery("Sanford")).toEqual({ status: "fee", fee: 50 });
     expect(getCityDelivery("Kissimmee").status).toBe("call");
     expect(getCityDelivery("Nowhere").status).toBe("call");
+  });
+});
+
+describe("Sales tax label", () => {
+  test("shows the configured rate: 6.5% today", () => {
+    expect(formatTaxPct(0.065)).toBe("6.5%");
+  });
+  test("follows a changed rate", () => {
+    expect(formatTaxPct(0.07)).toBe("7%");
+    expect(formatTaxPct(0.0675)).toBe("6.75%");
+  });
+  test("no email or screen hard-codes the tax percent", () => {
+    for (const f of [
+      "supabase/functions/_shared/email.ts",
+      "src/components/booking/CheckoutModal.tsx",
+      "src/components/booking/PaymentStep.tsx",
+      "src/components/admin/BookingFormModal.tsx",
+    ]) {
+      expect(readFileSync(f, "utf8")).not.toMatch(/Sales Tax \(\d/);
+    }
   });
 });
