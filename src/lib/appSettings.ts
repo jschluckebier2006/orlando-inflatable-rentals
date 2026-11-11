@@ -21,7 +21,7 @@ const DEFAULTS: RuntimeSettings = {
   taxRate: 0.065,
   damageWaiverRate: 0.10,
   defaultDeposit: 5,
-  onlineCheckoutFeeRate: 0.04,
+  onlineCheckoutFeeRate: 0.03,
   googleReviewsCount: 68,
   googleRating: 5.0,
 };
