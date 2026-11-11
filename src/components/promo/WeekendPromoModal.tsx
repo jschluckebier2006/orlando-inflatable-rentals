@@ -5,24 +5,25 @@ import { useCart } from "@/contexts/CartContext";
 import { trackEvent } from "@/lib/analytics";
 import {
   WEEKEND_PROMO_UI_ACTIVE, PROMO_NAME, PROMO_TEL, PROMO_SMS, PROMO_PHONE_DISPLAY,
-  BAR_DISMISSED_EVENT, isBarDismissed, isModalRecentlySeen, markModalSeen, isExcludedPath,
+  BAR_DISMISSED_EVENT, isBarDismissed, isModalSeen, markModalSeen, isExcludedPath,
 } from "@/config/weekendPromo";
 
 /** Timed "Book Saturday, Get Sunday FREE" popup. Display only — phone/text bookings. */
 export function WeekendPromoModal() {
   const { pathname } = useLocation();
-  const { items, isCheckoutOpen } = useCart();
+  const { items, isCheckoutOpen, isCartOpen } = useCart();
   const [open, setOpen] = useState(false);
   const done = useRef(false); // fired or cancelled for this page load
 
   // Latest values for the suppression check at fire time.
-  const live = useRef({ pathname, itemCount: items.length, isCheckoutOpen });
-  live.current = { pathname, itemCount: items.length, isCheckoutOpen };
+  const live = useRef({ pathname, itemCount: items.length, isCheckoutOpen, isCartOpen });
+  live.current = { pathname, itemCount: items.length, isCheckoutOpen, isCartOpen };
 
   const suppressed = () =>
     isBarDismissed() ||
-    isModalRecentlySeen() ||
+    isModalSeen() ||
     live.current.isCheckoutOpen ||
+    live.current.isCartOpen ||
     live.current.itemCount > 0 ||
     isExcludedPath(live.current.pathname) ||
     live.current.pathname.startsWith("/admin");
@@ -53,8 +54,8 @@ export function WeekendPromoModal() {
     };
   }, [tryOpen]);
 
-  // Never sit on top of the reservation flow.
-  useEffect(() => { if (isCheckoutOpen) setOpen(false); }, [isCheckoutOpen]);
+  // Never sit on top of the cart drawer or the reservation flow.
+  useEffect(() => { if (isCheckoutOpen || isCartOpen) setOpen(false); }, [isCheckoutOpen, isCartOpen]);
 
   const close = useCallback(() => {
     setOpen(false);

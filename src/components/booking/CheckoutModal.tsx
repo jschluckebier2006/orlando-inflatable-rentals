@@ -26,6 +26,7 @@ import { DeliveryRequestPanel } from "./DeliveryRequestPanel";
 import { lookupZone } from "@/lib/appSettings";
 import { deliveryFeeForZone, isZoneBookableOnline } from "@/data/deliveryZones";
 import { trackEvent } from "@/lib/analytics";
+import { WeekendDealNote } from "@/components/promo/WeekendDealNote";
 
 const EVENT_TYPES = [
   "Birthday Party", "School Event", "Church Event",
@@ -264,6 +265,7 @@ export function CheckoutModal() {
                   );
                 })}
               </div>
+              <WeekendDealNote source="checkout_weekend_option" />
             </div>
 
             <div className="rounded-md bg-muted/40 p-3 space-y-2">
@@ -308,6 +310,9 @@ export function CheckoutModal() {
                   ? "Greyed-out dates mean an item is booked that day or the following morning."
                   : "Greyed-out dates are unavailable for at least one item in your cart."}
               </p>
+              {date && date.getDay() === 6 && (duration === "7hour" || duration === "overnight") && (
+                <WeekendDealNote source="checkout_saturday_pick" />
+              )}
               {conflictingItems.length > 0 && (
                 <div className="rounded-md border border-destructive/40 bg-destructive/10 p-3 text-sm flex gap-2">
                   <AlertTriangle className="h-4 w-4 text-destructive shrink-0 mt-0.5" />

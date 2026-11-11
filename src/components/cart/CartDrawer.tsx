@@ -4,6 +4,7 @@ import { Trash2, ShoppingCart } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { DURATION_LABELS, DURATION_MULTIPLIERS, DURATION_DESCRIPTIONS, type DurationType } from "@/lib/pricing";
 import { cn } from "@/lib/utils";
+import { WeekendDealNote } from "@/components/promo/WeekendDealNote";
 
 const ORDER: DurationType[] = ["7hour", "overnight", "weekend"];
 const ORDER_MINIMUM = 100;
@@ -52,8 +53,8 @@ export function CartDrawer() {
                     const active = d === duration;
                     const pct = Math.round((DURATION_MULTIPLIERS[d] - 1) * 100);
                     return (
+                      <div key={d} className="space-y-2">
                       <button
-                        key={d}
                         type="button"
                         onClick={() => setDuration(d)}
                         className={cn(
@@ -78,6 +79,8 @@ export function CartDrawer() {
                           <span className="text-sm font-semibold whitespace-nowrap">${tierTotal.toFixed(2)}</span>
                         </div>
                       </button>
+                      {d === "weekend" && <WeekendDealNote source="cart_drawer" />}
+                      </div>
                     );
                   })}
                 </div>

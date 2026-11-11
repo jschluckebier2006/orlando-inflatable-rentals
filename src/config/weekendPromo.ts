@@ -11,7 +11,6 @@ export const PROMO_SMS = "sms:+14074971840";
 const BAR_KEY = "oi_promo_bar_dismissed";
 const MODAL_KEY = "oi_promo_modal_seen";
 const BAR_DAYS = 30;
-const MODAL_DAYS = 7;
 export const BAR_DISMISSED_EVENT = "oi-promo-bar-dismissed";
 
 function readTs(key: string): number | null {
@@ -37,7 +36,9 @@ export const markBarDismissed = () => {
   writeNow(BAR_KEY);
   try { window.dispatchEvent(new Event(BAR_DISMISSED_EVENT)); } catch { /* noop */ }
 };
-export const isModalRecentlySeen = () => within(readTs(MODAL_KEY), MODAL_DAYS);
+// Popup shows at most once per visitor (per device). If storage is blocked,
+// readTs returns null and the popup is limited to once per page load instead.
+export const isModalSeen = () => readTs(MODAL_KEY) != null;
 export const markModalSeen = () => writeNow(MODAL_KEY);
 
 export const PROMO_EXCLUDED_PATHS = ["/cart", "/checkout", "/thank-you"];
