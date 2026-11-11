@@ -34,7 +34,8 @@ export function BlogPostLayout({
   return (
     <Layout>
       <SEOHead
-        title={`${title} | Orlando Inflatable Rentals Blog`}
+        title={`${title} | Orlando Inflatables`}
+        exactTitle
         description={metaDescription}
         canonical={canonicalPath}
         ogType="article"

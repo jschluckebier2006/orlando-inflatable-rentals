@@ -47,7 +47,9 @@ export function CityServicePage({ city, citySlug, serviceType, nearbyAreas, loca
   const pageSlug = isBounceHouse ? `bounce-house-rentals-${citySlug}` : `water-slide-rentals-${citySlug}`;
   
   const title = `${serviceName} Rentals ${city} FL | Orlando Inflatables`;
-  const description = `${serviceName} rentals in ${city}, FL. Premium inflatable ${serviceName.toLowerCase()}s for birthday parties, events & celebrations. ${freeCity ? "Free delivery! Call (407) 497-1840." : `Call or text (407) 497-1840 to book your ${city} date.`}`;
+  const description = freeCity
+    ? `${serviceName} rentals in ${city}, FL. Premium inflatable ${serviceName.toLowerCase()}s for birthday parties, events & celebrations. Free delivery! Call (407) 497-1840.`
+    : `${serviceName} rentals in ${city}, FL. Inflatable ${serviceName.toLowerCase()}s for birthday parties, events & celebrations. Call or text (407) 497-1840 to book your date.`;
 
   // FAQ items for schema
   const faqItems = [

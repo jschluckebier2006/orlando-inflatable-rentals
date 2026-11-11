@@ -112,6 +112,7 @@ const ChurchEvents = () => {
     <Layout>
       <SEOHead
         title="Church Event Inflatable Rentals in Orlando, FL"
+        exactTitle
         description="Church event inflatable rentals in Orlando, FL. Bounce houses, water slides & obstacle courses for festivals & family nights. Call (407) 497-1840."
         canonical="/events/church-event-inflatable-rentals-in-orlando"
       />

@@ -41,6 +41,7 @@ export default function BounceSlideComboRentals() {
     <Layout>
       <SEOHead
         title="Bounce House & Slide Combo Rentals in Orlando, FL"
+        exactTitle
         description="Double the fun with bounce house and slide combo rentals in Orlando, FL. Perfect for birthdays & parties. Free delivery in most areas. Call (407) 497-1840."
         canonical="/bounce-slide-combo-rentals"
       />

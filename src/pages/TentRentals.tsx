@@ -63,7 +63,7 @@ export default function TentRentals() {
   return (
     <Layout>
       <SEOHead
-        title="Tent Rentals in Orlando, FL | 20x20 High Peak Frame Tent | Orlando Inflatables"
+        title="20x20 Tent Rentals in Orlando, FL | Orlando Inflatables"
         description="Tent rentals Orlando: our 20x20 high peak frame tent with delivery and setup across East Orlando. Reserve by phone at 407-497-1840."
         canonical="/tent-rentals"
       />

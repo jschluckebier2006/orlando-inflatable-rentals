@@ -122,7 +122,8 @@ const BirthdayParties = () => {
     <Layout>
       <SEOHead
         title="Birthday Party Inflatable Rentals in Orlando, FL"
-        description={"Make your child's birthday unforgettable with inflatable rentals in Orlando, FL. Bounce houses, water slides & more. Free delivery in most areas. Call (407) 497-1840."}
+        exactTitle
+        description={"Make birthdays unforgettable with inflatable rentals in Orlando, FL. Bounce houses, water slides & more. Free delivery in most areas. Call (407) 497-1840."}
         canonical="/events/birthday-party-inflatable-rentals-in-orlando"
       />
       <ServiceSchema
