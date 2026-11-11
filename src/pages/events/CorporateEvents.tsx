@@ -129,7 +129,8 @@ const CorporateEvents = () => {
     <Layout>
       <SEOHead
         title="Corporate Event Inflatable Rentals in Orlando, FL"
-        description="Corporate event inflatable rentals in Orlando, FL for team building, company picnics & employee appreciation events. Free delivery in most areas. Call (407) 497-1840."
+        exactTitle
+        description="Corporate event inflatables in Orlando, FL for team building, company picnics & employee appreciation. Free delivery in most areas. Call (407) 497-1840."
         canonical="/events/corporate-event-inflatable-rentals-in-orlando"
       />
       <ServiceSchema

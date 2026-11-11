@@ -97,6 +97,7 @@ export function CityDeliveryPage({
     <Layout>
       <SEOHead
         title={metaTitle}
+        exactTitle
         description={freeCity ? metaDescription : `Bounce house and water slide rentals in ${cityName}, FL. ${callOrTextLine(cityName)}`}
         canonical={`/water-slide-and-bounce-house-rental-${citySlug}`}
         ogImage={ogImage}

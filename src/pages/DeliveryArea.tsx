@@ -14,7 +14,7 @@ const areas = [
 export default function DeliveryArea() {
   return (
     <Layout>
-      <SEOHead title="Delivery Areas | Bounce House & Water Slide Rentals in East Orlando | Orlando Inflatables" description="Orlando Inflatables delivers bounce houses & water slides to Alafaya, Avalon Park, Waterford Lakes, Bithlo, Chuluota & more in East Orlando & Orange County." canonical="/delivery-area" />
+      <SEOHead title="Delivery Areas in East Orlando | Orlando Inflatables" description="Orlando Inflatables delivers bounce houses & water slides to Alafaya, Avalon Park, Waterford Lakes, Bithlo, Chuluota & more in East Orlando & Orange County." canonical="/delivery-area" />
       <BreadcrumbSchema items={[{ name: "Delivery Areas", href: "/delivery-area" }]} />
       <section className="section-padding">
         <div className="container-page">
