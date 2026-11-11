@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/accordion";
 import { cityServiceImages, cityServiceImages2, getHeroBackground } from "@/components/home/ContentImages";
 import { ContentImageWithText } from "@/components/home/ContentImageWithText";
-import { isFreeDeliveryCity, callOrTextLine } from "@/data/serviceAreas";
+import { getCityDelivery, callOrTextLine, feeDeliveryLine } from "@/data/serviceAreas";
 import { CallOrTextLine } from "@/components/CallOrTextLine";
 
 interface CityServicePageProps {
@@ -40,7 +40,10 @@ export function CityServicePage({ city, citySlug, serviceType, nearbyAreas, loca
   const [showJotform, setShowJotform] = useState(false);
   
   const isBounceHouse = serviceType === "bounce-house";
-  const freeCity = isFreeDeliveryCity(city);
+  const delivery = getCityDelivery(city);
+  const freeCity = delivery.status === "free";
+  const feeCity = delivery.status === "fee";
+  const feeLine = feeDeliveryLine(delivery.fee); // "$50 delivery, setup included."
   const serviceName = isBounceHouse ? "Bounce House" : "Water Slide";
   const serviceNamePlural = isBounceHouse ? "Bounce Houses" : "Water Slides";
   const servicePath = isBounceHouse ? "/bounce-house-rentals" : "/water-slide-rentals";
@@ -49,18 +52,22 @@ export function CityServicePage({ city, citySlug, serviceType, nearbyAreas, loca
   const title = `${serviceName} Rentals ${city} FL | Orlando Inflatables`;
   const description = freeCity
     ? `${serviceName} rentals in ${city}, FL. Premium inflatable ${serviceName.toLowerCase()}s for birthday parties, events & celebrations. Free delivery! Call (407) 497-1840.`
+    : feeCity
+    ? `${serviceName} rentals in ${city}, FL. Inflatable ${serviceName.toLowerCase()}s for birthday parties, events & celebrations. ${feeLine} Call (407) 497-1840.`
     : `${serviceName} rentals in ${city}, FL. Inflatable ${serviceName.toLowerCase()}s for birthday parties, events & celebrations. Call or text (407) 497-1840 to book your date.`;
 
   // FAQ items for schema
   const faqItems = [
     {
       question: `How much does it cost to rent a ${serviceName.toLowerCase()} in ${city}?`,
-      answer: `${serviceName} rental prices in ${city} start at $199 for a full-day rental. Pricing varies based on the size and style you choose. ${freeCity ? `We offer competitive rates with free delivery to ${city}!` : callOrTextLine(city)}`
+      answer: `${serviceName} rental prices in ${city} start at $199 for a full-day rental. Pricing varies based on the size and style you choose. ${freeCity ? `We offer competitive rates with free delivery to ${city}!` : feeCity ? `Delivery to ${city}: ${feeLine}` : callOrTextLine(city)}`
     },
     {
       question: `Do you deliver ${serviceName.toLowerCase()}s to ${city}, FL?`,
       answer: freeCity
         ? `Yes! We provide free delivery, setup, and pickup throughout ${city} and surrounding areas. Our team handles everything so you can focus on your party.`
+        : feeCity
+        ? `Yes! ${feeLine} We also handle pickup so you can focus on your party.`
         : `Yes! ${callOrTextLine(city)} We handle setup and pickup so you can focus on your party.`
     },
     {
@@ -228,7 +235,7 @@ export function CityServicePage({ city, citySlug, serviceType, nearbyAreas, loca
                     <Truck className="h-8 w-8 text-primary" />
                     <h3 className="font-display text-xl font-bold text-foreground">{freeCity ? `Free Delivery to ${city}` : `Delivery to ${city}`}</h3>
                   </div>
-                  <p className="text-muted-foreground">{freeCity ? `We deliver, set up, and pick up at no extra charge throughout the ${city} area. Just enjoy your party!` : <CallOrTextLine city={city} />}</p>
+                  <p className="text-muted-foreground">{freeCity ? `We deliver, set up, and pick up at no extra charge throughout the ${city} area. Just enjoy your party!` : feeCity ? `${feeLine} We deliver, set up, and pick up throughout the ${city} area.` : <CallOrTextLine city={city} />}</p>
                 </CardContent>
               </Card>
 
@@ -422,7 +429,7 @@ export function CityServicePage({ city, citySlug, serviceType, nearbyAreas, loca
               Affordable {serviceName} Rental Prices in {city}
             </h2>
             <p className="text-muted-foreground leading-relaxed mb-6">
-              We believe every {city} family deserves access to premium party rentals at fair prices. {freeCity ? <>Our {serviceName.toLowerCase()} rentals include free delivery, professional setup, and pickup—no hidden fees or surprises.</> : <>Every rental includes professional setup and pickup. <CallOrTextLine city={city} /></>}
+              We believe every {city} family deserves access to premium party rentals at fair prices. {freeCity ? <>Our {serviceName.toLowerCase()} rentals include free delivery, professional setup, and pickup—no hidden fees or surprises.</> : feeCity ? <>{feeLine} Pickup is included too—no hidden fees or surprises.</> : <>Every rental includes professional setup and pickup. <CallOrTextLine city={city} /></>}
             </p>
 
             {/* H3: What's Included */}
@@ -432,7 +439,7 @@ export function CityServicePage({ city, citySlug, serviceType, nearbyAreas, loca
             <ul className="space-y-3 mb-8">
               <li className="flex items-start gap-3">
                 <Check className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
-                <span className="text-muted-foreground">{freeCity ? `Free delivery and setup to your ${city} location` : <CallOrTextLine city={city} />}</span>
+                <span className="text-muted-foreground">{freeCity ? `Free delivery and setup to your ${city} location` : feeCity ? `${feeLine.replace(/\.$/, "")} — to your ${city} location` : <CallOrTextLine city={city} />}</span>
               </li>
               <li className="flex items-start gap-3">
                 <Check className="h-5 w-5 text-primary mt-1 flex-shrink-0" />

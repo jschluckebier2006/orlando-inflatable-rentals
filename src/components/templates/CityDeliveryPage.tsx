@@ -27,7 +27,7 @@ import tablesChairsImg from "@/assets/tables-chairs-category.webp";
 import { deliveryPageImages, deliveryPageImages2, getHeroBackground } from "@/components/home/ContentImages";
 import { ContentImageWithText } from "@/components/home/ContentImageWithText";
 import { ReviewsSection } from "@/components/home/ReviewsSection";
-import { isFreeDeliveryCity, callOrTextLine } from "@/data/serviceAreas";
+import { getCityDelivery, callOrTextLine, feeDeliveryLine } from "@/data/serviceAreas";
 import { CallOrTextLine } from "@/components/CallOrTextLine";
 
 const services = [
@@ -85,7 +85,10 @@ export function CityDeliveryPage({
   ogImage,
 }: CityDeliveryPageProps) {
   const [showJotform, setShowJotform] = useState(false);
-  const freeCity = isFreeDeliveryCity(cityName);
+  const delivery = getCityDelivery(cityName);
+  const freeCity = delivery.status === "free";
+  const feeCity = delivery.status === "fee";
+  const feeLine = feeDeliveryLine(delivery.fee); // "$50 delivery, setup included."
   
   // Convert FAQs to schema format
   const faqSchemaItems = faqs.map(faq => ({
@@ -98,7 +101,7 @@ export function CityDeliveryPage({
       <SEOHead
         title={metaTitle}
         exactTitle
-        description={freeCity ? metaDescription : `Bounce house and water slide rentals in ${cityName}, FL. ${callOrTextLine(cityName)}`}
+        description={freeCity ? metaDescription : feeCity ? `Bounce house and water slide rentals in ${cityName}, FL. ${feeLine} Call (407) 497-1840 to book.` : `Bounce house and water slide rentals in ${cityName}, FL. ${callOrTextLine(cityName)}`}
         canonical={`/water-slide-and-bounce-house-rental-${citySlug}`}
         ogImage={ogImage}
       />
@@ -134,7 +137,7 @@ export function CityDeliveryPage({
               Bounce House & Water Slide Rentals in {cityName}
             </h1>
             <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto drop-shadow-md">
-              Your trusted party rental company serving {cityName} and surrounding areas. {freeCity ? "Free delivery on bounce houses, water slides, obstacle courses, and more!" : <CallOrTextLine city={cityName} />}
+              Your trusted party rental company serving {cityName} and surrounding areas. {freeCity ? "Free delivery on bounce houses, water slides, obstacle courses, and more!" : feeCity ? feeLine : <CallOrTextLine city={cityName} />}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button
@@ -386,7 +389,7 @@ export function CityDeliveryPage({
                 When you book with Orlando Inflatables for your {cityName} event, you're choosing the area's most trusted party rental company.
               </p>
               <ul className="space-y-2 text-muted-foreground">
-                {freeCity ? <li>• <strong>Free Delivery & Setup:</strong> Complimentary delivery throughout {cityName}</li> : <li>• <strong>Delivery & Setup:</strong> <CallOrTextLine city={cityName} /></li>}
+                {freeCity ? <li>• <strong>Free Delivery & Setup:</strong> Complimentary delivery throughout {cityName}</li> : feeCity ? <li>• <strong>Delivery & Setup:</strong> {feeLine}</li> : <li>• <strong>Delivery & Setup:</strong> <CallOrTextLine city={cityName} /></li>}
                 <li>• <strong>Clean & Sanitized:</strong> Every unit is thoroughly cleaned and inspected</li>
                 <li>• <strong>Licensed & Insured:</strong> Full liability coverage for your peace of mind</li>
                 <li>• <strong>On-Time Service:</strong> We arrive when promised and handle all setup</li>
