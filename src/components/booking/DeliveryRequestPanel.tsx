@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
-import { trackEvent } from "@/lib/analytics";
+import { trackEvent, trackDeliveryRequestConversion } from "@/lib/analytics";
 
 const RequestSchema = z.object({
   customer_name: z.string().trim().min(1, "Please enter your name").max(120),
@@ -108,6 +108,7 @@ export function DeliveryRequestPanel({ zip, defaults }: Props) {
       }
       trackEvent("delivery_request_submitted", { zip: d.event_zip });
       setDone(true);
+      trackDeliveryRequestConversion();
     } finally {
       setSending(false);
     }

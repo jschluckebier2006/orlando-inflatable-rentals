@@ -4,6 +4,7 @@ import { CheckCircle2, Loader2, AlertCircle, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/contexts/CartContext";
 import { supabase } from "@/integrations/supabase/client";
+import { trackBookingConversion } from "@/lib/analytics";
 
 type ReturnState = "loading" | "ok" | "pending" | "missing" | "error";
 
@@ -40,7 +41,12 @@ export default function CheckoutReturn() {
         if (cancelled) return;
         if (error) throw error;
         consecutiveErrors = 0;
-        if (data?.confirmed) { setState("ok"); return; }
+        if (data?.confirmed) {
+          setState("ok");
+          // Ads + GA4 conversion: only on a confirmed, paid booking.
+          trackBookingConversion(typeof data.booking_id === "string" ? data.booking_id : sessionId);
+          return;
+        }
         if (attempts >= maxAttempts) { setState("pending"); return; }
         schedule();
       } catch (e) {
