@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { z } from "zod";
 import { CheckCircle2, Loader2, MessageSquare, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -35,6 +35,12 @@ interface Props {
  * Shown when a ZIP can't be booked online ("call" or unlisted). Offers call,
  * text, and a short request form that's saved for the owner and emailed to them.
  */
+/** Anchor the call-ZIP note under the checkout ZIP field scrolls to. */
+export const DELIVERY_REQUEST_PANEL_ID = "delivery-request-panel";
+
+const CONTACT_KEYS = ["customer_name", "customer_phone", "customer_email"] as const;
+type ContactKey = (typeof CONTACT_KEYS)[number];
+
 export function DeliveryRequestPanel({ zip, defaults }: Props) {
   const zip5 = (zip ?? "").trim().slice(0, 5);
   const [form, setForm] = useState({
@@ -52,8 +58,23 @@ export function DeliveryRequestPanel({ zip, defaults }: Props) {
   const [done, setDone] = useState(false);
   const [failMsg, setFailMsg] = useState<string | null>(null);
 
-  const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+  // Name/phone/email follow what the customer types in the checkout form
+  // above, until they edit that field here — then their edit wins.
+  const edited = useRef<Set<ContactKey>>(new Set());
+  useEffect(() => {
+    setForm((f) => {
+      const next = { ...f };
+      for (const k of CONTACT_KEYS) {
+        if (!edited.current.has(k)) next[k] = defaults[k] ?? "";
+      }
+      return next;
+    });
+  }, [defaults.customer_name, defaults.customer_phone, defaults.customer_email]);
+
+  const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    if ((CONTACT_KEYS as readonly string[]).includes(k)) edited.current.add(k as ContactKey);
     setForm((f) => ({ ...f, [k]: e.target.value }));
+  };
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -93,7 +114,7 @@ export function DeliveryRequestPanel({ zip, defaults }: Props) {
   }
 
   return (
-    <div role="region" aria-label="Delivery request" className="rounded-md border border-primary/30 bg-primary/10 p-4 text-sm text-foreground space-y-3">
+    <div id={DELIVERY_REQUEST_PANEL_ID} role="region" aria-label="Delivery request" className="scroll-mt-4 rounded-md border border-primary/30 bg-primary/10 p-4 text-sm text-foreground space-y-3">
       <p>
         We may still be able to deliver to <strong>{zip5}</strong>. Call or text{" "}
         <a href="tel:4074971840" className="font-semibold underline whitespace-nowrap">(407) 497-1840</a>, or send a request and we'll get back to you.

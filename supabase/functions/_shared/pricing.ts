@@ -53,3 +53,8 @@ export function computeBreakdown(
     total,
   };
 }
+
+/** Percent text for a tax rate: 0.065 → "6.5%", 0.07 → "7%". Label only — no math. */
+export function formatTaxPct(rate: number): string {
+  return `${Number((rate * 100).toFixed(3))}%`;
+}

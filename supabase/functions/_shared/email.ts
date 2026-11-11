@@ -1,5 +1,7 @@
 // Shared Resend email sender + branded templates for Orlando Inflatables.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+import { loadSettings } from "./settings.ts";
+import { formatTaxPct } from "./pricing.ts";
 
 const GATEWAY_URL = "https://connector-gateway.lovable.dev/resend";
 const FROM_BOOKINGS = "Orlando Inflatables <bookings@orlandoinflatables.com>";
@@ -219,6 +221,7 @@ export interface BookingForEmail {
   damage_waiver_selected?: boolean | null;
   damage_waiver_amount?: number | null;
   tax_amount?: number | null;
+  tax_rate?: number | null;
   delivery_fee?: number | null;
   delivery_zone_city?: string | null;
   checkout_fee_amount?: number | null;
@@ -277,7 +280,18 @@ function deliveryRow(b: BookingForEmail) {
     : `<tr><td style="color:#54657a;">${label}</td><td style="text-align:right;color:#1a8a4a;">FREE</td></tr>`;
 }
 
-function totalsBlock(b: BookingForEmail) {
+/**
+ * Rate to print on the tax line: the rate stored on the booking (copied from
+ * settings when it was priced, so older bookings show what they were actually
+ * charged); falls back to the live settings rate.
+ */
+async function taxRateFor(b: BookingForEmail): Promise<number> {
+  const stored = b.tax_rate != null ? Number(b.tax_rate) : NaN;
+  if (Number.isFinite(stored) && stored > 0) return stored;
+  return (await loadSettings(admin())).taxRate;
+}
+
+function totalsBlock(b: BookingForEmail, taxRate: number) {
   const total = Number(b.total_amount ?? 0);
   const paid = Number(b.amount_paid ?? 0);
   // Trust the money, not the stored balance column — a stale balance must never
@@ -296,7 +310,7 @@ function totalsBlock(b: BookingForEmail) {
   const feeLine = Number(b.checkout_fee_amount ?? 0) > 0
     ? `<tr><td style="color:#54657a;">Online Payment Convenience Fee (4%)</td><td style="text-align:right;">${fmtMoney(b.checkout_fee_amount)}</td></tr>` : "";
   const taxLine = Number(b.tax_amount ?? 0) > 0
-    ? `<tr><td style="color:#54657a;">Sales Tax (7%)</td><td style="text-align:right;">${fmtMoney(b.tax_amount)}</td></tr>` : "";
+    ? `<tr><td style="color:#54657a;">Sales Tax (${formatTaxPct(taxRate)})</td><td style="text-align:right;">${fmtMoney(b.tax_amount)}</td></tr>` : "";
   return `<table width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;margin-top:8px;">
       ${subtotalLine}${waiverLine}${deliveryLine}${taxLine}${feeLine}
       <tr><td style="color:#54657a;"><strong>Total</strong></td><td style="text-align:right;"><strong>${fmtMoney(b.total_amount)}</strong></td></tr>
@@ -321,7 +335,7 @@ export async function customerConfirmationEmail(b: BookingForEmail, items: Booki
     phone: PHONE,
     details_block: bookingDetailsBlock(b),
     items_block: itemsTable(items),
-    totals_block: totalsBlock(b),
+    totals_block: totalsBlock(b, await taxRateFor(b)),
   }, `Your Orlando Inflatables booking #${ref} is confirmed.`);
 }
 
@@ -452,6 +466,6 @@ export async function balancePaidCustomerEmail(
     event_date: fmtDate(b.event_date),
     phone: PHONE,
     balance_paid: fmtMoney(amountCharged),
-    totals_block: totalsBlock(b),
+    totals_block: totalsBlock(b, await taxRateFor(b)),
   }, `Payment received for your Orlando Inflatables booking #${ref}.`);
 }

@@ -41,6 +41,9 @@ export const TAX_RATE = 0.065;
 export const DAMAGE_WAIVER_RATE = 0.10;
 
 export const getTaxRate = () => getSettings().taxRate;
+/** Tax line label from a rate, e.g. 0.065 → "Sales Tax (6.5%)". Defaults to the live settings rate. */
+export const salesTaxLabel = (rate: number = getTaxRate()) =>
+  `Sales Tax (${Number((rate * 100).toFixed(3))}%)`;
 export const getDamageWaiverRate = () => getSettings().damageWaiverRate;
 export const getDefaultDeposit = () => getSettings().defaultDeposit;
 export const getOnlineCheckoutFeeRate = () => getSettings().onlineCheckoutFeeRate;
