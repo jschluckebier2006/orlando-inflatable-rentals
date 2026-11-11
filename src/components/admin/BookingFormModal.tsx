@@ -575,7 +575,7 @@ export default function BookingFormModal({ open, onOpenChange, booking, onSaved 
               <span>Delivery{booking?.delivery_zone_city ? ` — ${booking.delivery_zone_city}` : ""}</span>
               <span>{shownDelivery > 0 ? `$${shownDelivery.toFixed(2)}` : "Free"}</span>
             </div>
-            <div className="flex justify-between"><span>{salesTaxLabel(booking?.tax_rate != null && Number(booking.tax_rate) > 0 ? Number(booking.tax_rate) : undefined)}</span><span>${shownTax.toFixed(2)}</span></div>
+            <div className="flex justify-between"><span>{salesTaxLabel(moneyLocked && Number(booking?.tax_rate) > 0 ? Number(booking?.tax_rate) : undefined)}</span><span>${shownTax.toFixed(2)}</span></div>
             {shownFee > 0 && (
               <div className="flex justify-between">
                 <span>Online Payment Convenience Fee (4%)</span>
