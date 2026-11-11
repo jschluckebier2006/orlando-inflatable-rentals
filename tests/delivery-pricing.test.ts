@@ -1,7 +1,7 @@
 // Delivery zone + pricing rules. Run with: bun test tests/
 import { describe, expect, test } from "bun:test";
 import { readFileSync } from "node:fs";
-import { computeBreakdown, formatTaxPct } from "../supabase/functions/_shared/pricing.ts";
+import { cardPctFromAmounts, computeBreakdown, formatTaxPct } from "../supabase/functions/_shared/pricing.ts";
 import {
   DELIVERY_ZONES,
   deliveryFeeForZone,
@@ -11,7 +11,7 @@ import {
 } from "../supabase/functions/_shared/deliveryZones.ts";
 import { getCityDelivery } from "../src/data/serviceAreas.ts";
 
-const RATES = { taxRate: 0.065, waiverRate: 0.10, checkoutFeeRate: 0.04 };
+const RATES = { taxRate: 0.065, waiverRate: 0.10, checkoutFeeRate: 0.03 };
 const zone = (zip: string) => lookupZoneIn(DELIVERY_ZONES, zip);
 
 describe("ZIP list", () => {
@@ -70,10 +70,44 @@ describe("pricing for one $209 Day Rental with damage waiver", () => {
     expect(bd.total).toBe(294.84);
   });
 
-  test("$50 fee ZIP, card on file: 4% fee on the total including delivery", () => {
+  test("free ZIP: card price $252.19, cash $244.84, cash saves $7.35", () => {
+    const card = computeBreakdown(209, true, 0, RATES, "card_on_file");
+    const cash = computeBreakdown(209, true, 0, RATES, "cash_on_delivery");
+    expect(card.total).toBe(252.19);
+    expect(cash.total).toBe(244.84);
+    expect(card.checkoutFee).toBe(7.35);
+  });
+
+  test("$50 fee ZIP: card price is 3% over the cash total including delivery", () => {
     const bd = computeBreakdown(209, true, 50, RATES, "card_on_file");
-    expect(bd.checkoutFee).toBe(11.79); // 4% of $294.84
-    expect(bd.total).toBe(306.63);
+    expect(bd.checkoutFee).toBe(8.85); // 3% of $294.84
+    expect(bd.total).toBe(303.69);
+  });
+});
+
+describe("Card price rate", () => {
+  test("code defaults are 3% in both settings files", () => {
+    for (const f of ["src/lib/appSettings.ts", "supabase/functions/_shared/settings.ts"]) {
+      expect(readFileSync(f, "utf8")).toMatch(/onlineCheckoutFeeRate: 0\.03,/);
+    }
+  });
+  test("saved bookings read back the percent they were priced at", () => {
+    expect(cardPctFromAmounts(7.35, 252.19)).toBe("3%");
+    expect(cardPctFromAmounts(11.79, 306.63)).toBe("4%"); // older 4% booking
+  });
+  test("customers never see 'convenience fee' or 'surcharge'", () => {
+    for (const f of [
+      "supabase/functions/_shared/email.ts",
+      "src/components/cart/CartDrawer.tsx",
+      "src/components/booking/CheckoutModal.tsx",
+      "src/components/booking/PaymentStep.tsx",
+      "src/components/admin/BookingFormModal.tsx",
+      "src/pages/CheckoutReturn.tsx",
+      "src/pages/FAQ.tsx",
+      "src/pages/TermsOfService.tsx",
+    ]) {
+      expect(readFileSync(f, "utf8")).not.toMatch(/convenience fee|surcharge/i);
+    }
   });
 });
 
