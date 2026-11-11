@@ -3,8 +3,10 @@
 import {
   DELIVERY_ZONES as STATIC_ZONES,
   type DeliveryZone,
-  type ZoneStatus,
+  zoneFromRow,
 } from "./deliveryZones.ts";
+
+export { lookupZoneIn } from "./deliveryZones.ts";
 
 export interface AppSettings {
   taxRate: number;
@@ -42,12 +44,7 @@ export async function loadSettings(supabase: any): Promise<AppSettings> {
     };
     if (Array.isArray(z)) {
       for (const r of z as Array<{ zip: string; city: string; fee: number; status: string }>) {
-        value.zones[r.zip] = {
-          zip: r.zip,
-          city: r.city,
-          fee: 0,
-          status: (r.status === "free" ? "free" : "call") as ZoneStatus,
-        };
+        value.zones[r.zip] = zoneFromRow(r);
       }
     }
     cache = { value, expires: Date.now() + TTL_MS };
@@ -55,11 +52,4 @@ export async function loadSettings(supabase: any): Promise<AppSettings> {
   } catch {
     return DEFAULTS;
   }
-}
-
-export function lookupZoneIn(zones: Record<string, DeliveryZone>, input: string | null | undefined): DeliveryZone | null {
-  if (!input) return null;
-  const zip = String(input).trim().slice(0, 5);
-  if (!/^\d{5}$/.test(zip)) return null;
-  return zones[zip] ?? null;
 }
