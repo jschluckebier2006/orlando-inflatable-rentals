@@ -2,7 +2,10 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "
 import { Button } from "@/components/ui/button";
 import { Trash2, ShoppingCart } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
-import { DURATION_LABELS, DURATION_MULTIPLIERS, DURATION_DESCRIPTIONS, type DurationType } from "@/lib/pricing";
+import {
+  DURATION_LABELS, DURATION_MULTIPLIERS, DURATION_DESCRIPTIONS, type DurationType,
+  computeBreakdown, formatPct, getDamageWaiverRate, getOnlineCheckoutFeeRate, getTaxRate,
+} from "@/lib/pricing";
 import { cn } from "@/lib/utils";
 import { WeekendDealNote } from "@/components/promo/WeekendDealNote";
 
@@ -89,18 +92,39 @@ export function CartDrawer() {
           )}
         </div>
 
-        {items.length > 0 && (
+        {items.length > 0 && (() => {
+          // Estimate with the damage waiver on (it's pre-selected at checkout) and
+          // delivery left out — the ZIP sets it at checkout. Cash price.
+          const est = computeBreakdown(total, true, 0, "cash_on_delivery");
+          return (
           <div className="border-t border-border pt-4 space-y-3">
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">Subtotal ({DURATION_LABELS[duration]})</span>
-              <span className="font-semibold text-foreground">${total.toFixed(2)}</span>
-            </div>
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">Delivery</span>
-              <span className="text-foreground">Set by your ZIP at checkout</span>
-            </div>
-            <p className="text-xs text-muted-foreground">Free delivery in most areas, $50 for some outlying ZIPs.</p>
-            <p className="text-xs text-muted-foreground">+6.5% sales tax. Optional 4% convenience fee if paid online by card — choose cash on delivery to skip it.</p>
+            <dl className="space-y-1.5 text-sm" aria-label="Estimated total">
+              <div className="flex items-start justify-between gap-3">
+                <dt className="text-muted-foreground">Rental ({DURATION_LABELS[duration]})</dt>
+                <dd className="text-foreground whitespace-nowrap">${est.subtotal.toFixed(2)}</dd>
+              </div>
+              <div className="flex items-start justify-between gap-3">
+                <dt className="text-muted-foreground shrink-0">Delivery</dt>
+                <dd className="text-foreground text-right text-xs leading-snug">
+                  Set by your ZIP at checkout (free in most areas, $50 for some outlying ZIPs)
+                </dd>
+              </div>
+              <div className="flex items-start justify-between gap-3">
+                <dt className="text-muted-foreground">Damage waiver ({formatPct(getDamageWaiverRate())}, recommended)</dt>
+                <dd className="text-foreground whitespace-nowrap">${est.damageWaiver.toFixed(2)}</dd>
+              </div>
+              <div className="flex items-start justify-between gap-3">
+                <dt className="text-muted-foreground">Sales tax ({formatPct(getTaxRate())})</dt>
+                <dd className="text-foreground whitespace-nowrap">${est.tax.toFixed(2)}</dd>
+              </div>
+              <div className="flex items-start justify-between gap-3 border-t border-border pt-1.5 font-semibold">
+                <dt className="text-foreground">Estimated total (cash)</dt>
+                <dd className="text-foreground whitespace-nowrap" data-testid="cart-estimated-total">${est.total.toFixed(2)}</dd>
+              </div>
+            </dl>
+            <p className="text-xs text-muted-foreground">
+              Paying by card? Card price is {formatPct(getOnlineCheckoutFeeRate())} more. Secure your date with a $5 deposit.
+            </p>
             {total < ORDER_MINIMUM && (
               <p className="text-sm font-medium text-destructive text-center">
                 Order minimum is ${ORDER_MINIMUM}. Please add ${(ORDER_MINIMUM - total).toFixed(2)} more to continue.
@@ -114,9 +138,9 @@ export function CartDrawer() {
             >
               Check Availability & Reserve
             </Button>
-            <p className="text-xs text-muted-foreground text-center">Secure your date with just a $5 deposit — no full payment required now.</p>
           </div>
-        )}
+          );
+        })()}
       </SheetContent>
     </Sheet>
   );

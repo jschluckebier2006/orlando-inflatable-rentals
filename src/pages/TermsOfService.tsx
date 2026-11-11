@@ -28,8 +28,8 @@ export default function TermsOfService() {
             </h2>
             <p className="text-muted-foreground leading-relaxed mb-6">
               A deposit confirms your reservation and is credited toward your balance. The balance
-              is due on or before the day of delivery. Card payments may include an online payment
-              convenience fee, which is displayed before you confirm. Applicable Florida sales tax
+              is due on or before the day of delivery. Card payments are charged our card price; paying
+              cash on delivery gets the lower cash price. Both prices are shown before you confirm. Applicable Florida sales tax
               is added to your order.
             </p>
 

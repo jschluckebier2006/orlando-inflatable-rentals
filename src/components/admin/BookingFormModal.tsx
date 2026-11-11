@@ -20,7 +20,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useInventory } from "@/lib/inventory";
 import { DURATION_MULTIPLIERS, DURATION_LABELS, type DurationType, endDateFor } from "@/lib/pricing";
-import { TAX_RATE, computeBreakdown, salesTaxLabel } from "@/lib/pricing";
+import { TAX_RATE, computeBreakdown, salesTaxLabel, formatPct, getOnlineCheckoutFeeRate, cardPctFromAmounts } from "@/lib/pricing";
 import { logActivity } from "@/lib/adminActivity";
 import { format } from "date-fns";
 import { CalendarClock, CreditCard, Loader2 } from "lucide-react";
