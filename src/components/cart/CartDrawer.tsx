@@ -92,6 +92,11 @@ export function CartDrawer() {
               <span className="text-muted-foreground">Subtotal ({DURATION_LABELS[duration]})</span>
               <span className="font-semibold text-foreground">${total.toFixed(2)}</span>
             </div>
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground">Delivery</span>
+              <span className="text-foreground">Set by your ZIP at checkout</span>
+            </div>
+            <p className="text-xs text-muted-foreground">Free delivery in most areas, $50 for some outlying ZIPs.</p>
             <p className="text-xs text-muted-foreground">+6.5% sales tax. Optional 4% convenience fee if paid online by card — choose cash on delivery to skip it.</p>
             {total < ORDER_MINIMUM && (
               <p className="text-sm font-medium text-destructive text-center">

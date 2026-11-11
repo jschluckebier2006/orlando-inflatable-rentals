@@ -61,10 +61,11 @@ export interface PriceBreakdown {
 }
 
 /**
- * Compute the full price breakdown.
- * - 4% Online Payment Convenience Fee applies ONLY when paymentChoice === 'card_on_file'.
- * - The fee is taxable when applied.
- * - Tax applies to (subtotal + waiver + delivery + fee) per FL sales tax law.
+ * Compute the full price breakdown. Mirrors supabase/functions/_shared/pricing.ts.
+ * - Damage waiver: % of the rental subtotal only (never the delivery fee).
+ * - Sales tax: on rentals (subtotal + waiver) only — the delivery fee is not taxed.
+ * - 4% Online Payment Convenience Fee applies ONLY when paymentChoice === 'card_on_file',
+ *   on the full pre-fee total including delivery and tax. The fee itself is not taxed.
  */
 export function computeBreakdown(
   subtotal: number,
@@ -75,19 +76,14 @@ export function computeBreakdown(
   const taxRate = getTaxRate();
   const waiverRate = getDamageWaiverRate();
   const feeRate = getOnlineCheckoutFeeRate();
-  const sub = Math.round(subtotal * 100) / 100;
-  const damageWaiver = waiverSelected ? Math.round(sub * waiverRate * 100) / 100 : 0;
-  const delivery = Math.round(Math.max(0, deliveryFee) * 100) / 100;
-  const preFee = Math.round((sub + damageWaiver + delivery) * 100) / 100;
-  // Tax is computed on (subtotal + waiver + delivery). The convenience fee
-  // is NOT taxed — it's applied as a processing surcharge on the full
-  // pre-fee total (including tax), mirroring how Stripe charges its fee.
-  const taxableBase = preFee;
-  const tax = Math.round(taxableBase * taxRate * 100) / 100;
-  const preFeeTotal = Math.round((preFee + tax) * 100) / 100;
-  const checkoutFee = paymentChoice === "card_on_file"
-    ? Math.round(preFeeTotal * feeRate * 100) / 100
-    : 0;
-  const total = Math.round((preFeeTotal + checkoutFee) * 100) / 100;
+  const r = (n: number) => Math.round(n * 100) / 100;
+  const sub = r(subtotal);
+  const damageWaiver = waiverSelected ? r(sub * waiverRate) : 0;
+  const delivery = r(Math.max(0, deliveryFee));
+  const taxableBase = r(sub + damageWaiver);
+  const tax = r(taxableBase * taxRate);
+  const preFeeTotal = r(taxableBase + delivery + tax);
+  const checkoutFee = paymentChoice === "card_on_file" ? r(preFeeTotal * feeRate) : 0;
+  const total = r(preFeeTotal + checkoutFee);
   return { subtotal: sub, damageWaiver, deliveryFee: delivery, checkoutFee, taxableBase, tax, total };
 }

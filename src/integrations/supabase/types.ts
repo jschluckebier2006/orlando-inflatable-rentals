@@ -431,6 +431,48 @@ export type Database = {
         }
         Relationships: []
       }
+      delivery_requests: {
+        Row: {
+          created_at: string
+          customer_email: string
+          customer_name: string
+          customer_phone: string
+          event_date: string | null
+          event_zip: string
+          id: string
+          items: string[]
+          notes: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          customer_email: string
+          customer_name: string
+          customer_phone: string
+          event_date?: string | null
+          event_zip: string
+          id?: string
+          items?: string[]
+          notes?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          customer_email?: string
+          customer_name?: string
+          customer_phone?: string
+          event_date?: string | null
+          event_zip?: string
+          id?: string
+          items?: string[]
+          notes?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       delivery_zones: {
         Row: {
           city: string

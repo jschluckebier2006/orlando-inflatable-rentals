@@ -3,6 +3,10 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { JotformModal } from "@/components/JotformModal";
+import { isFreeDeliveryCity } from "@/data/serviceAreas";
+
+// Christmas's own delivery sentences follow its status in serviceAreas.ts.
+const FREE = isFreeDeliveryCity("Christmas");
 
 const nearbyAreas = [
   { name: "Bithlo", slug: "bithlo" },
@@ -18,7 +22,9 @@ const faqs = [
   },
   {
     question: "How much does a bounce house rental cost in Christmas, FL?",
-    answer: "Bounce house rentals in Christmas start at $199 for a full-day rental. We deliver to Christmas — call or text (407) 497-1840 to book your date. Larger water slides and combo units are also available at competitive rates.",
+    answer: FREE
+      ? "Bounce house rentals in Christmas start at $199 for a full-day rental. All prices include free delivery to Christmas—no extra mileage charges. Larger water slides and combo units are also available at competitive rates."
+      : "Bounce house rentals in Christmas start at $199 for a full-day rental. We deliver to Christmas — call or text (407) 497-1840 to book your date. Larger water slides and combo units are also available at competitive rates.",
   },
   {
     question: "Can you set up near Fort Christmas Historical Park?",
@@ -34,7 +40,9 @@ const faqs = [
   },
   {
     question: "Is there an extra delivery charge to Christmas?",
-    answer: "We deliver to Christmas — call or text (407) 497-1840 to book your date, and we'll confirm everything for your event by phone.",
+    answer: FREE
+      ? "No! Delivery to Christmas is included free with your rental. We serve all of East Orange County without additional delivery fees, including the Christmas and surrounding rural areas."
+      : "We deliver to Christmas — call or text (407) 497-1840 to book your date, and we'll confirm everything for your event by phone.",
   },
   {
     question: "How far in advance should I book for a Christmas, FL party?",
@@ -279,7 +287,7 @@ export default function ChristmasDelivery() {
         cityName="Christmas"
         citySlug="christmas"
         metaTitle="Bounce House & Water Slide Rentals in Christmas, FL"
-        metaDescription="Bounce house and water slide rentals in Christmas, FL. We deliver to Christmas — call or text (407) 497-1840 to book your date."
+        metaDescription="Bounce house and water slide rentals in Christmas, FL. Free delivery & setup to Christmas from Orlando Inflatables. Call (407) 497-1840 to book."
         nearbyAreas={nearbyAreas}
         ogImage="/og-images/og-christmas.jpg"
         cityWikipediaUrl="https://en.wikipedia.org/wiki/Christmas,_Florida"

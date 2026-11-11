@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { format, addDays } from "date-fns";
-import { CalendarIcon, Check, Loader2, AlertTriangle, Trash2, Phone, MessageSquare } from "lucide-react";
+import { CalendarIcon, Check, Loader2, AlertTriangle, Trash2 } from "lucide-react";
 import {
   Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle,
 } from "@/components/ui/dialog";
@@ -22,7 +22,9 @@ import {
 } from "@/lib/pricing";
 import { PaymentStep } from "./PaymentStep";
 import { ZipFeeBadge } from "./ZipFeeBadge";
-import { lookupZone } from "@/data/deliveryZones";
+import { DeliveryRequestPanel } from "./DeliveryRequestPanel";
+import { lookupZone } from "@/lib/appSettings";
+import { deliveryFeeForZone, isZoneBookableOnline } from "@/data/deliveryZones";
 import { trackEvent } from "@/lib/analytics";
 
 const EVENT_TYPES = [
@@ -81,9 +83,10 @@ export function CheckoutModal() {
 
   // Auto-applied delivery zone, derived from the entered ZIP.
   const zone = useMemo(() => lookupZone(form.event_zip), [form.event_zip]);
-  const deliveryFee = 0; // Delivery is always free online; other ZIPs must call or text.
+  // Display only — the server re-derives the fee from the ZIP when it prices the booking.
+  const zipBookable = isZoneBookableOnline(zone);
+  const deliveryFee = zipBookable ? deliveryFeeForZone(zone) : 0;
   const zoneCity = zone?.city ?? null;
-  const zipBookable = !!zone && zone.status === "free";
   const zipComplete = /^\d{5}/.test((form.event_zip ?? "").trim());
   const zipNeedsCall = zipComplete && !zipBookable;
   const lastCallZip = useRef<string | null>(null);
@@ -535,11 +538,14 @@ export function CheckoutModal() {
                     {damageWaiver && (
                       <div className="flex justify-between"><span>Damage Waiver (10%)</span><span>${bd.damageWaiver.toFixed(2)}</span></div>
                     )}
-                    {zipBookable && zoneCity ? (
-                      <div className="flex justify-between text-green-700 dark:text-green-400">
-                        <span>Delivery — {zoneCity}</span>
-                        <span>FREE</span>
-                      </div>
+                    {zipBookable ? (
+                      deliveryFee > 0 ? (
+                        <div className="flex justify-between"><span>Delivery — {zoneCity}</span><span>${deliveryFee.toFixed(2)}</span></div>
+                      ) : (
+                        <div className="flex justify-between text-green-700 dark:text-green-400"><span>Delivery — {zoneCity}</span><span>Free</span></div>
+                      )
+                    ) : !zipComplete ? (
+                      <div className="flex justify-between text-muted-foreground"><span>Delivery</span><span>Enter your ZIP</span></div>
                     ) : null}
                     <div className="flex justify-between"><span>Sales Tax (6.5%)</span><span>${bd.tax.toFixed(2)}</span></div>
                     <div className="flex justify-between font-semibold text-base pt-1"><span>Total</span><span>${bd.total.toFixed(2)}</span></div>
@@ -554,22 +560,18 @@ export function CheckoutModal() {
 
             {zipNeedsCall ? (
               <div className="space-y-3 pt-2">
-                <div role="alert" className="rounded-md border border-primary/30 bg-primary/10 p-4 text-sm text-foreground">
-                  <p className="font-semibold text-base mb-1">We deliver to your area!</p>
-                  <p>
-                    This ZIP is just outside our standard delivery zone, so we book it personally.
-                    Call or text us at <a href="tel:+14074971840" className="font-semibold underline">(407) 497-1840</a> and
-                    we'll get you taken care of.
-                  </p>
-                  <div className="mt-3 grid grid-cols-2 gap-2">
-                    <Button asChild className="bg-secondary hover:bg-secondary/90 text-secondary-foreground">
-                      <a href="tel:+14074971840"><Phone className="h-4 w-4 mr-1" />Call</a>
-                    </Button>
-                    <Button asChild variant="outline">
-                      <a href="sms:+14074971840"><MessageSquare className="h-4 w-4 mr-1" />Text</a>
-                    </Button>
-                  </div>
-                </div>
+                <DeliveryRequestPanel
+                  key={form.event_zip.trim().slice(0, 5)}
+                  zip={form.event_zip}
+                  defaults={{
+                    customer_name: form.customer_name,
+                    customer_phone: form.customer_phone,
+                    customer_email: form.customer_email,
+                    event_date: date ? format(date, "yyyy-MM-dd") : "",
+                    items: items.map((i) => i.name),
+                    notes: form.notes,
+                  }}
+                />
                 <Button variant="outline" onClick={() => setStep(2)}>Back</Button>
               </div>
             ) : (

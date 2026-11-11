@@ -17,3 +17,6 @@ verify_jwt = false
 
 [functions.get-payments-config]
 verify_jwt = false
+
+[functions.submit-delivery-request]
+verify_jwt = false

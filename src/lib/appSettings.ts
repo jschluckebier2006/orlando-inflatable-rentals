@@ -4,7 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 import {
   DELIVERY_ZONES as STATIC_ZONES,
   type DeliveryZone,
-  type ZoneStatus,
+  lookupZoneIn,
+  zoneFromRow,
 } from "@/data/deliveryZones";
 
 interface RuntimeSettings {
@@ -26,7 +27,7 @@ const DEFAULTS: RuntimeSettings = {
 };
 
 let current: RuntimeSettings = { ...DEFAULTS };
-let zonesOverlay: Record<string, DeliveryZone> = {};
+let liveZones: Record<string, DeliveryZone> | null = null;
 let hydrated = false;
 const listeners = new Set<() => void>();
 
@@ -35,8 +36,15 @@ export function getSettings(): RuntimeSettings {
 }
 
 export function getRuntimeZones(): Record<string, DeliveryZone> {
-  // Live DB rows win over static seeds, so admin edits show up immediately.
-  return hydrated ? { ...STATIC_ZONES, ...zonesOverlay } : STATIC_ZONES;
+  // The live table is the authority once loaded (admin edits show up
+  // immediately, and a removed ZIP falls back to "call"). The compiled list
+  // only covers the moment before the table loads.
+  return hydrated && liveZones ? liveZones : STATIC_ZONES;
+}
+
+/** Look up a zone by raw user input (handles ZIP+4, whitespace, etc.). Unknown = null (call). */
+export function lookupZone(input: string | null | undefined): DeliveryZone | null {
+  return lookupZoneIn(getRuntimeZones(), input);
 }
 
 export function subscribeAppSettings(fn: () => void) {
@@ -71,17 +79,12 @@ export async function loadAppSettings(): Promise<void> {
         googleRating: Number(g.rating) || DEFAULTS.googleRating,
       };
     }
-    if (Array.isArray(z)) {
+    if (Array.isArray(z) && z.length > 0) {
       const map: Record<string, DeliveryZone> = {};
       for (const r of z as Array<{ zip: string; city: string; fee: number; status: string }>) {
-        map[r.zip] = {
-          zip: r.zip,
-          city: r.city,
-          fee: 0,
-          status: (r.status === "free" ? "free" : "call") as ZoneStatus,
-        };
+        map[r.zip] = zoneFromRow(r);
       }
-      zonesOverlay = map;
+      liveZones = map;
     }
     hydrated = true;
     emit();

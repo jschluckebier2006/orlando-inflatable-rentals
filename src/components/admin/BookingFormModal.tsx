@@ -69,6 +69,7 @@ export interface BookingFormBooking {
   tax_rate?: number | null;
   tax_amount?: number | null;
   delivery_fee?: number | null;
+  delivery_zone_city?: string | null;
   checkout_fee_amount?: number | null;
   balance_due?: number | null;
   payment_method_choice?: "card_on_file" | "cash_on_delivery" | null;
@@ -570,9 +571,10 @@ export default function BookingFormModal({ open, onOpenChange, booking, onSaved 
             {shownWaiver > 0 && (
               <div className="flex justify-between"><span>Damage Waiver (10%)</span><span>${shownWaiver.toFixed(2)}</span></div>
             )}
-            {shownDelivery > 0 && (
-              <div className="flex justify-between"><span>Delivery</span><span>${shownDelivery.toFixed(2)}</span></div>
-            )}
+            <div className="flex justify-between">
+              <span>Delivery{booking?.delivery_zone_city ? ` — ${booking.delivery_zone_city}` : ""}</span>
+              <span>{shownDelivery > 0 ? `$${shownDelivery.toFixed(2)}` : "Free"}</span>
+            </div>
             <div className="flex justify-between"><span>Sales Tax (6.5%)</span><span>${shownTax.toFixed(2)}</span></div>
             {shownFee > 0 && (
               <div className="flex justify-between">

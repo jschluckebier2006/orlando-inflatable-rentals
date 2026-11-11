@@ -1,5 +1,5 @@
 import { Helmet } from "react-helmet-async";
-import { SCHEMA_AREA_SERVED, isFreeDeliveryCity } from "@/data/serviceAreas";
+import { SCHEMA_AREA_SERVED, getCityDelivery, feeDeliveryLine } from "@/data/serviceAreas";
 
 interface LocalBusinessSchemaProps {
   pageName?: string;
@@ -17,10 +17,15 @@ export function LocalBusinessSchema({ pageName, pageDescription, cityName, cityS
     : baseUrl;
 
   // Enhanced description for city pages
-  const freeCity = isFreeDeliveryCity(cityName);
+  const cityDelivery = getCityDelivery(cityName);
   const cityBookingLine = "Call or text (407) 497-1840 to book your date.";
+  // Three-way delivery sentence: free / fee / call.
+  const cityDeliverySentence =
+    cityDelivery.status === "free" ? "Free delivery and setup included."
+    : cityDelivery.status === "fee" ? feeDeliveryLine(cityDelivery.fee)
+    : cityBookingLine;
   const description = cityName
-    ? `Orlando Inflatables provides professional bounce house and water slide rentals in ${cityName}, Florida. Serving ${cityName} with clean, safe party inflatables for birthday parties, school events, church events, and community celebrations. ${freeCity ? "Free delivery and setup included." : cityBookingLine}`
+    ? `Orlando Inflatables provides professional bounce house and water slide rentals in ${cityName}, Florida. Serving ${cityName} with clean, safe party inflatables for birthday parties, school events, church events, and community celebrations. ${cityDeliverySentence}`
     : pageDescription || "Orlando Inflatables is your one-stop shop for bounce house and water slide rentals in East Orlando, Orange County, and Central Florida. We offer bounce houses, water slides, obstacle courses, interactive games, concessions, and table & chair rentals for birthday parties, school events, church events, corporate events, and graduations.";
 
   const schema = {
@@ -85,7 +90,11 @@ export function LocalBusinessSchema({ pageName, pageDescription, cityName, cityS
             "@type": "Service",
             name: "Bounce House Rental",
             description: cityName 
-              ? (freeCity ? `Professional bounce house rentals in ${cityName}, FL with free delivery and setup` : `Professional bounce house rentals in ${cityName}, FL with professional setup. ${cityBookingLine}`)
+              ? (cityDelivery.status === "free"
+                  ? `Professional bounce house rentals in ${cityName}, FL with free delivery and setup`
+                  : cityDelivery.status === "fee"
+                    ? `Professional bounce house rentals in ${cityName}, FL. ${feeDeliveryLine(cityDelivery.fee)}`
+                    : `Professional bounce house rentals in ${cityName}, FL with professional setup. ${cityBookingLine}`)
               : "Professional bounce house rentals with free delivery in most areas and professional setup"
           }
         },

@@ -268,6 +268,15 @@ function bookingDetailsBlock(b: BookingForEmail) {
     </table>`;
 }
 
+/** Delivery as its own line: "$50.00" for fee ZIPs, "FREE" otherwise. */
+function deliveryRow(b: BookingForEmail) {
+  const fee = Number(b.delivery_fee ?? 0);
+  const label = `Delivery${b.delivery_zone_city ? ` — ${escapeHtml(b.delivery_zone_city)}` : ""}`;
+  return fee > 0
+    ? `<tr><td style="color:#54657a;">${label}</td><td style="text-align:right;">${fmtMoney(fee)}</td></tr>`
+    : `<tr><td style="color:#54657a;">${label}</td><td style="text-align:right;color:#1a8a4a;">FREE</td></tr>`;
+}
+
 function totalsBlock(b: BookingForEmail) {
   const total = Number(b.total_amount ?? 0);
   const paid = Number(b.amount_paid ?? 0);
@@ -283,11 +292,7 @@ function totalsBlock(b: BookingForEmail) {
     ? `<tr><td style="color:#54657a;">Subtotal</td><td style="text-align:right;">${fmtMoney(b.subtotal)}</td></tr>` : "";
   const waiverLine = b.damage_waiver_selected && Number(b.damage_waiver_amount ?? 0) > 0
     ? `<tr><td style="color:#54657a;">Damage Waiver (10%)</td><td style="text-align:right;">${fmtMoney(b.damage_waiver_amount)}</td></tr>` : "";
-  const deliveryLine = Number(b.delivery_fee ?? 0) > 0
-    ? `<tr><td style="color:#54657a;">Delivery${b.delivery_zone_city ? ` — ${escapeHtml(b.delivery_zone_city)}` : ""}</td><td style="text-align:right;">${fmtMoney(b.delivery_fee)}</td></tr>`
-    : b.delivery_zone_city
-      ? `<tr><td style="color:#54657a;">Delivery — ${escapeHtml(b.delivery_zone_city)}</td><td style="text-align:right;color:#1a8a4a;">FREE</td></tr>`
-      : "";
+  const deliveryLine = deliveryRow(b);
   const feeLine = Number(b.checkout_fee_amount ?? 0) > 0
     ? `<tr><td style="color:#54657a;">Online Payment Convenience Fee (4%)</td><td style="text-align:right;">${fmtMoney(b.checkout_fee_amount)}</td></tr>` : "";
   const taxLine = Number(b.tax_amount ?? 0) > 0
@@ -329,7 +334,8 @@ export async function adminNewBookingEmail(b: BookingForEmail, items: BookingIte
     customer_phone: escapeHtml(b.customer_phone),
     event_date: fmtDate(b.event_date),
     details_block: bookingDetailsBlock(b),
-    items_list: itemsList(items),
+    items_list: itemsList(items) +
+      `<table width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;margin:0 0 12px;">${deliveryRow(b)}</table>`,
     total: fmtMoney(b.total_amount),
     paid: fmtMoney(b.amount_paid),
     balance: fmtMoney(b.balance_due),

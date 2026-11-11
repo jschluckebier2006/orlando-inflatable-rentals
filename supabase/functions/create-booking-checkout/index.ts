@@ -2,6 +2,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { z } from "https://esm.sh/zod@3.23.8";
 import { type StripeEnv, createStripeClient } from "../_shared/stripe.ts";
 import { loadSettings, lookupZoneIn } from "../_shared/settings.ts";
+import { deliveryFeeForZone, isZoneBookableOnline } from "../_shared/deliveryZones.ts";
 import { computeBreakdown, DEPOSIT_NET, DEPOSIT_CHARGE } from "../_shared/pricing.ts";
 import { rentalEndDate } from "../_shared/rentalDates.ts";
 
@@ -34,11 +35,14 @@ const PayloadSchema = z.object({
   items: z.array(ItemSchema).min(1).max(20),
   damage_waiver: z.boolean().optional().default(true),
   payment_choice: z.enum(["card_on_file", "cash_on_delivery"]),
-  // Optional client-supplied delivery fee — server re-validates from the zip.
+  // Client-supplied delivery fee is IGNORED — the server derives it from the ZIP.
   delivery_fee: z.number().nonnegative().max(500).optional(),
   delivery_zone_city: z.string().max(120).optional().nullable(),
   return_url: z.string().url(),
   environment: z.enum(["sandbox", "live"]),
+  // Price check only: validate + price exactly like a real checkout, then stop
+  // before Stripe or the database are touched. Nothing is charged or saved.
+  quote_only: z.boolean().optional(),
 });
 
 const SERVER_MULT: Record<string, number> = { "7hour": 1.0, overnight: 1.25, weekend: 1.6 };
@@ -65,14 +69,15 @@ Deno.serve(async (req) => {
 
     // ---- Server-side delivery-zone validation (defense in depth) ----
     const zone = lookupZoneIn(settings.zones, d.event_zip);
-    // Only known free ZIPs can book online. Call ZIPs and unknown ZIPs are refused.
-    if (!zone || zone.status !== "free") {
+    // Only known "free" and "fee" ZIPs can book online. Call ZIPs and unknown
+    // ZIPs are refused — never default to free or fee.
+    if (!zone || !isZoneBookableOnline(zone)) {
       return new Response(JSON.stringify({
-        error: "This ZIP is just outside our standard delivery zone, so we book it personally. Please call or text (407) 497-1840.",
+        error: "We may still be able to deliver to that ZIP. Call or text (407) 497-1840, or send a request and we'll get back to you.",
       }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
-    // Delivery is always free for online bookings.
-    const deliveryFee = 0;
+    // Delivery fee comes from the ZIP's zone (0 for free ZIPs), never the browser.
+    const deliveryFee = deliveryFeeForZone(zone);
     const deliveryZoneCity = zone.city;
 
     // ---- Date range validation (defense in depth) ----
@@ -150,6 +155,18 @@ Deno.serve(async (req) => {
     const total = bd.total;
     const amountToCharge = DEPOSIT_CHARGE;
     const lineLabel = "Reservation deposit";
+
+    if (d.quote_only) {
+      return new Response(JSON.stringify({
+        quote_only: true,
+        zip: zone.zip,
+        zone_status: zone.status,
+        delivery_zone_city: deliveryZoneCity,
+        breakdown: bd,
+        total,
+        amountCharged: amountToCharge,
+      }), { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
 
     const stripe = createStripeClient(d.environment as StripeEnv);
 
@@ -256,6 +273,7 @@ Deno.serve(async (req) => {
       sessionId: session.id,
       amountCharged: amountToCharge,
       total,
+      breakdown: bd,
     }), {
       status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });

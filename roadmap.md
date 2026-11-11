@@ -7,5 +7,6 @@
 - [x] Answered: customer record, email history and audit snapshot survive a purge (optional customer removal deferred)
 
 - [x] Free/Call delivery zones (all 4 copies)
+- [x] Three-state delivery zones (free / $50 fee / call) + 59-ZIP list + delivery request form
 - [x] Weekend promo bar + timed popup (phone/text only)
 - [ ] Service-area wording — waiting on your city-by-city decisions
