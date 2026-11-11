@@ -15,6 +15,7 @@ import { LaborDayPromoModal } from "./components/promo/LaborDayPromoModal";
 import { WeekendPromoModal } from "./components/promo/WeekendPromoModal";
 import { useEffect } from "react";
 import { loadAppSettings } from "./lib/appSettings";
+import { installCallTextTapTracking } from "./lib/analytics";
 
 // Lazy-load every other route so each page only ships its own JS
 const Rentals = lazy(() => import("./pages/Rentals"));
@@ -103,6 +104,7 @@ const RouteFallback = () => <div className="min-h-screen" aria-hidden="true" />;
 
 const App = () => {
   useEffect(() => { loadAppSettings(); }, []);
+  useEffect(() => installCallTextTapTracking(), []);
   return (
     <HelmetProvider>
     <QueryClientProvider client={queryClient}>

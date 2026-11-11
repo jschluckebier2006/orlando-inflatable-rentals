@@ -30,7 +30,7 @@ Deno.serve(async (req) => {
       .eq("stripe_session_id", session_id)
       .maybeSingle();
     if (existing?.id) {
-      return new Response(JSON.stringify({ confirmed: true }), {
+      return new Response(JSON.stringify({ confirmed: true, booking_id: existing.id }), {
         status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
@@ -62,7 +62,7 @@ Deno.serve(async (req) => {
         metadata: session.metadata as any,
       });
       const confirmed = result.status === "created" || result.status === "already_exists";
-      return new Response(JSON.stringify({ confirmed, reason: result.status }), {
+      return new Response(JSON.stringify({ confirmed, reason: result.status, booking_id: confirmed ? result.booking_id ?? null : null }), {
         status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     } catch (stripeErr) {
