@@ -1,7 +1,7 @@
 // Shared Resend email sender + branded templates for Orlando Inflatables.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { loadSettings } from "./settings.ts";
-import { formatTaxPct } from "./pricing.ts";
+import { cardPctFromAmounts, formatTaxPct } from "./pricing.ts";
 
 const GATEWAY_URL = "https://connector-gateway.lovable.dev/resend";
 const FROM_BOOKINGS = "Orlando Inflatables <bookings@orlandoinflatables.com>";
@@ -307,13 +307,21 @@ function totalsBlock(b: BookingForEmail, taxRate: number) {
   const waiverLine = b.damage_waiver_selected && Number(b.damage_waiver_amount ?? 0) > 0
     ? `<tr><td style="color:#54657a;">Damage Waiver (10%)</td><td style="text-align:right;">${fmtMoney(b.damage_waiver_amount)}</td></tr>` : "";
   const deliveryLine = deliveryRow(b);
-  const feeLine = Number(b.checkout_fee_amount ?? 0) > 0
-    ? `<tr><td style="color:#54657a;">Online Payment Convenience Fee (4%)</td><td style="text-align:right;">${fmtMoney(b.checkout_fee_amount)}</td></tr>` : "";
+  // Card bookings: show the cash price, then the total as the card price.
+  // The percent is read back from the booking's own amounts (older bookings were 4%).
+  const cardDiff = Number(b.checkout_fee_amount ?? 0);
+  const isCardPrice = cardDiff > 0;
+  const cardPct = isCardPrice ? cardPctFromAmounts(cardDiff, total) : null;
+  const cashPriceLine = isCardPrice
+    ? `<tr><td style="color:#54657a;">Cash price</td><td style="text-align:right;">${fmtMoney(total - cardDiff)}</td></tr>` : "";
+  const totalLabel = isCardPrice
+    ? `Total (card price${cardPct ? `, +${cardPct}` : ""})`
+    : b.payment_method_choice === "cash_on_delivery" ? "Total (cash price)" : "Total";
   const taxLine = Number(b.tax_amount ?? 0) > 0
     ? `<tr><td style="color:#54657a;">Sales Tax (${formatTaxPct(taxRate)})</td><td style="text-align:right;">${fmtMoney(b.tax_amount)}</td></tr>` : "";
   return `<table width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;margin-top:8px;">
-      ${subtotalLine}${waiverLine}${deliveryLine}${taxLine}${feeLine}
-      <tr><td style="color:#54657a;"><strong>Total</strong></td><td style="text-align:right;"><strong>${fmtMoney(b.total_amount)}</strong></td></tr>
+      ${subtotalLine}${waiverLine}${deliveryLine}${taxLine}${cashPriceLine}
+      <tr><td style="color:#54657a;"><strong>${totalLabel}</strong></td><td style="text-align:right;"><strong>${fmtMoney(b.total_amount)}</strong></td></tr>
       <tr><td style="color:#54657a;">Amount paid</td><td style="text-align:right;">${fmtMoney(b.amount_paid)}</td></tr>
       ${balanceLine}
     </table>`;

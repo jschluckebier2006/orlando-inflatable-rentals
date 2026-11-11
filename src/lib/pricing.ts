@@ -47,6 +47,19 @@ export const salesTaxLabel = (rate: number = getTaxRate()) =>
 export const getDamageWaiverRate = () => getSettings().damageWaiverRate;
 export const getDefaultDeposit = () => getSettings().defaultDeposit;
 export const getOnlineCheckoutFeeRate = () => getSettings().onlineCheckoutFeeRate;
+/** Percent text for any rate: 0.03 → "3%", 0.065 → "6.5%". Label only — no math. */
+export const formatPct = (rate: number) => `${Number((rate * 100).toFixed(3))}%`;
+/**
+ * The card-over-cash percent a saved booking was actually priced at, read back
+ * from its stored amounts (older bookings were 4%). Falls back to the live rate.
+ */
+export function cardPctFromAmounts(cardDifference: number, cardTotal: number): string {
+  const cash = cardTotal - cardDifference;
+  const rate = cash > 0 ? cardDifference / cash : NaN;
+  return Number.isFinite(rate) && rate > 0
+    ? `${Number((rate * 100).toFixed(1))}%`
+    : formatPct(getOnlineCheckoutFeeRate());
+}
 
 export const DEPOSIT_NET = 5.00;
 export const DEPOSIT_CHARGE = 5.45;
@@ -67,8 +80,10 @@ export interface PriceBreakdown {
  * Compute the full price breakdown. Mirrors supabase/functions/_shared/pricing.ts.
  * - Damage waiver: % of the rental subtotal only (never the delivery fee).
  * - Sales tax: on rentals (subtotal + waiver) only — the delivery fee is not taxed.
- * - 4% Online Payment Convenience Fee applies ONLY when paymentChoice === 'card_on_file',
- *   on the full pre-fee total including delivery and tax. The fee itself is not taxed.
+ * - Card price: every card payment (paymentChoice === 'card_on_file') pays the cash
+ *   total × (1 + card rate, 3% today), including delivery and tax. Cash on delivery
+ *   pays the lower cash price. The card difference itself is not taxed.
+ *   `checkoutFee` is that card-minus-cash difference (0 for cash).
  */
 export function computeBreakdown(
   subtotal: number,
@@ -89,4 +104,11 @@ export function computeBreakdown(
   const checkoutFee = paymentChoice === "card_on_file" ? r(preFeeTotal * feeRate) : 0;
   const total = r(preFeeTotal + checkoutFee);
   return { subtotal: sub, damageWaiver, deliveryFee: delivery, checkoutFee, taxableBase, tax, total };
+}
+
+/** Both prices for the same order: card price, cash price, and the cash saving. */
+export function cardAndCashTotals(subtotal: number, waiverSelected: boolean, deliveryFee: number = 0) {
+  const card = computeBreakdown(subtotal, waiverSelected, deliveryFee, "card_on_file");
+  const cash = computeBreakdown(subtotal, waiverSelected, deliveryFee, "cash_on_delivery");
+  return { card, cash, cashSavings: Math.round((card.total - cash.total) * 100) / 100 };
 }

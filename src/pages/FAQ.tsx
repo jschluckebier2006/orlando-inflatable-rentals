@@ -70,7 +70,7 @@ const faqs = [
   {
     question: "How do I pay?",
     answer:
-      "You can pay by card online or with cash on delivery. Card payments include a small online payment convenience fee; paying cash on delivery avoids it.",
+      "You can pay by card online or with cash on delivery. Card payments are charged our card price; paying cash on delivery gets you the lower cash price (a cash discount).",
   },
 ];
 

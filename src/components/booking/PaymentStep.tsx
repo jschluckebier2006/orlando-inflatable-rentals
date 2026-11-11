@@ -8,7 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { getStripe, resolveStripeEnvironment } from "@/lib/stripe";
 import { cn } from "@/lib/utils";
-import { computeBreakdown, DEPOSIT_CHARGE, salesTaxLabel, type PaymentMethodChoice } from "@/lib/pricing";
+import { cardAndCashTotals, computeBreakdown, DEPOSIT_CHARGE, salesTaxLabel, type PaymentMethodChoice } from "@/lib/pricing";
 
 const ORDER_MINIMUM = 100;
 
@@ -43,6 +43,11 @@ export function PaymentStep({
     [subtotal, damageWaiver, deliveryFee, choice],
   );
   const total = bd.total;
+  // Both prices, always shown: card price first, then the cash price and its saving.
+  const both = useMemo(
+    () => cardAndCashTotals(subtotal, damageWaiver, deliveryFee),
+    [subtotal, damageWaiver, deliveryFee],
+  );
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [agreed, setAgreed] = useState(false);
@@ -157,13 +162,25 @@ export function PaymentStep({
             </div>
           )}
           <div className="flex justify-between"><span>{salesTaxLabel()}</span><span>${bd.tax.toFixed(2)}</span></div>
-          {choice === "card_on_file" && (
-            <div className="flex justify-between">
-              <span>Online Payment Convenience Fee (4%)</span>
-              <span>${bd.checkoutFee.toFixed(2)}</span>
+          <div className="border-t border-border mt-2 pt-2 space-y-1">
+            <div
+              data-testid="card-price"
+              className={cn("flex justify-between gap-2", choice === "card_on_file" ? "font-semibold" : "text-muted-foreground")}
+            >
+              <span>Pay by card: ${both.card.total.toFixed(2)}</span>
+              {choice === "card_on_file" && <span className="text-xs font-normal text-primary self-center">Selected</span>}
             </div>
-          )}
-          <div className="flex justify-between font-semibold pt-1"><span>Order total</span><span>${total.toFixed(2)}</span></div>
+            <div
+              data-testid="cash-price"
+              className={cn("flex justify-between gap-2", choice === "cash_on_delivery" ? "font-semibold" : "text-muted-foreground")}
+            >
+              <span>
+                Pay cash on delivery: ${both.cash.total.toFixed(2)}{" "}
+                <span className="text-green-700 dark:text-green-400 font-semibold">(save ${both.cashSavings.toFixed(2)})</span>
+              </span>
+              {choice === "cash_on_delivery" && <span className="text-xs font-normal text-primary self-center">Selected</span>}
+            </div>
+          </div>
           <div className="flex justify-between text-muted-foreground pt-1"><span>Charged today</span><span>${DEPOSIT_CHARGE.toFixed(2)}</span></div>
           <div className="flex justify-between text-muted-foreground">
             <span>{choice === "cash_on_delivery" ? "Remaining balance (cash on delivery)" : "Remaining balance (charged the week of your event)"}</span>

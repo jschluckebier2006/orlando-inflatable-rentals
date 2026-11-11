@@ -27,7 +27,7 @@ export default function Settings() {
   const [taxPct, setTaxPct] = useState("7");
   const [waiverPct, setWaiverPct] = useState("10");
   const [deposit, setDeposit] = useState("50");
-  const [feePct, setFeePct] = useState("4");
+  const [feePct, setFeePct] = useState("3");
   const [savingPricing, setSavingPricing] = useState(false);
 
   const [reviewsCount, setReviewsCount] = useState("68");
@@ -48,7 +48,7 @@ export default function Settings() {
       setTaxPct(String(Number(s.tax_rate) * 100));
       setWaiverPct(String(Number(s.damage_waiver_rate) * 100));
       setDeposit(String(Number(s.default_deposit)));
-      setFeePct(String(Number(s.online_checkout_fee_rate ?? 0.04) * 100));
+      setFeePct(String(Number(s.online_checkout_fee_rate ?? 0.03) * 100));
       if (s.google_reviews_count != null) setReviewsCount(String(s.google_reviews_count));
       if (s.google_rating != null) setReviewsRating(String(s.google_rating));
     }
@@ -150,12 +150,12 @@ export default function Settings() {
             </div>
           </div>
           <div>
-            <Label>Online payment fee %</Label>
+            <Label>Card price % (above cash price)</Label>
             <div className="flex items-center gap-1">
               <Input type="number" step="0.01" value={feePct} onChange={(e) => setFeePct(e.target.value)} />
               <span className="text-sm">%</span>
             </div>
-            <p className="text-[11px] text-muted-foreground mt-1">Card-on-file only; skipped for cash on delivery.</p>
+            <p className="text-[11px] text-muted-foreground mt-1">Added to every card payment. Cash on delivery pays the lower cash price.</p>
           </div>
           <div>
             <Label>Default deposit ($)</Label>

@@ -20,7 +20,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useInventory } from "@/lib/inventory";
 import { DURATION_MULTIPLIERS, DURATION_LABELS, type DurationType, endDateFor } from "@/lib/pricing";
-import { TAX_RATE, computeBreakdown, salesTaxLabel } from "@/lib/pricing";
+import { TAX_RATE, computeBreakdown, salesTaxLabel, formatPct, getOnlineCheckoutFeeRate, cardPctFromAmounts } from "@/lib/pricing";
 import { logActivity } from "@/lib/adminActivity";
 import { format } from "date-fns";
 import { CalendarClock, CreditCard, Loader2 } from "lucide-react";
@@ -578,11 +578,18 @@ export default function BookingFormModal({ open, onOpenChange, booking, onSaved 
             <div className="flex justify-between"><span>{salesTaxLabel(moneyLocked && Number(booking?.tax_rate) > 0 ? Number(booking?.tax_rate) : undefined)}</span><span>${shownTax.toFixed(2)}</span></div>
             {shownFee > 0 && (
               <div className="flex justify-between">
-                <span>Online Payment Convenience Fee (4%)</span>
-                <span>${shownFee.toFixed(2)}</span>
+                <span>Cash price</span>
+                <span>${(Math.round((shownTotal - shownFee) * 100) / 100).toFixed(2)}</span>
               </div>
             )}
-            <div className="flex justify-between font-semibold text-base"><span>Total</span><span>${shownTotal.toFixed(2)}</span></div>
+            <div className="flex justify-between font-semibold text-base">
+              <span>
+                {shownFee > 0
+                  ? `Total (card price, +${moneyLocked ? cardPctFromAmounts(shownFee, shownTotal) : formatPct(getOnlineCheckoutFeeRate())})`
+                  : paymentMethod === "card_on_file" ? "Total" : "Total (cash price)"}
+              </span>
+              <span>${shownTotal.toFixed(2)}</span>
+            </div>
             {shownPaidInFull ? (
               <div className="flex justify-between font-semibold text-green-700">
                 <span>Paid in full</span>
@@ -642,9 +649,9 @@ export default function BookingFormModal({ open, onOpenChange, booking, onSaved 
             <Select value={paymentMethod} onValueChange={(v) => setPaymentMethod(v as any)} disabled={moneyLocked}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="card_on_file">Card (adds 4% Online Payment Convenience Fee)</SelectItem>
-                <SelectItem value="cash_on_delivery">Cash on Delivery (no fee)</SelectItem>
-                <SelectItem value="other">Other (no fee)</SelectItem>
+                <SelectItem value="card_on_file">Card (card price, +{formatPct(getOnlineCheckoutFeeRate())})</SelectItem>
+                <SelectItem value="cash_on_delivery">Cash on Delivery (cash price)</SelectItem>
+                <SelectItem value="other">Other (cash price)</SelectItem>
               </SelectContent>
             </Select>
           </section>

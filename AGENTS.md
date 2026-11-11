@@ -3,3 +3,4 @@
 - Delivery fee is always derived server-side from the ZIP in create-booking-checkout; the browser's fee is ignored. Why: a tampered request can't skip or change the fee.
 - Weekend promo UI is display-only behind WEEKEND_PROMO_UI_ACTIVE in src/config/weekendPromo.ts. Why: phone-only offer, no pricing coupling.
 - Sales tax labels are never hard-coded: live screens use the settings rate; saved-booking views and emails use the booking's stored tax_rate (falling back to settings). Why: older bookings were charged a different rate than today.
+- The card rate (app_settings.online_checkout_fee_rate, DB overrides code default) is shown as a card price over the cash price; bookings.checkout_fee_amount stores the card-minus-cash difference, and saved-booking views/emails read the percent back from stored amounts. Why: older bookings were priced at a different card rate than today.
