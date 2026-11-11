@@ -29,6 +29,13 @@
       "when": 1790824373259,
       "tag": "0003_lock_inventory_blackouts_read_to_admins",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1794416091218,
+      "tag": "0004_delivery_zones_three_state_59_zips",
+      "breakpoints": true
     }
   ]
 }
