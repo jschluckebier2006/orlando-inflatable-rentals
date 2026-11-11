@@ -28,7 +28,9 @@ export function ZipFeeBadge({ zip }: { zip: string }) {
       <div className="mt-1 flex items-start gap-2 rounded-md border border-primary/30 bg-primary/10 p-2 text-xs text-foreground">
         <PhoneCall className="h-3.5 w-3.5 shrink-0 mt-0.5 text-primary" />
         <span>
-          We can't book <strong>{zip5}</strong> online. Call, text, or{" "}
+          We can't book <strong>{zip5}</strong> online.{" "}
+          <a href="tel:4074971840" className="font-semibold text-primary underline">Call</a>,{" "}
+          <a href="sms:4074971840" className="font-semibold text-primary underline">text</a>, or{" "}
           <a href={`#${DELIVERY_REQUEST_PANEL_ID}`} onClick={scrollToRequestPanel} className="font-semibold text-primary underline">
             send a quick request below
           </a>.
