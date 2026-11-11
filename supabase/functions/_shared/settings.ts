@@ -42,10 +42,14 @@ export async function loadSettings(supabase: any): Promise<AppSettings> {
       onlineCheckoutFeeRate: s?.online_checkout_fee_rate != null ? Number(s.online_checkout_fee_rate) : DEFAULTS.onlineCheckoutFeeRate,
       zones: { ...STATIC_ZONES },
     };
-    if (Array.isArray(z)) {
+    // The live table is the authority: when it returns rows, use exactly
+    // those (a ZIP an admin removed must fall back to "call", not to a seed).
+    if (Array.isArray(z) && z.length > 0) {
+      const live: Record<string, DeliveryZone> = {};
       for (const r of z as Array<{ zip: string; city: string; fee: number; status: string }>) {
-        value.zones[r.zip] = zoneFromRow(r);
+        live[r.zip] = zoneFromRow(r);
       }
+      value.zones = live;
     }
     cache = { value, expires: Date.now() + TTL_MS };
     return value;
