@@ -41,7 +41,7 @@ const faqs = [
   {
     question: "Is there an extra delivery charge to Christmas?",
     answer: FREE
-      ? "No! Delivery to Christmas is included free with your rental, including the Christmas and surrounding rural areas."
+      ? "No! Delivery to Christmas is included free with your rental. We serve all of East Orange County without additional delivery fees, including the Christmas and surrounding rural areas."
       : "We deliver to Christmas — call or text (407) 497-1840 to book your date, and we'll confirm everything for your event by phone.",
   },
   {
