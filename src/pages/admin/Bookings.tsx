@@ -41,6 +41,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { buttonVariants } from "@/components/ui/button";
 import { logActivity } from "@/lib/adminActivity";
 import CancelledBookingsTable from "@/components/admin/CancelledBookingsTable";
+import DeliveryRequestsTab, { type DeliveryRequest } from "@/components/admin/DeliveryRequestsTab";
 
 type BookingStatus = "pending" | "confirmed" | "cancelled" | "completed";
 type PaymentStatus = "unpaid" | "deposit_paid" | "paid_in_full" | "refunded";
@@ -127,6 +128,12 @@ export default function AdminBookings() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [bookings, setBookings] = useState<Booking[]>([]);
+  const [requests, setRequests] = useState<DeliveryRequest[]>([]);
+  async function loadRequests() {
+    const { data } = await supabase.from("delivery_requests")
+      .select("*").order("created_at", { ascending: false }).limit(200);
+    setRequests((data ?? []) as DeliveryRequest[]);
+  }
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<"all" | BookingStatus>("all");
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
@@ -149,9 +156,10 @@ export default function AdminBookings() {
     }
   }, [searchParams, bookings]);
 
-  const tab: "active" | "cancelled" =
-    searchParams.get("tab") === "cancelled" ? "cancelled" : "active";
-  const setTab = (t: "active" | "cancelled") =>
+  const tabParam = searchParams.get("tab");
+  const tab: "active" | "cancelled" | "requests" =
+    tabParam === "cancelled" ? "cancelled" : tabParam === "requests" ? "requests" : "active";
+  const setTab = (t: "active" | "cancelled" | "requests") =>
     setSearchParams((p) => {
       const np = new URLSearchParams(p);
       np.set("tab", t);
@@ -487,6 +495,14 @@ export default function AdminBookings() {
           <TabsList>
             <TabsTrigger value="active">Active ({activeAll.length})</TabsTrigger>
             <TabsTrigger value="cancelled">Cancelled ({cancelledList.length})</TabsTrigger>
+            <TabsTrigger value="requests">
+              Delivery requests ({requests.length})
+              {requests.some((r) => r.status === "new") && (
+                <span className="ml-1.5 rounded-full bg-secondary text-secondary-foreground text-[10px] font-semibold px-1.5 py-0.5">
+                  {requests.filter((r) => r.status === "new").length} new
+                </span>
+              )}
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="active" className="space-y-4">
@@ -777,6 +793,13 @@ export default function AdminBookings() {
               </ul>
             )}
 
+          </TabsContent>
+
+          <TabsContent value="requests" className="space-y-3">
+            <p className="text-sm text-muted-foreground">
+              Customers whose ZIP can't be booked online. Each request was also emailed to you.
+            </p>
+            <DeliveryRequestsTab rows={requests} onChanged={loadRequests} />
           </TabsContent>
         </Tabs>
       </div>
