@@ -69,6 +69,7 @@ export interface BookingFormBooking {
   tax_rate?: number | null;
   tax_amount?: number | null;
   delivery_fee?: number | null;
+  delivery_zone_city?: string | null;
   checkout_fee_amount?: number | null;
   balance_due?: number | null;
   payment_method_choice?: "card_on_file" | "cash_on_delivery" | null;
