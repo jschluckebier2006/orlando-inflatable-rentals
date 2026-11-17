@@ -30,11 +30,14 @@ export function BlogPostLayout({
   children 
 }: BlogPostLayoutProps) {
   const canonicalPath = `/blog/${slug}`;
+  // Keep the brand suffix only when the full title fits Google's ~60-char snippet.
+  const brandedTitle = `${title} | Orlando Inflatables`;
+  const seoTitle = brandedTitle.length <= 60 ? brandedTitle : title;
   
   return (
     <Layout>
       <SEOHead
-        title={`${title} | Orlando Inflatables`}
+        title={seoTitle}
         exactTitle
         description={metaDescription}
         canonical={canonicalPath}

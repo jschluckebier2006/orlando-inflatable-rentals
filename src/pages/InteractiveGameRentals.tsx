@@ -42,6 +42,7 @@ export default function InteractiveGameRentals() {
     <Layout>
       <SEOHead
         title="Interactive Game Rentals in Orlando, FL"
+        exactTitle
         description="Interactive game rentals in Orlando, FL including dunk tanks, bungee runs, and more. Fun for all ages at parties & events in East Orlando. Call (407) 497-1840."
         canonical="/interactive-game-rentals"
       />

@@ -49,7 +49,11 @@ export function CityServicePage({ city, citySlug, serviceType, nearbyAreas, loca
   const servicePath = isBounceHouse ? "/bounce-house-rentals" : "/water-slide-rentals";
   const pageSlug = isBounceHouse ? `bounce-house-rentals-${citySlug}` : `water-slide-rentals-${citySlug}`;
   
-  const title = `${serviceName} Rentals ${city} FL | Orlando Inflatables`;
+  // Waterford Lakes bounce house title is shortened to fit Google's ~60-char snippet.
+  const exactCityTitle = pageSlug === "bounce-house-rentals-waterford-lakes";
+  const title = exactCityTitle
+    ? `${serviceName} Rentals in ${city}, FL`
+    : `${serviceName} Rentals ${city} FL | Orlando Inflatables`;
   const description = freeCity
     ? `${serviceName} rentals in ${city}, FL. Premium inflatable ${serviceName.toLowerCase()}s for birthday parties, events & celebrations. Free delivery! Call (407) 497-1840.`
     : feeCity
@@ -90,7 +94,7 @@ export function CityServicePage({ city, citySlug, serviceType, nearbyAreas, loca
 
   return (
     <Layout>
-      <SEOHead title={title} description={description} canonical={`/${pageSlug}`} />
+      <SEOHead title={title} exactTitle={exactCityTitle} description={description} canonical={`/${pageSlug}`} />
       <ServiceSchema
         serviceName={`${serviceName} Rentals in ${city} FL`}
         description={description}
