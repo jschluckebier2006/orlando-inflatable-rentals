@@ -748,7 +748,7 @@ const ChurchEvents = () => {
                   <div className="text-center">
                     <h3 className="font-semibold text-lg mb-4">Related Event Types:</h3>
                     <p className="text-muted-foreground max-w-2xl mx-auto">
-                      We also provide rentals for <Link to="/events/birthday-parties" className="text-primary hover:underline font-medium">birthday parties</Link>, <Link to="/events/school-events" className="text-primary hover:underline font-medium">school events</Link>, and <Link to="/events/graduation-events" className="text-primary hover:underline font-medium">graduation parties</Link> throughout East Orlando.
+                      We also provide rentals for <Link to="/events/birthday-party-inflatable-rentals-in-orlando" className="text-primary hover:underline font-medium">birthday parties</Link>, <Link to="/events/school-events" className="text-primary hover:underline font-medium">school events</Link>, and <Link to="/events/graduation-events" className="text-primary hover:underline font-medium">graduation parties</Link> throughout East Orlando.
                     </p>
                   </div>
                   

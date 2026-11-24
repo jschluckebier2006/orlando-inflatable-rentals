@@ -553,7 +553,7 @@ export function CityDeliveryPage({
                 Orlando Inflatable Rentals
               </Link>
               , our fun inflatables can suit any occasion. We have rentals perfect for your child's{" "}
-              <Link to="/events/birthday-parties" className="text-primary hover:underline">
+              <Link to="/events/birthday-party-inflatable-rentals-in-orlando" className="text-primary hover:underline">
                 birthday party
               </Link>{" "}
               or just for some family time in Spring, Summer, and Fall. We offer a ton of different units including a{" "}
