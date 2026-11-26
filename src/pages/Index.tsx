@@ -20,24 +20,29 @@ import { CTASection } from "@/components/home/CTASection";
 const homepageFaqs = [
   {
     question: "What areas do you deliver to?",
-    answer: "We proudly serve East Orlando, Orange County, and Central Florida including Alafaya, Avalon Park, Azalea Park, Bithlo, Christmas, Chuluota, Eastwood, Stoneybrook, Waterford Lakes, and Wedgefield. Contact us to confirm delivery to your specific location!"
+    answer:
+      "We proudly serve East Orlando, Orange County, and Central Florida including Alafaya, Avalon Park, Azalea Park, Bithlo, Christmas, Chuluota, Eastwood, Stoneybrook, Waterford Lakes, and Wedgefield. Contact us to confirm delivery to your specific location!",
   },
   {
     question: "How far in advance should I book?",
-    answer: "We recommend booking at least 1-2 weeks in advance to ensure availability, especially during peak season (spring and summer). However, we do accommodate last-minute bookings when possible - just give us a call!"
+    answer:
+      "We recommend booking at least 1-2 weeks in advance to ensure availability, especially during peak season (spring and summer). However, we do accommodate last-minute bookings when possible - just give us a call!",
   },
   {
     question: "Is setup and delivery included?",
-    answer: "Yes! We offer free delivery, professional setup, and pickup within our service area. Our trained staff will ensure everything is safely installed and ready for your guests."
+    answer:
+      "Yes! We offer free delivery, professional setup, and pickup within our service area. Our trained staff will ensure everything is safely installed and ready for your guests.",
   },
   {
     question: "Are your inflatables safe and clean?",
-    answer: "Absolutely! Safety is our top priority. All equipment is thoroughly cleaned and sanitized after each use. We are fully licensed and insured, and our inflatables meet all safety standards."
+    answer:
+      "Absolutely! Safety is our top priority. All equipment is thoroughly cleaned and sanitized after each use. We are fully licensed and insured, and our inflatables meet all safety standards.",
   },
   {
     question: "What happens if it rains on my event day?",
-    answer: "We understand Florida weather! If rain prevents safe use of the equipment, we'll work with you to reschedule. Please see our cancellation policy for full details."
-  }
+    answer:
+      "We understand Florida weather! If rain prevents safe use of the equipment, we'll work with you to reschedule. Please see our cancellation policy for full details.",
+  },
 ];
 
 const Index = () => {
@@ -60,20 +65,15 @@ const Index = () => {
 
   return (
     <Layout>
-      <SEOHead
-        title={seo.title}
-        description={seo.description}
-        canonical={seo.canonical}
-        exactTitle={!isKeywordRoute}
-      />
+      <SEOHead title={seo.title} description={seo.description} canonical={seo.canonical} exactTitle={!isKeywordRoute} />
       <LocalBusinessSchema />
       <OrganizationSchema />
       <FAQPageSchema faqs={homepageFaqs} />
-      
+
       <HeroSection />
       <TrustBadgesRow />
-      <AllCategoryCarousels />
       <CategoriesSection />
+      <AllCategoryCarousels />
       <SEOContentSection />
       <PopularRentalsSection />
       <DeliveryAreasSection />
