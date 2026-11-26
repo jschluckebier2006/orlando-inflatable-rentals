@@ -45,7 +45,7 @@ export function AllCategoryCarousels() {
     <CategoryCard
       key="addons"
       title="Party Add-Ons"
-      products={by("concessions", "tables-chairs", "tents")}
+      products={[...by("concessions"), ...by("tables-chairs"), ...by("tents")]}
       categoryLink="/concession-rentals"
       links={[
         { label: "Concessions", to: "/concession-rentals" },
