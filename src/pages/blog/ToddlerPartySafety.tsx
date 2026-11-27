@@ -6,6 +6,7 @@ export default function ToddlerPartySafety() {
   return (
     <BlogPostLayout
       title="Orlando Toddler Party Safety: Bounce House Rules Every Parent Needs"
+      seoTitle="Orlando Toddler Party Safety: Bounce House Rules for Parents"
       metaDescription="Orlando toddler party safety demands strict bounce house rules. Learn about supervision, age separation, and weather protocols for safe, enjoyable parties."
       heroImage={siteImages.toddlerBounce1}
       category="Safety Tips"

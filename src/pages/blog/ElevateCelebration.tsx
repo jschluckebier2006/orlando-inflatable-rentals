@@ -6,6 +6,7 @@ export default function ElevateCelebration() {
   return (
     <BlogPostLayout
       title="Elevate Your Next Celebration with the Joy of a Bounce House Rental"
+      seoTitle="Elevate Your Celebration with a Bounce House Rental"
       metaDescription="Discover how a bounce house rental can elevate your next celebration. Endless entertainment, active play, and stress-free party planning in Orlando."
       heroImage={siteImages.girlsJumping1}
       category="Party Ideas"

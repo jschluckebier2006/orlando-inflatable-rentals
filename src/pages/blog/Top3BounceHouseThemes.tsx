@@ -6,6 +6,7 @@ export default function Top3BounceHouseThemes() {
   return (
     <BlogPostLayout
       title="Top 3 Bounce House Themes in Orlando for Kids' Birthday Parties"
+      seoTitle="Top 3 Bounce House Themes in Orlando for Kids' Birthdays"
       metaDescription="The top 3 bounce house themes in Orlando for kids' birthday parties are Disney Princess, Dinosaur Raptor, and Primary Color bounce houses."
       heroImage={siteImages.kidsSmilingBounce1}
       category="Party Ideas"

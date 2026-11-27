@@ -6,6 +6,7 @@ export default function OrlandoBirthdayPartyVenuesGuide() {
   return (
     <BlogPostLayout
       title="Orlando Birthday Party Venues That Allow Bounce House & Water Slide Rentals"
+      seoTitle="Orlando Birthday Venues That Allow Bounce Houses & Slides"
       metaDescription="A local guide to East Orlando parks, community centers & backyard-friendly venues in Alafaya, Avalon Park & Waterford Lakes that permit inflatable rentals."
       heroImage={siteImages.kidsGroupBounce1}
       category="Party Planning"

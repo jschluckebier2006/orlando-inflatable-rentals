@@ -6,6 +6,7 @@ export default function BounceHousePricing2025() {
   return (
     <BlogPostLayout
       title="How Much is a Bounce House Rental in Orlando, Florida (2025 Pricing Guide)"
+      seoTitle="Bounce House Rental Prices in Orlando, FL (2025 Guide)"
       metaDescription="Bounce house rentals cost $139-$149 for full-day rentals in Orlando, Florida. Complete 2025 pricing guide with delivery, setup, and package deals included."
       heroImage={siteImages.kidsGroupBounce1}
       category="Pricing & Guides"

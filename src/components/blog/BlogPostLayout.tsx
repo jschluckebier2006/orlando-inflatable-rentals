@@ -10,6 +10,8 @@ import { ChevronRight } from "lucide-react";
 
 interface BlogPostLayoutProps {
   title: string;
+  /** Optional <title>/og/twitter override; H1 and schema still use `title`. */
+  seoTitle?: string;
   metaDescription: string;
   heroImage: string;
   category: string;
@@ -21,6 +23,7 @@ interface BlogPostLayoutProps {
 
 export function BlogPostLayout({ 
   title, 
+  seoTitle: seoTitleOverride,
   metaDescription, 
   heroImage, 
   category,
@@ -32,7 +35,7 @@ export function BlogPostLayout({
   const canonicalPath = `/blog/${slug}`;
   // Keep the brand suffix only when the full title fits Google's ~60-char snippet.
   const brandedTitle = `${title} | Orlando Inflatables`;
-  const seoTitle = brandedTitle.length <= 60 ? brandedTitle : title;
+  const seoTitle = seoTitleOverride ?? (brandedTitle.length <= 60 ? brandedTitle : title);
   
   return (
     <Layout>

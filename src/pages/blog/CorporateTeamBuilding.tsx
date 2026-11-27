@@ -6,6 +6,7 @@ export default function CorporateTeamBuilding() {
   return (
     <BlogPostLayout
       title="Corporate Team Building with Inflatables: Beyond Kids' Parties"
+      seoTitle="Corporate Team Building with Inflatables in Orlando"
       metaDescription="Corporate team building with inflatables redefines workplace events in Orlando. Use obstacle courses, games, and slides to foster teamwork and stress relief."
       heroImage={siteImages.slideTunnel1}
       category="Corporate Events"
